@@ -7,6 +7,7 @@ import DashboardLayout from "./components/layouts/DashboardLayout";
 import OrderList from "./components/pages/tenant/OrderList";
 import Reports from "./components/pages/tenant/Reports";
 import MyBooking from "./components/pages/MyBooking";
+import GuestRoute from "./components/layouts/GuestRoutes";
 
 const router = createBrowserRouter([
   {
@@ -39,7 +40,13 @@ const router = createBrowserRouter([
   },
   {
     path: "/login",
-    element: <Login />,
+    element: <GuestRoute />,
+    children: [
+      {
+        index: true,
+        element: <Login />,
+      },
+    ],
   },
 ]);
 
