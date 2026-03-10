@@ -8,6 +8,7 @@ import OrderList from "./components/pages/tenant/OrderList";
 import Reports from "./components/pages/tenant/Reports";
 import MyBooking from "./components/pages/MyBooking";
 import GuestRoute from "./components/layouts/GuestRoutes";
+import NotFoundPage from "./components/pages/NotFoundPage";
 
 const router = createBrowserRouter([
   {
@@ -47,6 +48,11 @@ const router = createBrowserRouter([
         element: <Login />,
       },
     ],
+  },
+
+  {
+    path: "*",
+    element: <NotFoundPage />,
   },
 ]);
 
