@@ -1,4 +1,27 @@
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { loginSchema, type LoginFormData } from "../../../schemas/login.schema";
+import { loginRequest } from "../../../api/services/auth.service";
+import toast from "react-hot-toast";
+
 function Login() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+  });
+
+  const onSubmit = async (data: LoginFormData) => {
+    try {
+      const res = await loginRequest(data);
+      console.log(res);
+    } catch (error: any) {
+      toast.error(error.response.data.message || "Failed to login");
+    }
+  };
+
   return (
     <main className="flex-1 min-h-screen flex items-center justify-center p-6">
       <div className="w-full max-w-[480px] bg-white dark:bg-slate-900 rounded-xl shadow-xl shadow-primary/5 p-8 md:p-10 border border-primary/5">
@@ -10,21 +33,26 @@ function Login() {
             Log in to your StayHub account to manage your bookings.
           </p>
         </div>
-        <form className="space-y-5">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           <div>
             <label className="block text-sm font-semibold mb-2" htmlFor="email">
               Email Address
             </label>
             <div className="relative">
-              <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl">
+              <span className="material-symbols-outlined absolute left-4 top-4 text-slate-400 text-xl">
                 mail
               </span>
               <input
-                className="w-full pl-12 pr-4 py-3.5 bg-background-light dark:bg-slate-800 border-none rounded-lg focus:ring-2 focus:ring-primary/50 text-slate-900 dark:text-white placeholder:text-slate-400"
-                id="email"
-                placeholder="name@company.com"
                 type="email"
+                placeholder="Email"
+                {...register("email")}
+                className="w-full pl-12 pr-4 py-3.5 bg-background-light dark:bg-slate-800 border-none rounded-lg focus:ring-2 focus:ring-primary/50 text-slate-900 dark:text-white placeholder:text-slate-400"
               />
+              {typeof errors.email?.message === "string" && (
+                <p className="text-red-500 text-sm mt-2">
+                  {errors.email?.message}
+                </p>
+              )}
             </div>
           </div>
           <div>
@@ -44,12 +72,17 @@ function Login() {
                 lock
               </span>
               <input
-                className="w-full pl-12 pr-4 py-3.5 bg-background-light dark:bg-slate-800 border-none rounded-lg focus:ring-2 focus:ring-primary/50 text-slate-900 dark:text-white placeholder:text-slate-400"
-                id="password"
-                placeholder="••••••••"
                 type="password"
+                placeholder="••••••••"
+                {...register("password")}
+                className="w-full pl-12 pr-4 py-3.5 bg-background-light dark:bg-slate-800 border-none rounded-lg focus:ring-2 focus:ring-primary/50 text-slate-900 dark:text-white placeholder:text-slate-400"
               />
             </div>
+            {typeof errors.password?.message === "string" && (
+              <p className="text-red-500 text-sm mt-2">
+                {errors.password?.message}
+              </p>
+            )}
           </div>
           <div className="flex items-center gap-2 py-1">
             <input
@@ -65,10 +98,11 @@ function Login() {
             </label>
           </div>
           <button
-            className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-lg shadow-lg shadow-primary/20 transition-all active:scale-[0.98]"
             type="submit"
+            disabled={isSubmitting}
+            className={`w-full  text-white font-bold py-4 rounded-lg shadow-lg shadow-primary/20 transition-all active:scale-[0.98] ${isSubmitting ? "bg-[#686363]" : "bg-primary hover:bg-primary/90"}`}
           >
-            Log In
+            {isSubmitting ? "Logging in..." : "Log In"}
           </button>
         </form>
         <div className="relative my-8">
