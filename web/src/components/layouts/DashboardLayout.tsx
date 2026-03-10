@@ -6,7 +6,7 @@ import { useAuthStore } from "../../stores/auth.store";
 function DashboardLayout() {
   const { user } = useAuthStore();
 
-  if (!user || user.role !== "tenant") {
+  if (!user || user.role !== "TENANT") {
     return <Navigate to={`/login`} replace />;
   }
 
