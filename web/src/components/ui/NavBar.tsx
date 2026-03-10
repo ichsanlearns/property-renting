@@ -18,18 +18,32 @@ function NavBar() {
           </h2>
         </Link>
         <div className="hidden md:flex items-center gap-8">
-          <Link
-            to="/host"
-            className="text-sm font-semibold hover:text-primary transition-colors"
-          >
-            Become a Host
-          </Link>
-          <Link
-            to="/experiences"
-            className="text-sm font-semibold hover:text-primary transition-colors"
-          >
-            Experiences
-          </Link>
+          {(!user || user.role === "CUSTOMER") && (
+            <>
+              <Link
+                to="/mybooking"
+                className="text-sm font-semibold hover:text-primary transition-colors"
+              >
+                My Booking
+              </Link>
+            </>
+          )}
+          {(!user || user.role === "TENANT") && (
+            <>
+              <Link
+                to="/tenant/orderlist"
+                className="text-sm font-semibold hover:text-primary transition-colors"
+              >
+                Become a Host
+              </Link>
+              <Link
+                to="/experiences"
+                className="text-sm font-semibold hover:text-primary transition-colors"
+              >
+                Experiences
+              </Link>
+            </>
+          )}
           {user ? (
             <div className="flex items-center gap-3">
               <Link

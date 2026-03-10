@@ -18,9 +18,9 @@ const seed = async () => {
     const users = [
       {
         id: "012e717a-2429-4757-945f-e24724bcd7ac",
-        first_name: "Ichsan",
+        first_name: "customer",
         last_name: "",
-        email: "ichsan@mail.com",
+        email: "customer@mail.com",
         phone_number: "087827689265",
         password: password,
         role: Role.CUSTOMER,
@@ -28,6 +28,19 @@ const seed = async () => {
         referral_code: generateReferralCode(),
         profile_image:
           "https://images.unsplash.com/photo-1507874457470-272b3c8d8ee2",
+      },
+      {
+        id: "17a6619c-f6b5-469a-adf4-66196a67d187",
+        first_name: "tenant",
+        last_name: "",
+        email: "tenant@mail.com",
+        phone_number: "087812345678",
+        password: password,
+        role: Role.TENANT,
+        is_verified: false,
+        referral_code: generateReferralCode(),
+        profile_image:
+          "https://images.unsplash.com/photo-1518770660439-4636190af475",
       },
     ];
     await prisma.user.createMany({
