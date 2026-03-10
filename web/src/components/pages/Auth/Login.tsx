@@ -1,10 +1,18 @@
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
+
 import { loginSchema, type LoginFormData } from "../../../schemas/login.schema";
 import { loginRequest } from "../../../api/services/auth.service";
-import toast from "react-hot-toast";
+
+import { useAuthStore } from "../../../stores/auth.store";
+import { useNavigate } from "react-router";
 
 function Login() {
+  const navigate = useNavigate();
+
+  const { login } = useAuthStore();
+
   const {
     register,
     handleSubmit,
@@ -15,9 +23,17 @@ function Login() {
 
   const onSubmit = async (data: LoginFormData) => {
     try {
+      toast.loading("Logging in...");
       const res = await loginRequest(data);
-      console.log(res);
+
+      login(res.data.data.token, res.data.data.user);
+
+      toast.dismiss();
+      toast.success("Succesfully login");
+
+      navigate("/");
     } catch (error: any) {
+      toast.dismiss;
       toast.error(error.response.data.message || "Failed to login");
     }
   };
