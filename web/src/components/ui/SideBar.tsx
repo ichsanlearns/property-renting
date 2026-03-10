@@ -1,6 +1,10 @@
 import { Link, NavLink } from "react-router";
+import { useAuthStore } from "../../stores/auth.store";
 
 function SideBar() {
+  const { user } = useAuthStore();
+
+  const roleLabel = user?.role === "TENANT" ? "tenant" : user?.role === "CUSTOMER" ? "Customer" : "";
   const menu = [
     {
       label: "Dashboard",
@@ -91,17 +95,14 @@ function SideBar() {
             className="size-10 rounded-full bg-slate-200 bg-cover bg-center"
             data-alt="Avatar of the current user admin"
             style={{
-              backgroundImage:
-                "url('https://lh3.googleusercontent.com/aida-public/AB6AXuB2KjNGA79Tyd07ABeVz0yifs6GGPGF3E2RsVCJwOVRrhCRWmxtRoL3ygFfE-mhTx-r9zMaUhdGh-OLc5QI-y_IAdIRSldFXZvp9q_-SPKRKwFsGH17zLUcjtKzXIp2QarXeVMTcXaf_yxTr1___5LLYgeVx0oRZ1bfOcvGlUGmSM6qfUme82nfx_J5o6BZKMe2-LCJZCtEgovkIXAC1N_c0F6Prmp0Uioj1V5NzY9pc5mWTrIn4RNaCY7yOaWi5SMVsYin2LqxqERf')",
+              backgroundImage: `url(${user?.profileImage || `https://ui-avatars.com/api/?name=${user?.fullName}`})`,
             }}
           ></div>
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-bold truncate">Alex Morgan</p>
-            <p className="text-[10px] text-slate-500 truncate">Super Admin</p>
+            <p className="text-xs font-bold truncate">{user?.fullName}</p>
+            <p className="text-[10px] text-slate-500 truncate">{roleLabel}</p>
           </div>
-          <button className="material-symbols-outlined text-slate-400 hover:text-primary transition-colors">
-            settings
-          </button>
+          <button className="material-symbols-outlined text-slate-400 hover:text-primary transition-colors">settings</button>
         </div>
       </div>
     </aside>
