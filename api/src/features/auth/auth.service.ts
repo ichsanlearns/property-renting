@@ -22,9 +22,26 @@ export const login = async ({
 
   if (!isMatch) throw new Error("Invalid credentials");
 
-  const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET!, {
-    expiresIn: process.env.JWT_EXPIRES_IN as StringValue,
-  });
+  const token = jwt.sign(
+    { userId: user.id, role: user.role },
+    process.env.JWT_SECRET!,
+    {
+      expiresIn: process.env.JWT_EXPIRES_IN as StringValue,
+    },
+  );
 
-  return { token };
+  const fullName = [user.first_name, user.last_name].filter(Boolean).join(" ");
+
+  return {
+    token,
+    user: {
+      id: user.id,
+      fullName,
+      email: user.email,
+      phoneNumbers: user.phone_number,
+      role: user.role,
+      isVerified: user.is_verified,
+      profileImage: user.profile_image,
+    },
+  };
 };
