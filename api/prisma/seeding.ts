@@ -1,5 +1,6 @@
 import { prisma } from "../src/shared/lib/prisma.lib.js";
 import { Role } from "../src/generated/prisma/enums.js";
+import bcrypt from "bcrypt";
 
 import { generateReferralCode } from "../src/shared/utils/referral.util.js";
 
@@ -12,6 +13,8 @@ const seed = async () => {
     // =============================
     // USERS
     // =============================
+    const password = await bcrypt.hash("password123", 10);
+
     const users = [
       {
         id: "012e717a-2429-4757-945f-e24724bcd7ac",
@@ -19,7 +22,7 @@ const seed = async () => {
         last_name: "",
         email: "ichsan@mail.com",
         phone_number: "087827689265",
-        password: "password123",
+        password: password,
         role: Role.CUSTOMER,
         is_verified: false,
         referral_code: generateReferralCode(),
