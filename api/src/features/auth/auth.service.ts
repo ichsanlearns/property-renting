@@ -2,8 +2,9 @@ import { prisma } from "../../shared/lib/prisma.lib.js";
 
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-
 import type { StringValue } from "ms";
+
+import { AppError } from "../../shared/utils/app-error.util.js";
 
 export const login = async ({
   email,
@@ -16,11 +17,11 @@ export const login = async ({
     where: { email },
   });
 
-  if (!user) throw new Error("Invalid credentials");
+  if (!user) throw new AppError(400, "Invalid credentials");
 
   const isMatch = await bcrypt.compare(password, user.password);
 
-  if (!isMatch) throw new Error("Invalid credentials");
+  if (!isMatch) throw new AppError(400, "Invalid credentials");
 
   const token = jwt.sign(
     { userId: user.id, role: user.role },
