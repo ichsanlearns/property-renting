@@ -69,7 +69,32 @@ export const refreshToken = async ({ token }: { token: string }) => {
 
   if (!stored) throw new AppError(401, "Invalid refresh token");
 
-  const newAccessToken = generateAccessToken(payload.userId);
+  const user = await prisma.user.findUnique({
+    where: { id: payload.id },
+  });
 
-  return newAccessToken;
+  if (!user) throw new AppError(401, "Invalid refresh token");
+
+  const accessToken = generateAccessToken({
+    userId: user.id,
+    role: user.role,
+  });
+  const refreshToken = generateRefreshToken({
+    userId: user.id,
+    role: user.role,
+  });
+
+  await prisma.refreshToken.delete({
+    where: { token },
+  });
+
+  await prisma.refreshToken.create({
+    data: {
+      token: refreshToken,
+      user_id: user.id,
+      expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    },
+  });
+
+  return { accessToken, refreshToken };
 };

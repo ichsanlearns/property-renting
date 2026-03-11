@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useAuthStore } from "../stores/auth.store";
+import { refreshToken } from "./services/auth.service";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL ?? "http://localhost:8000/api",
@@ -16,5 +17,26 @@ api.interceptors.request.use((config) => {
   }
   return config;
 });
+
+axios.interceptors.response.use(
+  (res) => res,
+  async (error) => {
+    const original = error.config;
+
+    if (error.response.status === 401 && !original._retry) {
+      original._retry = true;
+
+      const res = await refreshToken();
+
+      useAuthStore.getState().setToken(res.data.data.accessToken);
+
+      original.headers.Authorization = `Bearer ${res.data.data.accessToken}`;
+
+      return axios(original);
+    }
+
+    return Promise.reject(error);
+  },
+);
 
 export default api;

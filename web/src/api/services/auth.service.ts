@@ -7,6 +7,10 @@ type LoginPayload = {
   password: string;
 };
 
-export const loginRequest = (data: LoginPayload) => {
-  return api.post(API_ENDPOINTS.AUTH.LOGIN, data);
+export const loginRequest = async (data: LoginPayload) => {
+  return await api.post(API_ENDPOINTS.AUTH.LOGIN, data);
+};
+
+export const refreshToken = async () => {
+  return await api.post(API_ENDPOINTS.AUTH.REFRESH);
 };
