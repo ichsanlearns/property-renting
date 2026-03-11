@@ -5,6 +5,10 @@ import jwt from "jsonwebtoken";
 import type { StringValue } from "ms";
 
 import { AppError } from "../../shared/utils/app-error.util.js";
+import {
+  generateAccessToken,
+  generateRefreshToken,
+} from "../../shared/utils/jwt.util.js";
 
 export const login = async ({
   email,
@@ -23,18 +27,25 @@ export const login = async ({
 
   if (!isMatch) throw new AppError(400, "Invalid credentials");
 
-  const token = jwt.sign(
-    { userId: user.id, role: user.role },
-    process.env.JWT_SECRET!,
-    {
-      expiresIn: process.env.JWT_EXPIRES_IN as StringValue,
-    },
-  );
-
   const fullName = [user.first_name, user.last_name].filter(Boolean).join(" ");
 
+  const accessToken = generateAccessToken({ userId: user.id, role: user.role });
+  const refreshToken = generateRefreshToken({
+    userId: user.id,
+    role: user.role,
+  });
+
+  await prisma.refreshToken.create({
+    data: {
+      token: refreshToken,
+      user_id: user.id,
+      expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    },
+  });
+
   return {
-    token,
+    token: accessToken,
+    refreshToken,
     user: {
       id: user.id,
       fullName,

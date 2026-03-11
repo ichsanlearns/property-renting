@@ -7,5 +7,15 @@ export const login = catchAsync(async (req: Request, res: Response) => {
 
   const result = await authService.login({ email, password });
 
-  res.status(200).json({ message: "Login success", data: result });
+  res.cookie("refreshToken", result.refreshToken, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "strict",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+
+  res.status(200).json({
+    message: "Login success",
+    data: { token: result.token, user: result.user },
+  });
 });
