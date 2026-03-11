@@ -19,3 +19,16 @@ export const login = catchAsync(async (req: Request, res: Response) => {
     data: { token: result.token, user: result.user },
   });
 });
+
+export const authRefreshToken = catchAsync(
+  async (req: Request, res: Response) => {
+    const token = req.cookies.refreshToken;
+
+    const result = await authService.refreshToken({ token });
+
+    res.status(200).json({
+      message: "New access token generated successfully",
+      data: { token: result },
+    });
+  },
+);

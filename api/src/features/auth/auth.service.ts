@@ -57,3 +57,19 @@ export const login = async ({
     },
   };
 };
+
+export const refreshToken = async ({ token }: { token: string }) => {
+  if (!token) throw new AppError(401, "Unauthorized");
+
+  const payload = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET!) as any;
+
+  const stored = await prisma.refreshToken.findUnique({
+    where: { token },
+  });
+
+  if (!stored) throw new AppError(401, "Invalid refresh token");
+
+  const newAccessToken = generateAccessToken(payload.userId);
+
+  return newAccessToken;
+};
