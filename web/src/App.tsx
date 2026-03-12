@@ -1,15 +1,20 @@
+import { useEffect, useRef } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router";
 
 import RootLayout from "./components/layouts/RootLayout";
-import HomePage from "./components/pages/HomePage";
 import DashboardLayout from "./components/layouts/DashboardLayout";
-import OrderList from "./components/pages/tenant/OrderList";
-import Reports from "./components/pages/tenant/Reports";
-import MyBooking from "./components/pages/MyBooking";
 import GuestRoute from "./components/layouts/GuestRoutes";
+
+import HomePage from "./components/pages/HomePage";
+import MyBooking from "./components/pages/MyBooking";
+
 import NotFoundPage from "./components/pages/NotFoundPage";
 import Login from "./components/pages/auth/Login";
-import { useEffect, useRef } from "react";
+
+import OrderList from "./components/pages/tenant/OrderList";
+import Reports from "./components/pages/tenant/Reports";
+import Properties from "./components/pages/tenant/Properties";
+
 import { refreshSession } from "./api/services/auth.service";
 import { useAuthStore } from "./stores/auth.store";
 
@@ -32,6 +37,10 @@ const router = createBrowserRouter([
     path: "/tenant/",
     element: <DashboardLayout />,
     children: [
+      {
+        path: "properties",
+        element: <Properties />,
+      },
       {
         path: "orderlist",
         element: <OrderList />,
@@ -61,6 +70,7 @@ const router = createBrowserRouter([
 
 function App() {
   const initialized = useRef(false);
+  const { setAuthLoading } = useAuthStore();
 
   useEffect(() => {
     if (initialized.current) return;
@@ -75,6 +85,8 @@ function App() {
         useAuthStore.getState().login(accessToken, user);
       } catch {
         useAuthStore.getState().logout();
+      } finally {
+        setAuthLoading(false);
       }
     }
     initAuth();
