@@ -1,10 +1,16 @@
 import { Navigate, Outlet } from "react-router";
 
-import SideBar from "../ui/SideBar";
 import { useAuthStore } from "../../stores/auth.store";
 
+import SideBar from "../ui/SideBar";
+import FullPageLoader from "../ui/FullPageLoader";
+
 function DashboardLayout() {
-  const { user } = useAuthStore();
+  const { user, authLoading } = useAuthStore();
+
+  if (authLoading) {
+    return <FullPageLoader />;
+  }
 
   if (!user || user.role !== "TENANT") {
     return <Navigate to={`/login`} replace />;
