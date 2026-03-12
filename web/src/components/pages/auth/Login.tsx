@@ -18,6 +18,7 @@ function Login() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -28,15 +29,27 @@ function Login() {
       toast.loading("Logging in...");
       const res = await loginRequest(data);
 
-      login(res.data.data.accessToken, res.data.data.user);
+      const { accessToken, user } = res.data.data;
+
+      login(accessToken, user);
 
       toast.dismiss();
       toast.success("Succesfully login");
 
       navigate("/");
     } catch (error: any) {
-      toast.dismiss;
+      toast.dismiss();
       toast.error(error.response?.data?.message || "Failed to login");
+    }
+  };
+
+  const handleUseDemoAccount = (role: string) => {
+    if (role === "tenant") {
+      setValue("email", "tenant@mail.com");
+      setValue("password", "password123");
+    } else {
+      setValue("email", "customer@mail.com");
+      setValue("password", "password123");
     }
   };
 
@@ -155,13 +168,16 @@ function Login() {
               </label>
             </div>
             <button
-              className="w-full bg-primary hover:bg-primary/95 text-white font-extrabold py-4.5 rounded-xl shadow-xl shadow-primary/20 hover:shadow-primary/30 hover:-translate-y-0.5 transition-all active:scale-[0.98] flex items-center justify-center gap-3"
+              disabled={isSubmitting}
+              className={`w-full bg-primary hover:bg-primary/95 text-white font-extrabold py-4.5 rounded-xl shadow-xl shadow-primary/20 hover:shadow-primary/30 hover:-translate-y-0.5 transition-all active:scale-[0.98] flex items-center justify-center gap-3 ${isSubmitting ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
               id="loginBtn"
               type="submit"
             >
-              <span id="btnText">Log In</span>
+              <span id="btnText">
+                {isSubmitting ? "Logging in..." : "Log In"}
+              </span>
               <svg
-                className="animate-spin h-5 w-5 text-white hidden"
+                className={`animate-spin h-5 w-5 text-white ${isSubmitting ? "" : "hidden"}`}
                 fill="none"
                 id="loadingSpinner"
                 viewBox="0 0 24 24"
@@ -240,6 +256,63 @@ function Login() {
                 Create an account
               </a>
             </p>
+          </div>
+        </div>
+        <div className="w-full max-w-[400px] bg-white/50 backdrop-blur-sm dark:bg-slate-900/50 rounded-2xl border border-slate-200/50 dark:border-slate-800/50 p-8 shadow-2xl shadow-black/5 self-center">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="p-2 bg-primary/10 rounded-lg">
+              <span className="material-symbols-outlined text-primary text-xl">
+                info
+              </span>
+            </div>
+            <h3 className="font-extrabold text-slate-800 dark:text-slate-200">
+              Demo Accounts
+            </h3>
+          </div>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mb-6 leading-relaxed font-medium">
+            Use these demo accounts to explore the platform instantly.
+          </p>
+          <div className="space-y-4">
+            <div className="p-4 rounded-xl bg-white/80 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700/50 group hover:border-primary/40 transition-all">
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-xs font-extrabold text-slate-800 dark:text-slate-200">
+                  Tenant Demo
+                </p>
+                <button
+                  onClick={() => handleUseDemoAccount("tenant")}
+                  className="text-[10px] font-bold bg-primary text-white px-3 py-1.5 rounded-lg hover:bg-primary/90 transition-all uppercase tracking-wider cursor-pointer"
+                >
+                  Use Account
+                </button>
+              </div>
+              <code className="text-[11px] bg-slate-100 dark:bg-slate-900 px-2 py-1.5 rounded-lg font-mono text-slate-600 dark:text-slate-400 block w-full text-center border border-slate-200/40 dark:border-slate-700/40">
+                tenant@mail.com
+              </code>
+            </div>
+            <div className="p-4 rounded-xl bg-white/80 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700/50 group hover:border-primary/40 transition-all">
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-xs font-extrabold text-slate-800 dark:text-slate-200">
+                  Customer Demo
+                </p>
+                <button
+                  onClick={() => handleUseDemoAccount("customer")}
+                  className="text-[10px] font-bold bg-primary text-white px-3 py-1.5 rounded-lg hover:bg-primary/90 transition-all uppercase tracking-wider cursor-pointer"
+                >
+                  Use Account
+                </button>
+              </div>
+              <code className="text-[11px] bg-slate-100 dark:bg-slate-900 px-2 py-1.5 rounded-lg font-mono text-slate-600 dark:text-slate-400 block w-full text-center border border-slate-200/40 dark:border-slate-700/40">
+                customer@mail.com
+              </code>
+            </div>
+          </div>
+          <div
+            className="mt-6 opacity-0 transition-opacity duration-300 text-center"
+            id="feedback"
+          >
+            <span className="text-[11px] font-bold text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/30 px-3 py-1 rounded-full border border-green-100 dark:border-green-800">
+              Credentials filled successfully!
+            </span>
           </div>
         </div>
       </main>
