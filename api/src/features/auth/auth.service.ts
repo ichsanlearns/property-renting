@@ -44,7 +44,7 @@ export const login = async ({
   });
 
   return {
-    token: accessToken,
+    accessToken,
     refreshToken,
     user: {
       id: user.id,
@@ -58,19 +58,26 @@ export const login = async ({
   };
 };
 
-export const refreshToken = async ({ token }: { token: string }) => {
-  if (!token) throw new AppError(401, "Unauthorized");
+export const refreshSession = async ({
+  oldRefreshToken,
+}: {
+  oldRefreshToken: string;
+}) => {
+  if (!oldRefreshToken) throw new AppError(401, "Unauthorized");
 
-  const payload = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET!) as any;
+  const payload = jwt.verify(
+    oldRefreshToken,
+    process.env.JWT_REFRESH_TOKEN!,
+  ) as any;
 
   const stored = await prisma.refreshToken.findUnique({
-    where: { token },
+    where: { token: oldRefreshToken },
   });
 
   if (!stored) throw new AppError(401, "Invalid refresh token");
 
   const user = await prisma.user.findUnique({
-    where: { id: payload.id },
+    where: { id: payload.userId },
   });
 
   if (!user) throw new AppError(401, "Invalid refresh token");
@@ -84,10 +91,9 @@ export const refreshToken = async ({ token }: { token: string }) => {
     role: user.role,
   });
 
-  await prisma.refreshToken.delete({
-    where: { token },
+  await prisma.refreshToken.deleteMany({
+    where: { token: oldRefreshToken },
   });
-
   await prisma.refreshToken.create({
     data: {
       token: refreshToken,
@@ -96,5 +102,19 @@ export const refreshToken = async ({ token }: { token: string }) => {
     },
   });
 
-  return { accessToken, refreshToken };
+  const fullName = [user.first_name, user.last_name].filter(Boolean).join(" ");
+
+  return {
+    accessToken,
+    refreshToken,
+    user: {
+      id: user.id,
+      fullName,
+      email: user.email,
+      phoneNumbers: user.phone_number,
+      role: user.role,
+      isVerified: user.is_verified,
+      profileImage: user.profile_image,
+    },
+  };
 };

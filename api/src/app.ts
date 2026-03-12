@@ -5,6 +5,7 @@ import express, {
 } from "express";
 
 import cors from "cors";
+import cookieParser from "cookie-parser";
 
 import authRoutes from "./features/auth/auth.route.js";
 import { notFound } from "./shared/middleware/not-found.middleware.js";
@@ -14,7 +15,8 @@ const app: Application = express();
 const PORT: number = 8000;
 
 app.use(express.json());
-app.use(cors({ origin: `${process.env.WEB_URL}` }));
+app.use(cors({ origin: `${process.env.WEB_URL}`, credentials: true }));
+app.use(cookieParser());
 
 app.get("/favicon.ico", (req, res) => res.status(204).end());
 

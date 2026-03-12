@@ -9,35 +9,33 @@ export const login = catchAsync(async (req: Request, res: Response) => {
 
   res.cookie("refreshToken", result.refreshToken, {
     httpOnly: true,
-    secure: true,
-    sameSite: "strict",
+    secure: false,
+    sameSite: "lax",
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
   res.status(200).json({
     message: "Login success",
-    data: { accessToken: result.token, user: result.user },
+    data: { accessToken: result.accessToken, user: result.user },
   });
 });
 
 export const authRefreshToken = catchAsync(
   async (req: Request, res: Response) => {
-    const token = req.cookies.refreshToken;
+    const oldRefreshToken = req.cookies.refreshToken;
 
-    const result = await authService.refreshToken({ token });
+    const result = await authService.refreshSession({ oldRefreshToken });
 
     res.cookie("refreshToken", result.refreshToken, {
       httpOnly: true,
-      secure: true,
-      sameSite: "strict",
+      secure: false,
+      sameSite: "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     res.status(200).json({
       message: "New access token generated successfully",
-      data: {
-        accessToken: result.accessToken,
-      },
+      data: { accessToken: result.accessToken, user: result.user },
     });
   },
 );

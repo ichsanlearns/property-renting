@@ -1,9 +1,10 @@
 import axios from "axios";
 import { useAuthStore } from "../stores/auth.store";
-import { refreshToken } from "./services/auth.service";
+import { refreshSession } from "./services/auth.service";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL ?? "http://localhost:8000/api",
+  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
   },
@@ -26,7 +27,7 @@ axios.interceptors.response.use(
     if (error.response.status === 401 && !original._retry) {
       original._retry = true;
 
-      const res = await refreshToken();
+      const res = await refreshSession();
 
       useAuthStore.getState().setToken(res.data.data.accessToken);
 
