@@ -12,6 +12,7 @@ import Login from "./components/pages/auth/Login";
 import { useEffect, useRef } from "react";
 import { refreshSession } from "./api/services/auth.service";
 import { useAuthStore } from "./stores/auth.store";
+import Properties from "./components/pages/tenant/Properties";
 
 const router = createBrowserRouter([
   {
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
     path: "/tenant/",
     element: <DashboardLayout />,
     children: [
+      {
+        path: "properties",
+        element: <Properties />,
+      },
       {
         path: "orderlist",
         element: <OrderList />,
