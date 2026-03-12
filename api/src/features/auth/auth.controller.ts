@@ -25,7 +25,11 @@ export const logout = catchAsync(async (req: Request, res: Response) => {
 
   await authService.logout({ refreshToken: oldRefreshToken });
 
-  res.clearCookie("refreshToken");
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: false,
+    sameSite: "lax",
+  });
 
   res.status(200).json({
     message: "Logged out successfully",
