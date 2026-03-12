@@ -1,4 +1,11 @@
 function Properties() {
+  const categories = [
+    { id: 1, name: "Residential" },
+    { id: 2, name: "Commercial" },
+    { id: 3, name: "Industrial" },
+    { id: 4, name: "Land" },
+  ];
+
   return (
     <main className="flex-1 p-8">
       <header className="flex items-center justify-between mb-8">
@@ -52,12 +59,20 @@ function Properties() {
                 <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
                   Category
                 </label>
-                <select className="w-full rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary p-3.5">
-                  <option>Residential</option>
-                  <option>Commercial</option>
-                  <option>Industrial</option>
-                  <option>Land</option>
-                </select>
+                {categories.length === 0 ? (
+                  <button className="flex items-center gap-2 bg-primary text-white px-5 py-3 rounded-xl font-bold hover:bg-primary/90 transition-all shadow-sm">
+                    <span className="material-symbols-outlined text-[20px]">
+                      add_circle
+                    </span>
+                    Create your first category
+                  </button>
+                ) : (
+                  <select className="w-full rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary p-3.5">
+                    {categories.map((category) => (
+                      <option key={category.id}>{category.name}</option>
+                    ))}
+                  </select>
+                )}
               </div>
               <div>
                 <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
