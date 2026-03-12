@@ -2,13 +2,13 @@ import { prisma } from "../../shared/lib/prisma.lib.js";
 
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import type { StringValue } from "ms";
 
 import { AppError } from "../../shared/utils/app-error.util.js";
 import {
   generateAccessToken,
   generateRefreshToken,
 } from "../../shared/utils/jwt.util.js";
+import { hashToken } from "../../shared/utils/hash-token.util.js";
 
 export const login = async ({
   email,
@@ -29,23 +29,28 @@ export const login = async ({
 
   const fullName = [user.first_name, user.last_name].filter(Boolean).join(" ");
 
-  const accessToken = generateAccessToken({ userId: user.id, role: user.role });
-  const refreshToken = generateRefreshToken({
+  const newAccessToken = generateAccessToken({
+    userId: user.id,
+    role: user.role,
+  });
+  const newRefreshToken = generateRefreshToken({
     userId: user.id,
     role: user.role,
   });
 
+  const hashedRefreshToken = await hashToken({ token: newRefreshToken });
+
   await prisma.refreshToken.create({
     data: {
-      token: refreshToken,
+      hashed_token: hashedRefreshToken,
       user_id: user.id,
       expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     },
   });
 
   return {
-    accessToken,
-    refreshToken,
+    accessToken: newAccessToken,
+    refreshToken: newRefreshToken,
     user: {
       id: user.id,
       fullName,
@@ -70,8 +75,10 @@ export const refreshSession = async ({
     process.env.JWT_REFRESH_TOKEN!,
   ) as any;
 
+  const hashedOldRefreshToken = await hashToken({ token: oldRefreshToken });
+
   const stored = await prisma.refreshToken.findUnique({
-    where: { token: oldRefreshToken },
+    where: { hashed_token: hashedOldRefreshToken },
   });
 
   if (!stored) throw new AppError(401, "Invalid refresh token");
@@ -82,21 +89,24 @@ export const refreshSession = async ({
 
   if (!user) throw new AppError(401, "Invalid refresh token");
 
-  const accessToken = generateAccessToken({
+  const newAccessToken = generateAccessToken({
     userId: user.id,
     role: user.role,
   });
-  const refreshToken = generateRefreshToken({
+  const newRefreshToken = generateRefreshToken({
     userId: user.id,
     role: user.role,
   });
 
   await prisma.refreshToken.deleteMany({
-    where: { token: oldRefreshToken },
+    where: { hashed_token: hashedOldRefreshToken },
   });
+
+  const hashedRefreshToken = await hashToken({ token: newRefreshToken });
+
   await prisma.refreshToken.create({
     data: {
-      token: refreshToken,
+      hashed_token: hashedRefreshToken,
       user_id: user.id,
       expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     },
@@ -105,8 +115,8 @@ export const refreshSession = async ({
   const fullName = [user.first_name, user.last_name].filter(Boolean).join(" ");
 
   return {
-    accessToken,
-    refreshToken,
+    accessToken: newAccessToken,
+    refreshToken: newRefreshToken,
     user: {
       id: user.id,
       fullName,
