@@ -63,6 +63,16 @@ export const login = async ({
   };
 };
 
+export const logout = async ({ refreshToken }: { refreshToken: string }) => {
+  if (!refreshToken) throw new AppError(401, "Unauthorized");
+
+  const hashedRefreshToken = await hashToken({ token: refreshToken });
+
+  await prisma.refreshToken.deleteMany({
+    where: { hashed_token: hashedRefreshToken },
+  });
+};
+
 export const refreshSession = async ({
   oldRefreshToken,
 }: {

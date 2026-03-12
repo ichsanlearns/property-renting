@@ -20,6 +20,18 @@ export const login = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+export const logout = catchAsync(async (req: Request, res: Response) => {
+  const oldRefreshToken = req.cookies.refreshToken;
+
+  await authService.logout({ refreshToken: oldRefreshToken });
+
+  res.clearCookie("refreshToken");
+
+  res.status(200).json({
+    message: "Logged out successfully",
+  });
+});
+
 export const authRefreshToken = catchAsync(
   async (req: Request, res: Response) => {
     const oldRefreshToken = req.cookies.refreshToken;
