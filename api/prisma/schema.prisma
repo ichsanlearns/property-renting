@@ -32,8 +32,21 @@ model User {
   created_at         DateTime  @default(now())
   updated_at         DateTime  @updatedAt
   deleted_at         DateTime?
-  reset_token        String?
-  reset_token_expiry DateTime?
+
+  refresh_tokens RefreshToken[]
 
   @@map("users")
+}
+
+model RefreshToken {
+  id                 String     @id @default(uuid())
+  hashed_token       String     @unique
+  user_id            String
+  expires_at         DateTime
+  created_at         DateTime   @default(now())
+  deleted_at         DateTime?
+
+  user User @relation(fields: [user_id], references: [id])
+
+  @@map("refresh_tokens")
 }

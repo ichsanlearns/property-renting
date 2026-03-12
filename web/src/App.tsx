@@ -9,10 +9,9 @@ import MyBooking from "./components/pages/MyBooking";
 import GuestRoute from "./components/layouts/GuestRoutes";
 import NotFoundPage from "./components/pages/NotFoundPage";
 import Login from "./components/pages/auth/Login";
-
+import { useEffect, useRef } from "react";
+import { refreshSession } from "./api/services/auth.service";
 import { useAuthStore } from "./stores/auth.store";
-import FullPageLoader from "./components/ui/FullPageLoader";
-import { useEffect, useState } from "react";
 
 const router = createBrowserRouter([
   {
@@ -61,24 +60,25 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-  const [hydrated, setHydrated] = useState(false);
+  const initialized = useRef(false);
 
   useEffect(() => {
-    const unsub = useAuthStore.persist.onFinishHydration(() => {
-      setTimeout(() => setHydrated(true), 500);
-    });
+    if (initialized.current) return;
+    initialized.current = true;
 
-    if (useAuthStore.persist.hasHydrated()) {
-      setTimeout(() => setHydrated(true), 500);
+    async function initAuth() {
+      try {
+        const res = await refreshSession();
+
+        const { accessToken, user } = res.data.data;
+
+        useAuthStore.getState().login(accessToken, user);
+      } catch {
+        useAuthStore.getState().logout();
+      }
     }
-
-    return unsub;
+    initAuth();
   }, []);
-
-  if (!hydrated) {
-    return <FullPageLoader />;
-  }
-
   return <RouterProvider router={router} />;
 }
 

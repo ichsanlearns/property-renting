@@ -26,7 +26,7 @@ function Login() {
       toast.loading("Logging in...");
       const res = await loginRequest(data);
 
-      login(res.data.data.token, res.data.data.user);
+      login(res.data.data.accessToken, res.data.data.user);
 
       toast.dismiss();
       toast.success("Succesfully login");
