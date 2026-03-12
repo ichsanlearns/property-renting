@@ -18,6 +18,33 @@ enum Role {
   TENANT
 }
 
+enum PaymentMethod {
+  MANUAL_TRANSFER
+  E_WALLET
+  CREDIT_CARD
+}
+
+enum PaymentStatus {
+  WAITING_CONFIRMATION
+  APPROVED
+  REJECTED
+}
+
+enum ReservationStatus {
+  WAITING_PAYMENT
+  WAITING_CONFIRMATION
+  REJECTED
+  EXPIRED
+  CANCELED
+  PAID
+  REVIEWED
+}
+
+enum PriceAdjustmentType {
+  NOMINAL
+  PERCENTAGE
+}
+
 model User {
   id                 String    @id @default(uuid())
   first_name         String
@@ -26,7 +53,7 @@ model User {
   phone_number       String
   password           String
   role               Role
-  is_verified        Boolean
+  is_verified        Boolean   @default(false)
   profile_image      String?
   referral_code      String    @unique
   created_at         DateTime  @default(now())
@@ -34,6 +61,9 @@ model User {
   deleted_at         DateTime?
 
   refresh_tokens RefreshToken[]
+  properties     Property[]
+  reviews        Review[]
+  reservations   Reservation[]
 
   @@map("users")
 }
@@ -49,4 +79,259 @@ model RefreshToken {
   user User @relation(fields: [user_id], references: [id])
 
   @@map("refresh_tokens")
+}
+
+model Property {
+  id                 String    @id @default(uuid())
+  tenant_id          String
+  category_id        String
+  
+  title              String
+  description        String
+
+  country            String
+  city               String
+  full_address       String
+
+  latitude           String
+  longitude          String
+
+  number_of_bathrooms Int
+
+  average_rating     Float?
+  review_count       Int      @default(0)
+
+  created_at         DateTime  @default(now())
+  updated_at         DateTime  @updatedAt
+  deleted_at         DateTime?
+
+  tenant User @relation(fields: [tenant_id], references: [id])
+  category Category @relation(fields: [category_id], references: [id])
+
+  property_amenities PropertyAmenity[]
+  property_images    PropertyImage[]
+  room_types         RoomType[]
+  reviews            Review[]
+
+  @@index([city])
+  @@index([category_id])
+
+  @@map("properties")
+}
+
+model Category {
+  id                 String    @id @default(uuid())
+  name               String
+
+  created_at         DateTime  @default(now())
+  updated_at         DateTime  @updatedAt
+  deleted_at         DateTime?
+
+  properties Property[]
+
+  @@map("categories")
+}
+
+model Amenity {
+  id                 String    @id @default(uuid())
+  name               String
+  icon               String
+
+  created_at         DateTime  @default(now())
+  updated_at         DateTime  @updatedAt
+  deleted_at         DateTime?
+
+  property_amenities PropertyAmenity[]
+
+  @@map("amenities")
+}
+
+model PropertyAmenity {
+  id                 String    @id @default(uuid())
+  property_id        String
+  amenity_id         String
+  created_at         DateTime  @default(now())
+  updated_at         DateTime  @updatedAt
+  deleted_at         DateTime?
+
+  property Property @relation(fields: [property_id], references: [id])
+  amenity  Amenity  @relation(fields: [amenity_id], references: [id])
+
+  @@unique([property_id, amenity_id])
+
+  @@map("property_amenities")
+}
+
+model PropertyImage {
+  id                 String    @id @default(uuid())
+  property_id        String
+  image_url          String
+  is_primary         Boolean   @default(false)
+
+  created_at         DateTime  @default(now())
+  updated_at         DateTime  @updatedAt
+  deleted_at         DateTime?
+
+  property Property @relation(fields: [property_id], references: [id])
+
+  @@map("property_images")
+}
+
+model RoomType {
+  id                 String    @id @default(uuid())
+  property_id        String
+
+  name               String
+  description        String
+  capacity           Int
+
+  base_price         Decimal @db.Decimal(10,2)
+  quantity           Int
+
+  created_at         DateTime  @default(now())
+  updated_at         DateTime  @updatedAt
+  deleted_at         DateTime?
+
+  property Property @relation(fields: [property_id], references: [id])
+
+  room_availability RoomAvailability[]
+  price_adjustments PriceAdjustment[]
+  reservations      Reservation[]
+  room_type_images  RoomTypeImage[]
+
+  @@map("room_types")
+}
+
+model RoomTypeImage {
+  id                 String    @id @default(uuid())
+  room_type_id       String
+
+  image_url          String
+  is_primary         Boolean   @default(false)
+
+  created_at         DateTime  @default(now())
+  updated_at         DateTime  @updatedAt
+  deleted_at         DateTime?
+
+  room_type RoomType @relation(fields: [room_type_id], references: [id])
+
+  @@map("room_type_images")
+}
+
+model RoomAvailability {
+  id                 String    @id @default(uuid())
+  room_type_id       String
+
+  date               DateTime
+  available_quantity Int
+
+  created_at         DateTime  @default(now())
+  updated_at         DateTime  @updatedAt
+  deleted_at         DateTime?
+
+  room_type RoomType @relation(fields: [room_type_id], references: [id])
+
+  @@index([room_type_id, date])
+
+  @@unique([room_type_id, date])
+
+  @@map("room_availability")
+}
+
+
+model PriceAdjustment {
+  id                 String    @id @default(uuid())
+  room_type_id       String
+
+  start_date         DateTime
+  end_date           DateTime
+
+  adjustment_type    PriceAdjustmentType
+  adjustment_value   Decimal @db.Decimal(10,2)
+
+  reason             String
+
+  created_at         DateTime  @default(now())
+  updated_at         DateTime  @updatedAt
+  deleted_at         DateTime?
+
+  room_type RoomType @relation(fields: [room_type_id], references: [id])
+
+  @@map("price_adjustments")
+}
+
+model Reservation {
+  id                 String    @id @default(uuid())
+  customer_id        String
+  room_type_id       String
+  coupon_id          String?
+  voucher_id         String?
+
+  check_in_date      DateTime
+  check_out_date     DateTime
+
+  guest_count        Int
+
+  using_points       Decimal @db.Decimal(10,2)
+  total_amount       Decimal @db.Decimal(10,2)
+  status             ReservationStatus
+
+  payment_deadline   DateTime
+
+  created_at         DateTime  @default(now())
+  updated_at         DateTime  @updatedAt
+  deleted_at         DateTime?
+
+  room_type RoomType @relation(fields: [room_type_id], references: [id])
+  customer  User     @relation(fields: [customer_id], references: [id])
+
+  payments  Payment[]
+  reviews   Review[]
+
+  @@index([customer_id])
+  @@index([room_type_id])
+  @@index([status])
+
+  @@map("reservations")
+}
+
+model Payment {
+  id                 String    @id @default(uuid())
+  reservation_id     String
+
+  amount             Decimal @db.Decimal(10,2)
+  payment_method     PaymentMethod
+  payment_status     PaymentStatus
+  transaction_id     String
+  proof_image        String?
+
+  confirmed_at       DateTime?
+
+  created_at         DateTime  @default(now())
+  updated_at         DateTime  @updatedAt
+  deleted_at         DateTime?
+
+  reservation Reservation @relation(fields: [reservation_id], references: [id])
+
+  @@map("payments")
+}
+
+model Review {
+  id                 String    @id @default(uuid())
+  reservation_id     String    @unique
+  customer_id        String
+  property_id        String
+
+  rating             Int
+  comment            String
+
+  created_at         DateTime  @default(now())
+  updated_at         DateTime  @updatedAt
+  deleted_at         DateTime?
+
+  reservation Reservation @relation(fields: [reservation_id], references: [id])
+  customer    User        @relation(fields: [customer_id], references: [id])
+  property    Property    @relation(fields: [property_id], references: [id])
+
+  @@map("reviews")
 }
