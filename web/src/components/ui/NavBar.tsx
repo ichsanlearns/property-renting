@@ -3,22 +3,30 @@ import { useAuthStore } from "../../stores/auth.store";
 import toast from "react-hot-toast";
 import { LogOut } from "lucide-react";
 import { logoutRequest } from "../../api/services/auth.service";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 
 function NavBar() {
   const navigate = useNavigate();
   const { user, logout } = useAuthStore();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const handleLogout = async () => {
     try {
+      setIsLoggingOut(true);
+      toast.loading("Logging out...");
       await logoutRequest();
 
-      await logout();
+      logout();
+      toast.dismiss();
       toast.success("Logged out successfully");
+      setIsMenuOpen(false);
     } catch (error) {
+      toast.dismiss();
       toast.error("Failed to log out");
+    } finally {
+      setIsLoggingOut(false);
     }
   };
 
@@ -30,6 +38,25 @@ function NavBar() {
 
     setIsMenuOpen(false);
   };
+
+  const sidebarRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        sidebarRef.current &&
+        !sidebarRef.current.contains(event.target as Node)
+      ) {
+        setIsMenuOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [setIsMenuOpen]);
 
   return (
     <header className="sticky top-0 z-50 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-primary/10 px-4 md:px-20 py-4">
@@ -133,6 +160,7 @@ function NavBar() {
       ></div>
 
       <div
+        ref={sidebarRef}
         className={`fixed right-0 top-0  h-screen w-[80%]  z-50 bg-white dark:bg-slate-900 shadow-2xl flex flex-col transform transition-transform duration-300 ease-in-out ${isMenuOpen ? "translate-x-0" : "translate-x-full"}`}
       >
         <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 dark:border-slate-800">
@@ -279,13 +307,35 @@ function NavBar() {
                 <>
                   <li>
                     <button
-                      className="flex w-full items-center gap-4 px-3 py-3 rounded-lg text-primary font-medium hover:bg-primary/5 transition-colors cursor-pointer"
+                      className={`flex w-full items-center gap-4 px-3 py-3 rounded-lg text-primary font-medium hover:bg-primary/5 transition-colors cursor-pointer ${isLoggingOut ? "opacity-50 cursor-not-allowed" : ""}`}
                       onClick={handleLogout}
+                      disabled={isLoggingOut}
                     >
                       <span className="material-symbols-outlined text-[22px]">
                         logout
                       </span>
-                      <span>Logout</span>
+                      <span>{isLoggingOut ? "Logging out..." : "Logout"}</span>
+                      <svg
+                        className={`animate-spin h-5 w-5 text-white ${isLoggingOut ? "" : "hidden"}`}
+                        fill="none"
+                        id="loadingSpinner"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth={4}
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          fill="currentColor"
+                        ></path>
+                      </svg>
                     </button>
                   </li>
                 </>
