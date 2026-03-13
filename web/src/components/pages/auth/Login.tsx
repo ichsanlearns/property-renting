@@ -63,9 +63,6 @@ function Login() {
     // }
 
     const isMobile = window.innerWidth <= 768;
-    if (isMobile) {
-      navigate("/");
-    }
 
     if (isMobile) {
       setValue("email", credentials[role].email);
