@@ -19,7 +19,7 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-api.interceptors.response.use(
+axios.interceptors.response.use(
   (res) => res,
   async (error) => {
     const original = error.config;
@@ -33,7 +33,7 @@ api.interceptors.response.use(
 
       original.headers.Authorization = `Bearer ${res.data.data.accessToken}`;
 
-      return api(original);
+      return axios(original);
     }
 
     return Promise.reject(error);
