@@ -43,13 +43,37 @@ function Login() {
     }
   };
 
-  const handleUseDemoAccount = (role: string) => {
-    if (role === "tenant") {
-      setValue("email", "tenant@mail.com");
-      setValue("password", "password123");
+  const handleUseDemoAccount = (role: "tenant" | "customer") => {
+    const credentials = {
+      tenant: {
+        email: "tenant@mail.com",
+        password: "password123",
+      },
+      customer: {
+        email: "customer@mail.com",
+        password: "password123",
+      },
+    };
+    // if (role === "tenant") {
+    //   setValue("email", credentials.tenant.email);
+    //   setValue("password", credentials.tenant.password);
+    // } else {
+    //   setValue("email", credentials.customer.email);
+    //   setValue("password", credentials.customer.password);
+    // }
+
+    const isMobile = window.innerWidth <= 768;
+    if (isMobile) {
+      navigate("/");
+    }
+
+    if (isMobile) {
+      setValue("email", credentials[role].email);
+      setValue("password", credentials[role].password);
+      handleSubmit(onSubmit)();
     } else {
-      setValue("email", "customer@mail.com");
-      setValue("password", "password123");
+      setValue("email", credentials[role].email);
+      setValue("password", credentials[role].password);
     }
   };
 
@@ -62,8 +86,8 @@ function Login() {
         <div className="absolute inset-0 bg-pattern opacity-40"></div>
         <div className="absolute inset-0 bg-linear-to-br from-primary/5 via-white/20 to-orange-100/20"></div>
       </div>
-      <main className="relative z-10 flex-1 flex flex-col lg:flex-row items-center justify-center p-6 gap-12 lg:gap-20 max-w-7xl mx-auto w-full">
-        <div className="w-full max-w-[520px] glass-card dark:bg-slate-900/90 rounded-4xl shadow-[0_32px_64px_-16px_rgba(255,92,97,0.15)] p-8 md:p-12 border border-primary/40 dark:border-slate-800 ring-1 ring-primary/5">
+      <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 place-items-center p-6 gap-12 lg:gap-20 max-w-7xl mx-auto w-full">
+        <div className="w-full max-w-[520px]  glass-card dark:bg-slate-900/90 rounded-4xl shadow-[0_32px_64px_-16px_rgba(255,92,97,0.15)] p-8 md:p-12 border border-primary/40 dark:border-slate-800 ring-1 ring-primary/5 order-2 lg:order-1">
           <div className="mb-10 text-center">
             <div className="inline-flex items-center justify-center w-14 h-14 bg-primary/10 rounded-2xl text-primary mb-6 ring-4 ring-primary/5">
               <span className="material-symbols-outlined text-3xl font-bold">
@@ -258,7 +282,7 @@ function Login() {
             </p>
           </div>
         </div>
-        <div className="w-full max-w-[400px] bg-white/50 backdrop-blur-sm dark:bg-slate-900/50 rounded-2xl border border-slate-200/50 dark:border-slate-800/50 p-8 shadow-2xl shadow-black/5 self-center">
+        <div className="w-full max-w-[400px]  bg-white/50 backdrop-blur-sm dark:bg-slate-900/50 rounded-2xl border border-slate-200/50 dark:border-slate-800/50 p-8 shadow-2xl shadow-black/5 self-center order-1 lg:order-2">
           <div className="flex items-center gap-3 mb-4">
             <div className="p-2 bg-primary/10 rounded-lg">
               <span className="material-symbols-outlined text-primary text-xl">
@@ -315,7 +339,7 @@ function Login() {
             </span>
           </div>
         </div>
-      </main>
+      </div>
     </main>
   );
 }
