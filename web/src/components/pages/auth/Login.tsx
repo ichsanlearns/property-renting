@@ -7,10 +7,13 @@ import { loginRequest } from "../../../api/services/auth.service";
 
 import { useAuthStore } from "../../../stores/auth.store";
 import { useNavigate } from "react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router";
 
 function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
+
   const [showPassword, setShowPassword] = useState(false);
 
   const { login } = useAuthStore();
@@ -54,16 +57,8 @@ function Login() {
         password: "password123",
       },
     };
-    // if (role === "tenant") {
-    //   setValue("email", credentials.tenant.email);
-    //   setValue("password", credentials.tenant.password);
-    // } else {
-    //   setValue("email", credentials.customer.email);
-    //   setValue("password", credentials.customer.password);
-    // }
 
     const isMobile = window.innerWidth <= 768;
-
     if (isMobile) {
       setValue("email", credentials[role].email);
       setValue("password", credentials[role].password);

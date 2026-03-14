@@ -17,6 +17,7 @@ import Properties from "./components/pages/tenant/Properties";
 
 import { refreshSession } from "./api/services/auth.service";
 import { useAuthStore } from "./stores/auth.store";
+import ProtectedRoutes from "./components/layouts/ProtectedRoutes";
 
 const router = createBrowserRouter([
   {
@@ -29,7 +30,13 @@ const router = createBrowserRouter([
       },
       {
         path: "mybooking",
-        element: <MyBooking />,
+        element: <ProtectedRoutes />,
+        children: [
+          {
+            index: true,
+            element: <MyBooking />,
+          },
+        ],
       },
     ],
   },

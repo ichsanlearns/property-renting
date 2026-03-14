@@ -11,6 +11,7 @@ function RootLayout() {
   if (authLoading) {
     return <FullPageLoader />;
   }
+
   return (
     <>
       <NavBar />

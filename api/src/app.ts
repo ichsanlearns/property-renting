@@ -7,11 +7,11 @@ import express, {
 import cors from "cors";
 import cookieParser from "cookie-parser";
 
-import authRoutes from "./features/auth/auth.route.js";
-import propertyRoutes from "./features/property/property.route.js";
-
 import { notFound } from "./shared/middleware/not-found.middleware.js";
 import { error } from "./shared/middleware/error.middleware.js";
+
+import authRoutes from "./features/auth/auth.route.js";
+import propertyRoutes from "./features/property/property.route.js";
 
 const app: Application = express();
 const PORT: number = 8000;

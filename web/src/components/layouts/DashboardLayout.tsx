@@ -4,6 +4,8 @@ import { useAuthStore } from "../../stores/auth.store";
 
 import SideBar from "../ui/SideBar";
 import FullPageLoader from "../ui/FullPageLoader";
+import toast from "react-hot-toast";
+import { useEffect } from "react";
 
 function DashboardLayout() {
   const { user, authLoading } = useAuthStore();
@@ -11,6 +13,15 @@ function DashboardLayout() {
   if (authLoading) {
     return <FullPageLoader />;
   }
+
+  useEffect(() => {
+    if (!user) {
+      toast.error("Please login to access this page");
+    }
+    if (user && user.role !== "TENANT") {
+      toast.error("Please login as a tenant to access this page");
+    }
+  }, [user]);
 
   if (!user || user.role !== "TENANT") {
     return <Navigate to={`/login`} replace />;
