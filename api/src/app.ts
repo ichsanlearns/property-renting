@@ -8,6 +8,8 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 
 import authRoutes from "./features/auth/auth.route.js";
+import propertyRoutes from "./features/property/property.route.js";
+
 import { notFound } from "./shared/middleware/not-found.middleware.js";
 import { error } from "./shared/middleware/error.middleware.js";
 
@@ -27,6 +29,7 @@ app.get("/api/status", (req: Request, res: Response) => {
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api/property", propertyRoutes);
 
 app.use(notFound);
 app.use(error);
