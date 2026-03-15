@@ -1,20 +1,22 @@
-import api from "../client";
+import { apiRefresh } from "../client";
 
 import { API_ENDPOINTS } from "../endpoints";
-
-type LoginPayload = {
-  email: string;
-  password: string;
-};
+import type { LoginPayload } from "../types/auth.type";
 
 export const loginRequest = async (data: LoginPayload) => {
-  return await api.post(API_ENDPOINTS.AUTH.LOGIN, data);
+  const res = await apiRefresh.post(API_ENDPOINTS.AUTH.LOGIN, data);
+
+  return res.data;
 };
 
 export const logoutRequest = async () => {
-  return await api.post(API_ENDPOINTS.AUTH.LOGOUT);
+  const res = await apiRefresh.post(API_ENDPOINTS.AUTH.LOGOUT);
+
+  return res.data;
 };
 
 export const refreshSession = async () => {
-  return await api.post(API_ENDPOINTS.AUTH.REFRESH);
+  const res = await apiRefresh.post(API_ENDPOINTS.AUTH.REFRESH);
+
+  return res.data;
 };

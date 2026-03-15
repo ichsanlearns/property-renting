@@ -7,12 +7,11 @@ import { loginRequest } from "../../../api/services/auth.service";
 
 import { useAuthStore } from "../../../stores/auth.store";
 import { useNavigate } from "react-router";
-import { useEffect, useState } from "react";
-import { useLocation } from "react-router";
+import { useState } from "react";
+import type { LoginResponse } from "../../../api/types/auth.type";
 
 function Login() {
   const navigate = useNavigate();
-  const location = useLocation();
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -30,14 +29,12 @@ function Login() {
   const onSubmit = async (data: LoginFormData) => {
     try {
       toast.loading("Logging in...");
-      const res = await loginRequest(data);
+      const res: LoginResponse = await loginRequest(data);
 
-      const { accessToken, user } = res.data.data;
-
-      login(accessToken, user);
+      login(res.data.accessToken, res.data.user);
 
       toast.dismiss();
-      toast.success("Succesfully login");
+      toast.success(res.message);
 
       navigate("/");
     } catch (error: any) {
