@@ -6,16 +6,19 @@ import { loginSchema, type LoginFormData } from "../../../schemas/login.schema";
 import { loginRequest } from "../../../api/services/auth.service";
 
 import { useAuthStore } from "../../../stores/auth.store";
-import { useNavigate } from "react-router";
-import { useState } from "react";
+import { useLocation, useNavigate } from "react-router";
+import { useEffect, useState } from "react";
 import type { LoginResponse } from "../../../api/types/auth.type";
 
 function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [showPassword, setShowPassword] = useState(false);
 
-  const { login } = useAuthStore();
+  const { login, setIsLoggingIn } = useAuthStore();
+
+  const from = location.state?.from?.pathname || "/";
 
   const {
     register,
@@ -27,21 +30,27 @@ function Login() {
   });
 
   const onSubmit = async (data: LoginFormData) => {
+    setIsLoggingIn(true);
     try {
       toast.loading("Logging in...");
       const res: LoginResponse = await loginRequest(data);
 
       login(res.data.accessToken, res.data.user);
+      navigate(from, { replace: true });
 
       toast.dismiss();
       toast.success(res.message);
-
-      navigate("/");
     } catch (error: any) {
       toast.dismiss();
       toast.error(error.response?.data?.message || "Failed to login");
     }
   };
+
+  useEffect(() => {
+    if (location.pathname !== "/login") {
+      setIsLoggingIn(false);
+    }
+  }, [location.pathname]);
 
   const handleUseDemoAccount = (role: "tenant" | "customer") => {
     const credentials = {

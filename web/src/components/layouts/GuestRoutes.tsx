@@ -1,19 +1,20 @@
 import { Navigate, Outlet } from "react-router";
 import { useAuthStore } from "../../stores/auth.store";
-import toast from "react-hot-toast";
-import { useEffect } from "react";
 
 export default function GuestRoute() {
-  const { user } = useAuthStore();
-
-  useEffect(() => {
-    if (user) {
-      toast.success("You are already logged in");
-    }
-  }, [user]);
+  const { user, isLoggingIn } = useAuthStore();
 
   if (user) {
-    return <Navigate to={`/`} replace />;
+    return (
+      <Navigate
+        to={`/`}
+        state={{
+          reason: isLoggingIn ? "" : "You are already logged in",
+          from: location.pathname,
+        }}
+        replace
+      />
+    );
   }
 
   return <Outlet />;

@@ -14,64 +14,72 @@ import Login from "./components/pages/auth/Login";
 import OrderList from "./components/pages/tenant/OrderList";
 import Reports from "./components/pages/tenant/Reports";
 import Properties from "./components/pages/tenant/Properties";
+import ProtectedLayout from "./components/layouts/ProtectedLayout";
 
 import { refreshSession } from "./api/services/auth.service";
 import { useAuthStore } from "./stores/auth.store";
-import ProtectedRoutes from "./components/layouts/ProtectedRoutes";
+import type { LoginResponse } from "./api/types/auth.type";
+import RootFeedbackHandler from "./components/layouts/RootFeedbackHandler";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <RootLayout />,
+    element: <RootFeedbackHandler />,
     children: [
       {
-        index: true,
-        element: <HomePage />,
-      },
-      {
-        path: "mybooking",
-        element: <ProtectedRoutes />,
+        path: "/",
+        element: <RootLayout />,
         children: [
           {
             index: true,
-            element: <MyBooking />,
+            element: <HomePage />,
+          },
+          {
+            path: "mybooking",
+            element: <ProtectedLayout />,
+            children: [
+              {
+                index: true,
+                element: <MyBooking />,
+              },
+            ],
           },
         ],
       },
-    ],
-  },
-  {
-    path: "/tenant/",
-    element: <DashboardLayout />,
-    children: [
       {
-        path: "properties",
-        element: <Properties />,
+        path: "/tenant/",
+        element: <DashboardLayout />,
+        children: [
+          {
+            path: "properties",
+            element: <Properties />,
+          },
+          {
+            path: "orderlist",
+            element: <OrderList />,
+          },
+          {
+            path: "reports",
+            element: <Reports />,
+          },
+        ],
       },
       {
-        path: "orderlist",
-        element: <OrderList />,
+        path: "/login",
+        element: <GuestRoute />,
+        children: [
+          {
+            index: true,
+            element: <Login />,
+          },
+        ],
       },
-      {
-        path: "reports",
-        element: <Reports />,
-      },
-    ],
-  },
-  {
-    path: "/login",
-    element: <GuestRoute />,
-    children: [
-      {
-        index: true,
-        element: <Login />,
-      },
-    ],
-  },
 
-  {
-    path: "*",
-    element: <NotFoundPage />,
+      {
+        path: "*",
+        element: <NotFoundPage />,
+      },
+    ],
   },
 ]);
 
@@ -85,11 +93,9 @@ function App() {
 
     async function initAuth() {
       try {
-        const res = await refreshSession();
+        const res: LoginResponse = await refreshSession();
 
-        const { accessToken, user } = res.data.data;
-
-        useAuthStore.getState().login(accessToken, user);
+        useAuthStore.getState().login(res.data.accessToken, res.data.user);
       } catch {
         useAuthStore.getState().logout();
       } finally {

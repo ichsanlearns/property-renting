@@ -10,21 +10,25 @@ import { useEffect } from "react";
 function DashboardLayout() {
   const { user, authLoading } = useAuthStore();
 
-  if (authLoading) {
-    return <FullPageLoader />;
-  }
-
   useEffect(() => {
+    if (authLoading) {
+      return;
+    }
+
     if (!user) {
       toast.error("Please login to access this page");
+      <Navigate to={`/login`} replace />;
+      return;
     }
-    if (user && user.role !== "TENANT") {
-      toast.error("Please login as a tenant to access this page");
+    if (user?.role !== "TENANT") {
+      toast.error("You are not authorized to access this page");
+      <Navigate to={`/`} replace />;
+      return;
     }
-  }, [user]);
+  }, [user, authLoading]);
 
-  if (!user || user.role !== "TENANT") {
-    return <Navigate to={`/login`} replace />;
+  if (authLoading) {
+    return <FullPageLoader />;
   }
 
   return (
