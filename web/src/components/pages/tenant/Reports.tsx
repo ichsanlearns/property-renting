@@ -66,13 +66,13 @@ function Reports() {
           </div>
           <div className="h-64 relative">
             <div className="absolute inset-0 flex items-end justify-between px-2">
-              <div className="w-full h-full bg-gradient-to-t from-primary/10 to-transparent rounded-t-lg relative overflow-hidden">
+              <div className="w-full h-full bg-linear-to-t from-primary/10 to-transparent rounded-t-lg relative overflow-hidden">
                 <svg className="absolute bottom-0 left-0 w-full h-40 overflow-visible" preserveAspectRatio="none">
                   <path d="M0 160 C 100 120, 200 140, 300 80 S 500 100, 600 40 S 800 60, 1000 20 V 160 H 0 Z" fill="rgba(255, 92, 97, 0.15)" stroke="#ff5c61" strokeWidth="3"></path>
                 </svg>
               </div>
             </div>
-            <div className="absolute bottom-[-24px] w-full flex justify-between text-[10px] text-slate-400 px-2">
+            <div className="absolute -bottom-6 w-full flex justify-between text-[10px] text-slate-400 px-2">
               <span>01 Oct</span>
               <span>07 Oct</span>
               <span>14 Oct</span>
