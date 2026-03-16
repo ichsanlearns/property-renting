@@ -48,6 +48,23 @@ const seed = async () => {
     });
 
     // =============================
+    // Property Categories
+    // =============================
+    const propertyCategories = [
+      {
+        id: "012e717a-2429-4757-945f-e24724bcd7ac",
+        name: "Apartment",
+      },
+      {
+        id: "17a6619c-f6b5-469a-adf4-66196a67d187",
+        name: "House",
+      },
+    ];
+    await prisma.category.createMany({
+      data: propertyCategories,
+    });
+
+    // =============================
     // DONE
     // =============================
     console.info("✅ Seeding completed successfully");

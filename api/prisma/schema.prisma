@@ -109,7 +109,7 @@ model Property {
   deleted_at         DateTime?
 
   tenant User @relation(fields: [tenant_id], references: [id])
-  category Category @relation(fields: [category_id], references: [id])
+  category PropertyCategory @relation(fields: [category_id], references: [id])
 
   property_amenities PropertyAmenity[]
   property_images    PropertyImage[]
@@ -123,7 +123,7 @@ model Property {
   @@map("properties")
 }
 
-model Category {
+model PropertyCategory {
   id                 String    @id @default(uuid())
   name               String
 
@@ -133,7 +133,7 @@ model Category {
 
   properties Property[]
 
-  @@map("categories")
+  @@map("property_categories")
 }
 
 model Amenity {
