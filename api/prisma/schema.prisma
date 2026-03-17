@@ -46,19 +46,19 @@ enum PriceAdjustmentType {
 }
 
 model User {
-  id                 String    @id @default(uuid())
-  first_name         String
-  last_name          String?
-  email              String    @unique
-  phone_number       String
-  password           String
-  role               Role
-  is_verified        Boolean   @default(false)
-  profile_image      String?
-  referral_code      String    @unique
-  created_at         DateTime  @default(now())
-  updated_at         DateTime  @updatedAt
-  deleted_at         DateTime?
+  id                String                                 @id @default(uuid())
+  firstName         String       @map("first_name")
+  lastName          String?      @map("last_name")
+  email             String                                 @unique 
+  phoneNumber       String       @map("phone_number")
+  password          String       
+  role              Role         
+  isVerified        Boolean      @map("is_verified")       @default(false) 
+  profileImage      String?      @map("profile_image")
+  referralCode      String       @map("referral_code")     @unique 
+  createdAt         DateTime     @map("created_at")        @default(now())         
+  updatedAt         DateTime     @map("updated_at")        @updatedAt
+  deletedAt         DateTime?    @map("deleted_at")
 
   refresh_tokens RefreshToken[]
   properties     Property[]
@@ -72,44 +72,44 @@ model User {
 }
 
 model RefreshToken {
-  id                 String     @id @default(uuid())
-  hashed_token       String     @unique
-  user_id            String
-  expires_at         DateTime
-  created_at         DateTime   @default(now())
-  deleted_at         DateTime?
+  id                String                                @id @default(uuid())
+  hashedToken       String       @map("hashed_token")     @unique 
+  userId            String       @map("user_id")
+  expiresAt         DateTime     @map("expires_at")
+  createdAt         DateTime     @map("created_at")       @default(now())         
+  deletedAt         DateTime?    @map("deleted_at")
 
-  user User @relation(fields: [user_id], references: [id])
+  user User @relation(fields: [userId], references: [id])
 
   @@map("refresh_tokens")
 }
 
 model Property {
-  id                 String    @id @default(uuid())
-  tenant_id          String
-  category_id        String
+  id                 String                                @id @default(uuid())
+  tenantId           String    @map("tenant_id")
+  categoryId         String    @map("category_id")
   
-  title              String
-  description        String
+  title              String    
+  description        String    
 
-  country            String
-  city               String
-  full_address       String
+  country            String    
+  city               String    
+  fullAddress        String    @map("full_address")
 
   latitude           String
   longitude          String
 
-  number_of_bathrooms Int
+  numberOfBathrooms Int        @map("number_of_bathrooms")
 
-  average_rating     Float?
-  review_count       Int      @default(0)
+  averageRating     Float?     @map("average_rating")
+  reviewCount       Int        @map("review_count")          @default(0)
 
-  created_at         DateTime  @default(now())
-  updated_at         DateTime  @updatedAt
-  deleted_at         DateTime?
+  createdAt         DateTime   @map("created_at")            @default(now()) 
+  updatedAt         DateTime   @map("updated_at")            @updatedAt
+  deletedAt         DateTime?  @map("deleted_at")
 
-  tenant User @relation(fields: [tenant_id], references: [id])
-  category PropertyCategory @relation(fields: [category_id], references: [id])
+  tenant User @relation(fields: [tenantId], references: [id])
+  category PropertyCategory @relation(fields: [categoryId], references: [id])
 
   property_amenities PropertyAmenity[]
   property_images    PropertyImage[]
@@ -118,18 +118,18 @@ model Property {
   voucher            Voucher[]
 
   @@index([city])
-  @@index([category_id])
+  @@index([categoryId])
 
   @@map("properties")
 }
 
 model PropertyCategory {
-  id                 String    @id @default(uuid())
-  name               String
+  id                String                                   @id @default(uuid())
+  name              String
 
-  created_at         DateTime  @default(now())
-  updated_at         DateTime  @updatedAt
-  deleted_at         DateTime?
+  createdAt         DateTime   @map("created_at")            @default(now()) 
+  updatedAt         DateTime   @map("updated_at")            @updatedAt
+  deletedAt         DateTime?  @map("deleted_at")
 
   properties Property[]
 
@@ -137,13 +137,13 @@ model PropertyCategory {
 }
 
 model Amenity {
-  id                 String    @id @default(uuid())
-  name               String
-  icon               String
+  id                String                                   @id @default(uuid())
+  name              String
+  icon              String
 
-  created_at         DateTime  @default(now())
-  updated_at         DateTime  @updatedAt
-  deleted_at         DateTime?
+  createdAt         DateTime   @map("created_at")            @default(now()) 
+  updatedAt         DateTime   @map("updated_at")            @updatedAt
+  deletedAt         DateTime?  @map("deleted_at")
 
   property_amenities PropertyAmenity[]
 
@@ -151,52 +151,52 @@ model Amenity {
 }
 
 model PropertyAmenity {
-  id                 String    @id @default(uuid())
-  property_id        String
-  amenity_id         String
-  created_at         DateTime  @default(now())
-  updated_at         DateTime  @updatedAt
-  deleted_at         DateTime?
+  id                String                                   @id @default(uuid())
+  propertyId        String     @map("property_id")
+  amenityId         String     @map("amenity_id")
+  createdAt         DateTime   @map("created_at")            @default(now()) 
+  updatedAt         DateTime   @map("updated_at")            @updatedAt
+  deletedAt         DateTime?  @map("deleted_at")
 
-  property Property @relation(fields: [property_id], references: [id])
-  amenity  Amenity  @relation(fields: [amenity_id], references: [id])
+  property Property @relation(fields: [propertyId], references: [id])
+  amenity  Amenity  @relation(fields: [amenityId], references: [id])
 
-  @@unique([property_id, amenity_id])
+  @@unique([propertyId, amenityId])
 
   @@map("property_amenities")
 }
 
 model PropertyImage {
-  id                 String    @id @default(uuid())
-  property_id        String
-  image_url          String
-  is_primary         Boolean   @default(false)
+  id                String                                   @id @default(uuid())
+  propertyId        String     @map("property_id")
+  imageUrl          String     @map("image_url")
+  isPrimary         Boolean    @map("is_primary")            @default(false)
 
-  created_at         DateTime  @default(now())
-  updated_at         DateTime  @updatedAt
-  deleted_at         DateTime?
+  createdAt         DateTime   @map("created_at")            @default(now()) 
+  updatedAt         DateTime   @map("updated_at")            @updatedAt
+  deletedAt         DateTime?  @map("deleted_at")
 
-  property Property @relation(fields: [property_id], references: [id])
+  property Property @relation(fields: [propertyId], references: [id])
 
   @@map("property_images")
 }
 
 model RoomType {
-  id                 String    @id @default(uuid())
-  property_id        String
+  id                String                                   @id @default(uuid())
+  propertyId        String     @map("property_id")
 
-  name               String
-  description        String
-  capacity           Int
+  name              String
+  description       String
+  capacity          Int
 
-  base_price         Decimal @db.Decimal(10,2)
-  quantity           Int
+  basePrice         Decimal    @map("base_price")            @db.Decimal(10,2) 
+  quantity          Int
 
-  created_at         DateTime  @default(now())
-  updated_at         DateTime  @updatedAt
-  deleted_at         DateTime?
+  createdAt         DateTime   @map("created_at")            @default(now()) 
+  updatedAt         DateTime   @map("updated_at")            @updatedAt
+  deletedAt         DateTime?  @map("deleted_at")
 
-  property Property @relation(fields: [property_id], references: [id])
+  property Property @relation(fields: [propertyId], references: [id])
 
   room_availability RoomAvailability[]
   price_adjustments PriceAdjustment[]
@@ -207,171 +207,171 @@ model RoomType {
 }
 
 model RoomTypeImage {
-  id                 String    @id @default(uuid())
-  room_type_id       String
+  id                String                                   @id @default(uuid())
+  roomTypeId        String     @map("room_type_id")
 
-  image_url          String
-  is_primary         Boolean   @default(false)
+  imageUrl          String     @map("image_url")
+  isPrimary         Boolean    @map("is_primary")            @default(false)
 
-  created_at         DateTime  @default(now())
-  updated_at         DateTime  @updatedAt
-  deleted_at         DateTime?
+  createdAt         DateTime   @map("created_at")            @default(now()) 
+  updatedAt         DateTime   @map("updated_at")            @updatedAt
+  deletedAt         DateTime?  @map("deleted_at")
 
-  room_type RoomType @relation(fields: [room_type_id], references: [id])
+  roomType RoomType @relation(fields: [roomTypeId], references: [id])
 
   @@map("room_type_images")
 }
 
 model RoomAvailability {
-  id                 String    @id @default(uuid())
-  room_type_id       String
+  id                String                                   @id @default(uuid())
+  roomTypeId        String     @map("room_type_id")
 
-  date               DateTime
-  available_quantity Int
+  date              DateTime
+  availableQuantity Int        @map("available_quantity")
 
-  created_at         DateTime  @default(now())
-  updated_at         DateTime  @updatedAt
-  deleted_at         DateTime?
+  createdAt         DateTime   @map("created_at")            @default(now()) 
+  updatedAt         DateTime   @map("updated_at")            @updatedAt
+  deletedAt         DateTime?  @map("deleted_at")
 
-  room_type RoomType @relation(fields: [room_type_id], references: [id])
+  roomType RoomType @relation(fields: [roomTypeId], references: [id])
 
-  @@index([room_type_id, date])
+  @@index([roomTypeId, date])
 
-  @@unique([room_type_id, date])
+  @@unique([roomTypeId, date])
 
   @@map("room_availability")
 }
 
 
 model PriceAdjustment {
-  id                 String    @id @default(uuid())
-  room_type_id       String
+  id                 String                                            @id @default(uuid())
+  roomTypeId         String              @map("room_type_id")
 
-  start_date         DateTime
-  end_date           DateTime
+  startDate          DateTime            @map("start_date")
+  endDate            DateTime            @map("end_date")
 
-  adjustment_type    PriceAdjustmentType
-  adjustment_value   Decimal @db.Decimal(10,2)
+  adjustmentType     PriceAdjustmentType @map("adjustment_type")
+  adjustmentValue    Decimal             @map("adjustment_value")      @db.Decimal(10,2) 
 
   reason             String
 
-  created_at         DateTime  @default(now())
-  updated_at         DateTime  @updatedAt
-  deleted_at         DateTime?
+  createdAt          DateTime            @map("created_at")            @default(now()) 
+  updatedAt          DateTime            @map("updated_at")            @updatedAt
+  deletedAt          DateTime?           @map("deleted_at")
 
-  room_type RoomType @relation(fields: [room_type_id], references: [id])
+  roomType RoomType @relation(fields: [roomTypeId], references: [id])
 
   @@map("price_adjustments")
 }
 
 model Reservation {
-  id                 String    @id @default(uuid())
-  customer_id        String
-  room_type_id       String
-  coupon_id          String?
-  voucher_id         String?
+  id                 String                               @id @default(uuid())
+  customerId         String    @map("customer_id")
+  roomTypeId         String    @map("room_type_id")
+  couponId           String?   @map("coupon_id")
+  voucherId          String?   @map("voucher_id")
 
-  check_in_date      DateTime
-  check_out_date     DateTime
+  checkInDate        DateTime  @map("check_in_date")
+  checkOutDate       DateTime  @map("check_out_date")
 
-  guest_count        Int
+  guestCount         Int       @map("guest_count")
 
-  using_points       Decimal @db.Decimal(10,2)
-  total_amount       Decimal @db.Decimal(10,2)
+  usingPoints        Decimal   @map("using_points")       @db.Decimal(10,2)
+  totalAmount        Decimal   @map("total_amount")       @db.Decimal(10,2)
   status             ReservationStatus
 
-  payment_deadline   DateTime
+  paymentDeadline    DateTime  @map("payment_deadline")
 
-  created_at         DateTime  @default(now())
-  updated_at         DateTime  @updatedAt
-  deleted_at         DateTime?
+  createdAt          DateTime  @map("created_at")         @default(now()) 
+  updatedAt          DateTime  @map("updated_at")         @updatedAt
+  deletedAt          DateTime? @map("deleted_at")
 
-  room_type RoomType @relation(fields: [room_type_id], references: [id])
-  customer  User     @relation(fields: [customer_id], references: [id])
+  roomType RoomType @relation(fields: [roomTypeId], references: [id])
+  customer  User     @relation(fields: [customerId], references: [id])
 
-  voucher Voucher? @relation(fields: [voucher_id], references: [id])
+  voucher Voucher? @relation(fields: [voucherId], references: [id])
 
   payments  Payment[]
   reviews   Review[]
 
-  @@index([customer_id])
-  @@index([room_type_id])
+  @@index([customerId])
+  @@index([roomTypeId])
   @@index([status])
 
   @@map("reservations")
 }
 
 model Payment {
-  id                 String    @id @default(uuid())
-  reservation_id     String
+  id                 String                                     @id @default(uuid())
+  reservationId      String        @map("reservation_id")
 
-  amount             Decimal @db.Decimal(10,2)
-  payment_method     PaymentMethod
-  payment_status     PaymentStatus
-  transaction_id     String
-  proof_image        String?
+  amount             Decimal                                    @db.Decimal(10,2)
+  paymentMethod      PaymentMethod @map("payment_method")
+  paymentStatus      PaymentStatus @map("payment_status")
+  transactionId      String        @map("transaction_id")
+  proofImage         String?       @map("proof_image")
 
-  confirmed_at       DateTime?
+  confirmedAt        DateTime?     @map("confirmed_at")
 
-  created_at         DateTime  @default(now())
-  updated_at         DateTime  @updatedAt
-  deleted_at         DateTime?
+  createdAt          DateTime      @map("created_at")           @default(now()) 
+  updatedAt          DateTime      @map("updated_at")           @updatedAt
+  deletedAt          DateTime?     @map("deleted_at")
 
-  reservation Reservation @relation(fields: [reservation_id], references: [id])
+  reservation Reservation @relation(fields: [reservationId], references: [id])
 
   @@map("payments")
 }
 
 model Review {
-  id                 String    @id @default(uuid())
-  reservation_id     String    @unique
-  customer_id        String
-  property_id        String
+  id                 String                                 @id @default(uuid())
+  reservationId      String    @map("reservation_id")       @unique 
+  customerId         String    @map("customer_id")
+  propertyId         String    @map("property_id")
 
   rating             Int
   comment            String
 
-  created_at         DateTime  @default(now())
-  updated_at         DateTime  @updatedAt
-  deleted_at         DateTime?
+  createdAt          DateTime  @map("created_at")           @default(now()) 
+  updatedAt          DateTime  @map("updated_at")           @updatedAt
+  deletedAt          DateTime? @map("deleted_at")
 
-  reservation Reservation @relation(fields: [reservation_id], references: [id])
-  customer    User        @relation(fields: [customer_id], references: [id])
-  property    Property    @relation(fields: [property_id], references: [id])
+  reservation Reservation @relation(fields: [reservationId], references: [id])
+  customer    User        @relation(fields: [customerId], references: [id])
+  property    Property    @relation(fields: [propertyId], references: [id])
 
   @@map("reviews")
 }
 
 model Point {
-  id         String    @id @default(uuid())
-  user_id    String    @unique
-  amount     Decimal   @db.Decimal(10,2)
+  id         String                                 @id @default(uuid())
+  userId     String                                 @unique @map("user_id")
+  amount     Decimal                                @db.Decimal(10,2)
 
-  expired_at DateTime
+  expiredAt  DateTime  @map("expired_at")
 
-  created_at DateTime  @default(now())
-  deleted_at DateTime?
-  updated_at DateTime  @updatedAt
+  createdAt  DateTime  @map("created_at")           @default(now()) 
+  deletedAt  DateTime? @map("deleted_at")
+  updatedAt  DateTime  @map("updated_at")           @updatedAt
 
-  User       User      @relation(fields: [user_id], references: [id])
+  User       User      @relation(fields: [userId], references: [id])
 
   @@map("points")
 }
 
 model Voucher {
-  id              String    @id @default(uuid())
-  property_id     String
-  code            String    @unique
-  discount_amount Decimal   @db.Decimal(10,2)      
+  id              String                                 @id @default(uuid())
+  propertyId      String    @map("property_id")
+  code            String                                 @unique
+  discountAmount  Decimal   @map("discount_amount")      @db.Decimal(10,2)      
   quota           Int
 
-  start_date      DateTime
-  end_date        DateTime
-  created_at      DateTime  @default(now())
-  updated_at      DateTime  @updatedAt
-  deleted_at      DateTime?
+  startDate       DateTime  @map("start_date")
+  endDate         DateTime  @map("end_date")
+  createdAt       DateTime  @map("created_at")           @default(now()) 
+  updatedAt       DateTime  @map("updated_at")           @updatedAt
+  deletedAt       DateTime? @map("deleted_at")
 
-  Properties Property @relation(fields: [property_id], references: [id])
+  Properties Property @relation(fields: [propertyId], references: [id])
 
   PropertyReservation Reservation[]
 
@@ -379,19 +379,18 @@ model Voucher {
 }
 
 model Coupon {
-  id                 String    @id @default(uuid())
-  customer_id        String
+  id                String                                 @id @default(uuid())
+  customerId        String    @map("customer_id")
   
-  discount_amount    Decimal   @db.Decimal(10,2)
-  referrer_id        String
+  discountAmount    Decimal   @map("discount_amount")      @db.Decimal(10,2) 
+  referrerId        String    @map("referrer_id")
   
-  expired_at         DateTime
-  created_at         DateTime  @default(now())
-  updated_at         DateTime  @updatedAt
-  deleted_at         DateTime?
+  expiredAt         DateTime  @map("expired_at")
+  createdAt         DateTime  @map("created_at")           @default(now()) 
+  updatedAt         DateTime  @map("updated_at")           @updatedAt
+  deletedAt         DateTime? @map("deleted_at")
 
-
-  customer User @relation(fields: [customer_id], references: [id])
+  customer User @relation(fields: [customerId], references: [id])
 
   @@map("coupons")
 }
