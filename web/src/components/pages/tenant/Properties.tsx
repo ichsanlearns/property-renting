@@ -1,4 +1,6 @@
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import {
@@ -6,13 +8,33 @@ import {
   type CreatePropertyPayload,
 } from "../../../schemas/property.schema";
 
+import { getAllCategories } from "../../../api/services/category.service";
+
+type Category = {
+  id: string;
+  name: string;
+};
+
 function Properties() {
-  const categories = [
-    { id: 1, name: "Residential" },
-    { id: 2, name: "Commercial" },
-    { id: 3, name: "Industrial" },
-    { id: 4, name: "Land" },
-  ];
+  const [isLoading, setIsLoading] = useState(false);
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        setIsLoading(true);
+        const response = await getAllCategories();
+        console.log(response.data);
+        setCategories(response.data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   const {
     register,
@@ -22,6 +44,10 @@ function Properties() {
   } = useForm<CreatePropertyPayload>({
     resolver: zodResolver(createPropertySchema),
   });
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <main className="flex-1 p-8">
@@ -85,8 +111,11 @@ function Properties() {
                   </button>
                 ) : (
                   <select className="w-full rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary p-3.5">
+                    <option value="">Select a category</option>
                     {categories.map((category) => (
-                      <option key={category.id}>{category.name}</option>
+                      <option key={category.id} value={category.id}>
+                        {category.name}
+                      </option>
                     ))}
                   </select>
                 )}

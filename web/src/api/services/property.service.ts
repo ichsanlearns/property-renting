@@ -1,5 +1,6 @@
-import type { CreatePropertyPayload } from "../../schemas/property.schema";
 import api from "../client";
+
+import type { CreatePropertyPayload } from "../../schemas/property.schema";
 
 import { API_ENDPOINTS } from "../endpoints";
 
