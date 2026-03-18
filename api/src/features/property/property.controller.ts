@@ -7,7 +7,7 @@ import * as PropertyService from "./property.service.js";
 
 export const create = catchAsync(async (req: Request, res: Response) => {
   if (!req.user) throw new AppError(401, "Unauthorized");
-  const tenantId = req.user.id;
+  const tenantId = req.user.userId;
 
   const {
     categoryId,
@@ -21,12 +21,8 @@ export const create = catchAsync(async (req: Request, res: Response) => {
     numberOfBathrooms,
   } = req.body;
 
-  console.log(req.body);
-  return;
-
   const property = await PropertyService.create({
     data: {
-      tenantId,
       categoryId,
       title,
       description,
@@ -37,6 +33,7 @@ export const create = catchAsync(async (req: Request, res: Response) => {
       longitude,
       numberOfBathrooms,
     },
+    tenantId,
   });
 
   res.status(201).json({

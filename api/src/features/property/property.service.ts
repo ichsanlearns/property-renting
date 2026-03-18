@@ -18,6 +18,11 @@ export const create = async ({
 
   const property = await prisma.property.create({
     data: { ...data, tenantId },
+    omit: {
+      deletedAt: true,
+      updatedAt: true,
+      createdAt: true,
+    },
   });
 
   return property;
