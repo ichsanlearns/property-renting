@@ -1,3 +1,11 @@
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import {
+  createPropertySchema,
+  type CreatePropertyPayload,
+} from "../../../schemas/property.schema";
+
 function Properties() {
   const categories = [
     { id: 1, name: "Residential" },
@@ -5,6 +13,15 @@ function Properties() {
     { id: 3, name: "Industrial" },
     { id: 4, name: "Land" },
   ];
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors, isSubmitting },
+  } = useForm<CreatePropertyPayload>({
+    resolver: zodResolver(createPropertySchema),
+  });
 
   return (
     <main className="flex-1 p-8">

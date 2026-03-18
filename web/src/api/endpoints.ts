@@ -7,4 +7,5 @@ export const API_ENDPOINTS = {
   PROPERTY: {
     CREATE: "/properties",
   },
+  CATEGORIES: "/categories",
 };
