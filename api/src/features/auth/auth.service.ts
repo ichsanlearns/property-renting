@@ -27,7 +27,7 @@ export const login = async ({
 
   if (!isMatch) throw new AppError(400, "Invalid credentials");
 
-  const fullName = [user.first_name, user.last_name].filter(Boolean).join(" ");
+  const fullName = [user.firstName, user.lastName].filter(Boolean).join(" ");
 
   const newAccessToken = generateAccessToken({
     userId: user.id,
@@ -42,9 +42,9 @@ export const login = async ({
 
   await prisma.refreshToken.create({
     data: {
-      hashed_token: hashedRefreshToken,
-      user_id: user.id,
-      expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      hashedToken: hashedRefreshToken,
+      userId: user.id,
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     },
   });
 
@@ -55,10 +55,10 @@ export const login = async ({
       id: user.id,
       fullName,
       email: user.email,
-      phoneNumbers: user.phone_number,
+      phoneNumbers: user.phoneNumber,
       role: user.role,
-      isVerified: user.is_verified,
-      profileImage: user.profile_image,
+      isVerified: user.isVerified,
+      profileImage: user.profileImage,
     },
   };
 };
@@ -69,7 +69,7 @@ export const logout = async ({ refreshToken }: { refreshToken: string }) => {
   const hashedRefreshToken = await hashToken({ token: refreshToken });
 
   await prisma.refreshToken.deleteMany({
-    where: { hashed_token: hashedRefreshToken },
+    where: { hashedToken: hashedRefreshToken },
   });
 };
 
@@ -88,7 +88,7 @@ export const refreshSession = async ({
   const hashedOldRefreshToken = await hashToken({ token: oldRefreshToken });
 
   const stored = await prisma.refreshToken.findUnique({
-    where: { hashed_token: hashedOldRefreshToken },
+    where: { hashedToken: hashedOldRefreshToken },
   });
 
   if (!stored) throw new AppError(401, "Invalid refresh token");
@@ -109,20 +109,20 @@ export const refreshSession = async ({
   });
 
   await prisma.refreshToken.deleteMany({
-    where: { hashed_token: hashedOldRefreshToken },
+    where: { hashedToken: hashedOldRefreshToken },
   });
 
   const hashedRefreshToken = await hashToken({ token: newRefreshToken });
 
   await prisma.refreshToken.create({
     data: {
-      hashed_token: hashedRefreshToken,
-      user_id: user.id,
-      expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      hashedToken: hashedRefreshToken,
+      userId: user.id,
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     },
   });
 
-  const fullName = [user.first_name, user.last_name].filter(Boolean).join(" ");
+  const fullName = [user.firstName, user.lastName].filter(Boolean).join(" ");
 
   return {
     accessToken: newAccessToken,
@@ -131,10 +131,10 @@ export const refreshSession = async ({
       id: user.id,
       fullName,
       email: user.email,
-      phoneNumbers: user.phone_number,
+      phoneNumbers: user.phoneNumber,
       role: user.role,
-      isVerified: user.is_verified,
-      profileImage: user.profile_image,
+      isVerified: user.isVerified,
+      profileImage: user.profileImage,
     },
   };
 };

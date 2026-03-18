@@ -3,8 +3,15 @@ import { AppError } from "../../shared/utils/app-error.util.js";
 import { ReservationStatus } from "../../generated/prisma/enums.js";
 import type { CreateReservationInput } from "./reservation.validator.js";
 
-export const createReservation = async ({ userId, payload }: { userId: string; payload: CreateReservationInput }) => {
-  const { roomTypeId, checkInDate, checkOutDate, guestCount, usePoints } = payload;
+export const createReservation = async ({
+  userId,
+  payload,
+}: {
+  userId: string;
+  payload: CreateReservationInput;
+}) => {
+  const { roomTypeId, checkInDate, checkOutDate, guestCount, usePoints } =
+    payload;
 
   const checkIn = new Date(checkInDate);
   const checkOut = new Date(checkOutDate);
@@ -34,7 +41,7 @@ export const createReservation = async ({ userId, payload }: { userId: string; p
 
     const availability = await tx.roomAvailability.findMany({
       where: {
-        room_type_id: roomTypeId,
+        roomTypeId: roomTypeId,
         date: { in: dates },
       },
     });
@@ -44,18 +51,19 @@ export const createReservation = async ({ userId, payload }: { userId: string; p
     }
 
     availability.forEach((day) => {
-      if (day.available_quantity <= 0) {
+      if (day.availableQuantity <= 0) {
         throw new AppError(400, "Room fully booked on selected date");
       }
     });
 
-    const totalAmount = Number(roomType.base_price) * dates.length - (usePoints ?? 0);
+    const totalAmount =
+      Number(roomType.basePrice) * dates.length - (usePoints ?? 0);
 
     for (const day of availability) {
       await tx.roomAvailability.update({
         where: { id: day.id },
         data: {
-          available_quantity: {
+          availableQuantity: {
             decrement: 1,
           },
         },
@@ -64,15 +72,15 @@ export const createReservation = async ({ userId, payload }: { userId: string; p
 
     const reservation = await tx.reservation.create({
       data: {
-        customer_id: userId,
-        room_type_id: roomTypeId,
-        check_in_date: checkIn,
-        check_out_date: checkOut,
-        guest_count: guestCount,
-        using_points: usePoints ?? 0,
-        total_amount: totalAmount,
+        customerId: userId,
+        roomTypeId: roomTypeId,
+        checkInDate: checkIn,
+        checkOutDate: checkOut,
+        guestCount: guestCount,
+        usingPoints: usePoints ?? 0,
+        totalAmount: totalAmount,
         status: ReservationStatus.WAITING_PAYMENT,
-        payment_deadline: new Date(Date.now() + 2 * 60 * 60 * 1000),
+        paymentDeadline: new Date(Date.now() + 2 * 60 * 60 * 1000),
       },
     });
 

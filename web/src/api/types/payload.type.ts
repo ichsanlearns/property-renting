@@ -1,4 +1,4 @@
-export type CreatePropertyDto = {
+export type CreatePropertyPayload = {
   categoryId: string;
   title: string;
   description: string;
