@@ -21,6 +21,9 @@ export const create = catchAsync(async (req: Request, res: Response) => {
     numberOfBathrooms,
   } = req.body;
 
+  console.log(req.body);
+  return;
+
   const property = await PropertyService.create({
     data: {
       tenantId,

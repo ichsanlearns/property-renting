@@ -4,4 +4,7 @@ export const API_ENDPOINTS = {
     LOGOUT: "/auth/logout",
     REFRESH: "/auth/refresh",
   },
+  PROPERTY: {
+    CREATE: "/properties",
+  },
 };
