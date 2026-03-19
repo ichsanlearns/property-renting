@@ -10,6 +10,7 @@ import cookieParser from "cookie-parser";
 import authRoutes from "./features/auth/auth.route.js";
 import propertyRoutes from "./features/property/property.route.js";
 import categoryRoutes from "./features/property/category/category.route.js";
+import amenityRoutes from "./features/property/amenity/amenity.route.js";
 import reservationRoutes from "./features/reservation/reservation.route.js";
 
 import { notFound } from "./shared/middleware/not-found.middleware.js";
@@ -33,6 +34,7 @@ app.get("/api/status", (req: Request, res: Response) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/properties", propertyRoutes);
 app.use("/api/property-categories", categoryRoutes);
+app.use("/api/property-amenities", amenityRoutes);
 app.use("/api/reservations", reservationRoutes);
 
 app.use(notFound);
