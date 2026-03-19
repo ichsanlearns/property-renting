@@ -11,23 +11,35 @@ import {
 import { getAllCategories } from "../../../api/services/category.service";
 import { createProperty } from "../../../api/services/property.service";
 import toast from "react-hot-toast";
+import { getAmenities } from "../../../api/services/amenity.service";
 
 type Category = {
   id: string;
   name: string;
 };
 
+type Amenity = {
+  id: string;
+  name: string;
+  icon: string;
+};
+
 function Properties() {
   const [isLoading, setIsLoading] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [amenities, setAmenities] = useState<Amenity[]>([]);
+
+  const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         setIsLoading(true);
-        const response = await getAllCategories();
-        console.log(response.data);
-        setCategories(response.data);
+        const resCategories = await getAllCategories();
+        const resAmenities = await getAmenities();
+
+        setCategories(resCategories.data);
+        setAmenities(resAmenities.data);
       } catch (error) {
         console.error("Error fetching categories:", error);
       } finally {
@@ -64,6 +76,14 @@ function Properties() {
     }
   };
 
+  const handleAmenityClick = (amenityId: string) => {
+    setSelectedAmenities((prev) =>
+      prev.includes(amenityId)
+        ? prev.filter((id) => id !== amenityId)
+        : [...prev, amenityId],
+    );
+  };
+
   return (
     <main className="flex-1 p-8">
       <header className="flex items-center justify-between mb-8">
@@ -87,7 +107,10 @@ function Properties() {
           <button className="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 transition-colors">
             <span className="material-symbols-outlined">notifications</span>
           </button>
-          <button className="flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-xl font-bold hover:bg-primary/90 transition-all shadow-sm">
+          <button
+            type="button"
+            className="flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-xl font-bold hover:bg-primary/90 transition-all shadow-sm"
+          >
             <span className="material-symbols-outlined text-[20px]">save</span>
             Save Changes
           </button>
@@ -232,54 +255,23 @@ function Properties() {
                 Amenities
               </h3>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                <button className="flex flex-col items-center justify-center p-4 rounded-xl border-2 border-primary bg-primary/5 text-primary transition-all">
-                  <span className="material-symbols-outlined mb-2 text-3xl">
-                    wifi
-                  </span>
-                  <span className="text-xs font-bold">WiFi</span>
-                </button>
-                <button className="flex flex-col items-center justify-center p-4 rounded-xl border-2 border-slate-100 dark:border-slate-800 bg-transparent text-slate-500 hover:border-slate-200 transition-all">
-                  <span className="material-symbols-outlined mb-2 text-3xl">
-                    local_parking
-                  </span>
-                  <span className="text-xs font-bold">Parking</span>
-                </button>
-                <button className="flex flex-col items-center justify-center p-4 rounded-xl border-2 border-primary bg-primary/5 text-primary transition-all">
-                  <span className="material-symbols-outlined mb-2 text-3xl">
-                    ac_unit
-                  </span>
-                  <span className="text-xs font-bold">AC</span>
-                </button>
-                <button className="flex flex-col items-center justify-center p-4 rounded-xl border-2 border-primary bg-primary/5 text-primary transition-all">
-                  <span className="material-symbols-outlined mb-2 text-3xl">
-                    kitchen
-                  </span>
-                  <span className="text-xs font-bold">Kitchen</span>
-                </button>
-                <button className="flex flex-col items-center justify-center p-4 rounded-xl border-2 border-slate-100 dark:border-slate-800 bg-transparent text-slate-500 hover:border-slate-200 transition-all">
-                  <span className="material-symbols-outlined mb-2 text-3xl">
-                    fitness_center
-                  </span>
-                  <span className="text-xs font-bold">Gym</span>
-                </button>
-                <button className="flex flex-col items-center justify-center p-4 rounded-xl border-2 border-slate-100 dark:border-slate-800 bg-transparent text-slate-500 hover:border-slate-200 transition-all">
-                  <span className="material-symbols-outlined mb-2 text-3xl">
-                    pool
-                  </span>
-                  <span className="text-xs font-bold">Pool</span>
-                </button>
-                <button className="flex flex-col items-center justify-center p-4 rounded-xl border-2 border-slate-100 dark:border-slate-800 bg-transparent text-slate-500 hover:border-slate-200 transition-all">
-                  <span className="material-symbols-outlined mb-2 text-3xl">
-                    local_laundry_service
-                  </span>
-                  <span className="text-xs font-bold">Laundry</span>
-                </button>
-                <button className="flex flex-col items-center justify-center p-4 rounded-xl border-2 border-primary bg-primary/5 text-primary transition-all">
-                  <span className="material-symbols-outlined mb-2 text-3xl">
-                    security
-                  </span>
-                  <span className="text-xs font-bold">Security</span>
-                </button>
+                {amenities.map((amenity) => (
+                  <button
+                    type="button"
+                    key={amenity.id}
+                    onClick={() => handleAmenityClick(amenity.id)}
+                    className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all ${
+                      selectedAmenities.includes(amenity.id)
+                        ? "border-primary bg-primary/5 text-primary"
+                        : "border-slate-100 dark:border-slate-800 bg-transparent text-slate-500 hover:border-slate-200 dark:hover:border-slate-700"
+                    }`}
+                  >
+                    <span className="material-symbols-outlined mb-2 text-3xl">
+                      {amenity.icon}
+                    </span>
+                    <span className="text-xs font-bold">{amenity.name}</span>
+                  </button>
+                ))}
               </div>
             </div>
             <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-8 shadow-sm">
@@ -301,7 +293,10 @@ function Properties() {
                 <p className="text-slate-500 dark:text-slate-400 text-sm">
                   Support JPG, PNG, up to 10MB
                 </p>
-                <button className="mt-4 px-6 py-2 bg-slate-900 dark:bg-white dark:text-slate-900 text-white rounded-xl text-sm font-bold shadow-sm">
+                <button
+                  type="button"
+                  className="mt-4 px-6 py-2 bg-slate-900 dark:bg-white dark:text-slate-900 text-white rounded-xl text-sm font-bold shadow-sm"
+                >
                   Browse Files
                 </button>
               </div>
@@ -398,7 +393,10 @@ function Properties() {
                   >
                     Save Property
                   </button>
-                  <button className="w-full bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 py-3.5 rounded-xl font-bold hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+                  <button
+                    type="button"
+                    className="w-full bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 py-3.5 rounded-xl font-bold hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+                  >
                     Cancel
                   </button>
                 </div>
