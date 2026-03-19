@@ -34,7 +34,7 @@ app.get("/api/status", (req: Request, res: Response) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/properties", propertyRoutes);
 app.use("/api/property-categories", categoryRoutes);
-app.use("/api/amenities", amenityRoutes);
+app.use("/api/property-amenities", amenityRoutes);
 app.use("/api/reservations", reservationRoutes);
 
 app.use(notFound);
