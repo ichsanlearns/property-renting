@@ -12,6 +12,7 @@ import { getAllCategories } from "../api/category.service";
 import { createProperty } from "../api/property.service";
 import toast from "react-hot-toast";
 import { getAmenities } from "../api/amenity.service";
+import Map from "../components/Map";
 
 type Category = {
   id: string;
@@ -200,35 +201,25 @@ function Properties() {
                     />
                   </div>
                 </div>
-                <div className="relative w-full aspect-21/9 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 group">
-                  <img
-                    alt="Interactive Map"
-                    className="w-full h-full object-cover"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCwo3bT2Dse-rXfKGaZvylKcanlpO7YGCaZ0A67Sxqwk5daFWZBAfE5otahLSqlEPgMAX41x7mhCWJ-2_8UyEb5CdQ_RemRVSzSAW46tSlD4jZ0KYFdS-OQ4DPX17s9bRc-Ln39ITVOYnYHL2JD26wlM9NZUZz4hDGrVoqsuKbAWOoRQWoRwIouXfdxseUIVTRq3vB8AFOe5yOkST84FpOwvWPI1YPm5Npw68xMAlySlfjQKcj_ZO1SbZBz3eAUW2-X__iGA8_71s3W"
-                  />
-                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <span
-                      className="material-symbols-outlined text-primary text-5xl drop-shadow-lg"
-                      style={{ fontVariationSettings: "'FILL' 1" }}
-                    >
-                      location_on
-                    </span>
-                  </div>
-                  <div className="absolute bottom-4 left-4 bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm px-3 py-1.5 rounded-lg text-xs font-medium border border-slate-200 dark:border-slate-700">
-                    Click on map to set pin
-                  </div>
-                </div>
+                <Map
+                  onSelect={({ lat, lng }) => {
+                    setValue("latitude", lat);
+                    setValue("longitude", lng);
+                  }}
+                />
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
                       Latitude
                     </label>
                     <input
+                      disabled
                       type="number"
                       step="0.0001"
                       placeholder="47.6062"
                       {...register("latitude")}
-                      className="w-full rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary p-3.5"
+                      className="w-full rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary p-3.5 bg-slate-50 dark:bg-slate-700 cursor-not-allowed"
                     />
                   </div>
                   <div>
@@ -236,11 +227,12 @@ function Properties() {
                       Longitude
                     </label>
                     <input
+                      disabled
                       type="number"
                       step="0.0001"
                       placeholder="-122.3321"
                       {...register("longitude")}
-                      className="w-full rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary p-3.5"
+                      className="w-full rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary p-3.5 bg-slate-50 dark:bg-slate-700 cursor-not-allowed"
                     />
                   </div>
                 </div>

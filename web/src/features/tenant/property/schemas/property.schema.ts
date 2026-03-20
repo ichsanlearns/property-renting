@@ -7,8 +7,8 @@ export const createPropertySchema = z.object({
   country: z.string().min(1, "Country is required"),
   city: z.string().min(1, "City is required"),
   fullAddress: z.string().min(1, "Full address is required"),
-  latitude: z.string().min(1, "Latitude is required"),
-  longitude: z.string().min(1, "Longitude is required"),
+  latitude: z.number().min(1, "Choose location on map"),
+  longitude: z.number().min(1, "Choose location on map"),
   numberOfBathrooms: z.number().min(1, "Number of bathrooms is required"),
 });
 
