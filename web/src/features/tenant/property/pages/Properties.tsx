@@ -13,6 +13,7 @@ import { createProperty } from "../api/property.service";
 import toast from "react-hot-toast";
 import { getAmenities } from "../api/amenity.service";
 import Map from "../components/Map";
+import { geocodingService } from "../api/geocoding.service";
 
 type Category = {
   id: string;
@@ -29,6 +30,7 @@ function Properties() {
   const [isLoading, setIsLoading] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [amenities, setAmenities] = useState<Amenity[]>([]);
+  const [isFetchingLocation, setIsFetchingLocation] = useState(false);
 
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
 
@@ -83,6 +85,24 @@ function Properties() {
         ? prev.filter((id) => id !== amenityId)
         : [...prev, amenityId],
     );
+  };
+
+  const handleMapSelect = async (location: { lat: number; lng: number }) => {
+    setValue("latitude", location.lat);
+    setValue("longitude", location.lng);
+
+    try {
+      setIsFetchingLocation(true);
+      const address = await geocodingService(location);
+      setValue("fullAddress", address.fullAddress);
+      setValue("city", address.city);
+      setValue("province", address.province);
+      setValue("country", address.country);
+    } catch (error) {
+      console.error("Error fetching address:", error);
+    } finally {
+      setIsFetchingLocation(false);
+    }
   };
 
   return (
@@ -201,12 +221,7 @@ function Properties() {
                     />
                   </div>
                 </div>
-                <Map
-                  onSelect={({ lat, lng }) => {
-                    setValue("latitude", lat);
-                    setValue("longitude", lng);
-                  }}
-                />
+                <Map onSelect={(location) => handleMapSelect(location)} />
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
