@@ -13,7 +13,7 @@ import { createProperty } from "../api/property.service";
 import toast from "react-hot-toast";
 import { getAmenities } from "../api/amenity.service";
 import Map from "../components/Map";
-import { geocodingService } from "../api/geocoding.service";
+import { useReverseGeoCode } from "../hooks/useReverseGeocode";
 
 type Category = {
   id: string;
@@ -30,9 +30,10 @@ function Properties() {
   const [isLoading, setIsLoading] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [amenities, setAmenities] = useState<Amenity[]>([]);
-  const [isFetchingLocation, setIsFetchingLocation] = useState(false);
 
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
+
+  const { reverseGeoCode, isFetching } = useReverseGeoCode();
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -91,18 +92,12 @@ function Properties() {
     setValue("latitude", location.lat);
     setValue("longitude", location.lng);
 
-    try {
-      setIsFetchingLocation(true);
-      const address = await geocodingService(location);
+    reverseGeoCode(location, (address) => {
       setValue("fullAddress", address.fullAddress);
       setValue("city", address.city);
       setValue("province", address.province);
       setValue("country", address.country);
-    } catch (error) {
-      console.error("Error fetching address:", error);
-    } finally {
-      setIsFetchingLocation(false);
-    }
+    });
   };
 
   return (
@@ -221,13 +216,18 @@ function Properties() {
                     />
                   </div>
                 </div>
-                {isFetchingLocation ? (
-                  <div className="flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-                  </div>
-                ) : (
-                  <Map onSelect={(location) => handleMapSelect(location)} />
-                )}
+
+                <div className="relative">
+                  <Map onSelect={handleMapSelect} />
+
+                  {isFetching && (
+                    <div className="absolute inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-1000">
+                      <p className="text-white text-sm">
+                        Detecting location...
+                      </p>
+                    </div>
+                  )}
+                </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
@@ -240,7 +240,7 @@ function Properties() {
                       step="0.0001"
                       placeholder="47.6062"
                       {...register("latitude")}
-                      className="w-full rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary p-3.5 bg-slate-50 dark:bg-slate-700 cursor-not-allowed"
+                      className="w-full rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary p-3.5 bg-slate-50 cursor-not-allowed"
                     />
                   </div>
                   <div>
@@ -253,7 +253,7 @@ function Properties() {
                       step="0.0001"
                       placeholder="-122.3321"
                       {...register("longitude")}
-                      className="w-full rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary p-3.5 bg-slate-50 dark:bg-slate-700 cursor-not-allowed"
+                      className="w-full rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary p-3.5 bg-slate-50 cursor-not-allowed"
                     />
                   </div>
                 </div>
