@@ -1,6 +1,6 @@
 import axios from "axios";
-import { useAuthStore } from "../stores/auth.store";
-import { refreshSession } from "./services/auth.service";
+import { useAuthStore } from "../features/auth/stores/auth.store";
+import { refreshSession } from "../features/auth/api/auth.service";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL ?? "http://localhost:8000/api",

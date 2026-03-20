@@ -4,8 +4,9 @@ export type CreatePropertyDto = {
   description: string;
   country: string;
   city: string;
+  province: string;
   fullAddress: string;
-  latitude: string;
-  longitude: string;
+  latitude: number;
+  longitude: number;
   numberOfBathrooms: number;
 };

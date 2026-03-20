@@ -1,22 +1,22 @@
 import { useEffect, useRef } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router";
 
-import RootLayout from "./components/layouts/RootLayout";
-import DashboardLayout from "./components/layouts/DashboardLayout";
-import GuestRoute from "./components/layouts/GuestRoutes";
+import RootLayout from "./shared/layouts/RootLayout";
+import DashboardLayout from "./shared/layouts/DashboardLayout";
+import GuestRoute from "./shared/layouts/GuestRoutes";
 
-import HomePage from "./components/pages/HomePage";
-import MyBooking from "./components/pages/MyBooking";
+import HomePage from "./features/public/pages/HomePage";
+import MyBooking from "./features/public/pages/MyBooking";
 
-import NotFoundPage from "./components/pages/NotFoundPage";
-import Login from "./components/pages/auth/Login";
+import NotFoundPage from "./features/public/pages/NotFoundPage";
+import Login from "./features/auth/pages/Login";
 
-import OrderList from "./components/pages/tenant/OrderList";
-import Reports from "./components/pages/tenant/Reports";
-import Properties from "./components/pages/tenant/Properties";
+import OrderList from "./features/tenant/order-list/pages/OrderList";
+import Reports from "./features/tenant/reports/pages/Reports";
+import Properties from "./features/tenant/property/pages/Properties";
 
-import { refreshSession } from "./api/services/auth.service";
-import { useAuthStore } from "./stores/auth.store";
+import { refreshSession } from "./features/auth/api/auth.service";
+import { useAuthStore } from "./features/auth/stores/auth.store";
 
 const router = createBrowserRouter([
   {
