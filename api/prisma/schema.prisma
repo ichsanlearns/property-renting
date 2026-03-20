@@ -93,7 +93,8 @@ model Property {
   description        String    
 
   country            String    
-  city               String    
+  city               String 
+  province           String
   fullAddress        String    @map("full_address")
 
   latitude           String
