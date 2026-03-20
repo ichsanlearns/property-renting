@@ -97,12 +97,12 @@ model Property {
   province           String
   fullAddress        String    @map("full_address")
 
-  latitude           String
-  longitude          String
+  latitude           Float
+  longitude          Float
 
   numberOfBathrooms Int        @map("number_of_bathrooms")
 
-  averageRating     Float?     @map("average_rating")
+  averageRating     Decimal?     @map("average_rating")      @db.Decimal(1,1)
   reviewCount       Int        @map("review_count")          @default(0)
 
   createdAt         DateTime   @map("created_at")            @default(now()) 
