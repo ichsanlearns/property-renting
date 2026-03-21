@@ -6,6 +6,8 @@ import { AppError } from "../../shared/utils/app-error.util.js";
 import * as PropertyService from "./property.service.js";
 import * as geocodingService from "./geocoding.service.js";
 
+import * as uploadService from "../../shared/services/upload.service.js";
+
 export const create = catchAsync(async (req: Request, res: Response) => {
   if (!req.user) throw new AppError(401, "Unauthorized");
   const tenantId = req.user.userId;
@@ -30,6 +32,12 @@ export const create = catchAsync(async (req: Request, res: Response) => {
     longitude: Number(longitude),
     numberOfBathrooms: Number(numberOfBathrooms),
   };
+
+  const uploadedImages = await Promise.all(
+    images.map((image) =>
+      uploadService.uploadToCloudinary(image.buffer, "propertyImages"),
+    ),
+  );
 
   const location = await geocodingService.reverseGeocode({
     lat: data.latitude,
