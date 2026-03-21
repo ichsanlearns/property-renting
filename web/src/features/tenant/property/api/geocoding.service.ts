@@ -12,7 +12,7 @@ export const geocodingService = async ({
   lat: number;
   lng: number;
 }): Promise<ReverseGeocodeResult> => {
-  const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`;
+  const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&accept-language=id`;
 
   const res = await fetch(url, { headers: { "User-Agent": "property-app" } });
 
@@ -25,8 +25,9 @@ export const geocodingService = async ({
 
   return {
     fullAddress: data.display_name || "",
-    city: address.city || address.town || address.village || "",
-    province: address.state || "",
+    city:
+      address.city || address.county || address.town || address.village || "",
+    province: address.province || address.state || address.region || "",
     country: address.country || "",
   };
 };

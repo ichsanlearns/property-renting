@@ -13,7 +13,7 @@ import { createProperty } from "../api/property.service";
 import toast from "react-hot-toast";
 import { getAmenities } from "../api/amenity.service";
 import Map from "../components/Map";
-import { geocodingService } from "../api/geocoding.service";
+import { useReverseGeoCode } from "../hooks/useReverseGeocode";
 
 type Category = {
   id: string;
@@ -30,9 +30,10 @@ function Properties() {
   const [isLoading, setIsLoading] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [amenities, setAmenities] = useState<Amenity[]>([]);
-  const [isFetchingLocation, setIsFetchingLocation] = useState(false);
 
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
+
+  const { reverseGeoCode, isFetching } = useReverseGeoCode();
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -53,11 +54,6 @@ function Properties() {
     fetchCategories();
   }, []);
 
-  useEffect(() => {
-    setValue("country", "Indonesia");
-    setValue("numberOfBathrooms", 1);
-  }, []);
-
   const { register, handleSubmit, setValue } = useForm<CreatePropertyPayload>({
     resolver: zodResolver(createPropertySchema),
   });
@@ -67,10 +63,21 @@ function Properties() {
   }
 
   const onSubmit = async (data: CreatePropertyPayload) => {
+    const payload = {
+      categoryId: data.categoryId,
+      title: data.title,
+      description: data.description,
+      latitude: data.latitude,
+      longitude: data.longitude,
+      numberOfBathrooms: data.numberOfBathrooms,
+      amenities: selectedAmenities,
+    };
+
     try {
       toast.loading("Creating property...");
 
-      await createProperty(data);
+      await createProperty(payload);
+
       toast.dismiss();
       toast.success("Property created successfully");
     } catch (error: any) {
@@ -91,18 +98,12 @@ function Properties() {
     setValue("latitude", location.lat);
     setValue("longitude", location.lng);
 
-    try {
-      setIsFetchingLocation(true);
-      const address = await geocodingService(location);
+    reverseGeoCode(location, (address) => {
       setValue("fullAddress", address.fullAddress);
       setValue("city", address.city);
       setValue("province", address.province);
       setValue("country", address.country);
-    } catch (error) {
-      console.error("Error fetching address:", error);
-    } finally {
-      setIsFetchingLocation(false);
-    }
+    });
   };
 
   return (
@@ -196,38 +197,69 @@ function Properties() {
                 </span>
                 Location
               </h3>
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
                     <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
                       City
                     </label>
                     <input
+                      disabled
                       type="text"
                       placeholder="e.g. Seattle"
                       {...register("city")}
-                      className="w-full rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary p-3.5"
+                      className="w-full rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary p-3.5 bg-slate-50 cursor-not-allowed text-slate-500"
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                      Full Address
+                      Province
                     </label>
                     <input
+                      disabled
                       type="text"
-                      placeholder="123 Maple St, ZIP 98101"
-                      {...register("fullAddress")}
-                      className="w-full rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary p-3.5"
+                      placeholder="e.g. Washington"
+                      {...register("province")}
+                      className="w-full rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary p-3.5 bg-slate-50 cursor-not-allowed text-slate-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                      Country
+                    </label>
+                    <input
+                      disabled
+                      type="text"
+                      placeholder="e.g. United States"
+                      {...register("country")}
+                      className="w-full rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary p-3.5 bg-slate-50 cursor-not-allowed text-slate-500"
                     />
                   </div>
                 </div>
-                {isFetchingLocation ? (
-                  <div className="flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-                  </div>
-                ) : (
-                  <Map onSelect={(location) => handleMapSelect(location)} />
-                )}
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                    Full Address
+                  </label>
+                  <input
+                    disabled
+                    type="text"
+                    placeholder="e.g. 123 Maple St, ZIP 98101"
+                    {...register("fullAddress")}
+                    className="w-full rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary p-3.5 bg-slate-50 cursor-not-allowed text-slate-500"
+                  />
+                </div>
+
+                <div className="relative">
+                  <Map onSelect={handleMapSelect} />
+
+                  {isFetching && (
+                    <div className="absolute inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-1000">
+                      <p className="text-white text-sm">
+                        Detecting location...
+                      </p>
+                    </div>
+                  )}
+                </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
@@ -240,7 +272,7 @@ function Properties() {
                       step="0.0001"
                       placeholder="47.6062"
                       {...register("latitude")}
-                      className="w-full rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary p-3.5 bg-slate-50 dark:bg-slate-700 cursor-not-allowed"
+                      className="w-full rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary p-3.5 bg-slate-50 cursor-not-allowed text-slate-500"
                     />
                   </div>
                   <div>
@@ -253,7 +285,7 @@ function Properties() {
                       step="0.0001"
                       placeholder="-122.3321"
                       {...register("longitude")}
-                      className="w-full rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary p-3.5 bg-slate-50 dark:bg-slate-700 cursor-not-allowed"
+                      className="w-full rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary p-3.5 bg-slate-50 cursor-not-allowed text-slate-500"
                     />
                   </div>
                 </div>
@@ -285,6 +317,19 @@ function Properties() {
                     <span className="text-xs font-bold">{amenity.name}</span>
                   </button>
                 ))}
+              </div>
+              <div className="mt-6">
+                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                  Number of Bathrooms
+                </label>
+                <input
+                  type="number"
+                  placeholder="e.g. 2"
+                  {...register("numberOfBathrooms", {
+                    valueAsNumber: true,
+                  })}
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary p-3.5  text-slate-500"
+                />
               </div>
             </div>
             <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-8 shadow-sm">
