@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import type { PropertyImage } from "../types/image.type";
 
@@ -9,6 +9,8 @@ type ImageUploadProps = {
 };
 
 function ImageUpload({ value, onChange, max = 5 }: ImageUploadProps) {
+  const [isDragging, setIsDragging] = useState(false);
+
   const handleSelectFile = useCallback(
     (files: FileList | null) => {
       if (!files) return;
@@ -18,9 +20,9 @@ function ImageUpload({ value, onChange, max = 5 }: ImageUploadProps) {
 
       const newImages = filesArray.slice(0, remaining).map((file, index) => ({
         id: uuidv4(),
+        preview: URL.createObjectURL(file),
         file,
 
-        preview: URL.createObjectURL(file),
         isCover: value.length + index === 0,
         order: value.length + index + 1,
       }));
@@ -29,6 +31,28 @@ function ImageUpload({ value, onChange, max = 5 }: ImageUploadProps) {
     },
     [value, max, onChange],
   );
+
+  const handleRemoveImage = useCallback(
+    (id: string) => {
+      onChange(value.filter((img) => img.id !== id));
+    },
+    [value, onChange],
+  );
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    handleSelectFile(e.dataTransfer.files);
+  };
 
   return (
     <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-8 shadow-sm">
@@ -39,8 +63,11 @@ function ImageUpload({ value, onChange, max = 5 }: ImageUploadProps) {
         Property Gallery
       </h3>
       <label
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
         htmlFor="image-upload"
-        className={`border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl p-10 flex flex-col items-center justify-center text-center hover:border-primary transition-colors group bg-slate-50/50 dark:bg-slate-800/30 ${value.length === max ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+        className={`border-2 border-dashed  dark:border-slate-700 rounded-xl p-10 flex flex-col items-center justify-center text-center hover:border-primary transition-colors group bg-slate-50/50 dark:bg-slate-800/30 ${value.length === max ? "opacity-50 cursor-not-allowed" : "cursor-pointer"} ${isDragging ? "border-primary bg-primary/5" : "border-slate-200 dark:border-slate-700"}`}
       >
         <input
           type="file"
@@ -84,7 +111,11 @@ function ImageUpload({ value, onChange, max = 5 }: ImageUploadProps) {
                 Cover
               </div>
             )}
-            <button className="absolute top-2 right-2 bg-white/90 rounded-full p-1.5 text-red-500 opacity-0 group-hover:opacity-100 transition-opacity shadow-sm">
+            <button
+              type="button"
+              onClick={() => handleRemoveImage(img.id)}
+              className="absolute top-2 right-2 bg-white/90 rounded-full p-1.5 text-red-500 opacity-0 group-hover:opacity-100 transition-opacity shadow-sm"
+            >
               <span className="material-symbols-outlined text-[18px]">
                 delete
               </span>

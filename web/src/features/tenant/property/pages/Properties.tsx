@@ -75,6 +75,7 @@ function Properties() {
       longitude: data.longitude,
       numberOfBathrooms: data.numberOfBathrooms,
       amenities: selectedAmenities,
+      images,
     };
 
     try {
