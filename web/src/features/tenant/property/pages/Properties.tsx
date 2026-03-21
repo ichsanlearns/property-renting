@@ -74,14 +74,26 @@ function Properties() {
       latitude: data.latitude,
       longitude: data.longitude,
       numberOfBathrooms: data.numberOfBathrooms,
-      amenities: selectedAmenities,
-      images,
     };
+
+    const formData = new FormData();
+
+    Object.entries(payload).forEach(([key, value]) => {
+      formData.append(key, String(value));
+    });
+
+    images.forEach((image) => {
+      formData.append("images", image.file);
+    });
+
+    selectedAmenities.forEach((amenity) => {
+      formData.append("amenities", amenity);
+    });
 
     try {
       toast.loading("Creating property...");
 
-      await createProperty(payload);
+      await createProperty(formData);
 
       toast.dismiss();
       toast.success("Property created successfully");
@@ -370,8 +382,8 @@ function Properties() {
                     </label>
                     <select className="w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary p-3 text-sm font-medium">
                       <option>Draft</option>
-                      <option selected>Published</option>
-                      <option>Hidden</option>
+                      <option selected>Publish</option>
+                      <option>Archive</option>
                     </select>
                   </div>
                   <div className="flex items-center justify-between">

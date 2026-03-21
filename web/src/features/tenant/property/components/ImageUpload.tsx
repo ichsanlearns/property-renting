@@ -24,7 +24,7 @@ function ImageUpload({ value, onChange, max = 5 }: ImageUploadProps) {
         file,
 
         isCover: value.length + index === 0,
-        order: value.length + index + 1,
+        order: value.length + index,
       }));
 
       onChange([...value, ...newImages]);
@@ -88,12 +88,9 @@ function ImageUpload({ value, onChange, max = 5 }: ImageUploadProps) {
         <p className="text-slate-500 dark:text-slate-400 text-sm">
           Support JPG, PNG, up to 10MB
         </p>
-        <button
-          type="button"
-          className="mt-4 px-6 py-2 bg-slate-900 dark:bg-white dark:text-slate-900 text-white rounded-xl text-sm font-bold shadow-sm"
-        >
+        <div className="mt-4 px-6 py-2 bg-slate-900 dark:bg-white dark:text-slate-900 text-white rounded-xl text-sm font-bold shadow-sm">
           Browse Files
-        </button>
+        </div>
       </label>
       <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-4 mt-8">
         {value.map((img) => (

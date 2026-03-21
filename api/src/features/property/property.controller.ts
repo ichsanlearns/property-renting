@@ -10,6 +10,8 @@ export const create = catchAsync(async (req: Request, res: Response) => {
   if (!req.user) throw new AppError(401, "Unauthorized");
   const tenantId = req.user.userId;
 
+  const images = req.files as Express.Multer.File[];
+
   const {
     categoryId,
     title,
@@ -17,25 +19,30 @@ export const create = catchAsync(async (req: Request, res: Response) => {
     latitude,
     longitude,
     numberOfBathrooms,
+    amenities,
   } = req.body;
 
+  const data = {
+    categoryId,
+    title,
+    description,
+    latitude: Number(latitude),
+    longitude: Number(longitude),
+    numberOfBathrooms: Number(numberOfBathrooms),
+  };
+
   const location = await geocodingService.reverseGeocode({
-    lat: latitude,
-    long: longitude,
+    lat: data.latitude,
+    long: data.longitude,
   });
 
   const property = await PropertyService.create({
     data: {
-      categoryId,
-      title,
-      description,
+      ...data,
       country: location.country,
       city: location.city,
       province: location.province,
       fullAddress: location.fullAddress,
-      latitude,
-      longitude,
-      numberOfBathrooms,
     },
     tenantId,
   });
