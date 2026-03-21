@@ -86,6 +86,16 @@ function Properties() {
       formData.append("images", image.file);
     });
 
+    formData.append(
+      "imagesMeta",
+      JSON.stringify(
+        images.map((image) => ({
+          isCover: image.isCover,
+          order: image.order,
+        })),
+      ),
+    );
+
     selectedAmenities.forEach((amenity) => {
       formData.append("amenities", amenity);
     });
@@ -278,7 +288,7 @@ function Properties() {
                   )}
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
                       Latitude
@@ -305,7 +315,7 @@ function Properties() {
                       className="w-full rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary p-3.5 bg-slate-50 cursor-not-allowed text-slate-500"
                     />
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
 

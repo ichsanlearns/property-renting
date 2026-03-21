@@ -6,24 +6,58 @@ import type { CreatePropertyDto } from "./property.type.js";
 export const create = async ({
   data,
   tenantId,
+  images,
+  amenities,
 }: {
   data: CreatePropertyDto;
   tenantId: string;
+  images: { imageUrl: string; isCover: boolean; order: number }[];
+  amenities: string[];
 }) => {
-  const category = await prisma.propertyCategory.findUnique({
-    where: { id: data.categoryId },
+  return await prisma.$transaction(async (tx) => {
+    const property = await tx.property.create({
+      data: {
+        ...data,
+        tenantId,
+        isVerified: "VERIFIED",
+        isPublished: "PUBLISHED",
+      },
+      omit: {
+        deletedAt: true,
+        updatedAt: true,
+        createdAt: true,
+      },
+    });
+
+    for (const image of images) {
+      await tx.propertyImage.create({
+        data: {
+          propertyId: property.id,
+          imageUrl: image.imageUrl,
+          isCover: image.isCover,
+          order: image.order,
+        },
+        omit: {
+          deletedAt: true,
+          updatedAt: true,
+          createdAt: true,
+        },
+      });
+    }
+
+    for (const amenity of amenities) {
+      await tx.propertyAmenity.create({
+        data: {
+          propertyId: property.id,
+          amenityId: amenity,
+        },
+        omit: {
+          deletedAt: true,
+          updatedAt: true,
+          createdAt: true,
+        },
+      });
+    }
+    return property;
   });
-
-  if (!category) throw new AppError(404, "Category not found");
-
-  const property = await prisma.property.create({
-    data: { ...data, tenantId },
-    omit: {
-      deletedAt: true,
-      updatedAt: true,
-      createdAt: true,
-    },
-  });
-
-  return property;
 };
