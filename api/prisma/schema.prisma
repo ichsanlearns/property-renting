@@ -45,6 +45,18 @@ enum PriceAdjustmentType {
   PERCENTAGE
 }
 
+enum VerificationStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum PublishStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
 model User {
   id                String                                 @id @default(uuid())
   firstName         String       @map("first_name")
@@ -104,6 +116,9 @@ model Property {
 
   averageRating     Decimal?     @map("average_rating")      @db.Decimal(1,1)
   reviewCount       Int        @map("review_count")          @default(0)
+
+  isVerified        VerificationStatus    @map("is_verified")           @default(PENDING)
+  isPublished       PublishStatus    @map("is_published")          @default(DRAFT)
 
   createdAt         DateTime   @map("created_at")            @default(now()) 
   updatedAt         DateTime   @map("updated_at")            @updatedAt
@@ -171,7 +186,8 @@ model PropertyImage {
   id                String                                   @id @default(uuid())
   propertyId        String     @map("property_id")
   imageUrl          String     @map("image_url")
-  isPrimary         Boolean    @map("is_primary")            @default(false)
+  isCover           Boolean    @map("is_cover")            @default(false)
+  order             Int        @default(0)
 
   createdAt         DateTime   @map("created_at")            @default(now()) 
   updatedAt         DateTime   @map("updated_at")            @updatedAt
@@ -192,6 +208,9 @@ model RoomType {
 
   basePrice         Decimal    @map("base_price")            @db.Decimal(10,2) 
   quantity          Int
+
+  isVerified        VerificationStatus    @map("is_verified")           @default(PENDING)
+  isPublished       PublishStatus    @map("is_published")          @default(DRAFT)
 
   createdAt         DateTime   @map("created_at")            @default(now()) 
   updatedAt         DateTime   @map("updated_at")            @updatedAt
