@@ -12,7 +12,7 @@ export const geocodingService = async ({
   lat: number;
   lng: number;
 }): Promise<ReverseGeocodeResult> => {
-  const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`;
+  const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&accept-language=id`;
 
   const res = await fetch(url, { headers: { "User-Agent": "property-app" } });
 

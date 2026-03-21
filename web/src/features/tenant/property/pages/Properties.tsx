@@ -218,7 +218,7 @@ function Properties() {
                     <input
                       disabled
                       type="text"
-                      placeholder="123 Maple St, ZIP 98101"
+                      placeholder="e.g. Washington"
                       {...register("province")}
                       className="w-full rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary p-3.5 bg-slate-50 cursor-not-allowed text-slate-500"
                     />
@@ -230,7 +230,7 @@ function Properties() {
                     <input
                       disabled
                       type="text"
-                      placeholder="123 Maple St, ZIP 98101"
+                      placeholder="e.g. United States"
                       {...register("country")}
                       className="w-full rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary p-3.5 bg-slate-50 cursor-not-allowed text-slate-500"
                     />
@@ -243,7 +243,7 @@ function Properties() {
                   <input
                     disabled
                     type="text"
-                    placeholder="123 Maple St, ZIP 98101"
+                    placeholder="e.g. 123 Maple St, ZIP 98101"
                     {...register("fullAddress")}
                     className="w-full rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary p-3.5 bg-slate-50 cursor-not-allowed text-slate-500"
                   />
@@ -324,9 +324,11 @@ function Properties() {
                 </label>
                 <input
                   type="number"
-                  placeholder="123 Maple St, ZIP 98101"
-                  {...register("numberOfBathrooms")}
-                  className="w-full rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary p-3.5 bg-slate-50 text-slate-500"
+                  placeholder="e.g. 2"
+                  {...register("numberOfBathrooms", {
+                    valueAsNumber: true,
+                  })}
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary p-3.5  text-slate-500"
                 />
               </div>
             </div>
