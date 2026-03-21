@@ -54,11 +54,6 @@ function Properties() {
     fetchCategories();
   }, []);
 
-  useEffect(() => {
-    setValue("country", "Indonesia");
-    setValue("numberOfBathrooms", 1);
-  }, []);
-
   const { register, handleSubmit, setValue } = useForm<CreatePropertyPayload>({
     resolver: zodResolver(createPropertySchema),
   });
@@ -68,10 +63,21 @@ function Properties() {
   }
 
   const onSubmit = async (data: CreatePropertyPayload) => {
+    const payload = {
+      categoryId: data.categoryId,
+      title: data.title,
+      description: data.description,
+      latitude: data.latitude,
+      longitude: data.longitude,
+      numberOfBathrooms: data.numberOfBathrooms,
+      amenities: selectedAmenities,
+    };
+
     try {
       toast.loading("Creating property...");
 
-      await createProperty(data);
+      await createProperty(payload);
+
       toast.dismiss();
       toast.success("Property created successfully");
     } catch (error: any) {
@@ -198,6 +204,7 @@ function Properties() {
                       City
                     </label>
                     <input
+                      disabled
                       type="text"
                       placeholder="e.g. Seattle"
                       {...register("city")}
@@ -209,6 +216,7 @@ function Properties() {
                       Province
                     </label>
                     <input
+                      disabled
                       type="text"
                       placeholder="123 Maple St, ZIP 98101"
                       {...register("province")}
@@ -220,6 +228,7 @@ function Properties() {
                       Country
                     </label>
                     <input
+                      disabled
                       type="text"
                       placeholder="123 Maple St, ZIP 98101"
                       {...register("country")}
@@ -232,6 +241,7 @@ function Properties() {
                     Full Address
                   </label>
                   <input
+                    disabled
                     type="text"
                     placeholder="123 Maple St, ZIP 98101"
                     {...register("fullAddress")}
@@ -307,6 +317,17 @@ function Properties() {
                     <span className="text-xs font-bold">{amenity.name}</span>
                   </button>
                 ))}
+              </div>
+              <div className="mt-6">
+                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                  Number of Bathrooms
+                </label>
+                <input
+                  type="number"
+                  placeholder="123 Maple St, ZIP 98101"
+                  {...register("numberOfBathrooms")}
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary p-3.5 bg-slate-50 text-slate-500"
+                />
               </div>
             </div>
             <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-8 shadow-sm">

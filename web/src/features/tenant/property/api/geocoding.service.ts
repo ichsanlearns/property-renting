@@ -25,8 +25,9 @@ export const geocodingService = async ({
 
   return {
     fullAddress: data.display_name || "",
-    city: address.city || address.town || address.village || "",
-    province: address.state || "",
+    city:
+      address.city || address.county || address.town || address.village || "",
+    province: address.province || address.state || address.region || "",
     country: address.country || "",
   };
 };
