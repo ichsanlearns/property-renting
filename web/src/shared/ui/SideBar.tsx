@@ -25,7 +25,7 @@ function SideBar() {
     },
     {
       label: "Rooms",
-      path: "/tenant/properties/rooms/create",
+      path: "/tenant/properties/:propertyId/rooms/create",
       icon: "bed",
       role: "TENANT",
     },

@@ -44,7 +44,7 @@ const router = createBrowserRouter([
         element: <FormProperties />,
       },
       {
-        path: "properties/rooms/create",
+        path: "properties/:propertyId/rooms/create",
         element: <FormRoom />,
       },
       {
