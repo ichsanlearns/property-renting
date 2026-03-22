@@ -44,7 +44,7 @@ function Properties() {
       try {
         setIsLoading(true);
         const resCategories = await getAllCategories();
-        const resAmenities = await getAmenities();
+        const resAmenities = await getAmenities("PROPERTY");
 
         setCategories(resCategories.data);
         setAmenities(resAmenities.data);

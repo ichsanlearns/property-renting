@@ -183,10 +183,10 @@ function FormRoom() {
                 </button>
                 <button className="group flex flex-col items-center gap-3 p-5 rounded-2xl bg-surface-container text-slate-500 hover:border-primary/30 border-2 border-transparent transition-all">
                   <span className="material-symbols-outlined text-3xl group-hover:text-primary">
-                    lock
+                    kitchen
                   </span>
                   <span className="text-[10px] font-bold uppercase tracking-widest">
-                    In-room Safe
+                    Mini Fridge
                   </span>
                 </button>
                 <button className="group flex flex-col items-center gap-3 p-5 rounded-2xl border-2 border-dashed border-slate-200 text-slate-300 hover:text-primary hover:border-primary/50 transition-all">
