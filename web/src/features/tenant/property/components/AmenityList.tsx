@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
-import { getAmenities } from "../api/amenity.service";
 import type { Amenity } from "../types/amenity.type";
+import { useAmenities } from "../hooks/useAmenities";
 
 function AmenityList({
   selectedAmenities,
@@ -9,27 +8,9 @@ function AmenityList({
 }: {
   selectedAmenities: string[];
   onChange: (value: string[]) => void;
-  type: string;
+  type: "PROPERTY" | "ROOM";
 }) {
-  const [amenities, setAmenities] = useState<Amenity[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    if (amenities.length > 0) return;
-    const fetchAmenities = async () => {
-      try {
-        setIsLoading(true);
-        const resAmenities = await getAmenities(type);
-        setAmenities(resAmenities.data);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchAmenities();
-  }, []);
+  const { data: amenities = [], isLoading, error } = useAmenities(type);
 
   const handleAmenityClick = (amenityId: string) => {
     onChange(
@@ -43,9 +24,13 @@ function AmenityList({
     return <div>Loading...</div>;
   }
 
+  if (error) {
+    return <div>Error</div>;
+  }
+
   return (
     <>
-      {amenities.map((amenity) => (
+      {amenities.map((amenity: Amenity) => (
         <button
           type="button"
           key={amenity.id}

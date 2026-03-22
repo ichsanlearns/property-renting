@@ -271,35 +271,6 @@ function Properties() {
                     </div>
                   )}
                 </div>
-
-                {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                      Latitude
-                    </label>
-                    <input
-                      disabled
-                      type="number"
-                      step="0.0001"
-                      placeholder="47.6062"
-                      {...register("latitude")}
-                      className="w-full rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary p-3.5 bg-slate-50 cursor-not-allowed text-slate-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                      Longitude
-                    </label>
-                    <input
-                      disabled
-                      type="number"
-                      step="0.0001"
-                      placeholder="-122.3321"
-                      {...register("longitude")}
-                      className="w-full rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary p-3.5 bg-slate-50 cursor-not-allowed text-slate-500"
-                    />
-                  </div>
-                </div> */}
               </div>
             </div>
 
