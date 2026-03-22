@@ -1,10 +1,16 @@
 import { useState } from "react";
 
-import type { ImageType } from "../types/image.type";
-
 import ImageUpload from "../components/ImageUpload";
-
 import AmenityList from "../components/AmenityList";
+
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import {
+  createRoomSchema,
+  type CreateRoomPayload,
+} from "../schemas/room.schema";
+import type { ImageType } from "../types/image.type";
 
 const viewTypes = [
   { value: "ocean_front", label: "Ocean Front" },
@@ -32,6 +38,10 @@ function FormRoom() {
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
 
   const [selectedBathroomType, setSelectedBathroomType] = useState<string>("");
+
+  const { register, watch } = useForm<CreateRoomPayload>({
+    resolver: zodResolver(createRoomSchema),
+  });
 
   return (
     <main className=" m-16 min-h-[calc(100vh-4rem)]">
@@ -69,10 +79,16 @@ function FormRoom() {
             </div>
           </div>
           <div className="flex gap-3">
-            <button className="px-6 py-3 rounded-xl bg-slate-50  hover:bg-slate-200 text-on-surface font-bold text-sm transition-all active:scale-95">
+            <button
+              type="button"
+              className="px-6 py-3 rounded-xl bg-slate-50  hover:bg-slate-200 text-on-surface font-bold text-sm transition-all active:scale-95"
+            >
               Cancel
             </button>
-            <button className="px-8 py-3 rounded-xl bg-primary text-white font-bold text-sm shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all active:scale-95">
+            <button
+              type="submit"
+              className="px-8 py-3 rounded-xl bg-primary text-white font-bold text-sm shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all active:scale-95"
+            >
               Save Room
             </button>
           </div>
@@ -94,6 +110,7 @@ function FormRoom() {
                     Room Name
                   </label>
                   <input
+                    {...register("name")}
                     className="w-full p-4 bg-slate-50 hover:bg-white focus:bg-white border-slate-200 border rounded-xl text-sm font-semibold focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-slate-400"
                     placeholder="e.g. Master Oceanfront Suite"
                     type="text"
@@ -104,6 +121,7 @@ function FormRoom() {
                     Description
                   </label>
                   <textarea
+                    {...register("description")}
                     className="w-full p-4 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-slate-400 resize-none bg-slate-50 hover:bg-white focus:bg-white border-slate-200 border"
                     placeholder="Describe the room's unique features, view, and layout to help guests choose their perfect stay..."
                     rows={4}
@@ -119,6 +137,7 @@ function FormRoom() {
                     IDR
                   </span>
                   <input
+                    {...register("basePrice")}
                     className="w-full p-4 pl-16 bg-slate-50 hover:bg-white focus:bg-white border-slate-200 border rounded-xl text-sm font-semibold focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-slate-400"
                     placeholder="0.00"
                     step="0.01"
@@ -146,7 +165,10 @@ function FormRoom() {
                   <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
                     Bed Type
                   </label>
-                  <select className="w-full p-4 bg-slate-50 hover:bg-white focus:bg-white border-slate-200 border rounded-xl text-sm font-semibold focus:ring-2 focus:ring-primary/20 transition-all">
+                  <select
+                    {...register("bedType")}
+                    className="w-full p-4 bg-slate-50 hover:bg-white focus:bg-white border-slate-200 border rounded-xl text-sm font-semibold focus:ring-2 focus:ring-primary/20 transition-all"
+                  >
                     {bedTypes.map((bedType) => (
                       <option key={bedType.value} value={bedType.value}>
                         {bedType.label}
@@ -156,9 +178,10 @@ function FormRoom() {
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
-                    Bed count
+                    Guest Capacity
                   </label>
                   <input
+                    {...register("capacity")}
                     type="number"
                     placeholder="e.g. 2"
                     className="w-full p-4 bg-slate-50 hover:bg-white focus:bg-white border-slate-200 border rounded-xl text-sm font-semibold focus:ring-2 focus:ring-primary/20 transition-all"
@@ -168,7 +191,10 @@ function FormRoom() {
                   <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
                     View Type
                   </label>
-                  <select className="w-full p-4 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-primary/20 transition-all bg-slate-50 hover:bg-white focus:bg-white border-slate-200 border">
+                  <select
+                    {...register("viewType")}
+                    className="w-full p-4 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-primary/20 transition-all bg-slate-50 hover:bg-white focus:bg-white border-slate-200 border"
+                  >
                     {viewTypes.map((viewType) => (
                       <option key={viewType.value} value={viewType.value}>
                         {viewType.label}
@@ -183,6 +209,8 @@ function FormRoom() {
                   <div className="grid grid-cols-2 gap-2">
                     {bathroomTypes.map((bathroomType) => (
                       <button
+                        type="button"
+                        {...register("bathroomType")}
                         key={bathroomType.value}
                         onClick={() =>
                           setSelectedBathroomType(bathroomType.value)
@@ -196,15 +224,19 @@ function FormRoom() {
                 </div>
                 <div className="md:col-span-2 space-y-2">
                   <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
-                    Guest Capacity
+                    Bed Count
                   </label>
                   <div className="flex gap-4">
                     <input
+                      {...register("bedCount")}
                       className="w-full accent-primary h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer mt-4"
                       type="range"
+                      min={1}
+                      max={10}
+                      step={1}
                     />
                     <span className="w-12 h-12 bg-primary text-white flex items-center justify-center font-bold rounded-xl shrink-0 shadow-lg shadow-primary/20">
-                      2
+                      {watch("bedCount")}
                     </span>
                   </div>
                 </div>
@@ -297,10 +329,16 @@ function FormRoom() {
           </div>
         </div>
         <div className="md:hidden fixed bottom-0 left-0 w-full bg-white p-4 border-t border-primary/10 flex gap-3 z-50">
-          <button className="flex-1 py-4 rounded-xl bg-slate-50 hover:bg-white focus:bg-white font-bold text-sm">
+          <button
+            type="button"
+            className="flex-1 py-4 rounded-xl bg-slate-50 hover:bg-white focus:bg-white font-bold text-sm"
+          >
             Cancel
           </button>
-          <button className="flex-2 py-4 rounded-xl bg-primary text-white font-bold text-sm shadow-lg shadow-primary/20">
+          <button
+            type="submit"
+            className="flex-2 py-4 rounded-xl bg-primary text-white font-bold text-sm shadow-lg shadow-primary/20"
+          >
             Save Room
           </button>
         </div>
