@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,7 +8,6 @@ import {
   type CreatePropertyPayload,
 } from "../schemas/property.schema";
 
-import { getAllCategories } from "../api/category.service";
 import { createProperty } from "../api/property.service";
 import toast from "react-hot-toast";
 
@@ -17,6 +16,7 @@ import { useReverseGeoCode } from "../hooks/useReverseGeocode";
 import ImageUpload from "../components/ImageUpload";
 import type { ImageType } from "../types/image.type";
 import AmenityList from "../components/AmenityList";
+import { useCategories } from "../hooks/useCategories";
 
 type Category = {
   id: string;
@@ -24,8 +24,7 @@ type Category = {
 };
 
 function Properties() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [categories, setCategories] = useState<Category[]>([]);
+  const { data: categories = [], isLoading, error } = useCategories();
 
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
 
@@ -33,29 +32,16 @@ function Properties() {
 
   const [images, setImages] = useState<ImageType[]>([]);
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        setIsLoading(true);
-        const resCategories = await getAllCategories();
-
-        setCategories(resCategories.data);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchCategories();
-  }, []);
-
   const { register, handleSubmit, setValue } = useForm<CreatePropertyPayload>({
     resolver: zodResolver(createPropertySchema),
   });
 
   if (isLoading) {
     return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error.message}</div>;
   }
 
   const onSubmit = async (data: CreatePropertyPayload) => {
@@ -181,7 +167,7 @@ function Properties() {
                     className="w-full rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary p-3.5"
                   >
                     <option value="">Select a category</option>
-                    {categories.map((category) => (
+                    {categories.map((category: Category) => (
                       <option key={category.id} value={category.id}>
                         {category.name}
                       </option>
