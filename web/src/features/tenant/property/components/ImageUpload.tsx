@@ -57,7 +57,7 @@ function ImageUpload({ value, onChange, max = 5 }: ImageUploadProps) {
   return (
     <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-8 shadow-sm">
       <h3 className="text-lg font-bold mb-6 flex items-center gap-2 text-slate-900 dark:text-white">
-        <span className="material-symbols-outlined text-primary">
+        <span className="material-symbols-outlined text-primary bg-primary/10 p-2 rounded-lg">
           photo_library
         </span>
         Property Gallery

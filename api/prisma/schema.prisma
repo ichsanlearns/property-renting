@@ -62,6 +62,26 @@ enum AmenityType {
   ROOM
 }
 
+enum BathroomType {
+  PRIVATE
+  SHARED
+}
+
+enum BedType {
+  KING_SIZE
+  QUEEN_SIZE
+  DOUBLE_TWIN
+  SINGLE
+}
+
+enum ViewType {
+  OCEAN_FRONT
+  GARDEN_VIEW
+  CITY_SKYLINE
+  POOL_SIDE
+  NONE
+}
+
 model User {
   id                String                                 @id @default(uuid())
   firstName         String       @map("first_name")
@@ -212,10 +232,14 @@ model RoomType {
 
   name              String
   description       String
-  capacity          Int
-
   basePrice         Decimal    @map("base_price")            @db.Decimal(10,2) 
   quantity          Int
+
+  bedType           BedType    @map("bed_type")
+  bedCount          Int        @map("bed_count")
+  viewType          ViewType   @map("view_type")
+  bathroomType      BathroomType     @map("bathroom_type")
+  capacity          Int
 
   isVerified        VerificationStatus    @map("is_verified")           @default(PENDING)
   isPublished       PublishStatus    @map("is_published")          @default(DRAFT)

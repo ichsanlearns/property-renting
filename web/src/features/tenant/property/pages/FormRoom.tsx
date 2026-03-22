@@ -6,10 +6,32 @@ import ImageUpload from "../components/ImageUpload";
 
 import AmenityList from "../components/AmenityList";
 
+const viewTypes = [
+  { value: "ocean_front", label: "Ocean Front" },
+  { value: "garden_view", label: "Garden View" },
+  { value: "city_skyline", label: "City Skyline" },
+  { value: "pool_side", label: "Pool Side" },
+  { value: "none", label: "None" },
+];
+
+const bedTypes = [
+  { value: "king_size", label: "King Size Bed" },
+  { value: "queen_size", label: "Queen Size Bed" },
+  { value: "double_twin", label: "Double Twin Beds" },
+  { value: "single", label: "Single Bed" },
+];
+
+const bathroomTypes = [
+  { value: "private", label: "Private" },
+  { value: "shared", label: "Shared" },
+];
+
 function FormRoom() {
   const [images, setImages] = useState<ImageType[]>([]);
 
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
+
+  const [selectedBathroomType, setSelectedBathroomType] = useState<string>("");
 
   return (
     <main className=" m-16 min-h-[calc(100vh-4rem)]">
@@ -59,7 +81,60 @@ function FormRoom() {
           <div className="lg:col-span-2 space-y-8">
             <section className="bg-white p-8 rounded-4xl shadow-sm border border-primary/5 space-y-6">
               <div className="flex items-center gap-3">
-                <span className="material-symbols-outlined text-primary bg-slate-50 hover:bg-white p-2 rounded-lg">
+                <span className="material-symbols-outlined text-primary bg-primary/10 p-2 rounded-lg">
+                  edit_note
+                </span>
+                <h2 className="text-xl font-bold tracking-tight">
+                  Basic Information
+                </h2>
+              </div>
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                    Room Name
+                  </label>
+                  <input
+                    className="w-full p-4 bg-slate-50 hover:bg-white focus:bg-white border-slate-200 border rounded-xl text-sm font-semibold focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-slate-400"
+                    placeholder="e.g. Master Oceanfront Suite"
+                    type="text"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                    Description
+                  </label>
+                  <textarea
+                    className="w-full p-4 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-slate-400 resize-none bg-slate-50 hover:bg-white focus:bg-white border-slate-200 border"
+                    placeholder="Describe the room's unique features, view, and layout to help guests choose their perfect stay..."
+                    rows={4}
+                  ></textarea>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                  Base Price per Night
+                </label>
+                <div className="relative flex items-center">
+                  <span className="absolute left-4 text-slate-400 font-bold text-sm">
+                    IDR
+                  </span>
+                  <input
+                    className="w-full p-4 pl-16 bg-slate-50 hover:bg-white focus:bg-white border-slate-200 border rounded-xl text-sm font-semibold focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-slate-400"
+                    placeholder="0.00"
+                    step="0.01"
+                    type="number"
+                  />
+                </div>
+                <p className="text-[10px] text-slate-400 mt-1 leading-relaxed">
+                  This is the default price. Seasonal or date-based pricing can
+                  be configured later.
+                </p>
+              </div>
+            </section>
+
+            <section className="bg-white p-8 rounded-4xl shadow-sm border border-primary/5 space-y-6">
+              <div className="flex items-center gap-3">
+                <span className="material-symbols-outlined text-primary bg-primary/10 hover:bg-white focus:bg-white p-2 rounded-lg">
                   tune
                 </span>
                 <h2 className="text-xl font-bold tracking-tight">
@@ -71,11 +146,12 @@ function FormRoom() {
                   <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
                     Bed Type
                   </label>
-                  <select className="w-full p-4 bg-slate-50 hover:bg-white border-slate-200 border rounded-xl text-sm font-semibold focus:ring-2 focus:ring-primary/20 transition-all">
-                    <option>King Size Bed</option>
-                    <option>Queen Size Bed</option>
-                    <option>Double Twin Beds</option>
-                    <option>Single Bed</option>
+                  <select className="w-full p-4 bg-slate-50 hover:bg-white focus:bg-white border-slate-200 border rounded-xl text-sm font-semibold focus:ring-2 focus:ring-primary/20 transition-all">
+                    {bedTypes.map((bedType) => (
+                      <option key={bedType.value} value={bedType.value}>
+                        {bedType.label}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div className="space-y-2">
@@ -85,19 +161,19 @@ function FormRoom() {
                   <input
                     type="number"
                     placeholder="e.g. 2"
-                    className="w-full p-4 bg-slate-50 hover:bg-white border-slate-200 border rounded-xl text-sm font-semibold focus:ring-2 focus:ring-primary/20 transition-all"
+                    className="w-full p-4 bg-slate-50 hover:bg-white focus:bg-white border-slate-200 border rounded-xl text-sm font-semibold focus:ring-2 focus:ring-primary/20 transition-all"
                   />
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
                     View Type
                   </label>
-                  <select className="w-full p-4 bg-slate-50 hover:bg-white border-slate-200 border rounded-xl text-sm font-semibold focus:ring-2 focus:ring-primary/20 transition-all">
-                    <option>Ocean Front</option>
-                    <option>Garden View</option>
-                    <option>City Skyline</option>
-                    <option>Pool Side</option>
-                    <option>None / Courtyard</option>
+                  <select className="w-full p-4 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-primary/20 transition-all bg-slate-50 hover:bg-white focus:bg-white border-slate-200 border">
+                    {viewTypes.map((viewType) => (
+                      <option key={viewType.value} value={viewType.value}>
+                        {viewType.label}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div className="space-y-2">
@@ -105,12 +181,17 @@ function FormRoom() {
                     Bathroom Type
                   </label>
                   <div className="grid grid-cols-2 gap-2">
-                    <button className="p-4 rounded-xl border-2 border-primary bg-primary/5 text-primary text-xs font-bold uppercase tracking-wider">
-                      Private
-                    </button>
-                    <button className="p-4 rounded-xl border-2 border-slate-100 bg-slate-50 hover:bg-white text-slate-400 text-xs font-bold uppercase tracking-wider hover:border-primary/20 transition-all">
-                      Shared
-                    </button>
+                    {bathroomTypes.map((bathroomType) => (
+                      <button
+                        key={bathroomType.value}
+                        onClick={() =>
+                          setSelectedBathroomType(bathroomType.value)
+                        }
+                        className={`p-4 rounded-xl border-2 border-primary bg-primary/5 text-primary text-xs font-bold uppercase tracking-wider ${bathroomType.value === selectedBathroomType ? "border-primary bg-primary/5 text-primary" : "border-slate-100 bg-slate-50 hover:bg-white focus:bg-white text-slate-400 hover:border-primary/20"}`}
+                      >
+                        {bathroomType.label}
+                      </button>
+                    ))}
                   </div>
                 </div>
                 <div className="md:col-span-2 space-y-2">
@@ -131,7 +212,7 @@ function FormRoom() {
             </section>
             <section className="bg-white p-8 rounded-4xl shadow-sm border border-primary/5 space-y-6">
               <div className="flex items-center gap-3">
-                <span className="material-symbols-outlined text-primary bg-slate-50 hover:bg-white p-2 rounded-lg">
+                <span className="material-symbols-outlined text-primary bg-primary/10 hover:bg-white focus:bg-white p-2 rounded-lg">
                   grid_view
                 </span>
                 <h2 className="text-xl font-bold tracking-tight">
@@ -216,7 +297,7 @@ function FormRoom() {
           </div>
         </div>
         <div className="md:hidden fixed bottom-0 left-0 w-full bg-white p-4 border-t border-primary/10 flex gap-3 z-50">
-          <button className="flex-1 py-4 rounded-xl bg-slate-50 hover:bg-white font-bold text-sm">
+          <button className="flex-1 py-4 rounded-xl bg-slate-50 hover:bg-white focus:bg-white font-bold text-sm">
             Cancel
           </button>
           <button className="flex-2 py-4 rounded-xl bg-primary text-white font-bold text-sm shadow-lg shadow-primary/20">
