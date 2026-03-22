@@ -121,11 +121,14 @@ function ImageUpload({ value, onChange, max = 5 }: ImageUploadProps) {
         ))}
 
         {value.length < max && value.length > 0 && (
-          <div className="aspect-square rounded-xl bg-slate-50 dark:bg-slate-800 border-2 border-dashed border-slate-200 dark:border-slate-700 flex items-center justify-center hover:bg-slate-100 transition-colors cursor-pointer">
+          <label
+            htmlFor="image-upload"
+            className="aspect-square rounded-xl bg-slate-50 dark:bg-slate-800 border-2 border-dashed border-slate-200 dark:border-slate-700 flex items-center justify-center hover:bg-slate-100 transition-colors cursor-pointer"
+          >
             <span className="material-symbols-outlined text-slate-400">
               add
             </span>
-          </div>
+          </label>
         )}
       </div>
     </div>

@@ -6,7 +6,7 @@ function SideBar() {
 
   const roleLabel =
     user?.role === "TENANT"
-      ? "tenant"
+      ? "Tenant"
       : user?.role === "CUSTOMER"
         ? "Customer"
         : "";
@@ -15,37 +15,37 @@ function SideBar() {
       label: "Dashboard",
       path: "/tenant/dashboard",
       icon: "dashboard",
-      role: ["EVENT_ORGANIZER", "CUSTOMER"],
+      role: ["TENANT", "CUSTOMER"],
     },
     {
       label: "Properties",
-      path: "/tenant/properties",
+      path: "/tenant/properties/create",
       icon: "corporate_fare",
-      role: "CUSTOMER",
+      role: "TENANT",
     },
     {
       label: "Rooms",
-      path: "/tenant/rooms",
+      path: "/tenant/properties/rooms/create",
       icon: "bed",
-      role: "EVENT_ORGANIZER",
+      role: "TENANT",
     },
     {
       label: "Orders",
       path: "/tenant/orderlist",
       icon: "receipt_long",
-      role: "EVENT_ORGANIZER",
+      role: "TENANT",
     },
     {
       label: "Reviews",
       path: "/tenant/review",
       icon: "star",
-      role: "EVENT_ORGANIZER",
+      role: "TENANT",
     },
     {
       label: "Reports",
       path: "/tenant/reports",
       icon: "monitoring",
-      role: "EVENT_ORGANIZER",
+      role: "TENANT",
     },
   ];
 
@@ -77,22 +77,6 @@ function SideBar() {
             </NavLink>
           );
         })}
-
-        {/* <a
-          className="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
-          href="#"
-        >
-          <span className="material-symbols-outlined">dashboard</span>
-          <span className="text-sm font-medium">Dashboard</span>
-        </a>
-
-        <a
-          className="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary text-white shadow-lg shadow-primary/20"
-          href="#"
-        >
-          <span className="material-symbols-outlined">receipt_long</span>
-          <span className="text-sm font-medium">Orders</span>
-        </a> */}
       </nav>
       <div className="p-4 border-t border-slate-200 dark:border-slate-800 mt-auto">
         <div className="flex items-center gap-3 p-2 rounded-xl bg-slate-50 dark:bg-slate-800/50">
