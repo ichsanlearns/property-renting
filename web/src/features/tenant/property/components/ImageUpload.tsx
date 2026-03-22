@@ -1,10 +1,10 @@
 import { useCallback, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import type { PropertyImage } from "../types/image.type";
+import type { ImageType } from "../types/image.type";
 
 type ImageUploadProps = {
-  value: PropertyImage[];
-  onChange: (images: PropertyImage[]) => void;
+  value: ImageType[];
+  onChange: (images: ImageType[]) => void;
   max?: number;
 };
 
@@ -57,7 +57,7 @@ function ImageUpload({ value, onChange, max = 5 }: ImageUploadProps) {
   return (
     <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-8 shadow-sm">
       <h3 className="text-lg font-bold mb-6 flex items-center gap-2 text-slate-900 dark:text-white">
-        <span className="material-symbols-outlined text-primary">
+        <span className="material-symbols-outlined text-primary bg-primary/10 p-2 rounded-lg">
           photo_library
         </span>
         Property Gallery
@@ -121,11 +121,14 @@ function ImageUpload({ value, onChange, max = 5 }: ImageUploadProps) {
         ))}
 
         {value.length < max && value.length > 0 && (
-          <div className="aspect-square rounded-xl bg-slate-50 dark:bg-slate-800 border-2 border-dashed border-slate-200 dark:border-slate-700 flex items-center justify-center hover:bg-slate-100 transition-colors cursor-pointer">
+          <label
+            htmlFor="image-upload"
+            className="aspect-square rounded-xl bg-slate-50 dark:bg-slate-800 border-2 border-dashed border-slate-200 dark:border-slate-700 flex items-center justify-center hover:bg-slate-100 transition-colors cursor-pointer"
+          >
             <span className="material-symbols-outlined text-slate-400">
               add
             </span>
-          </div>
+          </label>
         )}
       </div>
     </div>

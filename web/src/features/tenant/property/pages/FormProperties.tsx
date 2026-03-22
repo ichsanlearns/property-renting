@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,55 +8,29 @@ import {
   type CreatePropertyPayload,
 } from "../schemas/property.schema";
 
-import { getAllCategories } from "../api/category.service";
 import { createProperty } from "../api/property.service";
 import toast from "react-hot-toast";
-import { getAmenities } from "../api/amenity.service";
+
 import Map from "../components/Map";
 import { useReverseGeoCode } from "../hooks/useReverseGeocode";
 import ImageUpload from "../components/ImageUpload";
-import type { PropertyImage } from "../types/image.type";
+import type { ImageType } from "../types/image.type";
+import AmenityList from "../components/AmenityList";
+import { useCategories } from "../hooks/useCategories";
 
 type Category = {
   id: string;
   name: string;
 };
 
-type Amenity = {
-  id: string;
-  name: string;
-  icon: string;
-};
-
 function Properties() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [amenities, setAmenities] = useState<Amenity[]>([]);
+  const { data: categories = [], isLoading, error } = useCategories();
 
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
 
   const { reverseGeoCode, isFetching } = useReverseGeoCode();
 
-  const [images, setImages] = useState<PropertyImage[]>([]);
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        setIsLoading(true);
-        const resCategories = await getAllCategories();
-        const resAmenities = await getAmenities();
-
-        setCategories(resCategories.data);
-        setAmenities(resAmenities.data);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchCategories();
-  }, []);
+  const [images, setImages] = useState<ImageType[]>([]);
 
   const { register, handleSubmit, setValue } = useForm<CreatePropertyPayload>({
     resolver: zodResolver(createPropertySchema),
@@ -64,6 +38,10 @@ function Properties() {
 
   if (isLoading) {
     return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error.message}</div>;
   }
 
   const onSubmit = async (data: CreatePropertyPayload) => {
@@ -111,14 +89,6 @@ function Properties() {
       toast.dismiss();
       toast.error(error.response?.data?.message || "Failed to create property");
     }
-  };
-
-  const handleAmenityClick = (amenityId: string) => {
-    setSelectedAmenities((prev) =>
-      prev.includes(amenityId)
-        ? prev.filter((id) => id !== amenityId)
-        : [...prev, amenityId],
-    );
   };
 
   const handleMapSelect = async (location: { lat: number; lng: number }) => {
@@ -197,7 +167,7 @@ function Properties() {
                     className="w-full rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary p-3.5"
                   >
                     <option value="">Select a category</option>
-                    {categories.map((category) => (
+                    {categories.map((category: Category) => (
                       <option key={category.id} value={category.id}>
                         {category.name}
                       </option>
@@ -287,35 +257,6 @@ function Properties() {
                     </div>
                   )}
                 </div>
-
-                {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                      Latitude
-                    </label>
-                    <input
-                      disabled
-                      type="number"
-                      step="0.0001"
-                      placeholder="47.6062"
-                      {...register("latitude")}
-                      className="w-full rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary p-3.5 bg-slate-50 cursor-not-allowed text-slate-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                      Longitude
-                    </label>
-                    <input
-                      disabled
-                      type="number"
-                      step="0.0001"
-                      placeholder="-122.3321"
-                      {...register("longitude")}
-                      className="w-full rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary p-3.5 bg-slate-50 cursor-not-allowed text-slate-500"
-                    />
-                  </div>
-                </div> */}
               </div>
             </div>
 
@@ -327,23 +268,11 @@ function Properties() {
                 Amenities
               </h3>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                {amenities.map((amenity) => (
-                  <button
-                    type="button"
-                    key={amenity.id}
-                    onClick={() => handleAmenityClick(amenity.id)}
-                    className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all ${
-                      selectedAmenities.includes(amenity.id)
-                        ? "border-primary bg-primary/5 text-primary"
-                        : "border-slate-100 dark:border-slate-800 bg-transparent text-slate-500 hover:border-slate-200 dark:hover:border-slate-700"
-                    }`}
-                  >
-                    <span className="material-symbols-outlined mb-2 text-3xl">
-                      {amenity.icon}
-                    </span>
-                    <span className="text-xs font-bold">{amenity.name}</span>
-                  </button>
-                ))}
+                <AmenityList
+                  selectedAmenities={selectedAmenities}
+                  onChange={setSelectedAmenities}
+                  type="PROPERTY"
+                />
               </div>
               <div className="mt-6">
                 <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">

@@ -13,7 +13,9 @@ import Login from "./features/auth/pages/Login";
 
 import OrderList from "./features/tenant/order-list/pages/OrderList";
 import Reports from "./features/tenant/reports/pages/Reports";
-import Properties from "./features/tenant/property/pages/Properties";
+
+import FormProperties from "./features/tenant/property/pages/FormProperties";
+import FormRoom from "./features/tenant/property/pages/FormRoom";
 
 import { refreshSession } from "./features/auth/api/auth.service";
 import { useAuthStore } from "./features/auth/stores/auth.store";
@@ -38,8 +40,12 @@ const router = createBrowserRouter([
     element: <DashboardLayout />,
     children: [
       {
-        path: "properties",
-        element: <Properties />,
+        path: "properties/create",
+        element: <FormProperties />,
+      },
+      {
+        path: "properties/:propertyId/rooms/create",
+        element: <FormRoom />,
       },
       {
         path: "orderlist",

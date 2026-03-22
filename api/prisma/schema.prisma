@@ -57,6 +57,31 @@ enum PublishStatus {
   ARCHIVED
 }
 
+enum AmenityType {
+  PROPERTY
+  ROOM
+}
+
+enum BathroomType {
+  PRIVATE
+  SHARED
+}
+
+enum BedType {
+  KING_SIZE
+  QUEEN_SIZE
+  DOUBLE_TWIN
+  SINGLE
+}
+
+enum ViewType {
+  OCEAN_FRONT
+  GARDEN_VIEW
+  CITY_SKYLINE
+  POOL_SIDE
+  NONE
+}
+
 model User {
   id                String                                 @id @default(uuid())
   firstName         String       @map("first_name")
@@ -156,12 +181,14 @@ model Amenity {
   id                String                                   @id @default(uuid())
   name              String
   icon              String
+  type              AmenityType
 
   createdAt         DateTime   @map("created_at")            @default(now()) 
   updatedAt         DateTime   @map("updated_at")            @updatedAt
   deletedAt         DateTime?  @map("deleted_at")
 
   property_amenities PropertyAmenity[]
+  room_amenities     RoomTypeAmenity[]
 
   @@map("amenities")
 }
@@ -205,10 +232,14 @@ model RoomType {
 
   name              String
   description       String
-  capacity          Int
-
   basePrice         Decimal    @map("base_price")            @db.Decimal(10,2) 
   quantity          Int
+
+  bedType           BedType    @map("bed_type")
+  bedCount          Int        @map("bed_count")
+  viewType          ViewType   @map("view_type")
+  bathroomType      BathroomType     @map("bathroom_type")
+  capacity          Int
 
   isVerified        VerificationStatus    @map("is_verified")           @default(PENDING)
   isPublished       PublishStatus    @map("is_published")          @default(DRAFT)
@@ -223,8 +254,26 @@ model RoomType {
   price_adjustments PriceAdjustment[]
   reservations      Reservation[]
   room_type_images  RoomTypeImage[]
+  room_amenities    RoomTypeAmenity[]
 
   @@map("room_types")
+}
+
+model RoomTypeAmenity {
+  id                String                                   @id @default(uuid())
+  roomTypeId        String     @map("room_type_id")
+  amenityId         String     @map("amenity_id")
+
+  createdAt         DateTime   @map("created_at")            @default(now()) 
+  updatedAt         DateTime   @map("updated_at")            @updatedAt
+  deletedAt         DateTime?  @map("deleted_at")
+
+  roomType RoomType @relation(fields: [roomTypeId], references: [id])
+  amenity  Amenity  @relation(fields: [amenityId], references: [id])
+
+  @@unique([roomTypeId, amenityId])
+
+  @@map("room_type_amenities")
 }
 
 model RoomTypeImage {

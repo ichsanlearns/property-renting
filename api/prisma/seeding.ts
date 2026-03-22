@@ -1,5 +1,5 @@
 import { prisma } from "../src/shared/lib/prisma.lib.js";
-import { Role } from "../src/generated/prisma/enums.js";
+import { Role, AmenityType } from "../src/generated/prisma/enums.js";
 import bcrypt from "bcrypt";
 
 import { generateReferralCode } from "../src/shared/utils/referral.util.js";
@@ -7,9 +7,20 @@ import { generateReferralCode } from "../src/shared/utils/referral.util.js";
 const seed = async () => {
   try {
     await prisma.refreshToken.deleteMany({});
-    await prisma.property.deleteMany();
+    await prisma.propertyAmenity.deleteMany({});
+    await prisma.propertyImage.deleteMany({});
+    await prisma.roomTypeImage.deleteMany({});
+    await prisma.property.deleteMany({});
     await prisma.propertyCategory.deleteMany({});
+    await prisma.amenity.deleteMany({});
+    await prisma.roomType.deleteMany({});
     await prisma.user.deleteMany({});
+    await prisma.review.deleteMany({});
+    await prisma.reservation.deleteMany({});
+    await prisma.priceAdjustment.deleteMany({});
+    await prisma.voucher.deleteMany({});
+    await prisma.point.deleteMany({});
+    await prisma.coupon.deleteMany({});
 
     console.info("🌱 Seeding started...");
 
@@ -114,51 +125,114 @@ const seed = async () => {
     // =============================
     // AMENITIES
     // =============================
-    const amenities = [
+    const propertyAmenities = [
       {
         id: "012e717a-2429-4757-945f-e24724bcd7ac",
         name: "WiFi",
         icon: "wifi",
+        type: AmenityType.PROPERTY,
       },
       {
         id: "17a6619c-f6b5-469a-adf4-66196a67d187",
         name: "Parking",
         icon: "local_parking",
+        type: AmenityType.PROPERTY,
       },
       {
         id: "b1eac0c3-61c0-4f3f-b8fa-3a5c6b0e8b2c",
         name: "AC",
         icon: "ac_unit",
+        type: AmenityType.PROPERTY,
       },
       {
         id: "e1f36b9c-8c6f-4c4f-b8b5-0c5c7e3f4b6d",
         name: "Kitchen",
         icon: "kitchen",
+        type: AmenityType.PROPERTY,
       },
       {
         id: "b8c0d4f2-3f47-4f74-9c0d-9c2f0e4b1c11",
         name: "Gym",
         icon: "fitness_center",
+        type: AmenityType.PROPERTY,
       },
       {
         id: "7a3e4b2d-6f5a-4a3d-9c8b-0d3f1e7b2a99",
         name: "Pool",
         icon: "pool",
+        type: AmenityType.PROPERTY,
       },
       {
         id: "5c7a4b1e-3f9c-4a6d-8e7f-2c1a3b5d6e44",
         name: "Laundry",
         icon: "local_laundry_service",
+        type: AmenityType.PROPERTY,
       },
       {
         id: "2d6f3a4b-7e8c-4a9b-b1f2-5e3d6c7a8b12",
         name: "Security",
         icon: "security",
+        type: AmenityType.PROPERTY,
       },
     ];
 
     await prisma.amenity.createMany({
-      data: amenities,
+      data: propertyAmenities,
+    });
+
+    const roomAmenities = [
+      {
+        id: "9f6b7c3e-8d2a-4b1f-9c75-3a6e2f9d1c40",
+        name: "AC",
+        icon: "ac_unit",
+        type: AmenityType.ROOM,
+      },
+      {
+        id: "1c8a9d72-5b3f-4e6a-8f21-7d4c9b2a0e55",
+        name: "Smart TV",
+        icon: "tv",
+        type: AmenityType.ROOM,
+      },
+      {
+        id: "7a2f1c9e-3d8b-4f6a-b5c2-9e1d7a3f4b68",
+        name: "Balcony",
+        icon: "balcony",
+        type: AmenityType.ROOM,
+      },
+      {
+        id: "d4b9e2a1-6f3c-4a7d-8b25-1c9e0f2a6d73",
+        name: "Workspace",
+        icon: "computer",
+        type: AmenityType.ROOM,
+      },
+      {
+        id: "3e7a1c5d-9b2f-4d6a-a8c1-5f3e9b7d2a10",
+        name: "Minibar",
+        icon: "coffee_maker",
+        type: AmenityType.ROOM,
+      },
+      {
+        id: "8c2d7a1f-4b6e-4f3a-9d25-6a1c7e2b9f44",
+        name: "High Speed",
+        icon: "wifi",
+        type: AmenityType.ROOM,
+      },
+      {
+        id: "5b1e9d3a-7c4f-4a6d-b2c8-0f3a9e7d1c66",
+        name: "In-room Safe",
+        icon: "lock",
+        type: AmenityType.ROOM,
+      },
+      {
+        id: "a9d3f7c1-2b6e-4a5d-8c21-7e4f1a9b3d88",
+        name: "Mini Fridge",
+        icon: "kitchen",
+        type: AmenityType.ROOM,
+      },
+    ];
+
+    await prisma.amenity.createMany({
+      data: roomAmenities,
     });
 
     // =============================
