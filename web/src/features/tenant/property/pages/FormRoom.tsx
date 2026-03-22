@@ -1,42 +1,15 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import type { ImageType } from "../types/image.type";
 
 import ImageUpload from "../components/ImageUpload";
-import { getAmenities } from "../api/amenity.service";
-import type { Amenity } from "../types/amenity.type";
+
+import AmenityList from "../components/AmenityList";
 
 function FormRoom() {
   const [images, setImages] = useState<ImageType[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [amenities, setAmenities] = useState<Amenity[]>([]);
 
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        setIsLoading(true);
-        const resAmenities = await getAmenities("ROOM");
-
-        setAmenities(resAmenities.data);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchCategories();
-  }, []);
-
-  const handleAmenityClick = (amenityId: string) => {
-    setSelectedAmenities((prev) =>
-      prev.includes(amenityId)
-        ? prev.filter((id) => id !== amenityId)
-        : [...prev, amenityId],
-    );
-  };
 
   return (
     <main className=" m-16 min-h-[calc(100vh-4rem)]">
@@ -74,7 +47,7 @@ function FormRoom() {
             </div>
           </div>
           <div className="flex gap-3">
-            <button className="px-6 py-3 rounded-xl bg-slate-50 hover:bg-white hover:bg-slate-200 text-on-surface font-bold text-sm transition-all active:scale-95">
+            <button className="px-6 py-3 rounded-xl bg-slate-50  hover:bg-slate-200 text-on-surface font-bold text-sm transition-all active:scale-95">
               Cancel
             </button>
             <button className="px-8 py-3 rounded-xl bg-primary text-white font-bold text-sm shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all active:scale-95">
@@ -166,25 +139,11 @@ function FormRoom() {
                 </h2>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                {amenities.map((amenity) => (
-                  <button
-                    type="button"
-                    key={amenity.id}
-                    onClick={() => handleAmenityClick(amenity.id)}
-                    className={`group flex flex-col items-center gap-3 p-5 rounded-2xl text-white   transition-all ${selectedAmenities.includes(amenity.id) ? "bg-primary text-white shadow-primary/20 shadow-xl" : "bg-primary-20 hover:bg-white text-slate-500 border-slate-100 hover:border-primary/30 border-3"}`}
-                  >
-                    <span
-                      className={`material-symbols-outlined text-3xl  ${selectedAmenities.includes(amenity.id) ? "text-white" : "text-slate-500 group-hover:text-primary"}`}
-                    >
-                      {amenity.icon}
-                    </span>
-                    <span
-                      className={` text-[10px] font-bold uppercase tracking-widest ${selectedAmenities.includes(amenity.id) ? "text-white" : "text-slate-500 group-hover:text-primary"}`}
-                    >
-                      {amenity.name}
-                    </span>
-                  </button>
-                ))}
+                <AmenityList
+                  selectedAmenities={selectedAmenities}
+                  onChange={setSelectedAmenities}
+                  type="ROOM"
+                />
               </div>
             </section>
             <ImageUpload value={images} onChange={setImages} max={3} />

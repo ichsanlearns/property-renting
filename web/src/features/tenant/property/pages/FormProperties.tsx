@@ -11,12 +11,12 @@ import {
 import { getAllCategories } from "../api/category.service";
 import { createProperty } from "../api/property.service";
 import toast from "react-hot-toast";
-import { getAmenities } from "../api/amenity.service";
+
 import Map from "../components/Map";
 import { useReverseGeoCode } from "../hooks/useReverseGeocode";
 import ImageUpload from "../components/ImageUpload";
 import type { ImageType } from "../types/image.type";
-import type { Amenity } from "../types/amenity.type";
+import AmenityList from "../components/AmenityList";
 
 type Category = {
   id: string;
@@ -26,7 +26,6 @@ type Category = {
 function Properties() {
   const [isLoading, setIsLoading] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [amenities, setAmenities] = useState<Amenity[]>([]);
 
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
 
@@ -39,10 +38,8 @@ function Properties() {
       try {
         setIsLoading(true);
         const resCategories = await getAllCategories();
-        const resAmenities = await getAmenities("PROPERTY");
 
         setCategories(resCategories.data);
-        setAmenities(resAmenities.data);
       } catch (error) {
         console.error("Error fetching categories:", error);
       } finally {
@@ -106,14 +103,6 @@ function Properties() {
       toast.dismiss();
       toast.error(error.response?.data?.message || "Failed to create property");
     }
-  };
-
-  const handleAmenityClick = (amenityId: string) => {
-    setSelectedAmenities((prev) =>
-      prev.includes(amenityId)
-        ? prev.filter((id) => id !== amenityId)
-        : [...prev, amenityId],
-    );
   };
 
   const handleMapSelect = async (location: { lat: number; lng: number }) => {
@@ -322,25 +311,11 @@ function Properties() {
                 Amenities
               </h3>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                {amenities.map((amenity) => (
-                  <button
-                    type="button"
-                    key={amenity.id}
-                    onClick={() => handleAmenityClick(amenity.id)}
-                    className={`group flex flex-col items-center gap-3 p-5 rounded-2xl text-white   transition-all ${selectedAmenities.includes(amenity.id) ? "bg-primary text-white shadow-primary/20 shadow-xl" : "bg-primary-20 hover:bg-white text-slate-500 border-slate-100 hover:border-primary/30 border-3"}`}
-                  >
-                    <span
-                      className={`material-symbols-outlined text-3xl  ${selectedAmenities.includes(amenity.id) ? "text-white" : "text-slate-500 group-hover:text-primary"}`}
-                    >
-                      {amenity.icon}
-                    </span>
-                    <span
-                      className={` text-[10px] font-bold uppercase tracking-widest ${selectedAmenities.includes(amenity.id) ? "text-white" : "text-slate-500 group-hover:text-primary"}`}
-                    >
-                      {amenity.name}
-                    </span>
-                  </button>
-                ))}
+                <AmenityList
+                  selectedAmenities={selectedAmenities}
+                  onChange={setSelectedAmenities}
+                  type="PROPERTY"
+                />
               </div>
               <div className="mt-6">
                 <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
