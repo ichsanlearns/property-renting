@@ -1,5 +1,5 @@
 import { prisma } from "../src/shared/lib/prisma.lib.js";
-import { Role } from "../src/generated/prisma/enums.js";
+import { Role, AmenityType } from "../src/generated/prisma/enums.js";
 import bcrypt from "bcrypt";
 
 import { generateReferralCode } from "../src/shared/utils/referral.util.js";
@@ -119,11 +119,13 @@ const seed = async () => {
         id: "012e717a-2429-4757-945f-e24724bcd7ac",
         name: "WiFi",
         icon: "wifi",
+        type: AmenityType.PROPERTY,
       },
       {
         id: "17a6619c-f6b5-469a-adf4-66196a67d187",
         name: "Parking",
         icon: "local_parking",
+        type: AmenityType.PROPERTY,
       },
       {
         id: "b1eac0c3-61c0-4f3f-b8fa-3a5c6b0e8b2c",
