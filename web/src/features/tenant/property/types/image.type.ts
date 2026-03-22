@@ -1,4 +1,4 @@
-export type PropertyImage = {
+export type ImageType = {
   id: string;
   file: File;
   preview: string;

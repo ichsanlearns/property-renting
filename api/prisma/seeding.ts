@@ -7,9 +7,20 @@ import { generateReferralCode } from "../src/shared/utils/referral.util.js";
 const seed = async () => {
   try {
     await prisma.refreshToken.deleteMany({});
-    await prisma.property.deleteMany();
+    await prisma.propertyAmenity.deleteMany({});
+    await prisma.propertyImage.deleteMany({});
+    await prisma.roomTypeImage.deleteMany({});
+    await prisma.property.deleteMany({});
     await prisma.propertyCategory.deleteMany({});
+    await prisma.amenity.deleteMany({});
+    await prisma.roomType.deleteMany({});
     await prisma.user.deleteMany({});
+    await prisma.review.deleteMany({});
+    await prisma.reservation.deleteMany({});
+    await prisma.priceAdjustment.deleteMany({});
+    await prisma.voucher.deleteMany({});
+    await prisma.point.deleteMany({});
+    await prisma.coupon.deleteMany({});
 
     console.info("🌱 Seeding started...");
 
@@ -191,7 +202,7 @@ const seed = async () => {
       {
         id: "d4b9e2a1-6f3c-4a7d-8b25-1c9e0f2a6d73",
         name: "Workspace",
-        icon: "desk",
+        icon: "computer",
         type: AmenityType.ROOM,
       },
       {

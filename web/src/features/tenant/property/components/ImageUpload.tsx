@@ -1,10 +1,10 @@
 import { useCallback, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import type { PropertyImage } from "../types/image.type";
+import type { ImageType } from "../types/image.type";
 
 type ImageUploadProps = {
-  value: PropertyImage[];
-  onChange: (images: PropertyImage[]) => void;
+  value: ImageType[];
+  onChange: (images: ImageType[]) => void;
   max?: number;
 };
 

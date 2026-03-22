@@ -1,10 +1,43 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-import type { PropertyImage } from "../types/image.type";
+import type { ImageType } from "../types/image.type";
+
 import ImageUpload from "../components/ImageUpload";
+import { getAmenities } from "../api/amenity.service";
+import type { Amenity } from "../types/amenity.type";
 
 function FormRoom() {
-  const [images, setImages] = useState<PropertyImage[]>([]);
+  const [images, setImages] = useState<ImageType[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [amenities, setAmenities] = useState<Amenity[]>([]);
+
+  const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        setIsLoading(true);
+        const resAmenities = await getAmenities("ROOM");
+
+        setAmenities(resAmenities.data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  const handleAmenityClick = (amenityId: string) => {
+    setSelectedAmenities((prev) =>
+      prev.includes(amenityId)
+        ? prev.filter((id) => id !== amenityId)
+        : [...prev, amenityId],
+    );
+  };
+
   return (
     <main className=" m-16 min-h-[calc(100vh-4rem)]">
       <div className="mx-auto space-y-8">
@@ -41,7 +74,7 @@ function FormRoom() {
             </div>
           </div>
           <div className="flex gap-3">
-            <button className="px-6 py-3 rounded-xl bg-surface-container hover:bg-slate-200 text-on-surface font-bold text-sm transition-all active:scale-95">
+            <button className="px-6 py-3 rounded-xl bg-slate-50 hover:bg-white hover:bg-slate-200 text-on-surface font-bold text-sm transition-all active:scale-95">
               Cancel
             </button>
             <button className="px-8 py-3 rounded-xl bg-primary text-white font-bold text-sm shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all active:scale-95">
@@ -53,7 +86,7 @@ function FormRoom() {
           <div className="lg:col-span-2 space-y-8">
             <section className="bg-white p-8 rounded-4xl shadow-sm border border-primary/5 space-y-6">
               <div className="flex items-center gap-3">
-                <span className="material-symbols-outlined text-primary bg-primary/10 p-2 rounded-lg">
+                <span className="material-symbols-outlined text-primary bg-slate-50 hover:bg-white p-2 rounded-lg">
                   tune
                 </span>
                 <h2 className="text-xl font-bold tracking-tight">
@@ -65,7 +98,7 @@ function FormRoom() {
                   <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
                     Bed Type
                   </label>
-                  <select className="w-full p-4 bg-surface-container border-slate-200 border rounded-xl text-sm font-semibold focus:ring-2 focus:ring-primary/20 transition-all">
+                  <select className="w-full p-4 bg-slate-50 hover:bg-white border-slate-200 border rounded-xl text-sm font-semibold focus:ring-2 focus:ring-primary/20 transition-all">
                     <option>King Size Bed</option>
                     <option>Queen Size Bed</option>
                     <option>Double Twin Beds</option>
@@ -79,14 +112,14 @@ function FormRoom() {
                   <input
                     type="number"
                     placeholder="e.g. 2"
-                    className="w-full p-4 bg-surface-container border-slate-200 border rounded-xl text-sm font-semibold focus:ring-2 focus:ring-primary/20 transition-all"
+                    className="w-full p-4 bg-slate-50 hover:bg-white border-slate-200 border rounded-xl text-sm font-semibold focus:ring-2 focus:ring-primary/20 transition-all"
                   />
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
                     View Type
                   </label>
-                  <select className="w-full p-4 bg-surface-container border-slate-200 border rounded-xl text-sm font-semibold focus:ring-2 focus:ring-primary/20 transition-all">
+                  <select className="w-full p-4 bg-slate-50 hover:bg-white border-slate-200 border rounded-xl text-sm font-semibold focus:ring-2 focus:ring-primary/20 transition-all">
                     <option>Ocean Front</option>
                     <option>Garden View</option>
                     <option>City Skyline</option>
@@ -102,7 +135,7 @@ function FormRoom() {
                     <button className="p-4 rounded-xl border-2 border-primary bg-primary/5 text-primary text-xs font-bold uppercase tracking-wider">
                       Private
                     </button>
-                    <button className="p-4 rounded-xl border-2 border-slate-100 bg-surface-container text-slate-400 text-xs font-bold uppercase tracking-wider hover:border-primary/20 transition-all">
+                    <button className="p-4 rounded-xl border-2 border-slate-100 bg-slate-50 hover:bg-white text-slate-400 text-xs font-bold uppercase tracking-wider hover:border-primary/20 transition-all">
                       Shared
                     </button>
                   </div>
@@ -125,7 +158,7 @@ function FormRoom() {
             </section>
             <section className="bg-white p-8 rounded-4xl shadow-sm border border-primary/5 space-y-6">
               <div className="flex items-center gap-3">
-                <span className="material-symbols-outlined text-primary bg-primary/10 p-2 rounded-lg">
+                <span className="material-symbols-outlined text-primary bg-slate-50 hover:bg-white p-2 rounded-lg">
                   grid_view
                 </span>
                 <h2 className="text-xl font-bold tracking-tight">
@@ -133,70 +166,25 @@ function FormRoom() {
                 </h2>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                <button className="group flex flex-col items-center gap-3 p-5 rounded-2xl bg-primary text-white shadow-xl shadow-primary/20 transition-all">
-                  <span className="material-symbols-outlined text-3xl">
-                    ac_unit
-                  </span>
-                  <span className="text-[10px] font-bold uppercase tracking-widest">
-                    Air Con
-                  </span>
-                </button>
-                <button className="group flex flex-col items-center gap-3 p-5 rounded-2xl bg-surface-container text-slate-500 hover:border-primary/30 border-2 border-transparent transition-all">
-                  <span className="material-symbols-outlined text-3xl group-hover:text-primary">
-                    tv
-                  </span>
-                  <span className="text-[10px] font-bold uppercase tracking-widest">
-                    Smart TV
-                  </span>
-                </button>
-                <button className="group flex flex-col items-center gap-3 p-5 rounded-2xl bg-primary text-white shadow-xl shadow-primary/20 transition-all">
-                  <span className="material-symbols-outlined text-3xl">
-                    balcony
-                  </span>
-                  <span className="text-[10px] font-bold uppercase tracking-widest">
-                    Balcony
-                  </span>
-                </button>
-                <button className="group flex flex-col items-center gap-3 p-5 rounded-2xl bg-surface-container text-slate-500 hover:border-primary/30 border-2 border-transparent transition-all">
-                  <span className="material-symbols-outlined text-3xl group-hover:text-primary">
-                    desk
-                  </span>
-                  <span className="text-[10px] font-bold uppercase tracking-widest">
-                    Workspace
-                  </span>
-                </button>
-                <button className="group flex flex-col items-center gap-3 p-5 rounded-2xl bg-surface-container text-slate-500 hover:border-primary/30 border-2 border-transparent transition-all">
-                  <span className="material-symbols-outlined text-3xl group-hover:text-primary">
-                    coffee_maker
-                  </span>
-                  <span className="text-[10px] font-bold uppercase tracking-widest">
-                    Minibar
-                  </span>
-                </button>
-                <button className="group flex flex-col items-center gap-3 p-5 rounded-2xl bg-surface-container text-slate-500 hover:border-primary/30 border-2 border-transparent transition-all">
-                  <span className="material-symbols-outlined text-3xl group-hover:text-primary">
-                    wifi
-                  </span>
-                  <span className="text-[10px] font-bold uppercase tracking-widest">
-                    High Speed
-                  </span>
-                </button>
-                <button className="group flex flex-col items-center gap-3 p-5 rounded-2xl bg-surface-container text-slate-500 hover:border-primary/30 border-2 border-transparent transition-all">
-                  <span className="material-symbols-outlined text-3xl group-hover:text-primary">
-                    kitchen
-                  </span>
-                  <span className="text-[10px] font-bold uppercase tracking-widest">
-                    Mini Fridge
-                  </span>
-                </button>
-                <button className="group flex flex-col items-center gap-3 p-5 rounded-2xl border-2 border-dashed border-slate-200 text-slate-300 hover:text-primary hover:border-primary/50 transition-all">
-                  <span className="material-symbols-outlined text-3xl">
-                    add_circle
-                  </span>
-                  <span className="text-[10px] font-bold uppercase tracking-widest">
-                    Add More
-                  </span>
-                </button>
+                {amenities.map((amenity) => (
+                  <button
+                    type="button"
+                    key={amenity.id}
+                    onClick={() => handleAmenityClick(amenity.id)}
+                    className={`group flex flex-col items-center gap-3 p-5 rounded-2xl text-white   transition-all ${selectedAmenities.includes(amenity.id) ? "bg-primary text-white shadow-primary/20 shadow-xl" : "bg-primary-20 hover:bg-white text-slate-500 border-slate-100 hover:border-primary/30 border-3"}`}
+                  >
+                    <span
+                      className={`material-symbols-outlined text-3xl  ${selectedAmenities.includes(amenity.id) ? "text-white" : "text-slate-500 group-hover:text-primary"}`}
+                    >
+                      {amenity.icon}
+                    </span>
+                    <span
+                      className={` text-[10px] font-bold uppercase tracking-widest ${selectedAmenities.includes(amenity.id) ? "text-white" : "text-slate-500 group-hover:text-primary"}`}
+                    >
+                      {amenity.name}
+                    </span>
+                  </button>
+                ))}
               </div>
             </section>
             <ImageUpload value={images} onChange={setImages} max={3} />
@@ -269,7 +257,7 @@ function FormRoom() {
           </div>
         </div>
         <div className="md:hidden fixed bottom-0 left-0 w-full bg-white p-4 border-t border-primary/10 flex gap-3 z-50">
-          <button className="flex-1 py-4 rounded-xl bg-surface-container font-bold text-sm">
+          <button className="flex-1 py-4 rounded-xl bg-slate-50 hover:bg-white font-bold text-sm">
             Cancel
           </button>
           <button className="flex-2 py-4 rounded-xl bg-primary text-white font-bold text-sm shadow-lg shadow-primary/20">

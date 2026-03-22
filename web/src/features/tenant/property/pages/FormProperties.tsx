@@ -15,17 +15,12 @@ import { getAmenities } from "../api/amenity.service";
 import Map from "../components/Map";
 import { useReverseGeoCode } from "../hooks/useReverseGeocode";
 import ImageUpload from "../components/ImageUpload";
-import type { PropertyImage } from "../types/image.type";
+import type { ImageType } from "../types/image.type";
+import type { Amenity } from "../types/amenity.type";
 
 type Category = {
   id: string;
   name: string;
-};
-
-type Amenity = {
-  id: string;
-  name: string;
-  icon: string;
 };
 
 function Properties() {
@@ -37,7 +32,7 @@ function Properties() {
 
   const { reverseGeoCode, isFetching } = useReverseGeoCode();
 
-  const [images, setImages] = useState<PropertyImage[]>([]);
+  const [images, setImages] = useState<ImageType[]>([]);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -332,16 +327,18 @@ function Properties() {
                     type="button"
                     key={amenity.id}
                     onClick={() => handleAmenityClick(amenity.id)}
-                    className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all ${
-                      selectedAmenities.includes(amenity.id)
-                        ? "border-primary bg-primary/5 text-primary"
-                        : "border-slate-100 dark:border-slate-800 bg-transparent text-slate-500 hover:border-slate-200 dark:hover:border-slate-700"
-                    }`}
+                    className={`group flex flex-col items-center gap-3 p-5 rounded-2xl text-white   transition-all ${selectedAmenities.includes(amenity.id) ? "bg-primary text-white shadow-primary/20 shadow-xl" : "bg-primary-20 hover:bg-white text-slate-500 border-slate-100 hover:border-primary/30 border-3"}`}
                   >
-                    <span className="material-symbols-outlined mb-2 text-3xl">
+                    <span
+                      className={`material-symbols-outlined text-3xl  ${selectedAmenities.includes(amenity.id) ? "text-white" : "text-slate-500 group-hover:text-primary"}`}
+                    >
                       {amenity.icon}
                     </span>
-                    <span className="text-xs font-bold">{amenity.name}</span>
+                    <span
+                      className={` text-[10px] font-bold uppercase tracking-widest ${selectedAmenities.includes(amenity.id) ? "text-white" : "text-slate-500 group-hover:text-primary"}`}
+                    >
+                      {amenity.name}
+                    </span>
                   </button>
                 ))}
               </div>
