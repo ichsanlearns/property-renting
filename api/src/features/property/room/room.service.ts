@@ -2,7 +2,15 @@ import { prisma } from "../../../shared/lib/prisma.lib.js";
 import { AppError } from "../../../shared/utils/app-error.util.js";
 import type { CreateRoomPayload } from "./room.type.js";
 
-export const createRoom = async ({ data }: { data: CreateRoomPayload }) => {
+export const createRoom = async ({
+  data,
+  images,
+  amenities,
+}: {
+  data: CreateRoomPayload;
+  images: { imageUrl: string; isCover: boolean; order: number }[];
+  amenities: string[];
+}) => {
   const property = await prisma.property.findUnique({
     where: { id: data.propertyId },
   });
@@ -11,15 +19,33 @@ export const createRoom = async ({ data }: { data: CreateRoomPayload }) => {
     throw new AppError(404, "Property not found");
   }
 
-  return prisma.roomType.create({
-    data: {
-      ...data,
-      isVerified: "VERIFIED",
-    },
-    omit: {
-      createdAt: true,
-      updatedAt: true,
-      deletedAt: true,
-    },
+  return await prisma.$transaction(async (tx) => {
+    const room = await tx.roomType.create({
+      data: {
+        ...data,
+        isVerified: "VERIFIED",
+      },
+      omit: {
+        deletedAt: true,
+        updatedAt: true,
+        createdAt: true,
+      },
+    });
+
+    await tx.roomTypeImage.createMany({
+      data: images.map((image) => ({
+        ...image,
+        roomTypeId: room.id,
+      })),
+    });
+
+    await tx.roomTypeAmenity.createMany({
+      data: amenities.map((amenity) => ({
+        amenityId: amenity,
+        roomTypeId: room.id,
+      })),
+    });
+
+    return room;
   });
 };
