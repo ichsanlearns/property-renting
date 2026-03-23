@@ -17,6 +17,9 @@ import ImageUpload from "../components/ImageUpload";
 import type { ImageType } from "../types/image.type";
 import AmenityList from "../components/AmenityList";
 import { useCategories } from "../hooks/useCategories";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { queryKeys } from "../../../../shared/lib/queryKeys.lib";
+import { useNavigate } from "react-router-dom";
 
 type Category = {
   id: string;
@@ -36,13 +39,29 @@ function Properties() {
     resolver: zodResolver(createPropertySchema),
   });
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
-  if (error) {
-    return <div>{error.message}</div>;
-  }
+  const mutation = useMutation({
+    mutationFn: createProperty,
+    onMutate: () => {
+      toast.loading("Creating property...");
+    },
+    onSuccess: (property) => {
+      toast.dismiss();
+      toast.success("Property created successfully");
+
+      queryClient.setQueryData(
+        queryKeys.property.basic(property.data.id),
+        property,
+      );
+      navigate(`/tenant/properties/${property.data.id}/rooms/create`);
+    },
+    onError: (error: any) => {
+      toast.dismiss();
+      toast.error(error.response?.data?.message || "Failed to create property");
+    },
+  });
 
   const onSubmit = async (data: CreatePropertyPayload) => {
     const payload = {
@@ -78,17 +97,7 @@ function Properties() {
       formData.append("amenities", amenity);
     });
 
-    try {
-      toast.loading("Creating property...");
-
-      await createProperty(formData);
-
-      toast.dismiss();
-      toast.success("Property created successfully");
-    } catch (error: any) {
-      toast.dismiss();
-      toast.error(error.response?.data?.message || "Failed to create property");
-    }
+    mutation.mutate(formData);
   };
 
   const handleMapSelect = async (location: { lat: number; lng: number }) => {
@@ -102,6 +111,14 @@ function Properties() {
       setValue("country", address.country);
     });
   };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error.message}</div>;
+  }
 
   return (
     <main className="flex-1 p-8">
@@ -320,8 +337,8 @@ function Properties() {
                       Publish Status
                     </label>
                     <select className="w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary p-3 text-sm font-medium">
+                      <option defaultValue={"PUBLISHED"}>Publish</option>
                       <option>Draft</option>
-                      <option selected>Publish</option>
                       <option>Archive</option>
                     </select>
                   </div>
@@ -331,7 +348,6 @@ function Properties() {
                     </span>
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input
-                        checked
                         className="sr-only peer"
                         type="checkbox"
                         value=""

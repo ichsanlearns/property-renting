@@ -10,3 +10,10 @@ export const createProperty = async (data: FormData) => {
   });
   return response.data;
 };
+
+export const getPropertyByIdBasic = async (propertyId: string) => {
+  const response = await api.get(
+    PROPERTY_ENDPOINTS.GET_BY_ID_BASIC(propertyId),
+  );
+  return response.data;
+};

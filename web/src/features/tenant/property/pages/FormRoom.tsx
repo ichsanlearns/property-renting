@@ -14,6 +14,7 @@ import type { ImageType } from "../types/image.type";
 import toast from "react-hot-toast";
 import { createRoom } from "../api/room.service";
 import { useParams } from "react-router";
+import { usePropertyBasic } from "../hooks/useProperty";
 
 const viewTypes = [
   { value: "ocean_front", label: "Ocean Front" },
@@ -43,6 +44,7 @@ const publishStatuses = [
 
 function FormRoom() {
   const { propertyId } = useParams();
+  const { data: property, isLoading, error } = usePropertyBasic(propertyId!);
 
   const [images, setImages] = useState<ImageType[]>([]);
 
@@ -106,6 +108,14 @@ function FormRoom() {
     }
   };
 
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error.message}</div>;
+  }
+
   return (
     <main className=" m-16 min-h-[calc(100vh-4rem)]">
       <form
@@ -117,7 +127,7 @@ function FormRoom() {
             <img
               className="w-full h-full object-cover"
               data-alt="Luxury Ocean Breeze Villa Exterior"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIoAcDN_T8iuaysK8BrMx-3SmdFEe-pnPMTg_j2qegMqEkqiPNaG5sVtqnuJkB6v2Ms9Rf53YnPXJcLReNJ1_QCMnyr3VVdPzz_Oke8dwuhAB0ht4xZo7b3IiRDIzm3OyyLyxZw9ADPbawu_y2rui-WaVyz8VB2VswELWMZVlIHkORDhMXJ8OjxpN4tU-dAgEMfysCj6tRgF_W1vlDCshjwYn9DSlOUG3HMS_pRCCMofZQKA96GW6ABvxWYsgo8LXpvXgkZRrw0Rzc"
+              src={property.property_images[0].imageUrl}
             />
             <div className="absolute inset-0 bg-linear-to-t from-black/40 to-transparent"></div>
           </div>
@@ -126,21 +136,20 @@ function FormRoom() {
               Adding room to
             </span>
             <h1 className="text-3xl font-extrabold text-on-surface tracking-tight mt-1">
-              Ocean Breeze Villa
-              <span className="text-slate-400 font-medium">in Malibu</span>
+              {property.name}
             </h1>
             <div className="flex items-center justify-center md:justify-start gap-4 mt-2 text-slate-500 text-sm">
               <span className="flex items-center gap-1">
                 <span className="material-symbols-outlined text-[18px]">
                   location_on
                 </span>
-                Point Dume, CA
+                {property.city}, {property.province}
               </span>
               <span className="flex items-center gap-1">
                 <span className="material-symbols-outlined text-[18px]">
                   star
                 </span>
-                4.98 (124 reviews)
+                {property.rating} ({property.reviewCount} reviews)
               </span>
             </div>
           </div>
