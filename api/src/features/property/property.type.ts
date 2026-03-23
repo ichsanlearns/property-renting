@@ -1,6 +1,6 @@
 export type CreatePropertyDto = {
   categoryId: string;
-  title: string;
+  name: string;
   description: string;
   country: string;
   city: string;

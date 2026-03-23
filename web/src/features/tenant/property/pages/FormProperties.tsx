@@ -47,7 +47,7 @@ function Properties() {
   const onSubmit = async (data: CreatePropertyPayload) => {
     const payload = {
       categoryId: data.categoryId,
-      title: data.title,
+      name: data.name,
       description: data.description,
       latitude: data.latitude,
       longitude: data.longitude,
@@ -153,7 +153,7 @@ function Properties() {
                   <input
                     type="text"
                     placeholder="e.g. Sunset Heights Apartment"
-                    {...register("title")}
+                    {...register("name")}
                     className="w-full rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary transition-all p-3.5"
                   />
                 </div>

@@ -17,7 +17,7 @@ export const create = catchAsync(async (req: Request, res: Response) => {
 
   const {
     categoryId,
-    title,
+    name,
     description,
     latitude,
     longitude,
@@ -27,7 +27,7 @@ export const create = catchAsync(async (req: Request, res: Response) => {
 
   const data = {
     categoryId,
-    title,
+    name,
     description,
     latitude: Number(latitude),
     longitude: Number(longitude),

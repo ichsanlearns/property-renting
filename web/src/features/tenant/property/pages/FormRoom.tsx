@@ -11,6 +11,9 @@ import {
   type CreateRoomPayload,
 } from "../schemas/room.schema";
 import type { ImageType } from "../types/image.type";
+import toast from "react-hot-toast";
+import { createRoom } from "../api/room.service";
+import { useParams } from "react-router";
 
 const viewTypes = [
   { value: "ocean_front", label: "Ocean Front" },
@@ -32,20 +35,83 @@ const bathroomTypes = [
   { value: "shared", label: "Shared" },
 ];
 
+const publishStatuses = [
+  { value: "published", label: "Publish" },
+  { value: "draft", label: "Draft" },
+  { value: "archived", label: "Archive" },
+];
+
 function FormRoom() {
+  const { propertyId } = useParams();
+
   const [images, setImages] = useState<ImageType[]>([]);
 
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
 
   const [selectedBathroomType, setSelectedBathroomType] = useState<string>("");
 
-  const { register, watch } = useForm<CreateRoomPayload>({
-    resolver: zodResolver(createRoomSchema),
-  });
+  const { register, watch, handleSubmit, setValue } =
+    useForm<CreateRoomPayload>({
+      resolver: zodResolver(createRoomSchema),
+    });
+
+  const onSubmit = async (data: CreateRoomPayload) => {
+    const payload = {
+      name: data.name,
+      description: data.description,
+      basePrice: data.basePrice,
+      quantity: data.quantity,
+      bedType: data.bedType,
+      bedCount: data.bedCount,
+      viewType: data.viewType,
+      bathroomType: data.bathroomType,
+      capacity: data.capacity,
+      isPublished: data.isPublished,
+    };
+
+    const formData = new FormData();
+
+    Object.entries(payload).forEach(([key, value]) => {
+      formData.append(key, String(value));
+    });
+
+    images.forEach((image) => {
+      formData.append("images", image.file);
+    });
+
+    formData.append(
+      "imagesMeta",
+      JSON.stringify(
+        images.map((image) => ({
+          isCover: image.isCover,
+          order: image.order,
+        })),
+      ),
+    );
+
+    selectedAmenities.forEach((amenity) => {
+      formData.append("amenities", amenity);
+    });
+
+    try {
+      toast.loading("Creating room...");
+
+      await createRoom({ propertyId: propertyId!, data: formData });
+
+      toast.dismiss();
+      toast.success("Room created successfully");
+    } catch (error: any) {
+      toast.dismiss();
+      toast.error(error.response?.data?.message || "Failed to create room");
+    }
+  };
 
   return (
     <main className=" m-16 min-h-[calc(100vh-4rem)]">
-      <div className="mx-auto space-y-8">
+      <form
+        onSubmit={handleSubmit(onSubmit, (error) => console.log(error))}
+        className="mx-auto space-y-8"
+      >
         <header className="relative overflow-hidden rounded-3xl bg-white shadow-sm border border-primary/10 flex flex-col md:flex-row items-center gap-6 p-6">
           <div className="relative w-full md:w-48 h-32 shrink-0 rounded-2xl overflow-hidden shadow-md">
             <img
@@ -128,26 +194,44 @@ function FormRoom() {
                   ></textarea>
                 </div>
               </div>
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
-                  Base Price per Night
-                </label>
-                <div className="relative flex items-center">
-                  <span className="absolute left-4 text-slate-400 font-bold text-sm">
-                    IDR
-                  </span>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                    Base Price per Night
+                  </label>
+                  <div className="relative flex items-center">
+                    <span className="absolute left-4 text-slate-400 font-bold text-sm">
+                      IDR
+                    </span>
+                    <input
+                      {...register("basePrice", {
+                        valueAsNumber: true,
+                      })}
+                      className="w-full p-4 pl-16 bg-slate-50 hover:bg-white focus:bg-white border-slate-200 border rounded-xl text-sm font-semibold focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-slate-400"
+                      placeholder="0.00"
+                      step="0.01"
+                      type="number"
+                    />
+                  </div>
+                  <p className="text-[10px] text-slate-400 mt-1 leading-relaxed">
+                    This is the default price. Seasonal or date-based pricing
+                    can be configured later.
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                    Room Total
+                  </label>
                   <input
-                    {...register("basePrice")}
-                    className="w-full p-4 pl-16 bg-slate-50 hover:bg-white focus:bg-white border-slate-200 border rounded-xl text-sm font-semibold focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-slate-400"
-                    placeholder="0.00"
-                    step="0.01"
+                    {...register("quantity", {
+                      valueAsNumber: true,
+                    })}
                     type="number"
+                    placeholder="e.g. 2"
+                    className="w-full p-4 bg-slate-50 hover:bg-white focus:bg-white border-slate-200 border rounded-xl text-sm font-semibold focus:ring-2 focus:ring-primary/20 transition-all"
                   />
                 </div>
-                <p className="text-[10px] text-slate-400 mt-1 leading-relaxed">
-                  This is the default price. Seasonal or date-based pricing can
-                  be configured later.
-                </p>
               </div>
             </section>
 
@@ -181,7 +265,9 @@ function FormRoom() {
                     Guest Capacity
                   </label>
                   <input
-                    {...register("capacity")}
+                    {...register("capacity", {
+                      valueAsNumber: true,
+                    })}
                     type="number"
                     placeholder="e.g. 2"
                     className="w-full p-4 bg-slate-50 hover:bg-white focus:bg-white border-slate-200 border rounded-xl text-sm font-semibold focus:ring-2 focus:ring-primary/20 transition-all"
@@ -210,11 +296,11 @@ function FormRoom() {
                     {bathroomTypes.map((bathroomType) => (
                       <button
                         type="button"
-                        {...register("bathroomType")}
                         key={bathroomType.value}
-                        onClick={() =>
-                          setSelectedBathroomType(bathroomType.value)
-                        }
+                        onClick={() => {
+                          setSelectedBathroomType(bathroomType.value);
+                          setValue("bathroomType", bathroomType.value);
+                        }}
                         className={`p-4 rounded-xl border-2 border-primary bg-primary/5 text-primary text-xs font-bold uppercase tracking-wider ${bathroomType.value === selectedBathroomType ? "border-primary bg-primary/5 text-primary" : "border-slate-100 bg-slate-50 hover:bg-white focus:bg-white text-slate-400 hover:border-primary/20"}`}
                       >
                         {bathroomType.label}
@@ -228,9 +314,12 @@ function FormRoom() {
                   </label>
                   <div className="flex gap-4">
                     <input
-                      {...register("bedCount")}
+                      {...register("bedCount", {
+                        valueAsNumber: true,
+                      })}
                       className="w-full accent-primary h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer mt-4"
                       type="range"
+                      defaultValue={1}
                       min={1}
                       max={10}
                       step={1}
@@ -273,10 +362,19 @@ function FormRoom() {
                     <label className="block text-xs font-bold text-slate-400 uppercase mb-2">
                       Publish Status
                     </label>
-                    <select className="w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary p-3 text-sm font-medium">
-                      <option>Draft</option>
-                      <option selected>Publish</option>
-                      <option>Archive</option>
+                    <select
+                      {...register("isPublished")}
+                      className="w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary p-3 text-sm font-medium"
+                    >
+                      {publishStatuses.map((status) => (
+                        <option
+                          selected={status.value === "published"}
+                          key={status.value}
+                          value={status.value}
+                        >
+                          {status.label}
+                        </option>
+                      ))}
                     </select>
                   </div>
                   <div className="flex items-center justify-between">
@@ -342,7 +440,7 @@ function FormRoom() {
             Save Room
           </button>
         </div>
-      </div>
+      </form>
     </main>
   );
 }

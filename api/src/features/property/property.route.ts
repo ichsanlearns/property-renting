@@ -15,6 +15,11 @@ router.post(
   PropertyController.create,
 );
 
-router.use("/:propertyId/rooms", RoomController.createRoomController);
+router.post(
+  "/:propertyId/rooms",
+  authMiddleware,
+  uploadCloud.array("images", 3),
+  RoomController.createRoomController,
+);
 
 export default router;

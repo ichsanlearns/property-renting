@@ -16,7 +16,6 @@ export const createRoomController = catchAsync(
       viewType,
       bathroomType,
       capacity,
-      isVerified,
       isPublished,
     } = req.body;
 
@@ -32,7 +31,6 @@ export const createRoomController = catchAsync(
         viewType,
         bathroomType,
         capacity,
-        isVerified,
         isPublished,
       },
     });

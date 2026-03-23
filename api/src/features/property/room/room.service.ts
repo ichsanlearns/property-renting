@@ -14,6 +14,7 @@ export const createRoom = async ({ data }: { data: CreateRoomPayload }) => {
   return prisma.roomType.create({
     data: {
       ...data,
+      isVerified: "VERIFIED",
     },
     omit: {
       createdAt: true,

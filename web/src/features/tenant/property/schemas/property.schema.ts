@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const createPropertySchema = z.object({
   categoryId: z.string().min(1, "Category is required"),
-  title: z.string().min(1, "Title is required"),
+  name: z.string().min(1, "Name is required"),
   description: z.string().min(1, "Description is required"),
 
   country: z.string().min(1, "Country is required").optional(),
