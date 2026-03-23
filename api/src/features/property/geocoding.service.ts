@@ -36,6 +36,6 @@ export const reverseGeocode = async ({
       country: address.country || "",
     };
   } catch (error) {
-    throw new AppError(500, "Failed to reverse geocode");
+    throw new AppError("Failed to reverse geocode", 500);
   }
 };

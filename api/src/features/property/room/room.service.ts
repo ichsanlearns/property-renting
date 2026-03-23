@@ -16,7 +16,7 @@ export const createRoom = async ({
   });
 
   if (!property) {
-    throw new AppError(404, "Property not found");
+    throw new AppError("Property not found", 404);
   }
 
   return await prisma.$transaction(async (tx) => {

@@ -17,7 +17,7 @@ export const createReservation = async ({
   const checkOut = new Date(checkOutDate);
 
   if (checkOut <= checkIn) {
-    throw new AppError(400, "Invalid date range");
+    throw new AppError("Invalid date range", 400);
   }
 
   const dates: Date[] = [];
@@ -33,10 +33,10 @@ export const createReservation = async ({
       where: { id: roomTypeId },
     });
 
-    if (!roomType) throw new AppError(404, "Room type not found");
+    if (!roomType) throw new AppError("Room type not found", 404);
 
     if (guestCount > roomType.capacity) {
-      throw new AppError(400, "Guest exceeds room capacity");
+      throw new AppError("Guest exceeds room capacity", 400);
     }
 
     const availability = await tx.roomAvailability.findMany({
@@ -47,12 +47,12 @@ export const createReservation = async ({
     });
 
     if (availability.length !== dates.length) {
-      throw new AppError(400, "Room not available for selected dates");
+      throw new AppError("Room not available for selected dates", 400);
     }
 
     availability.forEach((day) => {
       if (day.availableQuantity <= 0) {
-        throw new AppError(400, "Room fully booked on selected date");
+        throw new AppError("Room fully booked on selected date", 400);
       }
     });
 

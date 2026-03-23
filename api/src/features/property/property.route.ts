@@ -15,6 +15,8 @@ router.post(
   PropertyController.create,
 );
 
+router.get("/:id", PropertyController.getByIdBasic);
+
 router.use("/:propertyId/rooms", createRoomRouter);
 
 export default router;
