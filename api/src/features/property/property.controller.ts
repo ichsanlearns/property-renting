@@ -9,7 +9,8 @@ import * as geocodingService from "./geocoding.service.js";
 import * as uploadService from "../../shared/services/upload.service.js";
 
 export const create = catchAsync(async (req: Request, res: Response) => {
-  if (!req.user) throw new AppError(401, "Unauthorized");
+  if (!req.user) throw new AppError("Unauthorized", 401);
+
   const tenantId = req.user.userId;
 
   const files = req.files as Express.Multer.File[];
@@ -17,7 +18,7 @@ export const create = catchAsync(async (req: Request, res: Response) => {
 
   const {
     categoryId,
-    title,
+    name,
     description,
     latitude,
     longitude,
@@ -27,7 +28,7 @@ export const create = catchAsync(async (req: Request, res: Response) => {
 
   const data = {
     categoryId,
-    title,
+    name,
     description,
     latitude: Number(latitude),
     longitude: Number(longitude),
@@ -68,6 +69,17 @@ export const create = catchAsync(async (req: Request, res: Response) => {
 
   res.status(201).json({
     message: "Property created successfully",
+    data: property,
+  });
+});
+
+export const getByIdBasic = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params as { id: string };
+
+  const property = await PropertyService.getByIdBasic(id);
+
+  res.status(200).json({
+    message: "Property fetched successfully",
     data: property,
   });
 });

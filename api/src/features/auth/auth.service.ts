@@ -21,11 +21,11 @@ export const login = async ({
     where: { email },
   });
 
-  if (!user) throw new AppError(400, "Invalid credentials");
+  if (!user) throw new AppError("Invalid credentials", 400);
 
   const isMatch = await bcrypt.compare(password, user.password);
 
-  if (!isMatch) throw new AppError(400, "Invalid credentials");
+  if (!isMatch) throw new AppError("Invalid credentials", 400);
 
   const fullName = [user.firstName, user.lastName].filter(Boolean).join(" ");
 
@@ -64,7 +64,7 @@ export const login = async ({
 };
 
 export const logout = async ({ refreshToken }: { refreshToken: string }) => {
-  if (!refreshToken) throw new AppError(401, "Unauthorized");
+  if (!refreshToken) throw new AppError("Unauthorized", 401);
 
   const hashedRefreshToken = await hashToken({ token: refreshToken });
 
@@ -78,7 +78,7 @@ export const refreshSession = async ({
 }: {
   oldRefreshToken: string;
 }) => {
-  if (!oldRefreshToken) throw new AppError(401, "Unauthorized");
+  if (!oldRefreshToken) throw new AppError("Unauthorized", 401);
 
   const payload = jwt.verify(
     oldRefreshToken,
@@ -91,13 +91,13 @@ export const refreshSession = async ({
     where: { hashedToken: hashedOldRefreshToken },
   });
 
-  if (!stored) throw new AppError(401, "Invalid refresh token");
+  if (!stored) throw new AppError("Invalid refresh token", 401);
 
   const user = await prisma.user.findUnique({
     where: { id: payload.userId },
   });
 
-  if (!user) throw new AppError(401, "Invalid refresh token");
+  if (!user) throw new AppError("Invalid refresh token", 401);
 
   const newAccessToken = generateAccessToken({
     userId: user.id,

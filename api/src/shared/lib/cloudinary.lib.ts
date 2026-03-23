@@ -7,7 +7,7 @@ const apiKey = process.env.CLOUDINARY_API_KEY;
 const apiSecret = process.env.CLOUDINARY_API_SECRET;
 
 if (!cloudName || !apiKey || !apiSecret) {
-  throw new AppError(400, "Cloudinary credentials not found");
+  throw new AppError("Cloudinary credentials not found", 400);
 }
 
 cloudinary.config({

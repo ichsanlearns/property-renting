@@ -12,7 +12,6 @@ export const createRoomSchema = z.object({
   bathroomType: z.string().min(1, "Bathroom type is required"),
   capacity: z.number().min(1, "Capacity is required"),
 
-  isVerified: z.string().min(1, "Is verified is required"),
   isPublished: z.string().min(1, "Is published is required"),
 });
 

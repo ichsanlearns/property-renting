@@ -126,7 +126,7 @@ model Property {
   tenantId           String    @map("tenant_id")
   categoryId         String    @map("category_id")
   
-  title              String    
+  name              String    
   description        String    
 
   country            String    

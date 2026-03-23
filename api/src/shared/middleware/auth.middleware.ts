@@ -11,13 +11,13 @@ export function authMiddleware(
   const authHeader = req.headers.authorization;
 
   if (!authHeader) {
-    return next(new AppError(401, "Unauthorized"));
+    return next(new AppError("Unauthorized", 401));
   }
 
   const token = authHeader.split(" ")[1];
 
   if (!token) {
-    return next(new AppError(401, "Unauthorized"));
+    return next(new AppError("Unauthorized", 401));
   }
 
   try {
@@ -27,6 +27,6 @@ export function authMiddleware(
 
     next();
   } catch {
-    next(new AppError(401, "Invalid token"));
+    next(new AppError("Invalid token", 401));
   }
 }

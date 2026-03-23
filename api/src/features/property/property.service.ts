@@ -61,3 +61,36 @@ export const create = async ({
     return property;
   });
 };
+
+export const getByIdBasic = async (id: string) => {
+  const property = await prisma.property.findUnique({
+    where: {
+      id,
+    },
+    select: {
+      name: true,
+      city: true,
+      province: true,
+      country: true,
+
+      averageRating: true,
+      reviewCount: true,
+
+      property_images: {
+        where: {
+          isCover: true,
+        },
+        select: {
+          imageUrl: true,
+        },
+        take: 1,
+      },
+    },
+  });
+
+  if (!property) {
+    throw new AppError("Property not found", 404);
+  }
+
+  return property;
+};

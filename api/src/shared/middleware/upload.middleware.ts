@@ -9,7 +9,7 @@ export const uploadCloud = multer({
   fileFilter: (_req: any, file: any, cb: any) => {
     const allowed = ["image/jpeg", "image/png", "image/webp"];
     if (!allowed.includes(file.mimetype)) {
-      return cb(new AppError(400, "Invalid file type"));
+      return cb(new AppError("Invalid file type", 400));
     }
     cb(null, true);
   },

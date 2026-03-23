@@ -2,7 +2,6 @@ import type {
   BedType,
   ViewType,
   BathroomType,
-  VerificationStatus,
   PublishStatus,
 } from "../../../generated/prisma/enums.js";
 
@@ -17,6 +16,5 @@ export type CreateRoomPayload = {
   viewType: ViewType;
   bathroomType: BathroomType;
   capacity: number;
-  isVerified: VerificationStatus;
   isPublished: PublishStatus;
 };

@@ -4,7 +4,7 @@ import * as PropertyController from "./property.controller.js";
 import { authMiddleware } from "../../shared/middleware/auth.middleware.js";
 import { uploadCloud } from "../../shared/middleware/upload.middleware.js";
 
-import * as RoomController from "./room/room.controller.js";
+import { createRoomRouter } from "./room/room.route.js";
 
 const router = Router();
 
@@ -15,6 +15,8 @@ router.post(
   PropertyController.create,
 );
 
-router.use("/:propertyId/rooms", RoomController.createRoomController);
+router.get("/:id/basic", PropertyController.getByIdBasic);
+
+router.use("/:propertyId/rooms", createRoomRouter);
 
 export default router;
