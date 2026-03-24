@@ -76,7 +76,7 @@ export const getByIdBasic = async (id: string) => {
       averageRating: true,
       reviewCount: true,
 
-      property_images: {
+      propertyImages: {
         where: {
           isCover: true,
         },

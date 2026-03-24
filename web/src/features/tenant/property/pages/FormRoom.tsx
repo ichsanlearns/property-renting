@@ -127,7 +127,7 @@ function FormRoom() {
             <img
               className="w-full h-full object-cover"
               data-alt="Luxury Ocean Breeze Villa Exterior"
-              src={property.property_images[0].imageUrl}
+              src={property.propertyImages[0].imageUrl}
             />
             <div className="absolute inset-0 bg-linear-to-t from-black/40 to-transparent"></div>
           </div>
