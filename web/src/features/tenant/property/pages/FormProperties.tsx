@@ -51,10 +51,9 @@ function Properties() {
       toast.dismiss();
       toast.success("Property created successfully");
 
-      queryClient.setQueryData(
-        queryKeys.property.basic(property.data.id),
-        property,
-      );
+      queryClient.setQueryData(queryKeys.property.basic(property.data.id), {
+        data: property.data,
+      });
       navigate(`/tenant/properties/${property.data.id}/rooms/create`);
     },
     onError: (error: any) => {

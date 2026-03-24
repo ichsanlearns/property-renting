@@ -127,7 +127,7 @@ function FormRoom() {
             <img
               className="w-full h-full object-cover"
               data-alt="Luxury Ocean Breeze Villa Exterior"
-              src={property.propertyImages[0].imageUrl}
+              src={property?.coverImage}
             />
             <div className="absolute inset-0 bg-linear-to-t from-black/40 to-transparent"></div>
           </div>
@@ -136,20 +136,20 @@ function FormRoom() {
               Adding room to
             </span>
             <h1 className="text-3xl font-extrabold text-on-surface tracking-tight mt-1">
-              {property.name}
+              {property?.name}
             </h1>
             <div className="flex items-center justify-center md:justify-start gap-4 mt-2 text-slate-500 text-sm">
               <span className="flex items-center gap-1">
                 <span className="material-symbols-outlined text-[18px]">
                   location_on
                 </span>
-                {property.city}, {property.province}
+                {property?.city}, {property?.province}
               </span>
               <span className="flex items-center gap-1">
                 <span className="material-symbols-outlined text-[18px]">
                   star
                 </span>
-                {property.rating} ({property.reviewCount} reviews)
+                {property?.averageRating} ({property?.reviewCount} reviews)
               </span>
             </div>
           </div>
