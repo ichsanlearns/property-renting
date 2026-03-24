@@ -3,7 +3,7 @@ import { useAuthStore } from "../features/auth/stores/auth.store";
 import { refreshSession } from "../features/auth/api/auth.service";
 
 let isRefreshing = false;
-let refreshPromise: Promise<void> | null = null;
+let refreshPromise: Promise<string> | null = null;
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL ?? "http://localhost:8000/api",
@@ -42,7 +42,7 @@ api.interceptors.response.use(
         refreshPromise = (async () => {
           try {
             const res = await refreshSession();
-            const newToken = res.data.data.accessToken;
+            const newToken = res.data.accessToken;
 
             useAuthStore.getState().setToken(newToken);
 
@@ -56,10 +56,7 @@ api.interceptors.response.use(
         })();
       }
 
-      const res = await refreshSession();
-      const newToken = res.data.data.accessToken;
-
-      useAuthStore.getState().setToken(newToken);
+      const newToken = await refreshPromise;
 
       original.headers.Authorization = `Bearer ${newToken}`;
 

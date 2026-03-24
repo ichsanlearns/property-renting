@@ -10,8 +10,6 @@ export const createRoomController = catchAsync(
     const files = req.files as Express.Multer.File[];
     const imagesMeta = JSON.parse(req.body.imagesMeta);
 
-    console.log("pass");
-
     const {
       name,
       description,

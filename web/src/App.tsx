@@ -86,7 +86,7 @@ function App() {
       try {
         const res = await refreshSession();
 
-        const { accessToken, user } = res.data.data;
+        const { accessToken, user } = res.data;
 
         useAuthStore.getState().login(accessToken, user);
       } catch {

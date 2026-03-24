@@ -29,7 +29,7 @@ function Login() {
       toast.loading("Logging in...");
       const res = await loginRequest(data);
 
-      const { accessToken, user } = res.data.data;
+      const { accessToken, user } = res.data;
 
       login(accessToken, user);
 
