@@ -1,4 +1,4 @@
-import api from "../../../api/client";
+import { apiAuth } from "../../../api/client";
 
 import { AUTH_ENDPOINTS } from "./auth.endpoint";
 
@@ -8,13 +8,22 @@ type LoginPayload = {
 };
 
 export const loginRequest = async (data: LoginPayload) => {
-  return await api.post(AUTH_ENDPOINTS.LOGIN, data);
+  return await apiAuth.post(AUTH_ENDPOINTS.LOGIN, data);
 };
 
 export const logoutRequest = async () => {
-  return await api.post(AUTH_ENDPOINTS.LOGOUT);
+  return await apiAuth.post(AUTH_ENDPOINTS.LOGOUT);
 };
 
 export const refreshSession = async () => {
-  return await api.post(AUTH_ENDPOINTS.REFRESH);
+  try {
+    console.log("refreshing session");
+    return await apiAuth.post(AUTH_ENDPOINTS.REFRESH);
+  } catch (error: any) {
+    if (!error.response) {
+      console.log("refreshing session because cold start");
+      return await apiAuth.post(AUTH_ENDPOINTS.REFRESH);
+    }
+    throw error;
+  }
 };

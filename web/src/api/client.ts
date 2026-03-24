@@ -4,6 +4,13 @@ import { refreshSession } from "../features/auth/api/auth.service";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL ?? "http://localhost:8000/api",
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+const apiAuth = axios.create({
+  baseURL: import.meta.env.VITE_API_URL ?? "http://localhost:8000/api",
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
@@ -19,21 +26,26 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-axios.interceptors.response.use(
+api.interceptors.response.use(
   (res) => res,
   async (error) => {
     const original = error.config;
 
-    if (error.response.status === 401 && !original._retry) {
+    if (error.response?.status === 401 && !original._retry) {
       original._retry = true;
 
-      const res = await refreshSession();
+      try {
+        const res = await refreshSession();
 
-      useAuthStore.getState().setToken(res.data.data.accessToken);
+        useAuthStore.getState().setToken(res.data.data.accessToken);
 
-      original.headers.Authorization = `Bearer ${res.data.data.accessToken}`;
+        original.headers.Authorization = `Bearer ${res.data.data.accessToken}`;
 
-      return axios(original);
+        return api(original);
+      } catch (error) {
+        useAuthStore.getState().logout();
+        return Promise.reject(error);
+      }
     }
 
     return Promise.reject(error);
@@ -41,3 +53,4 @@ axios.interceptors.response.use(
 );
 
 export default api;
+export { apiAuth };
