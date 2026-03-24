@@ -21,7 +21,7 @@ export const refreshSession = async () => {
     return await apiAuth.post(AUTH_ENDPOINTS.REFRESH);
   } catch (error: any) {
     if (!error.response) {
-      console.log("refreshing session because cold start");
+      console.log("refreshing session because no response");
       return await apiAuth.post(AUTH_ENDPOINTS.REFRESH);
     }
     throw error;

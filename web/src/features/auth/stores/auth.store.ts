@@ -14,6 +14,7 @@ type AuthState = {
   token: string | null;
   user: User | null;
   authLoading: boolean;
+
   setToken: (token: string) => void;
   login: (token: string, user: User) => void;
   logout: () => void;
