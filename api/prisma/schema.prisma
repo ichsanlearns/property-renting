@@ -213,6 +213,7 @@ model PropertyAmenity {
 model PropertyImage {
   id                String                                   @id @default(uuid())
   propertyId        String     @map("property_id")
+
   imageUrl          String     @map("image_url")
   isCover           Boolean    @map("is_cover")            @default(false)
   order             Int        @default(0)
@@ -281,7 +282,8 @@ model RoomTypeImage {
   roomTypeId        String     @map("room_type_id")
 
   imageUrl          String     @map("image_url")
-  isPrimary         Boolean    @map("is_primary")            @default(false)
+  isCover           Boolean    @map("is_cover")            @default(false)
+  order             Int        @default(0)
 
   createdAt         DateTime   @map("created_at")            @default(now()) 
   updatedAt         DateTime   @map("updated_at")            @updatedAt

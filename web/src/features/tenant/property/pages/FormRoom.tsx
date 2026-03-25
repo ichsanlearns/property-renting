@@ -119,7 +119,7 @@ function FormRoom() {
   return (
     <main className=" m-16 min-h-[calc(100vh-4rem)]">
       <form
-        onSubmit={handleSubmit(onSubmit, (error) => console.log(error))}
+        onSubmit={handleSubmit(onSubmit, (error) => console.error(error))}
         className="mx-auto space-y-8"
       >
         <header className="relative overflow-hidden rounded-3xl bg-white shadow-sm border border-primary/10 flex flex-col md:flex-row items-center gap-6 p-6">
@@ -333,9 +333,13 @@ function FormRoom() {
                       max={10}
                       step={1}
                     />
-                    <span className="w-12 h-12 bg-primary text-white flex items-center justify-center font-bold rounded-xl shrink-0 shadow-lg shadow-primary/20">
-                      {watch("bedCount")}
-                    </span>
+                    <input
+                      value={watch("bedCount")}
+                      onChange={(e) =>
+                        setValue("bedCount", Number(e.target.value))
+                      }
+                      className="w-12 h-12 bg-primary text-white flex text-center justify-center font-bold rounded-xl shrink-0 shadow-lg shadow-primary/20"
+                    />
                   </div>
                 </div>
               </div>
