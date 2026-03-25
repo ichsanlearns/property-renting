@@ -119,7 +119,7 @@ function FormRoom() {
   return (
     <main className=" m-16 min-h-[calc(100vh-4rem)]">
       <form
-        onSubmit={handleSubmit(onSubmit, (error) => console.log(error))}
+        onSubmit={handleSubmit(onSubmit, (error) => console.error(error))}
         className="mx-auto space-y-8"
       >
         <header className="relative overflow-hidden rounded-3xl bg-white shadow-sm border border-primary/10 flex flex-col md:flex-row items-center gap-6 p-6">
@@ -127,7 +127,7 @@ function FormRoom() {
             <img
               className="w-full h-full object-cover"
               data-alt="Luxury Ocean Breeze Villa Exterior"
-              src={property.property_images[0].imageUrl}
+              src={property?.coverImage}
             />
             <div className="absolute inset-0 bg-linear-to-t from-black/40 to-transparent"></div>
           </div>
@@ -136,20 +136,20 @@ function FormRoom() {
               Adding room to
             </span>
             <h1 className="text-3xl font-extrabold text-on-surface tracking-tight mt-1">
-              {property.name}
+              {property?.name}
             </h1>
             <div className="flex items-center justify-center md:justify-start gap-4 mt-2 text-slate-500 text-sm">
               <span className="flex items-center gap-1">
                 <span className="material-symbols-outlined text-[18px]">
                   location_on
                 </span>
-                {property.city}, {property.province}
+                {property?.city}, {property?.province}
               </span>
               <span className="flex items-center gap-1">
                 <span className="material-symbols-outlined text-[18px]">
                   star
                 </span>
-                {property.rating} ({property.reviewCount} reviews)
+                {property?.averageRating} ({property?.reviewCount} reviews)
               </span>
             </div>
           </div>
@@ -333,9 +333,13 @@ function FormRoom() {
                       max={10}
                       step={1}
                     />
-                    <span className="w-12 h-12 bg-primary text-white flex items-center justify-center font-bold rounded-xl shrink-0 shadow-lg shadow-primary/20">
-                      {watch("bedCount")}
-                    </span>
+                    <input
+                      value={watch("bedCount")}
+                      onChange={(e) =>
+                        setValue("bedCount", Number(e.target.value))
+                      }
+                      className="w-12 h-12 bg-primary text-white flex text-center justify-center font-bold rounded-xl shrink-0 shadow-lg shadow-primary/20"
+                    />
                   </div>
                 </div>
               </div>

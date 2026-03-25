@@ -97,7 +97,7 @@ model User {
   updatedAt         DateTime     @map("updated_at")        @updatedAt
   deletedAt         DateTime?    @map("deleted_at")
 
-  refresh_tokens RefreshToken[]
+  refreshTokens RefreshToken[] 
   properties     Property[]
   reviews        Review[]
   reservations   Reservation[]
@@ -152,9 +152,9 @@ model Property {
   tenant User @relation(fields: [tenantId], references: [id])
   category PropertyCategory @relation(fields: [categoryId], references: [id])
 
-  property_amenities PropertyAmenity[]
-  property_images    PropertyImage[]
-  room_types         RoomType[]
+  propertyAmenities PropertyAmenity[]
+  propertyImages    PropertyImage[]
+  roomTypes         RoomType[]
   reviews            Review[]
   voucher            Voucher[]
 
@@ -187,8 +187,8 @@ model Amenity {
   updatedAt         DateTime   @map("updated_at")            @updatedAt
   deletedAt         DateTime?  @map("deleted_at")
 
-  property_amenities PropertyAmenity[]
-  room_amenities     RoomTypeAmenity[]
+  propertyAmenities PropertyAmenity[]
+  roomAmenities     RoomTypeAmenity[]
 
   @@map("amenities")
 }
@@ -213,6 +213,7 @@ model PropertyAmenity {
 model PropertyImage {
   id                String                                   @id @default(uuid())
   propertyId        String     @map("property_id")
+
   imageUrl          String     @map("image_url")
   isCover           Boolean    @map("is_cover")            @default(false)
   order             Int        @default(0)
@@ -250,11 +251,11 @@ model RoomType {
 
   property Property @relation(fields: [propertyId], references: [id])
 
-  room_availability RoomAvailability[]
-  price_adjustments PriceAdjustment[]
+  roomAvailability RoomAvailability[]
+  priceAdjustments PriceAdjustment[]
   reservations      Reservation[]
-  room_type_images  RoomTypeImage[]
-  room_amenities    RoomTypeAmenity[]
+  roomTypeImages  RoomTypeImage[]
+  roomAmenities    RoomTypeAmenity[]
 
   @@map("room_types")
 }
@@ -281,7 +282,8 @@ model RoomTypeImage {
   roomTypeId        String     @map("room_type_id")
 
   imageUrl          String     @map("image_url")
-  isPrimary         Boolean    @map("is_primary")            @default(false)
+  isCover           Boolean    @map("is_cover")            @default(false)
+  order             Int        @default(0)
 
   createdAt         DateTime   @map("created_at")            @default(now()) 
   updatedAt         DateTime   @map("updated_at")            @updatedAt

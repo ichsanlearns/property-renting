@@ -45,7 +45,9 @@ export const create = async ({
       });
     }
 
-    for (const amenity of amenities) {
+    const amenitiesId = Array.isArray(amenities) ? amenities : [amenities];
+
+    for (const amenity of amenitiesId) {
       await tx.propertyAmenity.create({
         data: {
           propertyId: property.id,
@@ -58,7 +60,16 @@ export const create = async ({
         },
       });
     }
-    return property;
+    return {
+      id: property.id,
+      name: property.name,
+      city: property.city,
+      province: property.province,
+      country: property.country,
+      averageRating: property.averageRating,
+      reviewCount: property.reviewCount,
+      coverImage: images.find((image) => image.isCover)?.imageUrl,
+    };
   });
 };
 
@@ -76,7 +87,7 @@ export const getByIdBasic = async (id: string) => {
       averageRating: true,
       reviewCount: true,
 
-      property_images: {
+      propertyImages: {
         where: {
           isCover: true,
         },
@@ -92,5 +103,13 @@ export const getByIdBasic = async (id: string) => {
     throw new AppError("Property not found", 404);
   }
 
-  return property;
+  return {
+    name: property.name,
+    city: property.city,
+    province: property.province,
+    country: property.country,
+    averageRating: property.averageRating,
+    reviewCount: property.reviewCount,
+    coverImage: property.propertyImages[0]?.imageUrl,
+  };
 };

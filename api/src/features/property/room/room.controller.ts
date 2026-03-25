@@ -10,8 +10,6 @@ export const createRoomController = catchAsync(
     const files = req.files as Express.Multer.File[];
     const imagesMeta = JSON.parse(req.body.imagesMeta);
 
-    console.log("pass");
-
     const {
       name,
       description,
@@ -40,11 +38,15 @@ export const createRoomController = catchAsync(
       isPublished: isPublished.toUpperCase(),
     };
 
+    console.log("pass 1");
+
     const uploadedImagesUrl = await Promise.all(
       files.map((file) =>
         uploadService.uploadToCloudinary(file.buffer, "roomImages"),
       ),
     );
+
+    console.log("pass 2");
 
     const images = uploadedImagesUrl.map((url, index) => {
       return {

@@ -35,9 +35,10 @@ function Properties() {
 
   const [images, setImages] = useState<ImageType[]>([]);
 
-  const { register, handleSubmit, setValue } = useForm<CreatePropertyPayload>({
-    resolver: zodResolver(createPropertySchema),
-  });
+  const { register, handleSubmit, setValue, watch } =
+    useForm<CreatePropertyPayload>({
+      resolver: zodResolver(createPropertySchema),
+    });
 
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -51,10 +52,9 @@ function Properties() {
       toast.dismiss();
       toast.success("Property created successfully");
 
-      queryClient.setQueryData(
-        queryKeys.property.basic(property.data.id),
-        property,
-      );
+      queryClient.setQueryData(queryKeys.property.basic(property.data.id), {
+        data: property.data,
+      });
       navigate(`/tenant/properties/${property.data.id}/rooms/create`);
     },
     onError: (error: any) => {
@@ -152,7 +152,9 @@ function Properties() {
           </button>
         </div>
       </header>
-      <form onSubmit={handleSubmit(onSubmit, (errors) => console.log(errors))}>
+      <form
+        onSubmit={handleSubmit(onSubmit, (errors) => console.error(errors))}
+      >
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <div className="lg:col-span-8 space-y-6">
             <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-8 shadow-sm">
@@ -295,14 +297,26 @@ function Properties() {
                 <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
                   Number of Bathrooms
                 </label>
-                <input
-                  type="number"
-                  placeholder="e.g. 2"
-                  {...register("numberOfBathrooms", {
-                    valueAsNumber: true,
-                  })}
-                  className="w-full rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary p-3.5  text-slate-500"
-                />
+                <div className="flex gap-4">
+                  <input
+                    {...register("numberOfBathrooms", {
+                      valueAsNumber: true,
+                    })}
+                    className="w-full accent-primary h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer mt-4"
+                    type="range"
+                    defaultValue={1}
+                    min={1}
+                    max={100}
+                    step={1}
+                  />
+                  <input
+                    value={watch("numberOfBathrooms")}
+                    onChange={(e) =>
+                      setValue("numberOfBathrooms", Number(e.target.value))
+                    }
+                    className="w-12 h-12 bg-primary text-white flex text-center justify-center font-bold rounded-xl shrink-0 shadow-lg shadow-primary/20"
+                  />
+                </div>
               </div>
             </div>
             <ImageUpload value={images} onChange={setImages} />

@@ -39,8 +39,10 @@ export const createRoom = async ({
       })),
     });
 
+    const amenitiesId = Array.isArray(amenities) ? amenities : [amenities];
+
     await tx.roomTypeAmenity.createMany({
-      data: amenities.map((amenity) => ({
+      data: amenitiesId.map((amenity) => ({
         amenityId: amenity,
         roomTypeId: room.id,
       })),

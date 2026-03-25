@@ -2,7 +2,17 @@ import axios from "axios";
 import { useAuthStore } from "../features/auth/stores/auth.store";
 import { refreshSession } from "../features/auth/api/auth.service";
 
+let isRefreshing = false;
+let refreshPromise: Promise<string> | null = null;
+
 const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL ?? "http://localhost:8000/api",
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+const apiAuth = axios.create({
   baseURL: import.meta.env.VITE_API_URL ?? "http://localhost:8000/api",
   withCredentials: true,
   headers: {
@@ -11,29 +21,46 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  const token = useAuthStore.getState().token;
-
+  const { token } = useAuthStore.getState();
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
 
-axios.interceptors.response.use(
+api.interceptors.response.use(
   (res) => res,
   async (error) => {
     const original = error.config;
 
-    if (error.response.status === 401 && !original._retry) {
+    if (error.response?.status === 401 && !original._retry) {
       original._retry = true;
 
-      const res = await refreshSession();
+      if (!isRefreshing) {
+        isRefreshing = true;
 
-      useAuthStore.getState().setToken(res.data.data.accessToken);
+        refreshPromise = (async () => {
+          try {
+            const res = await refreshSession();
+            const newToken = res.data.accessToken;
 
-      original.headers.Authorization = `Bearer ${res.data.data.accessToken}`;
+            useAuthStore.getState().setToken(newToken);
 
-      return axios(original);
+            return newToken;
+          } catch (err) {
+            useAuthStore.getState().logout();
+            throw err;
+          } finally {
+            isRefreshing = false;
+          }
+        })();
+      }
+
+      const newToken = await refreshPromise;
+
+      original.headers.Authorization = `Bearer ${newToken}`;
+
+      return api(original);
     }
 
     return Promise.reject(error);
@@ -41,3 +68,4 @@ axios.interceptors.response.use(
 );
 
 export default api;
+export { apiAuth };

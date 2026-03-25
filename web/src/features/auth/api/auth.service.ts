@@ -1,6 +1,9 @@
-import api from "../../../api/client";
+import { apiAuth } from "../../../api/client";
 
 import { AUTH_ENDPOINTS } from "./auth.endpoint";
+
+import type { ApiResponse } from "../../../shared/types/api-response";
+import type { LoginResponse, RefreshSessionResponse } from "./auth.response";
 
 type LoginPayload = {
   email: string;
@@ -8,13 +11,39 @@ type LoginPayload = {
 };
 
 export const loginRequest = async (data: LoginPayload) => {
-  return await api.post(AUTH_ENDPOINTS.LOGIN, data);
+  const response = await apiAuth.post<ApiResponse<LoginResponse>>(
+    AUTH_ENDPOINTS.LOGIN,
+    data,
+  );
+
+  return response.data;
 };
 
 export const logoutRequest = async () => {
-  return await api.post(AUTH_ENDPOINTS.LOGOUT);
+  const response = await apiAuth.post<ApiResponse<void>>(AUTH_ENDPOINTS.LOGOUT);
+
+  return response.data;
 };
 
 export const refreshSession = async () => {
-  return await api.post(AUTH_ENDPOINTS.REFRESH);
+  try {
+    console.log("refreshing basic session");
+    const response = await apiAuth.post<ApiResponse<RefreshSessionResponse>>(
+      AUTH_ENDPOINTS.REFRESH,
+    );
+    console.log("refreshing basic session success");
+
+    return response.data;
+  } catch (error: any) {
+    if (!error.response) {
+      console.log("refreshing session because no response");
+      const response = await apiAuth.post<ApiResponse<RefreshSessionResponse>>(
+        AUTH_ENDPOINTS.REFRESH,
+      );
+      console.log("refreshing session because no response success");
+
+      return response.data;
+    }
+    throw error;
+  }
 };
