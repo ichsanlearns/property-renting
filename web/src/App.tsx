@@ -19,6 +19,7 @@ import FormRoom from "./features/tenant/property/pages/FormRoom";
 
 import { refreshSession } from "./features/auth/api/auth.service";
 import { useAuthStore } from "./features/auth/stores/auth.store";
+import Register from "./features/auth/pages/Register";
 
 const router = createBrowserRouter([
   {
@@ -58,11 +59,14 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: "/login",
     element: <GuestRoute />,
     children: [
       {
-        index: true,
+        path: "/register",
+        element: <Register />,
+      },
+      {
+        path: "/login",
         element: <Login />,
       },
     ],
