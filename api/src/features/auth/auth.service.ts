@@ -7,6 +7,7 @@ import { AppError } from "../../shared/utils/app-error.util.js";
 import {
   generateAccessToken,
   generateRefreshToken,
+  generateRegisterToken,
 } from "../../shared/utils/jwt.util.js";
 import { hashToken } from "../../shared/utils/hash-token.util.js";
 
@@ -61,6 +62,37 @@ export const login = async ({
       profileImage: user.profileImage,
     },
   };
+};
+
+export const register = async ({ email }: { email: string }) => {
+  const isExist = await prisma.user.findUnique({
+    where: { email },
+  });
+
+  if (isExist) throw new AppError("User already exists", 400);
+
+  const isRegistering = await prisma.registerToken.findFirst({
+    where: { email, type: "REGISTER" },
+  });
+
+  if (isRegistering) {
+    await prisma.registerToken.deleteMany({
+      where: { email, type: "REGISTER" },
+    });
+  }
+
+  const token = generateRegisterToken({ email });
+
+  const hashedToken = await hashToken({ token });
+
+  await prisma.registerToken.create({
+    data: {
+      email,
+      token: hashedToken,
+      type: "REGISTER",
+      expiresAt: new Date(Date.now() + 120 * 60 * 1000),
+    },
+  });
 };
 
 export const logout = async ({ refreshToken }: { refreshToken: string }) => {

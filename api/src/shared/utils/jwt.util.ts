@@ -27,6 +27,12 @@ export function generateAccessToken({
   });
 }
 
+export function generateRegisterToken({ email }: { email: string }) {
+  return jwt.sign({ email }, process.env.JWT_REGISTER_TOKEN!, {
+    expiresIn: "120m",
+  });
+}
+
 export const hashPassword = async ({ token }: { token: string }) => {
   return await bcrypt.hash(token, 10);
 };

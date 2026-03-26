@@ -21,20 +21,13 @@ export const login = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-export const logout = catchAsync(async (req: Request, res: Response) => {
-  const oldRefreshToken = req.cookies.refreshToken;
+export const register = catchAsync(async (req: Request, res: Response) => {
+  const { email } = req.body;
 
-  await authService.logout({ refreshToken: oldRefreshToken });
-
-  res.clearCookie("refreshToken", {
-    httpOnly: true,
-    secure: true,
-    sameSite: "none",
-    path: "/",
-  });
+  await authService.register({ email });
 
   res.status(200).json({
-    message: "Logged out successfully",
+    message: "Register success, please check your email to verify your account",
   });
 });
 
@@ -58,3 +51,20 @@ export const authRefreshToken = catchAsync(
     });
   },
 );
+
+export const logout = catchAsync(async (req: Request, res: Response) => {
+  const oldRefreshToken = req.cookies.refreshToken;
+
+  await authService.logout({ refreshToken: oldRefreshToken });
+
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+    path: "/",
+  });
+
+  res.status(200).json({
+    message: "Logged out successfully",
+  });
+});
