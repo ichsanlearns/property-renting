@@ -82,6 +82,12 @@ enum ViewType {
   NONE
 }
 
+enum TokenType {
+  VERIFY_EMAIL
+  RESET_PASSWORD
+  REGISTER
+}
+
 model User {
   id                String                                 @id @default(uuid())
   email             String                                 @unique 
@@ -130,6 +136,22 @@ model Account {
 
   @@unique([provider, providerAccountId])
   @@map("accounts")
+}
+
+model RegisterToken {
+  id                String                                @id @default(uuid())
+  email             String       
+
+  token             String                                @unique 
+  type              TokenType  
+
+  expiresAt         DateTime     @map("expires_at")
+  createdAt         DateTime     @map("created_at")       @default(now())         
+  deletedAt         DateTime?    @map("deleted_at")
+
+  @@index([email])
+
+  @@map("register_tokens")
 }
 
 model RefreshToken {
