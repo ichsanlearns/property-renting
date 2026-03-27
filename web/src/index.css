@@ -6,6 +6,7 @@
 body {
   font-family: "Plus Jakarta Sans", sans-serif;
 }
+
 .material-symbols-outlined {
   font-variation-settings:
     "FILL" 0,
@@ -13,6 +14,7 @@ body {
     "GRAD" 0,
     "opsz" 24;
 }
+
 .bg-pattern {
   background-image:
     linear-gradient(
@@ -21,6 +23,14 @@ body {
       rgba(255, 186, 181, 0.1) 100%
     ),
     url(https://lh3.googleusercontent.com/aida-public/AB6AXuAKBh8zfAYnBrL4Yjn98gA3TCswAiYAyWh_o0f-EA8PgjPY7mPCrfzARTPl_25mgYQkM6w7vX7uVwi8qLhw9bHdvSz9SNDakDHILrZ1xEVPZLkZAhN-qQ4n0p0Lg0J4vacme0gKw8AorRbWOe9SrW_cGwj0xK4EEAQwEc_S69zOPRKGQtFkAn3K2ps4CJCrBaXyY_6yKS918LaOH_B7j_VGKdLLpFquTVJxen2ZnHosn05E6e7nW0JDhADUEvOiXuxPMl4jrHbTI3Rl);
+  background-size: cover;
+  background-position: center;
+}
+
+.bg-warm-travel {
+  background:
+    linear-gradient(rgba(15, 23, 42, 0.4), rgba(15, 23, 42, 0.4)),
+    url("https://images.unsplash.com/photo-1502784444187-359ac186c5bb?auto=format&fit=crop&q=80&w=1920");
   background-size: cover;
   background-position: center;
 }
