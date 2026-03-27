@@ -9,7 +9,9 @@ import {
   generateRefreshToken,
   generateRegisterToken,
 } from "../../shared/utils/jwt.util.js";
-import { hashToken } from "../../shared/utils/hash-token.util.js";
+import { generateToken, hashToken } from "../../shared/utils/token.util.js";
+import { sendEmail } from "../../shared/services/email/email.service.js";
+import { verifyEmailTemplate } from "../../shared/services/email/email.template.js";
 
 export const login = async ({
   email,
@@ -81,17 +83,23 @@ export const register = async ({ email }: { email: string }) => {
     });
   }
 
-  const token = generateRegisterToken({ email });
-
-  const hashedToken = await hashToken({ token });
+  const { raw, hashed } = generateToken();
 
   await prisma.registerToken.create({
     data: {
       email,
-      token: hashedToken,
+      token: hashed,
       type: "REGISTER",
       expiresAt: new Date(Date.now() + 120 * 60 * 1000),
     },
+  });
+
+  const verifyUrl = `${process.env.APP_URL}/verify?token=${raw}`;
+
+  await sendEmail({
+    to: email,
+    subject: "Verify your email",
+    html: verifyEmailTemplate(verifyUrl),
   });
 };
 

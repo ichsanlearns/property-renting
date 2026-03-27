@@ -1,5 +1,4 @@
 import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
 
 import type { Role } from "../../generated/prisma/enums.js";
 
@@ -32,7 +31,3 @@ export function generateRegisterToken({ email }: { email: string }) {
     expiresIn: "120m",
   });
 }
-
-export const hashPassword = async ({ token }: { token: string }) => {
-  return await bcrypt.hash(token, 10);
-};
