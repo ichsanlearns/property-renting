@@ -19,6 +19,15 @@ export const loginRequest = async (data: LoginPayload) => {
   return response.data;
 };
 
+export const registerRequest = async (data: LoginPayload) => {
+  const response = await apiAuth.post<ApiResponse<void>>(
+    AUTH_ENDPOINTS.REGISTER,
+    data,
+  );
+
+  return response.data;
+};
+
 export const logoutRequest = async () => {
   const response = await apiAuth.post<ApiResponse<void>>(AUTH_ENDPOINTS.LOGOUT);
 

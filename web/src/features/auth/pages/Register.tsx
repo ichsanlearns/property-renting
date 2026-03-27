@@ -1,6 +1,38 @@
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import { registerRequest } from "../api/auth.service";
+import {
+  registerSchema,
+  type RegisterFormData,
+} from "../schemas/register.schema";
 
 function Register() {
+  const navigate = useNavigate();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = useForm<RegisterFormData>({
+    resolver: zodResolver(registerSchema),
+  });
+
+  const onSubmit = async (data: any) => {
+    try {
+      toast.loading("Registering...");
+      const response = await registerRequest(data);
+      toast.dismiss();
+      toast.success(response.message);
+      navigate("/login");
+    } catch (error: any) {
+      toast.dismiss();
+      toast.error(error.response?.data?.message || "Something went wrong");
+    }
+  };
   return (
     <main className="flex items-center min-h-screen justify-center px-4 pt-20 pb-12 relative overflow-hidden">
       <div className="absolute inset-0 z-0 bg-linear-to-br from-primary/20 via-primary-fixed/30 to-background opacity-60"></div>
@@ -23,7 +55,7 @@ function Register() {
               Enter your email to get started
             </p>
           </div>
-          <form className="space-y-6">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-1.5">
               <label className="text-[10px] font-bold uppercase tracking-wider text-on-[#ffffff]-variant px-1">
                 Email Address
@@ -33,14 +65,19 @@ function Register() {
                   className="w-full px-5 py-4 rounded-xl bg-[#f1eeee] border-transparent focus:border-primary/30 focus:bg-white focus:ring-4 focus:ring-primary/5 transition-all duration-200 text-on-[#ffffff] font-medium placeholder:text-slate-400"
                   placeholder="name@example.com"
                   type="email"
+                  {...register("email")}
                 />
               </div>
             </div>
             <button
-              className="w-full bg-primary text-on-primary py-4 rounded-full font-bold text-base shadow-lg shadow-primary/25 hover:brightness-110 active:scale-[0.98] transition-all duration-200"
+              className={`w-full py-4 rounded-full font-bold text-base shadow-lg shadow-primary/25 hover:brightness-110 active:scale-[0.98] transition-all duration-200 ${
+                isSubmitting
+                  ? "bg-primary/50 cursor-not-allowed"
+                  : "bg-primary text-on-primary"
+              }`}
               type="submit"
             >
-              Continue
+              {isSubmitting ? "Registering..." : "Register"}
             </button>
           </form>
           <div className="relative my-8">

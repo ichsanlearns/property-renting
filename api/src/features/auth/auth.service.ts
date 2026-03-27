@@ -97,7 +97,10 @@ export const register = async ({ email }: { email: string }) => {
   const verifyUrl = `${process.env.APP_URL}/verify?token=${raw}`;
 
   await sendEmail({
-    to: email,
+    to:
+      process.env.NODE_ENV === "development"
+        ? "michsanudin03@gmail.com"
+        : email,
     subject: "Verify your email",
     html: verifyEmailTemplate(verifyUrl),
   });
