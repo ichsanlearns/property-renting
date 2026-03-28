@@ -7,7 +7,6 @@ import type { LoginResponse, RefreshSessionResponse } from "./auth.response";
 
 type LoginPayload = {
   email: string;
-  password: string;
 };
 
 export const loginRequest = async (data: LoginPayload) => {

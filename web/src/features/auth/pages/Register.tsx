@@ -21,13 +21,13 @@ function Register() {
     resolver: zodResolver(registerSchema),
   });
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: RegisterFormData) => {
     try {
       toast.loading("Registering...");
       const response = await registerRequest(data);
       toast.dismiss();
       toast.success(response.message);
-      navigate("/check-email");
+      navigate("check-email", { state: { email: data.email } });
     } catch (error: any) {
       toast.dismiss();
       toast.error(error.response?.data?.message || "Something went wrong");

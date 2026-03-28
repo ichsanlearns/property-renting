@@ -11,7 +11,7 @@ import {
 } from "../../shared/utils/jwt.util.js";
 import { generateToken, hashToken } from "../../shared/utils/token.util.js";
 import { sendEmail } from "../../shared/services/email/email.service.js";
-import { verifyEmailTemplate } from "../../shared/services/email/email.template.js";
+import { registrationEmailTemplate } from "../../shared/services/email/email.template.js";
 
 export const login = async ({
   email,
@@ -102,7 +102,7 @@ export const register = async ({ email }: { email: string }) => {
         ? "michsanudin03@gmail.com"
         : email,
     subject: "Verify your email",
-    html: verifyEmailTemplate(verifyUrl),
+    html: registrationEmailTemplate(verifyUrl),
   });
 };
 
