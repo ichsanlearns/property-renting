@@ -21,6 +21,7 @@ import { refreshSession } from "./features/auth/api/auth.service";
 import { useAuthStore } from "./features/auth/stores/auth.store";
 import Register from "./features/auth/pages/Register";
 import CheckEmail from "./features/auth/components/CheckEmail";
+import RegisterLayout from "./shared/layouts/RegisterLayout";
 
 const router = createBrowserRouter([
   {
@@ -64,11 +65,17 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/register",
-        element: <Register />,
-      },
-      {
-        path: "/check-email",
-        element: <CheckEmail />,
+        element: <RegisterLayout />,
+        children: [
+          {
+            index: true,
+            element: <Register />,
+          },
+          {
+            path: "check-email",
+            element: <CheckEmail />,
+          },
+        ],
       },
       {
         path: "/login",

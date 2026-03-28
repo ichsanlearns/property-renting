@@ -1,6 +1,8 @@
+import { Link } from "react-router";
+
 function CheckEmail() {
   return (
-    <body className="font-body bg-[#f8f5f5] text-on-background min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
+    <div className="font-body bg-[#f8f5f5] text-on-background min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
       <div
         className="absolute inset-0 bg-warm-travel z-0"
         data-alt="Cinematic wide shot of a misty mountain range at sunrise with soft golden light hitting the peaks and deep orange hues in the sky"
@@ -50,7 +52,7 @@ function CheckEmail() {
               </span>
             </button>
             <p className="text-on-[#ffffff]-variant text-sm font-medium">
-              Didn’t receive it?
+              Didn`t receive it?
               <a
                 className="text-primary hover:underline font-bold transition-all"
                 href="#"
@@ -60,9 +62,9 @@ function CheckEmail() {
             </p>
           </div>
           <div className="mt-10 pt-8 border-t border-[#ffffff]-container-high">
-            <a
+            <Link
               className="inline-flex items-center gap-2 text-on-[#ffffff]-variant hover:text-primary transition-colors text-sm font-bold uppercase tracking-wider"
-              href="#"
+              to="/login"
             >
               <span
                 className="material-symbols-outlined text-lg"
@@ -71,14 +73,14 @@ function CheckEmail() {
                 arrow_back
               </span>
               Back to login
-            </a>
+            </Link>
           </div>
         </div>
       </main>
       <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-10 text-white/50 text-[10px] font-bold uppercase tracking-widest pointer-events-none">
         © 2024 StayHub Hospitality Group
       </div>
-    </body>
+    </div>
   );
 }
 
