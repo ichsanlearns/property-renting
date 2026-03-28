@@ -26,7 +26,7 @@ export const login = async ({
 
   if (!user) throw new AppError("Invalid credentials", 400);
 
-  const isMatch = await bcrypt.compare(password, user.password);
+  const isMatch = await bcrypt.compare(password, user.password!);
 
   if (!isMatch) throw new AppError("Invalid credentials", 400);
 
@@ -34,11 +34,11 @@ export const login = async ({
 
   const newAccessToken = generateAccessToken({
     userId: user.id,
-    role: user.role,
+    role: user.role!,
   });
   const newRefreshToken = generateRefreshToken({
     userId: user.id,
-    role: user.role,
+    role: user.role!,
   });
 
   const hashedRefreshToken = await hashToken({ token: newRefreshToken });
@@ -68,7 +68,7 @@ export const login = async ({
 
 export const register = async ({ email }: { email: string }) => {
   const isExist = await prisma.user.findUnique({
-    where: { email },
+    where: { email, isVerified: true },
   });
 
   if (isExist) throw new AppError("User already exists", 400);
@@ -91,6 +91,13 @@ export const register = async ({ email }: { email: string }) => {
       token: hashed,
       type: "REGISTER",
       expiresAt: new Date(Date.now() + 120 * 60 * 1000),
+    },
+  });
+
+  await prisma.user.create({
+    data: {
+      email,
+      isVerified: false,
     },
   });
 
@@ -144,11 +151,11 @@ export const refreshSession = async ({
 
   const newAccessToken = generateAccessToken({
     userId: user.id,
-    role: user.role,
+    role: user.role!,
   });
   const newRefreshToken = generateRefreshToken({
     userId: user.id,
-    role: user.role,
+    role: user.role!,
   });
 
   await prisma.refreshToken.deleteMany({

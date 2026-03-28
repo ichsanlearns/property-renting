@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link } from "react-router";
+import { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router";
 
 function CheckEmail() {
   const [timeLeft, setTimeLeft] = useState(60);
@@ -64,20 +64,11 @@ function CheckEmail() {
                 </span>
               )}
             </button>
-            {/* <button
-              className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-full shadow-lg shadow-primary/25 transition-all active:scale-95 flex items-center justify-center gap-2 group opacity-70 cursor-not-allowed"
-              disabled={true}
-            >
-              <span className="material-symbols-outlined animate-spin text-xl">
-                progress_activity
-              </span>
-              <span>Resend in 30s</span>
-            </button> */}
             <p className="text-on-[#ffffff]-variant text-sm font-medium">
               Didn`t receive it?
-              <p className="inline-block text-primary hover:underline font-bold transition-all">
+              <span className="inline-block text-primary hover:underline font-bold transition-all">
                 &nbsp;Check spam.
-              </p>
+              </span>
             </p>
           </div>
           <div className="mt-10 pt-8 border-t border-[#ffffff]-container-high">

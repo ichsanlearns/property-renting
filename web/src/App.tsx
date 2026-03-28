@@ -20,8 +20,9 @@ import FormRoom from "./features/tenant/property/pages/FormRoom";
 import { refreshSession } from "./features/auth/api/auth.service";
 import { useAuthStore } from "./features/auth/stores/auth.store";
 import Register from "./features/auth/pages/Register";
-import CheckEmail from "./features/auth/components/CheckEmail";
+import CheckEmail from "./features/auth/pages/CheckEmail";
 import RegisterLayout from "./shared/layouts/RegisterLayout";
+import FillData from "./features/auth/pages/FillData";
 
 const router = createBrowserRouter([
   {
@@ -74,6 +75,10 @@ const router = createBrowserRouter([
           {
             path: "check-email",
             element: <CheckEmail />,
+          },
+          {
+            path: "verify",
+            element: <FillData />,
           },
         ],
       },
