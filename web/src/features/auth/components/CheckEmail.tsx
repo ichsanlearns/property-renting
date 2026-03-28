@@ -1,6 +1,9 @@
+import { useState } from "react";
 import { Link } from "react-router";
 
 function CheckEmail() {
+  const [timeLeft, setTimeLeft] = useState(60);
+
   return (
     <div className="font-body bg-[#f8f5f5] text-on-background min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
       <div
@@ -42,23 +45,39 @@ function CheckEmail() {
             <p className="text-primary font-bold text-sm">j***@gmail.com</p>
           </div>
           <div className="space-y-4">
-            <button className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-full shadow-lg shadow-primary/25 transition-all active:scale-95 flex items-center justify-center gap-2 group">
-              <span>Resend email</span>
-              <span
-                className="material-symbols-outlined text-xl group-hover:translate-x-1 transition-transform"
-                data-icon="send"
-              >
-                send
-              </span>
+            <button
+              disabled={timeLeft > 0}
+              className={`w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-full shadow-lg shadow-primary/25 transition-all active:scale-95 flex items-center justify-center gap-2 group ${timeLeft > 0 ? "cursor-not-allowed opacity-70" : ""}`}
+            >
+              <span>{timeLeft === 0 ? "Resend email" : "Resend in 30s"}</span>
+              {timeLeft > 0 && (
+                <span className="material-symbols-outlined animate-spin text-xl">
+                  progress_activity
+                </span>
+              )}
+              {timeLeft === 0 && (
+                <span
+                  className="material-symbols-outlined text-xl group-hover:translate-x-1 transition-transform"
+                  data-icon="send"
+                >
+                  send
+                </span>
+              )}
             </button>
+            {/* <button
+              className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-full shadow-lg shadow-primary/25 transition-all active:scale-95 flex items-center justify-center gap-2 group opacity-70 cursor-not-allowed"
+              disabled={true}
+            >
+              <span className="material-symbols-outlined animate-spin text-xl">
+                progress_activity
+              </span>
+              <span>Resend in 30s</span>
+            </button> */}
             <p className="text-on-[#ffffff]-variant text-sm font-medium">
               Didn`t receive it?
-              <a
-                className="text-primary hover:underline font-bold transition-all"
-                href="#"
-              >
-                Check spam
-              </a>
+              <p className="inline-block text-primary hover:underline font-bold transition-all">
+                &nbsp;Check spam.
+              </p>
             </p>
           </div>
           <div className="mt-10 pt-8 border-t border-[#ffffff]-container-high">
