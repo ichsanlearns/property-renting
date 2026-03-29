@@ -100,7 +100,7 @@ export const register = async ({ email }: { email: string }) => {
     },
   });
 
-  const verifyUrl = `${process.env.APP_URL}/verify?token=${raw}`;
+  const verifyUrl = `${process.env.APP_URL}/register/verify/fill-data?token=${raw}`;
 
   await sendEmail({
     to: email,
@@ -146,7 +146,7 @@ export const resendToken = async ({ email }: { email: string }) => {
     },
   });
 
-  const verifyUrl = `${process.env.APP_URL}/verify?token=${raw}`;
+  const verifyUrl = `${process.env.APP_URL}/register/verify/fill-data?token=${raw}`;
 
   await sendEmail({
     to:

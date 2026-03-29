@@ -27,7 +27,7 @@ function Register() {
       const response = await registerRequest(data);
       toast.dismiss();
       toast.success(response.message);
-      navigate("check-email", {
+      navigate("verify", {
         state: { email: data.email },
       });
     } catch (error: any) {

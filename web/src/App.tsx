@@ -23,6 +23,8 @@ import Register from "./features/auth/pages/Register";
 import CheckEmail from "./features/auth/pages/CheckEmail";
 import RegisterLayout from "./shared/layouts/RegisterLayout";
 import FillData from "./features/auth/pages/FillData";
+import VerifyLayout from "./features/auth/pages/VerifyLayout";
+import Password from "./features/auth/pages/Password";
 
 const router = createBrowserRouter([
   {
@@ -73,12 +75,22 @@ const router = createBrowserRouter([
             element: <Register />,
           },
           {
-            path: "check-email",
-            element: <CheckEmail />,
-          },
-          {
             path: "verify",
-            element: <FillData />,
+            element: <VerifyLayout />,
+            children: [
+              {
+                index: true,
+                element: <CheckEmail />,
+              },
+              {
+                path: "password",
+                element: <Password />,
+              },
+              {
+                path: "fill-data",
+                element: <FillData />,
+              },
+            ],
           },
         ],
       },
