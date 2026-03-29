@@ -1,8 +1,21 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
+import { useCountdown } from "../../../shared/utils/countdown.util";
+import { formatTime } from "../../../shared/utils/time.util";
 
 function CheckEmail() {
-  const [timeLeft, setTimeLeft] = useState(60);
+  const location = useLocation();
+  const { email } = location.state;
+
+  const [timer, setTimer] = useState(60);
+
+  const timeLeft = useCountdown(new Date().getTime() + 60 * 1000);
+
+  useEffect(() => {
+    const { seconds } = formatTime(timeLeft);
+
+    setTimer(Number(seconds));
+  }, [timeLeft]);
 
   return (
     <div className="font-body bg-[#f8f5f5] text-on-background min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
@@ -42,20 +55,22 @@ function CheckEmail() {
             We sent a confirmation link to your email
           </p>
           <div className="inline-block px-4 py-1.5 bg-[#ffffff]-container rounded-full mb-8">
-            <p className="text-primary font-bold text-sm">j***@gmail.com</p>
+            <p className="text-primary font-bold text-sm">{email}</p>
           </div>
           <div className="space-y-4">
             <button
-              disabled={timeLeft > 0}
-              className={`w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-full shadow-lg shadow-primary/25 transition-all active:scale-95 flex items-center justify-center gap-2 group ${timeLeft > 0 ? "cursor-not-allowed opacity-70" : ""}`}
+              disabled={timer > 0}
+              className={`w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-full shadow-lg shadow-primary/25 transition-all active:scale-95 flex items-center justify-center gap-2 group ${timer > 0 ? "cursor-not-allowed opacity-70" : ""}`}
             >
-              <span>{timeLeft === 0 ? "Resend email" : "Resend in 30s"}</span>
-              {timeLeft > 0 && (
+              <span>
+                {timer === 0 ? "Resend email" : `Resend in ${timer}s`}
+              </span>
+              {timer > 0 && (
                 <span className="material-symbols-outlined animate-spin text-xl">
                   progress_activity
                 </span>
               )}
-              {timeLeft === 0 && (
+              {timer === 0 && (
                 <span
                   className="material-symbols-outlined text-xl group-hover:translate-x-1 transition-transform"
                   data-icon="send"

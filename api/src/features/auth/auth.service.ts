@@ -7,7 +7,6 @@ import { AppError } from "../../shared/utils/app-error.util.js";
 import {
   generateAccessToken,
   generateRefreshToken,
-  generateRegisterToken,
 } from "../../shared/utils/jwt.util.js";
 import { generateToken, hashToken } from "../../shared/utils/token.util.js";
 import { sendEmail } from "../../shared/services/email/email.service.js";
@@ -77,27 +76,27 @@ export const register = async ({ email }: { email: string }) => {
     where: { email, type: "REGISTER" },
   });
 
-  if (isRegistering) {
-    await prisma.registerToken.deleteMany({
-      where: { email, type: "REGISTER" },
+  if (!isRegistering) {
+    await prisma.user.create({
+      data: {
+        email,
+        isVerified: false,
+      },
     });
   }
 
+  await prisma.registerToken.deleteMany({
+    where: { email, type: "REGISTER" },
+  });
+
   const { raw, hashed } = generateToken();
 
-  const newToken = await prisma.registerToken.create({
+  await prisma.registerToken.create({
     data: {
       email,
       token: hashed,
       type: "REGISTER",
       expiresAt: new Date(Date.now() + 2 * 60 * 60 * 1000),
-    },
-  });
-
-  await prisma.user.create({
-    data: {
-      email,
-      isVerified: false,
     },
   });
 
@@ -108,8 +107,6 @@ export const register = async ({ email }: { email: string }) => {
     subject: "Verify your email",
     html: registrationEmailTemplate(verifyUrl),
   });
-
-  return newToken.createdAt;
 };
 
 export const resendToken = async ({ email }: { email: string }) => {

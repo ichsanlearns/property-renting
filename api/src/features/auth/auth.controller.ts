@@ -24,11 +24,10 @@ export const login = catchAsync(async (req: Request, res: Response) => {
 export const register = catchAsync(async (req: Request, res: Response) => {
   const { email } = req.body;
 
-  const result = await authService.register({ email });
+  await authService.register({ email });
 
   res.status(200).json({
     message: "Register success, please check your email to verify your account",
-    data: { createdAt: result },
   });
 });
 

@@ -3,9 +3,18 @@ import { apiAuth } from "../../../api/client";
 import { AUTH_ENDPOINTS } from "./auth.endpoint";
 
 import type { ApiResponse } from "../../../shared/types/api-response";
-import type { LoginResponse, RefreshSessionResponse } from "./auth.response";
+import type {
+  LoginResponse,
+  RefreshSessionResponse,
+  ResendTokenResponse,
+} from "./auth.response";
 
 type LoginPayload = {
+  email: string;
+  password: string;
+};
+
+type RegisterPayload = {
   email: string;
 };
 
@@ -18,9 +27,18 @@ export const loginRequest = async (data: LoginPayload) => {
   return response.data;
 };
 
-export const registerRequest = async (data: LoginPayload) => {
+export const registerRequest = async (data: RegisterPayload) => {
   const response = await apiAuth.post<ApiResponse<void>>(
     AUTH_ENDPOINTS.REGISTER,
+    data,
+  );
+
+  return response.data;
+};
+
+export const resendTokenRequest = async (data: RegisterPayload) => {
+  const response = await apiAuth.post<ApiResponse<ResendTokenResponse>>(
+    AUTH_ENDPOINTS.RESEND_TOKEN,
     data,
   );
 

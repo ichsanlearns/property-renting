@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export function useCountdown(expiredAt: string | undefined) {
+export function useCountdown(expiredAt: number | undefined) {
   const [timeLeft, setTimeLeft] = useState(0);
 
   useEffect(() => {

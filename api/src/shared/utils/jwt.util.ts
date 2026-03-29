@@ -25,9 +25,3 @@ export function generateAccessToken({
     expiresIn: "15m",
   });
 }
-
-export function generateRegisterToken({ email }: { email: string }) {
-  return jwt.sign({ email }, process.env.JWT_REGISTER_TOKEN!, {
-    expiresIn: "120m",
-  });
-}
