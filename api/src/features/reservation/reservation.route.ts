@@ -4,6 +4,6 @@ import { authMiddleware } from "../../shared/middleware/auth.middleware.js";
 
 const router = Router();
 
-router.post("/reservations", authMiddleware, createReservationController);
+router.post("/", authMiddleware, createReservationController);
 
 export default router;
