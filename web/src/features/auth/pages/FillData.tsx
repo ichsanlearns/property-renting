@@ -120,7 +120,7 @@ function FillData() {
                 </label>
                 <input
                   className="w-full px-5 py-4 bg-surface-container-low border-0 focus:ring-2 focus:ring-primary rounded-2xl text-sm font-medium placeholder:text-slate-400 transition-all"
-                  placeholder="+1 (555) 000-0000"
+                  placeholder="087812345678"
                   type="tel"
                 />
               </div>

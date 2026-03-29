@@ -85,12 +85,12 @@ export const register = async ({ email }: { email: string }) => {
 
   const { raw, hashed } = generateToken();
 
-  await prisma.registerToken.create({
+  const newToken = await prisma.registerToken.create({
     data: {
       email,
       token: hashed,
       type: "REGISTER",
-      expiresAt: new Date(Date.now() + 120 * 60 * 1000),
+      expiresAt: new Date(Date.now() + 2 * 60 * 60 * 1000),
     },
   });
 
@@ -104,6 +104,54 @@ export const register = async ({ email }: { email: string }) => {
   const verifyUrl = `${process.env.APP_URL}/verify?token=${raw}`;
 
   await sendEmail({
+    to: email,
+    subject: "Verify your email",
+    html: registrationEmailTemplate(verifyUrl),
+  });
+
+  return newToken.createdAt;
+};
+
+export const resendToken = async ({ email }: { email: string }) => {
+  const isExist = await prisma.user.findUnique({
+    where: { email, isVerified: true },
+  });
+
+  if (isExist) throw new AppError("User already registered", 400);
+
+  const notExpiredToken = await prisma.registerToken.findFirst({
+    where: {
+      email,
+      type: "REGISTER",
+      createdAt: { gte: new Date(Date.now() - 60 * 1000) },
+    },
+  });
+
+  if (notExpiredToken) {
+    throw new AppError(
+      "Please wait 60 seconds before resending the token",
+      400,
+    );
+  }
+
+  await prisma.registerToken.deleteMany({
+    where: { email, type: "REGISTER" },
+  });
+
+  const { raw, hashed } = generateToken();
+
+  const newToken = await prisma.registerToken.create({
+    data: {
+      email,
+      token: hashed,
+      type: "REGISTER",
+      expiresAt: new Date(Date.now() + 120 * 60 * 1000),
+    },
+  });
+
+  const verifyUrl = `${process.env.APP_URL}/verify?token=${raw}`;
+
+  await sendEmail({
     to:
       process.env.NODE_ENV === "development"
         ? "michsanudin03@gmail.com"
@@ -111,6 +159,8 @@ export const register = async ({ email }: { email: string }) => {
     subject: "Verify your email",
     html: registrationEmailTemplate(verifyUrl),
   });
+
+  return newToken.createdAt;
 };
 
 export const logout = async ({ refreshToken }: { refreshToken: string }) => {

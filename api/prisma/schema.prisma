@@ -146,6 +146,7 @@ model RegisterToken {
   type              TokenType  
 
   expiresAt         DateTime     @map("expires_at")
+
   createdAt         DateTime     @map("created_at")       @default(now())         
   deletedAt         DateTime?    @map("deleted_at")
 
