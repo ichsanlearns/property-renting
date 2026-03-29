@@ -100,7 +100,7 @@ export const register = async ({ email }: { email: string }) => {
     },
   });
 
-  const verifyUrl = `${process.env.APP_URL}/register/verify/fill-data?token=${raw}`;
+  const verifyUrl = `${process.env.APP_URL}/register/verify/password?token=${raw}`;
 
   await sendEmail({
     to: email,
@@ -146,7 +146,7 @@ export const resendToken = async ({ email }: { email: string }) => {
     },
   });
 
-  const verifyUrl = `${process.env.APP_URL}/register/verify/fill-data?token=${raw}`;
+  const verifyUrl = `${process.env.APP_URL}/register/verify/password?token=${raw}`;
 
   await sendEmail({
     to:
@@ -161,11 +161,9 @@ export const resendToken = async ({ email }: { email: string }) => {
 };
 
 export const updatePassword = async ({
-  email,
   password,
   token,
 }: {
-  email: string;
   password: string;
   token: string;
 }) => {
@@ -176,6 +174,8 @@ export const updatePassword = async ({
   });
 
   if (!registerToken) throw new AppError("Invalid token", 400);
+
+  const email = registerToken.email;
 
   const user = await prisma.user.findUnique({
     where: { email },

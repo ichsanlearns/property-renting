@@ -18,6 +18,11 @@ type RegisterPayload = {
   email: string;
 };
 
+type UpdatePasswordPayload = {
+  password: string;
+  token: string;
+};
+
 export const loginRequest = async (data: LoginPayload) => {
   const response = await apiAuth.post<ApiResponse<LoginResponse>>(
     AUTH_ENDPOINTS.LOGIN,
@@ -39,6 +44,15 @@ export const registerRequest = async (data: RegisterPayload) => {
 export const resendTokenRequest = async (data: RegisterPayload) => {
   const response = await apiAuth.post<ApiResponse<ResendTokenResponse>>(
     AUTH_ENDPOINTS.RESEND_TOKEN,
+    data,
+  );
+
+  return response.data;
+};
+
+export const updatePasswordRequest = async (data: UpdatePasswordPayload) => {
+  const response = await apiAuth.patch<ApiResponse<void>>(
+    AUTH_ENDPOINTS.UPDATE_PASSWORD,
     data,
   );
 
