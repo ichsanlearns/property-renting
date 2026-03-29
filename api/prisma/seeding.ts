@@ -21,6 +21,7 @@ const seed = async () => {
     await prisma.voucher.deleteMany({});
     await prisma.point.deleteMany({});
     await prisma.coupon.deleteMany({});
+    await prisma.roomAvailability.deleteMany({});
 
     console.info("🌱 Seeding started...");
 
@@ -40,8 +41,7 @@ const seed = async () => {
         role: Role.CUSTOMER,
         isVerified: false,
         referralCode: generateReferralCode(),
-        profileImage:
-          "https://images.unsplash.com/photo-1507874457470-272b3c8d8ee2",
+        profileImage: "https://images.unsplash.com/photo-1507874457470-272b3c8d8ee2",
       },
       {
         id: "17a6619c-f6b5-469a-adf4-66196a67d187",
@@ -53,8 +53,7 @@ const seed = async () => {
         role: Role.TENANT,
         isVerified: false,
         referralCode: generateReferralCode(),
-        profileImage:
-          "https://images.unsplash.com/photo-1518770660439-4636190af475",
+        profileImage: "https://images.unsplash.com/photo-1518770660439-4636190af475",
       },
     ];
     await prisma.user.createMany({
@@ -234,6 +233,42 @@ const seed = async () => {
     await prisma.amenity.createMany({
       data: roomAmenities,
     });
+
+    const seedRoomAvailability = async () => {
+      const roomTypes = await prisma.roomType.findMany();
+
+      const today = new Date();
+      const totalDays = 30;
+
+      for (const room of roomTypes) {
+        for (let i = 0; i < totalDays; i++) {
+          const date = new Date();
+          date.setDate(today.getDate() + i);
+          date.setHours(0, 0, 0, 0);
+
+          await prisma.roomAvailability.upsert({
+            where: {
+              roomTypeId_date: {
+                roomTypeId: room.id,
+                date: date,
+              },
+            },
+            update: {
+              availableQuantity: room.quantity,
+            },
+            create: {
+              roomTypeId: room.id,
+              date: date,
+              availableQuantity: room.quantity,
+            },
+          });
+        }
+      }
+
+      console.log("✅ Room availability seeded (UPSERT)");
+    };
+
+    await seedRoomAvailability();
 
     // =============================
     // DONE
