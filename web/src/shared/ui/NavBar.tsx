@@ -138,7 +138,7 @@ function NavBar() {
                     Login
                   </Link>
                   <Link
-                    to="/login"
+                    to="/register"
                     className="bg-primary text-white text-sm font-bold px-5 py-2.5 rounded-xl shadow-lg shadow-primary/25 hover:scale-105 transition-transform"
                   >
                     Sign Up

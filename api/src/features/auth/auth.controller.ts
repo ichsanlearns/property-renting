@@ -21,22 +21,38 @@ export const login = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-export const logout = catchAsync(async (req: Request, res: Response) => {
-  const oldRefreshToken = req.cookies.refreshToken;
+export const register = catchAsync(async (req: Request, res: Response) => {
+  const { email } = req.body;
 
-  await authService.logout({ refreshToken: oldRefreshToken });
-
-  res.clearCookie("refreshToken", {
-    httpOnly: true,
-    secure: true,
-    sameSite: "none",
-    path: "/",
-  });
+  await authService.register({ email });
 
   res.status(200).json({
-    message: "Logged out successfully",
+    message: "Register success, please check your email to verify your account",
   });
 });
+
+export const resendToken = catchAsync(async (req: Request, res: Response) => {
+  const { email } = req.body;
+
+  const result = await authService.resendToken({ email });
+
+  res.status(200).json({
+    message: "Token resent successfully",
+    data: { createdAt: result },
+  });
+});
+
+export const updatePassword = catchAsync(
+  async (req: Request, res: Response) => {
+    const { password, token } = req.body;
+
+    await authService.updatePassword({ password, token });
+
+    res.status(200).json({
+      message: "Password updated successfully",
+    });
+  },
+);
 
 export const authRefreshToken = catchAsync(
   async (req: Request, res: Response) => {
@@ -58,3 +74,20 @@ export const authRefreshToken = catchAsync(
     });
   },
 );
+
+export const logout = catchAsync(async (req: Request, res: Response) => {
+  const oldRefreshToken = req.cookies.refreshToken;
+
+  await authService.logout({ refreshToken: oldRefreshToken });
+
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+    path: "/",
+  });
+
+  res.status(200).json({
+    message: "Logged out successfully",
+  });
+});

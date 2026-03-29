@@ -1,5 +1,4 @@
 import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
 
 import type { Role } from "../../generated/prisma/enums.js";
 
@@ -26,7 +25,3 @@ export function generateAccessToken({
     expiresIn: "15m",
   });
 }
-
-export const hashPassword = async ({ token }: { token: string }) => {
-  return await bcrypt.hash(token, 10);
-};

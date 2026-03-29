@@ -38,15 +38,11 @@ export const createRoomController = catchAsync(
       isPublished: isPublished.toUpperCase(),
     };
 
-    console.log("pass 1");
-
     const uploadedImagesUrl = await Promise.all(
       files.map((file) =>
         uploadService.uploadToCloudinary(file.buffer, "roomImages"),
       ),
     );
-
-    console.log("pass 2");
 
     const images = uploadedImagesUrl.map((url, index) => {
       return {

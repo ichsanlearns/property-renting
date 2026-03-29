@@ -3,16 +3,56 @@ import { apiAuth } from "../../../api/client";
 import { AUTH_ENDPOINTS } from "./auth.endpoint";
 
 import type { ApiResponse } from "../../../shared/types/api-response";
-import type { LoginResponse, RefreshSessionResponse } from "./auth.response";
+import type {
+  LoginResponse,
+  RefreshSessionResponse,
+  ResendTokenResponse,
+} from "./auth.response";
 
 type LoginPayload = {
   email: string;
   password: string;
 };
 
+type RegisterPayload = {
+  email: string;
+};
+
+type UpdatePasswordPayload = {
+  password: string;
+  token: string;
+};
+
 export const loginRequest = async (data: LoginPayload) => {
   const response = await apiAuth.post<ApiResponse<LoginResponse>>(
     AUTH_ENDPOINTS.LOGIN,
+    data,
+  );
+
+  return response.data;
+};
+
+export const registerRequest = async (data: RegisterPayload) => {
+  const response = await apiAuth.post<ApiResponse<void>>(
+    AUTH_ENDPOINTS.REGISTER,
+    data,
+  );
+
+  return response.data;
+};
+
+export const resendTokenRequest = async (data: RegisterPayload) => {
+  const response = await apiAuth.post<ApiResponse<ResendTokenResponse>>(
+    AUTH_ENDPOINTS.RESEND_TOKEN,
+    data,
+  );
+
+  return response.data;
+};
+
+export const updatePasswordRequest = async (data: UpdatePasswordPayload) => {
+  const response = await apiAuth.patch<ApiResponse<void>>(
+    AUTH_ENDPOINTS.UPDATE_PASSWORD,
     data,
   );
 

@@ -19,6 +19,12 @@ import FormRoom from "./features/tenant/property/pages/FormRoom";
 
 import { refreshSession } from "./features/auth/api/auth.service";
 import { useAuthStore } from "./features/auth/stores/auth.store";
+import Register from "./features/auth/pages/Register";
+import CheckEmail from "./features/auth/pages/CheckEmail";
+import RegisterLayout from "./shared/layouts/RegisterLayout";
+import FillData from "./features/auth/pages/FillData";
+import VerifyLayout from "./features/auth/pages/VerifyLayout";
+import Password from "./features/auth/pages/Password";
 
 const router = createBrowserRouter([
   {
@@ -58,11 +64,38 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: "/login",
     element: <GuestRoute />,
     children: [
       {
-        index: true,
+        path: "/register",
+        element: <RegisterLayout />,
+        children: [
+          {
+            index: true,
+            element: <Register />,
+          },
+          {
+            path: "verify",
+            element: <VerifyLayout />,
+            children: [
+              {
+                index: true,
+                element: <CheckEmail />,
+              },
+              {
+                path: "password",
+                element: <Password />,
+              },
+              {
+                path: "fill-data",
+                element: <FillData />,
+              },
+            ],
+          },
+        ],
+      },
+      {
+        path: "/login",
         element: <Login />,
       },
     ],

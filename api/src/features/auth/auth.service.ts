@@ -8,7 +8,9 @@ import {
   generateAccessToken,
   generateRefreshToken,
 } from "../../shared/utils/jwt.util.js";
-import { hashToken } from "../../shared/utils/hash-token.util.js";
+import { generateToken, hashToken } from "../../shared/utils/token.util.js";
+import { sendEmail } from "../../shared/services/email/email.service.js";
+import { registrationEmailTemplate } from "../../shared/services/email/email.template.js";
 
 export const login = async ({
   email,
@@ -23,7 +25,7 @@ export const login = async ({
 
   if (!user) throw new AppError("Invalid credentials", 400);
 
-  const isMatch = await bcrypt.compare(password, user.password);
+  const isMatch = await bcrypt.compare(password, user.password!);
 
   if (!isMatch) throw new AppError("Invalid credentials", 400);
 
@@ -31,11 +33,11 @@ export const login = async ({
 
   const newAccessToken = generateAccessToken({
     userId: user.id,
-    role: user.role,
+    role: user.role!,
   });
   const newRefreshToken = generateRefreshToken({
     userId: user.id,
-    role: user.role,
+    role: user.role!,
   });
 
   const hashedRefreshToken = await hashToken({ token: newRefreshToken });
@@ -61,6 +63,132 @@ export const login = async ({
       profileImage: user.profileImage,
     },
   };
+};
+
+export const register = async ({ email }: { email: string }) => {
+  const isExist = await prisma.user.findUnique({
+    where: { email, isVerified: true },
+  });
+
+  if (isExist) throw new AppError("User already exists", 400);
+
+  const isRegistering = await prisma.registerToken.findFirst({
+    where: { email, type: "REGISTER" },
+  });
+
+  if (!isRegistering) {
+    await prisma.user.create({
+      data: {
+        email,
+        isVerified: false,
+      },
+    });
+  }
+
+  await prisma.registerToken.deleteMany({
+    where: { email, type: "REGISTER" },
+  });
+
+  const { raw, hashed } = generateToken();
+
+  await prisma.registerToken.create({
+    data: {
+      email,
+      token: hashed,
+      type: "REGISTER",
+      expiresAt: new Date(Date.now() + 2 * 60 * 60 * 1000),
+    },
+  });
+
+  const verifyUrl = `${process.env.APP_URL}/register/verify/password?token=${raw}`;
+
+  await sendEmail({
+    to: email,
+    subject: "Verify your email",
+    html: registrationEmailTemplate(verifyUrl),
+  });
+};
+
+export const resendToken = async ({ email }: { email: string }) => {
+  const isExist = await prisma.user.findUnique({
+    where: { email, isVerified: true },
+  });
+
+  if (isExist) throw new AppError("User already registered", 400);
+
+  const notExpiredToken = await prisma.registerToken.findFirst({
+    where: {
+      email,
+      type: "REGISTER",
+      createdAt: { gte: new Date(Date.now() - 60 * 1000) },
+    },
+  });
+
+  if (notExpiredToken) {
+    throw new AppError(
+      "Please wait 60 seconds before resending the token",
+      400,
+    );
+  }
+
+  await prisma.registerToken.deleteMany({
+    where: { email, type: "REGISTER" },
+  });
+
+  const { raw, hashed } = generateToken();
+
+  const newToken = await prisma.registerToken.create({
+    data: {
+      email,
+      token: hashed,
+      type: "REGISTER",
+      expiresAt: new Date(Date.now() + 120 * 60 * 1000),
+    },
+  });
+
+  const verifyUrl = `${process.env.APP_URL}/register/verify/password?token=${raw}`;
+
+  await sendEmail({
+    to:
+      process.env.NODE_ENV === "development"
+        ? "michsanudin03@gmail.com"
+        : email,
+    subject: "Verify your email",
+    html: registrationEmailTemplate(verifyUrl),
+  });
+
+  return newToken.createdAt;
+};
+
+export const updatePassword = async ({
+  password,
+  token,
+}: {
+  password: string;
+  token: string;
+}) => {
+  const hashedToken = await hashToken({ token });
+
+  const registerToken = await prisma.registerToken.findUnique({
+    where: { token: hashedToken },
+  });
+
+  if (!registerToken) throw new AppError("Invalid token", 400);
+
+  const email = registerToken.email;
+
+  const user = await prisma.user.findUnique({
+    where: { email },
+  });
+
+  if (!user) throw new AppError("User not found", 404);
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  await prisma.user.update({
+    where: { email },
+    data: { password: hashedPassword },
+  });
 };
 
 export const logout = async ({ refreshToken }: { refreshToken: string }) => {
@@ -101,11 +229,11 @@ export const refreshSession = async ({
 
   const newAccessToken = generateAccessToken({
     userId: user.id,
-    role: user.role,
+    role: user.role!,
   });
   const newRefreshToken = generateRefreshToken({
     userId: user.id,
-    role: user.role,
+    role: user.role!,
   });
 
   await prisma.refreshToken.deleteMany({

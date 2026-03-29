@@ -11,6 +11,10 @@ type AuthResponse = {
   };
 };
 
+export type ResendTokenResponse = {
+  createdAt: string;
+};
+
 export type LoginResponse = AuthResponse;
 
 export type RefreshSessionResponse = AuthResponse;
