@@ -42,6 +42,18 @@ export const resendToken = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+export const updatePassword = catchAsync(
+  async (req: Request, res: Response) => {
+    const { email, password, token } = req.body;
+
+    await authService.updatePassword({ email, password, token });
+
+    res.status(200).json({
+      message: "Password updated successfully",
+    });
+  },
+);
+
 export const authRefreshToken = catchAsync(
   async (req: Request, res: Response) => {
     const oldRefreshToken = req.cookies.refreshToken;

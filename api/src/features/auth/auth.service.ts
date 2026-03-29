@@ -160,6 +160,37 @@ export const resendToken = async ({ email }: { email: string }) => {
   return newToken.createdAt;
 };
 
+export const updatePassword = async ({
+  email,
+  password,
+  token,
+}: {
+  email: string;
+  password: string;
+  token: string;
+}) => {
+  const hashedToken = await hashToken({ token });
+
+  const registerToken = await prisma.registerToken.findUnique({
+    where: { token: hashedToken },
+  });
+
+  if (!registerToken) throw new AppError("Invalid token", 400);
+
+  const user = await prisma.user.findUnique({
+    where: { email },
+  });
+
+  if (!user) throw new AppError("User not found", 404);
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  await prisma.user.update({
+    where: { email },
+    data: { password: hashedPassword },
+  });
+};
+
 export const logout = async ({ refreshToken }: { refreshToken: string }) => {
   if (!refreshToken) throw new AppError("Unauthorized", 401);
 
