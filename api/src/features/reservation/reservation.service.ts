@@ -3,28 +3,30 @@ import { AppError } from "../../shared/utils/app-error.util.js";
 import { ReservationStatus } from "../../generated/prisma/enums.js";
 import type { CreateReservationInput } from "./reservation.validator.js";
 
-export const createReservation = async ({
-  userId,
-  payload,
-}: {
-  userId: string;
-  payload: CreateReservationInput;
-}) => {
-  const { roomTypeId, checkInDate, checkOutDate, guestCount, usePoints } =
-    payload;
+const normalizeDate = (date: Date) => {
+  const d = new Date(date);
+  d.setHours(0, 0, 0, 0);
+  return d;
+};
 
-  const checkIn = new Date(checkInDate);
-  const checkOut = new Date(checkOutDate);
+export const createReservation = async ({ userId, payload }: { userId: string; payload: CreateReservationInput }) => {
+  const { roomTypeId, checkInDate, checkOutDate, guestCount, usePoints } = payload;
+
+  //  normalize date
+  const checkIn = normalizeDate(new Date(checkInDate));
+  const checkOut = normalizeDate(new Date(checkOutDate));
 
   if (checkOut <= checkIn) {
     throw new AppError("Invalid date range", 400);
   }
 
-  const dates: Date[] = [];
-  let current = new Date(checkIn);
+  //  generate dates
+  const dates: string[] = [];
 
-  while (current < checkOut) {
-    dates.push(new Date(current));
+  let current = new Date(checkInDate);
+
+  while (current < new Date(checkOutDate)) {
+    dates.push(current.toISOString().split("T")[0]!);
     current.setDate(current.getDate() + 1);
   }
 
@@ -39,26 +41,33 @@ export const createReservation = async ({
       throw new AppError("Guest exceeds room capacity", 400);
     }
 
+    //  pakai range query (LEBIH AMAN)
     const availability = await tx.roomAvailability.findMany({
       where: {
-        roomTypeId: roomTypeId,
-        date: { in: dates },
+        roomTypeId,
+        date: {
+          gte: new Date(checkInDate),
+          lt: new Date(checkOutDate),
+        },
       },
     });
 
+    //  cek apakah semua tanggal ada
     if (availability.length !== dates.length) {
       throw new AppError("Room not available for selected dates", 400);
     }
 
-    availability.forEach((day) => {
+    //  cek stok
+    for (const day of availability) {
       if (day.availableQuantity <= 0) {
         throw new AppError("Room fully booked on selected date", 400);
       }
-    });
+    }
 
-    const totalAmount =
-      Number(roomType.basePrice) * dates.length - (usePoints ?? 0);
+    //  hitung harga
+    const totalAmount = Number(roomType.basePrice) * dates.length - (usePoints ?? 0);
 
+    //  update availability
     for (const day of availability) {
       await tx.roomAvailability.update({
         where: { id: day.id },
@@ -70,15 +79,16 @@ export const createReservation = async ({
       });
     }
 
+    // create reservation
     const reservation = await tx.reservation.create({
       data: {
         customerId: userId,
-        roomTypeId: roomTypeId,
+        roomTypeId,
         checkInDate: checkIn,
         checkOutDate: checkOut,
-        guestCount: guestCount,
+        guestCount,
         usingPoints: usePoints ?? 0,
-        totalAmount: totalAmount,
+        totalAmount,
         status: ReservationStatus.WAITING_PAYMENT,
         paymentDeadline: new Date(Date.now() + 2 * 60 * 60 * 1000),
       },
