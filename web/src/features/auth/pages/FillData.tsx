@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function FillData() {
   const [role, setRole] = useState<"CUSTOMER" | "TENANT">("CUSTOMER");
+  const navigate = useNavigate();
 
   return (
     <div className="flex-1 flex items-center justify-center p-6 md:p-12 lg:p-24 bg-linear-to-b from-slate-100/50 to-transparent">
@@ -138,6 +140,7 @@ function FillData() {
               </span>
             </button>
             <button
+              onClick={() => navigate("/")}
               className="w-full mt-4 py-3 text-on-surface-variant hover:text-on-surface text-sm font-semibold transition-colors"
               type="button"
             >

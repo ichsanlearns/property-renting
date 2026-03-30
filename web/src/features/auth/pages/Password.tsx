@@ -6,10 +6,12 @@ import { updatePasswordSchema } from "../schemas/update-password.schema";
 import { updatePasswordRequest } from "../api/auth.service";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../stores/auth.store";
 
 function Password() {
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token") || "";
+  const { login } = useAuthStore();
   const navigate = useNavigate();
 
   const { register, handleSubmit } = useForm<UpdatePasswordFormData>({
@@ -25,6 +27,7 @@ function Password() {
       });
       toast.dismiss();
       toast.success(res.message);
+      login({ token: res.data.accessToken, user: res.data.user });
       navigate("/register/verify/fill-data");
     } catch (error: any) {
       toast.dismiss();

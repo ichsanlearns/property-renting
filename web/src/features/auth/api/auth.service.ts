@@ -64,7 +64,7 @@ export const resendTokenRequest = async (data: RegisterPayload) => {
 };
 
 export const updatePasswordRequest = async (data: UpdatePasswordPayload) => {
-  const response = await apiAuth.patch<ApiResponse<void>>(
+  const response = await apiAuth.patch<ApiResponse<LoginResponse>>(
     AUTH_ENDPOINTS.UPDATE_PASSWORD,
     data,
   );

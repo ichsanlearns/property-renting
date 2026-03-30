@@ -322,20 +322,29 @@ export const updatePassword = async ({
 
   if (!registerToken) throw new AppError("Invalid token", 400);
 
-  const email = registerToken.email;
-
   const user = await prisma.user.findUnique({
-    where: { email },
+    where: { email: registerToken.email },
   });
 
   if (!user) throw new AppError("User not found", 404);
 
+  await prisma.user.update({
+    where: { email: registerToken.email },
+    data: { isVerified: true },
+  });
+
+  await prisma.registerToken.deleteMany({
+    where: { email: registerToken.email, type: "REGISTER" },
+  });
+
   const hashedPassword = await bcrypt.hash(password, 10);
 
   await prisma.user.update({
-    where: { email },
+    where: { email: registerToken.email },
     data: { password: hashedPassword },
   });
+
+  return registerToken.email;
 };
 
 export const logout = async ({ refreshToken }: { refreshToken: string }) => {
