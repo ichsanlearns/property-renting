@@ -25,3 +25,16 @@ export function generateAccessToken({
     expiresIn: "15m",
   });
 }
+
+export function generateAuthToken({
+  userId,
+  role,
+}: {
+  userId: string;
+  role: Role;
+}) {
+  const accessToken = generateAccessToken({ userId, role });
+  const refreshToken = generateRefreshToken({ userId, role });
+
+  return { accessToken, refreshToken };
+}

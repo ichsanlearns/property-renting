@@ -31,7 +31,7 @@ function Login() {
 
       const { accessToken, user } = res.data;
 
-      login(accessToken, user);
+      login({ token: accessToken, user });
 
       toast.dismiss();
       toast.success("Succesfully login");
