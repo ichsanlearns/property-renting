@@ -4,13 +4,12 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 import { AppError } from "../../shared/utils/app-error.util.js";
-import {
-  generateAccessToken,
-  generateRefreshToken,
-} from "../../shared/utils/jwt.util.js";
+import { generateAuthToken } from "../../shared/utils/jwt.util.js";
 import { generateToken, hashToken } from "../../shared/utils/token.util.js";
 import { sendEmail } from "../../shared/services/email/email.service.js";
 import { registrationEmailTemplate } from "../../shared/services/email/email.template.js";
+import { verifyGoogleToken } from "../../shared/utils/verify-token.util.js";
+import { generateReferralCode } from "../../shared/utils/referral.util.js";
 
 export const login = async ({
   email,
@@ -31,14 +30,11 @@ export const login = async ({
 
   const fullName = [user.firstName, user.lastName].filter(Boolean).join(" ");
 
-  const newAccessToken = generateAccessToken({
-    userId: user.id,
-    role: user.role!,
-  });
-  const newRefreshToken = generateRefreshToken({
-    userId: user.id,
-    role: user.role!,
-  });
+  const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
+    generateAuthToken({
+      userId: user.id,
+      role: user.role!,
+    });
 
   const hashedRefreshToken = await hashToken({ token: newRefreshToken });
 
@@ -49,6 +45,157 @@ export const login = async ({
       expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     },
   });
+
+  return {
+    accessToken: newAccessToken,
+    refreshToken: newRefreshToken,
+    user: {
+      id: user.id,
+      fullName,
+      email: user.email,
+      phoneNumbers: user.phoneNumber,
+      role: user.role,
+      isVerified: user.isVerified,
+      profileImage: user.profileImage,
+    },
+  };
+};
+
+export const loginWithGoogle = async ({ token }: { token: string }) => {
+  const payload = await verifyGoogleToken({ token });
+
+  if (!payload?.email || !payload.sub) {
+    throw new AppError("Invalid Google token", 400);
+  }
+
+  const googleAccount = await prisma.account.findUnique({
+    where: {
+      provider_providerAccountId: {
+        provider: "GOOGLE",
+        providerAccountId: payload.sub,
+      },
+    },
+    include: { user: true },
+  });
+
+  if (googleAccount) {
+    const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
+      generateAuthToken({
+        userId: googleAccount.user.id,
+        role: googleAccount.user.role!,
+      });
+
+    const hashedRefreshToken = await hashToken({ token: newRefreshToken });
+
+    await prisma.refreshToken.create({
+      data: {
+        hashedToken: hashedRefreshToken,
+        userId: googleAccount.user.id,
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      },
+    });
+
+    const fullName = [googleAccount.user.firstName, googleAccount.user.lastName]
+      .filter(Boolean)
+      .join(" ");
+
+    return {
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken,
+      user: {
+        id: googleAccount.user.id,
+        fullName,
+        email: googleAccount.user.email,
+        phoneNumbers: googleAccount.user.phoneNumber,
+        role: googleAccount.user.role,
+        isVerified: googleAccount.user.isVerified,
+        profileImage: googleAccount.user.profileImage,
+      },
+    };
+  }
+
+  let user = await prisma.user.findUnique({
+    where: { email: payload.email },
+  });
+
+  if (user) {
+    await prisma.account.create({
+      data: {
+        userId: user.id,
+        provider: "GOOGLE",
+        providerAccountId: payload.sub,
+      },
+    });
+
+    const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
+      generateAuthToken({
+        userId: user.id,
+        role: user.role!,
+      });
+
+    const hashedRefreshToken = await hashToken({ token: newRefreshToken });
+
+    await prisma.refreshToken.create({
+      data: {
+        hashedToken: hashedRefreshToken,
+        userId: user.id,
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      },
+    });
+
+    const fullName = [user.firstName, user.lastName].filter(Boolean).join(" ");
+
+    return {
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken,
+      user: {
+        id: user.id,
+        fullName,
+        email: user.email,
+        phoneNumbers: user.phoneNumber,
+        role: user.role,
+        isVerified: user.isVerified,
+        profileImage: user.profileImage,
+      },
+    };
+  }
+
+  user = await prisma.user.create({
+    data: {
+      email: payload.email,
+      firstName: payload.name?.split(" ")[0] || "",
+      lastName: payload.name?.split(" ").slice(1).join(" ") || "",
+      profileImage: payload.picture ?? null,
+      role: "CUSTOMER",
+      isVerified: true,
+      referralCode: generateReferralCode(),
+
+      accounts: {
+        create: {
+          provider: "GOOGLE",
+          providerAccountId: payload.sub,
+        },
+      },
+    },
+  });
+
+  const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
+    generateAuthToken({
+      userId: user.id,
+      role: user.role!,
+    });
+
+  const hashedRefreshToken = await hashToken({ token: newRefreshToken });
+
+  await prisma.refreshToken.create({
+    data: {
+      hashedToken: hashedRefreshToken,
+      userId: user.id,
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    },
+  });
+
+  const fullName = [user.firstName, user.lastName].filter(Boolean).join(" ");
 
   return {
     accessToken: newAccessToken,
@@ -227,14 +374,11 @@ export const refreshSession = async ({
 
   if (!user) throw new AppError("Invalid refresh token", 401);
 
-  const newAccessToken = generateAccessToken({
-    userId: user.id,
-    role: user.role!,
-  });
-  const newRefreshToken = generateRefreshToken({
-    userId: user.id,
-    role: user.role!,
-  });
+  const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
+    generateAuthToken({
+      userId: user.id,
+      role: user.role!,
+    });
 
   await prisma.refreshToken.deleteMany({
     where: { hashedToken: hashedOldRefreshToken },

@@ -4,6 +4,7 @@ import * as authController from "./auth.controller.js";
 const router = Router();
 
 router.post("/login", authController.login);
+router.post("/login/google", authController.loginWithGoogle);
 router.post("/register", authController.register);
 router.post("/resend-token", authController.resendToken);
 router.patch("/update-password", authController.updatePassword);

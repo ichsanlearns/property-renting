@@ -126,8 +126,6 @@ model Account {
   provider          String
   providerAccountId String       @map("provider_account_id")
   
-  expiresAt         DateTime     @map("expires_at")
-  
   createdAt         DateTime     @map("created_at")       @default(now())         
   updatedAt         DateTime     @map("updated_at")        @updatedAt
   deletedAt         DateTime?    @map("deleted_at")

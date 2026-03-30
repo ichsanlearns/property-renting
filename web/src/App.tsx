@@ -121,7 +121,7 @@ function App() {
 
         const { accessToken, user } = res.data;
 
-        useAuthStore.getState().login(accessToken, user);
+        useAuthStore.getState().login({ token: accessToken, user });
       } catch {
         useAuthStore.getState().logout();
       } finally {

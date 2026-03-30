@@ -23,9 +23,22 @@ type UpdatePasswordPayload = {
   token: string;
 };
 
+type GoogleLoginPayload = {
+  token: string;
+};
+
 export const loginRequest = async (data: LoginPayload) => {
   const response = await apiAuth.post<ApiResponse<LoginResponse>>(
     AUTH_ENDPOINTS.LOGIN,
+    data,
+  );
+
+  return response.data;
+};
+
+export const googleLoginRequest = async (data: GoogleLoginPayload) => {
+  const response = await apiAuth.post<ApiResponse<LoginResponse>>(
+    AUTH_ENDPOINTS.GOOGLE_LOGIN,
     data,
   );
 

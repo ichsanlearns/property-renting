@@ -21,6 +21,27 @@ export const login = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+export const loginWithGoogle = catchAsync(
+  async (req: Request, res: Response) => {
+    const { token } = req.body;
+
+    const result = await authService.loginWithGoogle({ token });
+
+    res.cookie("refreshToken", result.refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      path: "/",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    res.status(200).json({
+      message: "Login success",
+      data: { accessToken: result.accessToken, user: result.user },
+    });
+  },
+);
+
 export const register = catchAsync(async (req: Request, res: Response) => {
   const { email } = req.body;
 
