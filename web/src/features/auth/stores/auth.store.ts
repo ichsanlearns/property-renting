@@ -1,14 +1,5 @@
 import { create } from "zustand";
-
-type User = {
-  id: string;
-  fullName: string;
-  email: string;
-  phoneNumbers: string;
-  role: string;
-  isVerified: boolean;
-  profileImage: string | null;
-};
+import type { User } from "../../../shared/types/user.type";
 
 type AuthState = {
   token: string | null;
