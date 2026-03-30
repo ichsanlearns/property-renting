@@ -23,7 +23,7 @@ import Register from "./features/auth/pages/Register";
 import CheckEmail from "./features/auth/pages/CheckEmail";
 import RegisterLayout from "./shared/layouts/RegisterLayout";
 import FillData from "./features/auth/pages/FillData";
-import VerifyLayout from "./features/auth/pages/VerifyLayout";
+import VerifyLayout from "./shared/layouts/VerifyLayout";
 import Password from "./features/auth/pages/Password";
 
 const router = createBrowserRouter([
@@ -86,10 +86,6 @@ const router = createBrowserRouter([
                 path: "password",
                 element: <Password />,
               },
-              {
-                path: "fill-data",
-                element: <FillData />,
-              },
             ],
           },
         ],
@@ -100,7 +96,10 @@ const router = createBrowserRouter([
       },
     ],
   },
-
+  {
+    path: "/fill-data",
+    element: <FillData />,
+  },
   {
     path: "*",
     element: <NotFoundPage />,

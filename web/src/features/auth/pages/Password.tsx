@@ -27,8 +27,9 @@ function Password() {
       });
       toast.dismiss();
       toast.success(res.message);
-      login({ token: res.data.accessToken, user: res.data.user });
-      navigate("/register/verify/fill-data");
+      navigate("/fill-data", {
+        state: { token: res.data.accessToken, user: res.data.user },
+      });
     } catch (error: any) {
       toast.dismiss();
       toast.error(error.response?.data?.message || "Failed to update password");
