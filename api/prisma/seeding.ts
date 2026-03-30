@@ -7,6 +7,7 @@ import { generateReferralCode } from "../src/shared/utils/referral.util.js";
 const seed = async () => {
   try {
     await prisma.refreshToken.deleteMany({});
+    await prisma.account.deleteMany({});
     await prisma.propertyAmenity.deleteMany({});
     await prisma.propertyImage.deleteMany({});
     await prisma.roomTypeImage.deleteMany({});
@@ -14,9 +15,9 @@ const seed = async () => {
     await prisma.propertyCategory.deleteMany({});
     await prisma.amenity.deleteMany({});
     await prisma.roomType.deleteMany({});
+    await prisma.reservation.deleteMany({});
     await prisma.user.deleteMany({});
     await prisma.review.deleteMany({});
-    await prisma.reservation.deleteMany({});
     await prisma.priceAdjustment.deleteMany({});
     await prisma.voucher.deleteMany({});
     await prisma.point.deleteMany({});
@@ -41,7 +42,8 @@ const seed = async () => {
         role: Role.CUSTOMER,
         isVerified: false,
         referralCode: generateReferralCode(),
-        profileImage: "https://images.unsplash.com/photo-1507874457470-272b3c8d8ee2",
+        profileImage:
+          "https://images.unsplash.com/photo-1507874457470-272b3c8d8ee2",
       },
       {
         id: "17a6619c-f6b5-469a-adf4-66196a67d187",
@@ -53,7 +55,8 @@ const seed = async () => {
         role: Role.TENANT,
         isVerified: false,
         referralCode: generateReferralCode(),
-        profileImage: "https://images.unsplash.com/photo-1518770660439-4636190af475",
+        profileImage:
+          "https://images.unsplash.com/photo-1518770660439-4636190af475",
       },
     ];
     await prisma.user.createMany({
