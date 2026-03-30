@@ -86,6 +86,24 @@ export const updatePassword = catchAsync(
   },
 );
 
+export const updateProfile = catchAsync(async (req: Request, res: Response) => {
+  const userId = req.user?.id;
+
+  const { firstName, lastName, phoneNumber } = req.body;
+
+  const result = await authService.updateProfile({
+    userId,
+    firstName,
+    lastName,
+    phoneNumber: phoneNumber ?? null,
+  });
+
+  res.status(200).json({
+    message: "Profile updated successfully",
+    data: { user: result },
+  });
+});
+
 export const authRefreshToken = catchAsync(
   async (req: Request, res: Response) => {
     const oldRefreshToken = req.cookies.refreshToken;

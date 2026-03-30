@@ -347,6 +347,33 @@ export const updatePassword = async ({
   return registerToken.email;
 };
 
+export const updateProfile = async ({
+  userId,
+  firstName,
+  lastName,
+  phoneNumber,
+}: {
+  userId: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string | null;
+}) => {
+  if (!userId) throw new AppError("Unauthorized", 401);
+
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+  });
+
+  if (!user) throw new AppError("User not found", 404);
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: { firstName, lastName, phoneNumber },
+  });
+
+  return { firstName, lastName, phoneNumber };
+};
+
 export const logout = async ({ refreshToken }: { refreshToken: string }) => {
   if (!refreshToken) throw new AppError("Unauthorized", 401);
 
