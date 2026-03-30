@@ -85,6 +85,16 @@ export const loginWithGoogle = async ({ token }: { token: string }) => {
         role: googleAccount.user.role!,
       });
 
+    const hashedRefreshToken = await hashToken({ token: newRefreshToken });
+
+    await prisma.refreshToken.create({
+      data: {
+        hashedToken: hashedRefreshToken,
+        userId: googleAccount.user.id,
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      },
+    });
+
     const fullName = [googleAccount.user.firstName, googleAccount.user.lastName]
       .filter(Boolean)
       .join(" ");
@@ -122,6 +132,16 @@ export const loginWithGoogle = async ({ token }: { token: string }) => {
         userId: user.id,
         role: user.role!,
       });
+
+    const hashedRefreshToken = await hashToken({ token: newRefreshToken });
+
+    await prisma.refreshToken.create({
+      data: {
+        hashedToken: hashedRefreshToken,
+        userId: user.id,
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      },
+    });
 
     const fullName = [user.firstName, user.lastName].filter(Boolean).join(" ");
 
@@ -164,6 +184,16 @@ export const loginWithGoogle = async ({ token }: { token: string }) => {
       userId: user.id,
       role: user.role!,
     });
+
+  const hashedRefreshToken = await hashToken({ token: newRefreshToken });
+
+  await prisma.refreshToken.create({
+    data: {
+      hashedToken: hashedRefreshToken,
+      userId: user.id,
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    },
+  });
 
   const fullName = [user.firstName, user.lastName].filter(Boolean).join(" ");
 
