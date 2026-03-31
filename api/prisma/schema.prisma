@@ -398,6 +398,7 @@ model Reservation {
   status             ReservationStatus
 
   paymentDeadline    DateTime  @map("payment_deadline")
+  paymentProof       String?   @map("payment_proof")
 
   createdAt          DateTime  @map("created_at")         @default(now()) 
   updatedAt          DateTime  @map("updated_at")         @updatedAt
