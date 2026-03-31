@@ -1,5 +1,4 @@
 import { useAuthStore } from "../../auth/stores/auth.store";
-import { DEFAULT_IMAGE } from "../../../shared/constants/image";
 import { useState } from "react";
 
 function MyProfile() {
@@ -20,7 +19,10 @@ function MyProfile() {
                         alt="User Image Profile"
                         className="w-full h-full object-cover"
                         data-alt="Large profile picture of John Doe"
-                        src={user?.profileImage || DEFAULT_IMAGE}
+                        src={
+                          user?.profileImage ||
+                          `https://ui-avatars.com/api/?name=${user?.fullName}`
+                        }
                       />
                     </div>
                     <button className="absolute bottom-1 right-1 bg-primary text-white p-2 rounded-full shadow-lg hover:scale-105 transition-transform">
