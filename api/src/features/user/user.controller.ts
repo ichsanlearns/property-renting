@@ -4,15 +4,23 @@ import * as UserService from "./user.service.js";
 export const updateMe = async (req: Request, res: Response) => {
   const userId = req.user?.userId;
 
-  const { fullName, email, phoneNumbers, role, isVerified, profileImage } =
-    req.body;
+  const {
+    firstName,
+    lastName,
+    email,
+    phoneNumber,
+    role,
+    isVerified,
+    profileImage,
+  } = req.body;
 
   const result = await UserService.updateMe({
     userId,
     data: {
-      fullName: fullName ?? undefined,
+      firstName: firstName ?? undefined,
+      lastName: lastName ?? undefined,
       email: email ?? undefined,
-      phoneNumbers: phoneNumbers ?? undefined,
+      phoneNumber: phoneNumber ?? undefined,
       role: role ?? undefined,
       isVerified: isVerified ?? undefined,
       profileImage: profileImage ?? undefined,

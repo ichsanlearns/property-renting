@@ -30,7 +30,7 @@ export const updateMe = async ({
     id: updatedUser.id,
     fullName,
     email: updatedUser.email,
-    phoneNumbers: updatedUser.phoneNumber,
+    phoneNumber: updatedUser.phoneNumber,
     role: updatedUser.role,
     isVerified: updatedUser.isVerified,
     profileImage: updatedUser.profileImage,

@@ -1,9 +1,10 @@
 import type { Role } from "../../generated/prisma/enums.js";
 
 export type UpdateMe = {
-  fullName?: string;
+  firstName?: string;
+  lastName?: string;
   email?: string;
-  phoneNumbers?: string;
+  phoneNumber?: string;
   role?: Role;
   isVerified?: boolean;
   profileImage?: string;

@@ -1,9 +1,39 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuthStore } from "../../auth/stores/auth.store";
 import { useState } from "react";
 
+import { useForm } from "react-hook-form";
+import { profileSchema, type ProfileFormData } from "../schema/profile.schema";
+import toast from "react-hot-toast";
+import { updateMeRequest } from "../api/profile.service";
+
 function MyProfile() {
-  const { user } = useAuthStore();
+  const { user, setUser } = useAuthStore();
   const [isEdit, setIsEdit] = useState<null | "PERSONAL" | "PASSWORD">(null);
+
+  const { register, handleSubmit } = useForm<ProfileFormData>({
+    resolver: zodResolver(profileSchema),
+    defaultValues: {
+      firstName: user?.fullName.split(" ")[0],
+      lastName: user?.fullName.split(" ")[1],
+      email: user?.email,
+      phoneNumber: user?.phoneNumber,
+    },
+  });
+
+  const onSubmitProfile = async (data: ProfileFormData) => {
+    try {
+      toast.loading("Updating profile...");
+      const response = await updateMeRequest(data);
+      setUser(response.data.user);
+      toast.dismiss();
+      toast.success("Profile updated successfully");
+      setIsEdit(null);
+    } catch (error: any) {
+      toast.dismiss();
+      toast.error(error.message);
+    }
+  };
 
   return (
     <div className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
@@ -57,7 +87,10 @@ function MyProfile() {
                   </h2>
                   {isEdit === "PERSONAL" ? (
                     <div className="flex gap-8">
-                      <button className="bg-primary text-white px-6 py-2.5 rounded-lg font-bold hover:bg-primary/90 transition-all shadow-md active:scale-95">
+                      <button
+                        onClick={handleSubmit(onSubmitProfile)}
+                        className="bg-primary text-white px-6 py-2.5 rounded-lg font-bold hover:bg-primary/90 transition-all shadow-md active:scale-95"
+                      >
                         Update
                       </button>
                       <button
@@ -84,10 +117,10 @@ function MyProfile() {
                       First Name
                     </label>
                     <input
+                      {...register("firstName")}
                       disabled={isEdit !== "PERSONAL"}
                       className={`w-full p-3.5 rounded-lg border border-primary/10 focus:border-primary focus:ring-primary  ${isEdit === "PERSONAL" ? "cursor-text bg-background-light/30" : "cursor-not-allowed bg-background-light"}`}
                       type="text"
-                      value={user?.fullName.split(" ")[0]}
                     />
                   </div>
                   <div className="space-y-1">
@@ -95,10 +128,10 @@ function MyProfile() {
                       Last Name
                     </label>
                     <input
+                      {...register("lastName")}
                       disabled={isEdit !== "PERSONAL"}
                       className={`w-full p-3.5 rounded-lg border border-primary/10 focus:border-primary focus:ring-primary  ${isEdit === "PERSONAL" ? "cursor-text bg-background-light/30" : "cursor-not-allowed bg-background-light"}`}
                       type="text"
-                      value={user?.fullName.split(" ")[1]}
                     />
                   </div>
                   <div className="space-y-1 md:col-span-2">
@@ -107,10 +140,10 @@ function MyProfile() {
                     </label>
                     <div className="flex gap-2">
                       <input
+                        {...register("email")}
                         disabled={isEdit !== "PERSONAL"}
                         className={`flex-1 rounded-lg p-3.5 border border-primary/10 focus:border-primary focus:ring-primary  ${isEdit === "PERSONAL" ? "cursor-text bg-background-light/30" : "cursor-not-allowed bg-background-light"}`}
                         type="email"
-                        value={user?.email}
                       />
                     </div>
                   </div>
@@ -119,10 +152,10 @@ function MyProfile() {
                       Phone Number
                     </label>
                     <input
+                      {...register("phoneNumber")}
                       disabled={isEdit !== "PERSONAL"}
                       className={`w-full p-3.5 rounded-lg border border-primary/10 focus:border-primary focus:ring-primary  ${isEdit === "PERSONAL" ? "cursor-text bg-background-light/30" : "cursor-not-allowed bg-background-light"}`}
                       type="tel"
-                      value={user?.phoneNumbers}
                     />
                   </div>
                 </div>

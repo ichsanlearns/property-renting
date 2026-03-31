@@ -7,8 +7,8 @@ import type {
   LoginResponse,
   RefreshSessionResponse,
   ResendTokenResponse,
-  UpdateProfileResponse,
 } from "./auth.response";
+import type { UpdateProfileResponse } from "../../profile/api/profile.response";
 
 type LoginPayload = {
   email: string;
