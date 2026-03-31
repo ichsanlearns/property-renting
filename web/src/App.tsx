@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { createBrowserRouter, RouterProvider } from "react-router";
+import { createBrowserRouter, redirect, RouterProvider } from "react-router";
 
 import RootLayout from "./shared/layouts/RootLayout";
 import DashboardLayout from "./shared/layouts/DashboardLayout";
@@ -23,46 +23,60 @@ import Register from "./features/auth/pages/Register";
 import CheckEmail from "./features/auth/pages/CheckEmail";
 import RegisterLayout from "./shared/layouts/RegisterLayout";
 import FillData from "./features/auth/pages/FillData";
-import VerifyLayout from "./features/auth/pages/VerifyLayout";
+import VerifyLayout from "./shared/layouts/VerifyLayout";
 import Password from "./features/auth/pages/Password";
+import type { User } from "./shared/types/user.type";
+
+function requireOnboarding(user: User | null) {
+  if (!user?.fullName && user?.email) {
+    return redirect("/fill-data");
+  }
+  return null;
+}
 
 const router = createBrowserRouter([
   {
-    path: "/",
-    element: <RootLayout />,
+    loader: () => requireOnboarding(useAuthStore.getState().user),
     children: [
       {
-        index: true,
-        element: <HomePage />,
+        path: "",
+        element: <RootLayout />,
+        children: [
+          {
+            index: true,
+            element: <HomePage />,
+          },
+          {
+            path: "mybooking",
+            element: <MyBooking />,
+          },
+        ],
       },
       {
-        path: "mybooking",
-        element: <MyBooking />,
+        path: "/tenant/",
+        element: <DashboardLayout />,
+        children: [
+          {
+            path: "properties/create",
+            element: <FormProperties />,
+          },
+          {
+            path: "properties/:propertyId/rooms/create",
+            element: <FormRoom />,
+          },
+          {
+            path: "orderlist",
+            element: <OrderList />,
+          },
+          {
+            path: "reports",
+            element: <Reports />,
+          },
+        ],
       },
     ],
   },
-  {
-    path: "/tenant/",
-    element: <DashboardLayout />,
-    children: [
-      {
-        path: "properties/create",
-        element: <FormProperties />,
-      },
-      {
-        path: "properties/:propertyId/rooms/create",
-        element: <FormRoom />,
-      },
-      {
-        path: "orderlist",
-        element: <OrderList />,
-      },
-      {
-        path: "reports",
-        element: <Reports />,
-      },
-    ],
-  },
+
   {
     element: <GuestRoute />,
     children: [
@@ -86,10 +100,6 @@ const router = createBrowserRouter([
                 path: "password",
                 element: <Password />,
               },
-              {
-                path: "fill-data",
-                element: <FillData />,
-              },
             ],
           },
         ],
@@ -100,7 +110,10 @@ const router = createBrowserRouter([
       },
     ],
   },
-
+  {
+    path: "/fill-data",
+    element: <FillData />,
+  },
   {
     path: "*",
     element: <NotFoundPage />,
@@ -130,6 +143,7 @@ function App() {
     }
     initAuth();
   }, []);
+
   return <RouterProvider router={router} />;
 }
 

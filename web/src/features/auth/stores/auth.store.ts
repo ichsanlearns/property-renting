@@ -1,14 +1,5 @@
 import { create } from "zustand";
-
-type User = {
-  id: string;
-  fullName: string;
-  email: string;
-  phoneNumbers: string;
-  role: string;
-  isVerified: boolean;
-  profileImage: string | null;
-};
+import type { User } from "../../../shared/types/user.type";
 
 type AuthState = {
   token: string | null;
@@ -16,6 +7,7 @@ type AuthState = {
   authLoading: boolean;
 
   setToken: (token: string) => void;
+  setUser: (user: User) => void;
   login: ({ token, user }: { token: string; user: User }) => void;
   logout: () => void;
   setAuthLoading: (authLoading: boolean) => void;
@@ -27,6 +19,7 @@ export const useAuthStore = create<AuthState>()((set) => ({
   authLoading: true,
 
   setToken: (token: string) => set({ token }),
+  setUser: (user: User) => set({ user }),
 
   login: ({ token, user }: { token: string; user: User }) =>
     set({

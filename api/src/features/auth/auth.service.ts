@@ -10,6 +10,7 @@ import { sendEmail } from "../../shared/services/email/email.service.js";
 import { registrationEmailTemplate } from "../../shared/services/email/email.template.js";
 import { verifyGoogleToken } from "../../shared/utils/verify-token.util.js";
 import { generateReferralCode } from "../../shared/utils/referral.util.js";
+import type { Role } from "../../generated/prisma/enums.js";
 
 export const login = async ({
   email,
@@ -322,20 +323,72 @@ export const updatePassword = async ({
 
   if (!registerToken) throw new AppError("Invalid token", 400);
 
-  const email = registerToken.email;
-
   const user = await prisma.user.findUnique({
-    where: { email },
+    where: { email: registerToken.email },
   });
 
   if (!user) throw new AppError("User not found", 404);
 
+  await prisma.user.update({
+    where: { email: registerToken.email },
+    data: { isVerified: true },
+  });
+
+  await prisma.registerToken.deleteMany({
+    where: { email: registerToken.email, type: "REGISTER" },
+  });
+
   const hashedPassword = await bcrypt.hash(password, 10);
 
   await prisma.user.update({
-    where: { email },
+    where: { email: registerToken.email },
     data: { password: hashedPassword },
   });
+
+  return registerToken.email;
+};
+
+export const updateProfile = async ({
+  userId,
+  firstName,
+  lastName,
+  role,
+  phoneNumber,
+  profileImage,
+}: {
+  userId: string;
+  firstName: string;
+  lastName: string;
+  role: Role;
+  phoneNumber: string | null;
+  profileImage: string | null;
+}) => {
+  if (!userId) throw new AppError("Unauthorized", 401);
+
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+  });
+
+  if (!user) throw new AppError("User not found", 404);
+
+  const updatedUser = await prisma.user.update({
+    where: { id: userId },
+    data: { firstName, lastName, role, phoneNumber, profileImage },
+  });
+
+  const fullName = [updatedUser.firstName, updatedUser.lastName]
+    .filter(Boolean)
+    .join(" ");
+
+  return {
+    id: updatedUser.id,
+    fullName,
+    email: updatedUser.email,
+    phoneNumbers: updatedUser.phoneNumber,
+    role: updatedUser.role,
+    isVerified: updatedUser.isVerified,
+    profileImage: updatedUser.profileImage,
+  };
 };
 
 export const logout = async ({ refreshToken }: { refreshToken: string }) => {

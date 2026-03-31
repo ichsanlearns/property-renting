@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import * as authService from "./auth.service.js";
 import { catchAsync } from "../../shared/utils/catch-async.util.js";
+import * as uploadService from "../../shared/services/upload.service.js";
 
 export const login = catchAsync(async (req: Request, res: Response) => {
   const { email, password } = req.body;
@@ -67,13 +68,55 @@ export const updatePassword = catchAsync(
   async (req: Request, res: Response) => {
     const { password, token } = req.body;
 
-    await authService.updatePassword({ password, token });
+    const email = await authService.updatePassword({ password, token });
+
+    const result = await authService.login({ email, password });
+
+    res.cookie("refreshToken", result.refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      path: "/",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
 
     res.status(200).json({
       message: "Password updated successfully",
+      data: { accessToken: result.accessToken, user: result.user },
     });
   },
 );
+
+export const updateProfile = catchAsync(async (req: Request, res: Response) => {
+  const userId = req.user?.userId;
+
+  const file = req.file as Express.Multer.File;
+
+  let profileImageLink = null;
+
+  if (file) {
+    profileImageLink = await uploadService.uploadToCloudinary(
+      file.buffer,
+      "profileImages",
+    );
+  }
+
+  const { firstName, lastName, role, phoneNumber } = req.body;
+
+  const result = await authService.updateProfile({
+    userId,
+    firstName,
+    lastName,
+    role,
+    phoneNumber: phoneNumber ?? null,
+    profileImage: profileImageLink ?? null,
+  });
+
+  res.status(200).json({
+    message: "Profile updated successfully",
+    data: { user: result },
+  });
+});
 
 export const authRefreshToken = catchAsync(
   async (req: Request, res: Response) => {

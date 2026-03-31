@@ -40,7 +40,7 @@ const seed = async () => {
         phoneNumber: "087827689265",
         password: password,
         role: Role.CUSTOMER,
-        isVerified: false,
+        isVerified: true,
         referralCode: generateReferralCode(),
         profileImage:
           "https://images.unsplash.com/photo-1507874457470-272b3c8d8ee2",
@@ -53,7 +53,7 @@ const seed = async () => {
         phoneNumber: "087812345678",
         password: password,
         role: Role.TENANT,
-        isVerified: false,
+        isVerified: true,
         referralCode: generateReferralCode(),
         profileImage:
           "https://images.unsplash.com/photo-1518770660439-4636190af475",
