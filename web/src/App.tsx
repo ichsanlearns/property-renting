@@ -27,6 +27,7 @@ import VerifyLayout from "./shared/layouts/VerifyLayout";
 import Password from "./features/auth/pages/Password";
 import type { User } from "./shared/types/user.type";
 import MyProfile from "./features/profile/pages/MyProfile";
+import PaymentProof from "./features/tenant/order-list/pages/PaymentProof";
 
 function requireOnboarding(user: User | null) {
   if (!user?.fullName && user?.email) {
@@ -72,6 +73,10 @@ const router = createBrowserRouter([
           {
             path: "orderlist",
             element: <OrderList />,
+          },
+          {
+            path: "paymentproof",
+            element: <PaymentProof />,
           },
           {
             path: "reports",
