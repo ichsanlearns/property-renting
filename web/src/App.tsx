@@ -28,7 +28,7 @@ import Password from "./features/auth/pages/Password";
 import type { User } from "./shared/types/user.type";
 
 function requireOnboarding(user: User | null) {
-  if (!user?.fullName) {
+  if (!user?.fullName && user?.email) {
     return redirect("/fill-data");
   }
   return null;
@@ -39,7 +39,7 @@ const router = createBrowserRouter([
     loader: () => requireOnboarding(useAuthStore.getState().user),
     children: [
       {
-        path: "/",
+        path: "",
         element: <RootLayout />,
         children: [
           {

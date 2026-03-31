@@ -55,6 +55,9 @@ function FormRoom() {
   const { register, watch, handleSubmit, setValue } =
     useForm<CreateRoomPayload>({
       resolver: zodResolver(createRoomSchema),
+      defaultValues: {
+        bedCount: 1,
+      },
     });
 
   const onSubmit = async (data: CreateRoomPayload) => {

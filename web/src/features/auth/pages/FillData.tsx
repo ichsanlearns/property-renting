@@ -1,17 +1,44 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuthStore } from "../stores/auth.store";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  updateProfileSchema,
+  type UpdateProfileFormData,
+} from "../schemas/update-profile.schema";
+import toast from "react-hot-toast";
+import { updateProfileRequest } from "../api/auth.service";
 
 function FillData() {
   const [role, setRole] = useState<"CUSTOMER" | "TENANT">("CUSTOMER");
   const navigate = useNavigate();
   const location = useLocation();
   const { token, user } = location.state;
-  const { login } = useAuthStore();
+
+  const { login, setUser } = useAuthStore();
+
+  const { register, handleSubmit } = useForm<UpdateProfileFormData>({
+    resolver: zodResolver(updateProfileSchema),
+  });
 
   useEffect(() => {
     login({ token, user });
   }, []);
+
+  const onSubmit = async (data: UpdateProfileFormData) => {
+    try {
+      toast.loading("Updating profile...");
+      const response = await updateProfileRequest({ ...data, role });
+      toast.dismiss();
+      toast.success("Profile updated successfully");
+      setUser({ ...response.data?.user });
+      navigate("/");
+    } catch (error: any) {
+      toast.dismiss();
+      toast.error(error.message);
+    }
+  };
 
   return (
     <div className="font-body bg-[#f8f5f5] text-on-background min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
@@ -74,7 +101,10 @@ function FillData() {
               </div>
             )}
           </div>
-          <form className="space-y-6">
+          <form
+            onSubmit={handleSubmit(onSubmit, (errors) => console.error(errors))}
+            className="space-y-6"
+          >
             <div className="flex flex-col items-center mb-8">
               <div className="relative group cursor-pointer">
                 <div className="w-24 h-24 rounded-full bg-surface-container-highest flex items-center justify-center border-4 border-white shadow-lg overflow-hidden transition-transform group-hover:scale-105">
@@ -104,6 +134,7 @@ function FillData() {
                   First Name *
                 </label>
                 <input
+                  {...register("firstName")}
                   className="w-full px-5 py-4 bg-surface-container-low border-0 focus:ring-2 focus:ring-primary rounded-2xl text-sm font-medium placeholder:text-slate-400 transition-all"
                   placeholder="e.g. Julian"
                   type="text"
@@ -114,6 +145,7 @@ function FillData() {
                   Last Name *
                 </label>
                 <input
+                  {...register("lastName")}
                   className="w-full px-5 py-4 bg-surface-container-low border-0 focus:ring-2 focus:ring-primary rounded-2xl text-sm font-medium placeholder:text-slate-400 transition-all"
                   placeholder="e.g. Sterling"
                   type="text"
@@ -125,26 +157,12 @@ function FillData() {
                 Phone Number (Optional)
               </label>
               <input
+                {...register("phoneNumber")}
                 className="w-full px-5 py-4 bg-surface-container-low border-0 focus:ring-2 focus:ring-primary rounded-2xl text-sm font-medium placeholder:text-slate-400 transition-all"
                 placeholder="087812345678"
                 type="tel"
               />
             </div>
-            {role === "TENANT" && (
-              <div className="space-y-1.5">
-                <label className="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant ml-1">
-                  Property / Business Name (Optional)
-                </label>
-                <input
-                  className="w-full px-5 py-4 bg-surface-container-low border-0 focus:ring-2 focus:ring-primary rounded-2xl text-sm font-medium placeholder:text-slate-400 transition-all"
-                  placeholder="e.g. Azure Bay Rentals"
-                  type="text"
-                />
-                <p className="text-[11px] text-slate-400 px-1 mt-1">
-                  You can add more details about your property later.
-                </p>
-              </div>
-            )}
             <div className="pt-6">
               <button
                 className="w-full py-4 bg-primary text-white rounded-full font-bold text-base shadow-primary/25 shadow-xl hover:opacity-90 active:scale-95 transition-all flex items-center justify-center gap-2"
@@ -157,13 +175,6 @@ function FillData() {
                 >
                   arrow_forward
                 </span>
-              </button>
-              <button
-                onClick={() => navigate("/")}
-                className="w-full mt-4 py-3 text-on-surface-variant hover:text-on-surface text-sm font-semibold transition-colors"
-                type="button"
-              >
-                Skip for now
               </button>
             </div>
           </form>

@@ -38,6 +38,9 @@ function Properties() {
   const { register, handleSubmit, setValue, watch } =
     useForm<CreatePropertyPayload>({
       resolver: zodResolver(createPropertySchema),
+      defaultValues: {
+        numberOfBathrooms: 1,
+      },
     });
 
   const queryClient = useQueryClient();

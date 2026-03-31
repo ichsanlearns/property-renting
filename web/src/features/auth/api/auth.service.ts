@@ -1,4 +1,4 @@
-import { apiAuth } from "../../../api/client";
+import api, { apiAuth } from "../../../api/client";
 
 import { AUTH_ENDPOINTS } from "./auth.endpoint";
 
@@ -7,6 +7,7 @@ import type {
   LoginResponse,
   RefreshSessionResponse,
   ResendTokenResponse,
+  UpdateProfileResponse,
 } from "./auth.response";
 
 type LoginPayload = {
@@ -21,6 +22,14 @@ type RegisterPayload = {
 type UpdatePasswordPayload = {
   password: string;
   token: string;
+};
+
+type UpdateProfilePayload = {
+  firstName: string;
+  lastName: string;
+  phoneNumber?: string;
+  profileImage?: File;
+  role: "CUSTOMER" | "TENANT";
 };
 
 type GoogleLoginPayload = {
@@ -66,6 +75,15 @@ export const resendTokenRequest = async (data: RegisterPayload) => {
 export const updatePasswordRequest = async (data: UpdatePasswordPayload) => {
   const response = await apiAuth.patch<ApiResponse<LoginResponse>>(
     AUTH_ENDPOINTS.UPDATE_PASSWORD,
+    data,
+  );
+
+  return response.data;
+};
+
+export const updateProfileRequest = async (data: UpdateProfilePayload) => {
+  const response = await api.patch<ApiResponse<UpdateProfileResponse>>(
+    AUTH_ENDPOINTS.UPDATE_PROFILE,
     data,
   );
 

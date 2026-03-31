@@ -7,6 +7,7 @@ type AuthState = {
   authLoading: boolean;
 
   setToken: (token: string) => void;
+  setUser: (user: User) => void;
   login: ({ token, user }: { token: string; user: User }) => void;
   logout: () => void;
   setAuthLoading: (authLoading: boolean) => void;
@@ -18,6 +19,7 @@ export const useAuthStore = create<AuthState>()((set) => ({
   authLoading: true,
 
   setToken: (token: string) => set({ token }),
+  setUser: (user: User) => set({ user }),
 
   login: ({ token, user }: { token: string; user: User }) =>
     set({

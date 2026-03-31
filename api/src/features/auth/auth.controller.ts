@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import * as authService from "./auth.service.js";
 import { catchAsync } from "../../shared/utils/catch-async.util.js";
+import * as uploadService from "../../shared/services/upload.service.js";
 
 export const login = catchAsync(async (req: Request, res: Response) => {
   const { email, password } = req.body;
@@ -87,15 +88,28 @@ export const updatePassword = catchAsync(
 );
 
 export const updateProfile = catchAsync(async (req: Request, res: Response) => {
-  const userId = req.user?.id;
+  const userId = req.user?.userId;
 
-  const { firstName, lastName, phoneNumber } = req.body;
+  const file = req.file as Express.Multer.File;
+
+  let profileImageLink = null;
+
+  if (file) {
+    profileImageLink = await uploadService.uploadToCloudinary(
+      file.buffer,
+      "profileImages",
+    );
+  }
+
+  const { firstName, lastName, role, phoneNumber } = req.body;
 
   const result = await authService.updateProfile({
     userId,
     firstName,
     lastName,
+    role,
     phoneNumber: phoneNumber ?? null,
+    profileImage: profileImageLink ?? null,
   });
 
   res.status(200).json({
