@@ -4,7 +4,7 @@ type AuthResponse = {
     id: string;
     fullName: string;
     email: string;
-    phoneNumbers: string;
+    phoneNumber: string;
     role: string;
     isVerified: boolean;
     profileImage: string;
@@ -13,18 +13,6 @@ type AuthResponse = {
 
 export type ResendTokenResponse = {
   createdAt: string;
-};
-
-export type UpdateProfileResponse = {
-  user: {
-    id: string;
-    fullName: string;
-    email: string;
-    phoneNumbers?: string;
-    role: string;
-    isVerified: boolean;
-    profileImage?: string;
-  };
 };
 
 export type LoginResponse = AuthResponse;

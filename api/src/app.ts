@@ -8,6 +8,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 
 import authRoutes from "./features/auth/auth.route.js";
+import userRoutes from "./features/user/user.route.js";
 import propertyRoutes from "./features/property/property.route.js";
 import categoryRoutes from "./features/property/category/category.route.js";
 import amenityRoutes from "./features/property/amenity/amenity.route.js";
@@ -32,6 +33,7 @@ app.get("/api/status", (req: Request, res: Response) => {
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
 app.use("/api/properties", propertyRoutes);
 app.use("/api/property-categories", categoryRoutes);
 app.use("/api/property-amenities", amenityRoutes);
