@@ -1,4 +1,11 @@
+import { useAuthStore } from "../../auth/stores/auth.store";
+import { DEFAULT_IMAGE } from "../../../shared/constants/image";
+import { useState } from "react";
+
 function MyProfile() {
+  const { user } = useAuthStore();
+  const [isEdit, setIsEdit] = useState<null | "PERSONAL" | "PASSWORD">(null);
+
   return (
     <div className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
       <div className="layout-container flex h-full grow flex-col">
@@ -10,10 +17,10 @@ function MyProfile() {
                   <div className="relative group">
                     <div className="size-32 rounded-full overflow-hidden border-4 border-background-light shadow-md">
                       <img
-                        alt="John Doe"
+                        alt="User Image Profile"
                         className="w-full h-full object-cover"
                         data-alt="Large profile picture of John Doe"
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuAPU-PPKKaSmiC-DumBEO5ygHPMX8sA7htpDvgpOmWrDUO98oN7JqwcPQhZX1LGPUFdO0eHQTy-C79V-y7rJ3wcCs1Fg61_cUxUGJtwCA_OcPvnZK-i_FFEKakaZ8seA2Zo373aN8r6egu_x0Dfdvyk1SP4POfLbaHWgigB5MF0bM9-NrMW6mOxtye6u7FnbdRxQ5py0_rhY11M2lOu4J5yH26rR5RzXLk-87uWUdCyZbIxVftZdhLU4HL_rHkZdZ9mDIANS2B-y6pA"
+                        src={user?.profileImage || DEFAULT_IMAGE}
                       />
                     </div>
                     <button className="absolute bottom-1 right-1 bg-primary text-white p-2 rounded-full shadow-lg hover:scale-105 transition-transform">
@@ -25,7 +32,7 @@ function MyProfile() {
                   <div className="text-center md:text-left space-y-2">
                     <div className="flex items-center justify-center md:justify-start gap-2">
                       <h1 className="text-2xl font-bold text-slate-900">
-                        John Doe
+                        {user?.fullName}
                       </h1>
                       <span className="flex items-center gap-1 bg-primary/10 text-primary text-xs font-bold px-2.5 py-1 rounded-full">
                         <span className="material-symbols-outlined text-[14px]">
@@ -34,7 +41,7 @@ function MyProfile() {
                         Verified
                       </span>
                     </div>
-                    <p className="text-slate-500">john.doe@example.com</p>
+                    <p className="text-slate-500">{user?.email}</p>
                     <p className="text-xs text-slate-400">
                       Member since January 2023
                     </p>
@@ -46,9 +53,28 @@ function MyProfile() {
                   <h2 className="text-lg font-bold text-slate-900">
                     Personal Information
                   </h2>
-                  <button className="text-primary font-semibold text-sm hover:underline">
-                    Edit
-                  </button>
+                  {isEdit === "PERSONAL" ? (
+                    <div className="flex gap-8">
+                      <button className="bg-primary text-white px-6 py-2.5 rounded-lg font-bold hover:bg-primary/90 transition-all shadow-md active:scale-95">
+                        Update
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setIsEdit(null)}
+                        className="text-primary font-semibold text-sm hover:underline"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setIsEdit("PERSONAL")}
+                      className="text-primary font-semibold text-sm hover:underline"
+                    >
+                      Edit
+                    </button>
+                  )}
                 </div>
                 <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-1">
@@ -56,9 +82,10 @@ function MyProfile() {
                       First Name
                     </label>
                     <input
-                      className="w-full p-3.5 rounded-lg border border-primary/10 focus:border-primary focus:ring-primary bg-background-light/30"
+                      disabled={isEdit !== "PERSONAL"}
+                      className={`w-full p-3.5 rounded-lg border border-primary/10 focus:border-primary focus:ring-primary  ${isEdit === "PERSONAL" ? "cursor-text bg-background-light/30" : "cursor-not-allowed bg-background-light"}`}
                       type="text"
-                      value="John"
+                      value={user?.fullName.split(" ")[0]}
                     />
                   </div>
                   <div className="space-y-1">
@@ -66,9 +93,10 @@ function MyProfile() {
                       Last Name
                     </label>
                     <input
-                      className="w-full rounded-lg p-3.5 border border-primary/10 focus:border-primary focus:ring-primary bg-background-light/30"
+                      disabled={isEdit !== "PERSONAL"}
+                      className={`w-full p-3.5 rounded-lg border border-primary/10 focus:border-primary focus:ring-primary  ${isEdit === "PERSONAL" ? "cursor-text bg-background-light/30" : "cursor-not-allowed bg-background-light"}`}
                       type="text"
-                      value="Doe"
+                      value={user?.fullName.split(" ")[1]}
                     />
                   </div>
                   <div className="space-y-1 md:col-span-2">
@@ -77,9 +105,10 @@ function MyProfile() {
                     </label>
                     <div className="flex gap-2">
                       <input
-                        className="flex-1 rounded-lg p-3.5 border border-primary/10 focus:border-primary focus:ring-primary bg-background-light/30"
+                        disabled={isEdit !== "PERSONAL"}
+                        className={`flex-1 rounded-lg p-3.5 border border-primary/10 focus:border-primary focus:ring-primary  ${isEdit === "PERSONAL" ? "cursor-text bg-background-light/30" : "cursor-not-allowed bg-background-light"}`}
                         type="email"
-                        value="john.doe@example.com"
+                        value={user?.email}
                       />
                     </div>
                   </div>
@@ -88,18 +117,41 @@ function MyProfile() {
                       Phone Number
                     </label>
                     <input
-                      className="w-full rounded-lg p-3.5 border border-primary/10 focus:border-primary focus:ring-primary bg-background-light/30"
+                      disabled={isEdit !== "PERSONAL"}
+                      className={`w-full p-3.5 rounded-lg border border-primary/10 focus:border-primary focus:ring-primary  ${isEdit === "PERSONAL" ? "cursor-text bg-background-light/30" : "cursor-not-allowed bg-background-light"}`}
                       type="tel"
-                      value="087812345678"
+                      value={user?.phoneNumbers}
                     />
                   </div>
                 </div>
               </section>
               <section className="bg-white rounded-xl shadow-sm border border-primary/5 overflow-hidden">
-                <div className="px-6 py-4 border-b border-primary/5">
+                <div className="px-6 py-4 border-b border-primary/5 flex justify-between items-center">
                   <h2 className="text-lg font-bold text-slate-900">
                     Change Password
                   </h2>
+                  {isEdit === "PASSWORD" ? (
+                    <div className="flex gap-8">
+                      <button className="bg-primary text-white px-6 py-2.5 rounded-lg font-bold hover:bg-primary/90 transition-all shadow-md active:scale-95">
+                        Update
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setIsEdit(null)}
+                        className="text-primary font-semibold text-sm hover:underline"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setIsEdit("PASSWORD")}
+                      className="text-primary font-semibold text-sm hover:underline"
+                    >
+                      Edit
+                    </button>
+                  )}
                 </div>
                 <div className="p-6 space-y-4">
                   <div className="space-y-1">
@@ -107,7 +159,8 @@ function MyProfile() {
                       Current Password
                     </label>
                     <input
-                      className="w-full rounded-lg p-3.5 border border-primary/10 focus:border-primary focus:ring-primary bg-background-light/30"
+                      disabled={isEdit !== "PASSWORD"}
+                      className={`w-full rounded-lg p-3.5 border border-primary/10 focus:border-primary focus:ring-primary  ${isEdit === "PASSWORD" ? "cursor-text bg-background-light/30" : "cursor-not-allowed bg-background-light"}`}
                       placeholder="••••••••"
                       type="password"
                     />
@@ -118,7 +171,8 @@ function MyProfile() {
                         New Password
                       </label>
                       <input
-                        className="w-full rounded-lg p-3.5 border border-primary/10 focus:border-primary focus:ring-primary bg-background-light/30"
+                        disabled={isEdit !== "PASSWORD"}
+                        className={`w-full rounded-lg p-3.5 border border-primary/10 focus:border-primary focus:ring-primary  ${isEdit === "PASSWORD" ? "cursor-text bg-background-light/30" : "cursor-not-allowed bg-background-light"}`}
                         placeholder="Min. 8 characters"
                         type="password"
                       />
@@ -128,50 +182,54 @@ function MyProfile() {
                         Confirm New Password
                       </label>
                       <input
-                        className="w-full rounded-lg p-3.5 border border-primary/10 focus:border-primary focus:ring-primary bg-background-light/30"
+                        disabled={isEdit !== "PASSWORD"}
+                        className={`w-full rounded-lg p-3.5 border border-primary/10 focus:border-primary focus:ring-primary  ${isEdit === "PASSWORD" ? "cursor-text bg-background-light/30" : "cursor-not-allowed bg-background-light"}`}
                         placeholder="Re-type password"
                         type="password"
                       />
                     </div>
                   </div>
-                  <div className="pt-2 flex justify-end">
-                    <button className="bg-primary text-white px-6 py-2.5 rounded-lg font-bold hover:bg-primary/90 transition-all shadow-md active:scale-95">
-                      Update Password
-                    </button>
-                  </div>
                 </div>
               </section>
               <section className="bg-white rounded-xl shadow-sm border border-primary/5 p-6 flex flex-col md:flex-row items-center justify-between gap-6">
                 <div className="flex items-start gap-4">
-                  <div className="bg-primary/10 p-3 rounded-full text-primary">
+                  <div
+                    className={` p-3 rounded-full ${user?.isVerified ? "text-green-600" : "bg-primary/10 text-red-500"}`}
+                  >
                     <span className="material-symbols-outlined text-3xl">
-                      verified_user
+                      {user?.isVerified ? "verified_user" : "verified_off"}
                     </span>
                   </div>
                   <div>
                     <h3 className="font-bold text-slate-900">
                       Account Verification
                     </h3>
-                    <p className="text-sm text-slate-500 max-w-sm mt-1">
-                      Your email is verified. To unlock higher booking limits
-                      and host capabilities, complete your ID verification.
-                    </p>
-                    <div className="mt-3 flex items-center gap-2 text-green-600 text-sm font-medium">
+                    {!user?.isVerified && (
+                      <p className="text-sm text-slate-500 max-w-sm mt-1">
+                        Your email is{" "}
+                        <span className="text-red-600">not verified</span>. To
+                        be able to book a property, please complete your email
+                        verification."
+                      </p>
+                    )}
+
+                    <div
+                      className={`mt-3 flex items-center gap-2 text-sm font-medium ${user?.isVerified ? "text-green-600" : "text-red-500"}`}
+                    >
                       <span className="material-symbols-outlined text-sm">
                         mail
                       </span>
-                      Email verified
+                      Email {user?.isVerified ? "verified" : "not verified"}
                     </div>
                   </div>
                 </div>
-                <div className="w-full md:w-auto flex flex-col gap-2">
-                  <button className="w-full md:w-auto px-6 py-2.5 rounded-lg border border-primary text-primary font-bold hover:bg-primary/5 transition-all">
-                    Resend Verification
-                  </button>
-                  <button className="w-full md:w-auto px-6 py-2.5 rounded-lg bg-slate-900 text-white font-bold hover:bg-slate-800 transition-all shadow-md">
-                    Verify Identity
-                  </button>
-                </div>
+                {!user?.isVerified && (
+                  <div className="w-full md:w-auto flex flex-col gap-2">
+                    <button className="w-full md:w-auto px-6 py-2.5 rounded-lg border border-primary text-primary font-bold hover:bg-primary/5 transition-all">
+                      Resend Verification
+                    </button>
+                  </div>
+                )}
               </section>
               <section className="p-6 border-2 border-red-50 rounded-xl bg-red-50/20">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">

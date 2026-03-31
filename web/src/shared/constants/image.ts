@@ -1,0 +1,2 @@
+export const DEFAULT_IMAGE =
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuAPU-PPKKaSmiC-DumBEO5ygHPMX8sA7htpDvgpOmWrDUO98oN7JqwcPQhZX1LGPUFdO0eHQTy-C79V-y7rJ3wcCs1Fg61_cUxUGJtwCA_OcPvnZK-i_FFEKakaZ8seA2Zo373aN8r6egu_x0Dfdvyk1SP4POfLbaHWgigB5MF0bM9-NrMW6mOxtye6u7FnbdRxQ5py0_rhY11M2lOu4J5yH26rR5RzXLk-87uWUdCyZbIxVftZdhLU4HL_rHkZdZ9mDIANS2B-y6pA";
