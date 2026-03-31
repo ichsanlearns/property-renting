@@ -26,6 +26,7 @@ import FillData from "./features/auth/pages/FillData";
 import VerifyLayout from "./shared/layouts/VerifyLayout";
 import Password from "./features/auth/pages/Password";
 import type { User } from "./shared/types/user.type";
+import MyProfile from "./features/profile/pages/MyProfile";
 
 function requireOnboarding(user: User | null) {
   if (!user?.fullName && user?.email) {
@@ -49,6 +50,10 @@ const router = createBrowserRouter([
           {
             path: "mybooking",
             element: <MyBooking />,
+          },
+          {
+            path: "myprofile",
+            element: <MyProfile />,
           },
         ],
       },

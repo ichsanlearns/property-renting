@@ -100,7 +100,7 @@ function NavBar() {
             {user ? (
               <div className="flex items-center gap-3">
                 <Link
-                  to="/profile"
+                  to="/myprofile"
                   className="flex items-center gap-3 bg-red-500/20 hover:bg-red-500/40 px-3 py-2 rounded-xl transition"
                 >
                   <img
