@@ -162,16 +162,10 @@ function Login() {
                 >
                   Password
                 </label>
-                <a
-                  className="text-xs font-bold text-primary hover:opacity-80 transition-opacity"
-                  href="#"
-                >
-                  Forgot password?
-                </a>
               </div>
               <div className="relative group">
                 <span
-                  className={`material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 ${showPassword ? "" : "text-primary"} transition-colors text-xl`}
+                  className={`material-symbols-outlined absolute left-4 top-7 -translate-y-1/2 ${showPassword ? "" : "text-primary"} transition-colors text-xl`}
                 >
                   lock
                 </span>
@@ -189,7 +183,7 @@ function Login() {
                 )}
                 <button
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary transition-colors focus:outline-none"
+                  className="absolute right-4 top-8 -translate-y-1/2 text-slate-400 hover:text-primary transition-colors focus:outline-none"
                   type="button"
                 >
                   <span
@@ -199,6 +193,14 @@ function Login() {
                     visibility
                   </span>
                 </button>
+                <div className="flex justify-end">
+                  <Link
+                    className="text-xs mt-2 font-bold text-primary hover:opacity-80 transition-opacity"
+                    to="/reset-password"
+                  >
+                    Forgot password?
+                  </Link>
+                </div>
               </div>
             </div>
             <div className="flex items-center gap-2 py-1 ml-1">
