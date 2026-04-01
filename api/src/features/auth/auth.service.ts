@@ -401,6 +401,47 @@ export const logout = async ({ refreshToken }: { refreshToken: string }) => {
   });
 };
 
+export const resetPassword = async ({ email }: { email: string }) => {
+  const googleUser = await prisma.user.findFirst({
+    where: { email, password: null, isVerified: true },
+  });
+
+  if (googleUser)
+    throw new AppError(
+      "This account is registered with Google, please login with Google",
+      400,
+    );
+
+  const user = await prisma.user.findUnique({
+    where: { email, password: { not: null }, isVerified: true },
+  });
+
+  if (!user) throw new AppError("User not found", 404);
+
+  await prisma.registerToken.deleteMany({
+    where: { email, type: "RESET_PASSWORD" },
+  });
+
+  const { raw, hashed } = generateToken();
+
+  await prisma.registerToken.create({
+    data: {
+      email,
+      token: hashed,
+      type: "RESET_PASSWORD",
+      expiresAt: new Date(Date.now() + 2 * 60 * 60 * 1000),
+    },
+  });
+
+  const verifyUrl = `${process.env.APP_URL}/reset-password?token=${raw}`;
+
+  await sendEmail({
+    to: email,
+    subject: "Reset your password",
+    html: registrationEmailTemplate(verifyUrl),
+  });
+};
+
 export const refreshSession = async ({
   oldRefreshToken,
 }: {

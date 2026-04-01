@@ -118,6 +118,17 @@ export const updateProfile = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+export const resetPassword = catchAsync(async (req: Request, res: Response) => {
+  const { email } = req.body;
+
+  await authService.resetPassword({ email });
+
+  res.status(200).json({
+    message:
+      "Reset password success, please check your email to reset your password",
+  });
+});
+
 export const authRefreshToken = catchAsync(
   async (req: Request, res: Response) => {
     const oldRefreshToken = req.cookies.refreshToken;
