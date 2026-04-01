@@ -28,6 +28,7 @@ import Password from "./features/auth/pages/Password";
 import type { User } from "./shared/types/user.type";
 import MyProfile from "./features/profile/pages/MyProfile";
 import PaymentProof from "./features/tenant/order-list/pages/PaymentProof";
+import ResetPassword from "./features/auth/pages/ResetPassword";
 
 function requireOnboarding(user: User | null) {
   if (!user?.fullName && user?.email) {
@@ -117,6 +118,10 @@ const router = createBrowserRouter([
       {
         path: "/login",
         element: <Login />,
+      },
+      {
+        path: "/reset-password",
+        element: <ResetPassword />,
       },
     ],
   },
