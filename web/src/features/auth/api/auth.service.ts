@@ -36,6 +36,10 @@ type GoogleLoginPayload = {
   token: string;
 };
 
+type ForgotPasswordPayload = {
+  email: string;
+};
+
 export const loginRequest = async (data: LoginPayload) => {
   const response = await apiAuth.post<ApiResponse<LoginResponse>>(
     AUTH_ENDPOINTS.LOGIN,
@@ -84,6 +88,15 @@ export const updatePasswordRequest = async (data: UpdatePasswordPayload) => {
 export const updateProfileRequest = async (data: UpdateProfilePayload) => {
   const response = await api.patch<ApiResponse<UpdateProfileResponse>>(
     AUTH_ENDPOINTS.UPDATE_PROFILE,
+    data,
+  );
+
+  return response.data;
+};
+
+export const forgotPasswordRequest = async (data: ForgotPasswordPayload) => {
+  const response = await apiAuth.post<ApiResponse<void>>(
+    AUTH_ENDPOINTS.FORGOT_PASSWORD,
     data,
   );
 

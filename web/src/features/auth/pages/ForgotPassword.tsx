@@ -1,6 +1,34 @@
 import { Link } from "react-router";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { forgotPasswordSchema } from "../schemas/forgot-password.schema";
+import { forgotPasswordRequest } from "../api/auth.service";
+import toast from "react-hot-toast";
 
 function ForgotPassword() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: zodResolver(forgotPasswordSchema),
+    defaultValues: {
+      email: "",
+    },
+  });
+
+  const onSubmit = async (data: { email: string }) => {
+    try {
+      toast.loading("Sending reset link...");
+      const response = await forgotPasswordRequest(data);
+      toast.dismiss();
+      toast.success(response.message);
+    } catch (error: any) {
+      toast.dismiss();
+      toast.error(error.response?.data?.message || "Failed to send reset link");
+    }
+  };
+
   return (
     <div className="bg-mesh min-h-screen flex items-center justify-center p-6">
       <main className="w-full max-w-md">
@@ -26,7 +54,7 @@ function ForgotPassword() {
               Enter your email and we’ll send you a reset link
             </p>
           </div>
-          <form className="w-full space-y-6">
+          <form className="w-full space-y-6" onSubmit={handleSubmit(onSubmit)}>
             <div className="space-y-2">
               <label className="block font-label text-[10px] font-bold uppercase tracking-wider text-on-surface-variant ml-1">
                 Email Address
@@ -43,16 +71,22 @@ function ForgotPassword() {
                 <input
                   className="w-full pl-12 pr-4 py-4 bg-surface-container-low border-0 focus:ring-2 focus:ring-primary/20 rounded-xl text-on-surface placeholder:text-slate-400 transition-all"
                   placeholder="name@example.com"
-                  required
                   type="email"
+                  {...register("email")}
                 />
               </div>
+              {errors.email && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.email.message}
+                </p>
+              )}
             </div>
             <button
-              className="w-full bg-primary text-white font-bold py-4 rounded-full shadow-lg shadow-primary/25 hover:scale-[1.02] active:scale-95 transition-all duration-200"
+              className={`w-full  text-white font-bold py-4 rounded-full shadow-lg shadow-primary/25 hover:scale-[1.02] active:scale-95 transition-all duration-200 ${isSubmitting ? "cursor-not-allowed bg-primary/50" : "cursor-pointer bg-primary"}`}
+              disabled={isSubmitting}
               type="submit"
             >
-              Send Reset Link
+              {isSubmitting ? "Sending..." : "Send Reset Link"}
             </button>
           </form>
           <div className="mt-8">

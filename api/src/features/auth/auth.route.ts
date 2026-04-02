@@ -9,7 +9,7 @@ router.post("/login", authController.login);
 router.post("/login/google", authController.loginWithGoogle);
 router.post("/register", authController.register);
 router.post("/resend-token", authController.resendToken);
-router.post("/reset-password", authController.resetPassword);
+router.post("/forgot-password", authController.resetPassword);
 router.patch("/update-password", authController.updatePassword);
 
 router.patch(
