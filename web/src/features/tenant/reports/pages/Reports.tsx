@@ -1,3 +1,5 @@
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, BarChart, Bar } from "recharts";
+
 function Reports() {
   const summaryCards = [
     {
@@ -65,34 +67,39 @@ function Reports() {
     },
   ];
 
+  const revenueData = [
+    { date: "01 Oct", revenue: 4000 },
+    { date: "07 Oct", revenue: 3000 },
+    { date: "14 Oct", revenue: 5000 },
+    { date: "21 Oct", revenue: 4000 },
+    { date: "28 Oct", revenue: 6000 },
+  ];
+
+  const bookingData = [
+    { name: "Skyline", bookings: 156 },
+    { name: "Ocean", bookings: 204 },
+    { name: "Mountain", bookings: 92 },
+    { name: "Urban", bookings: 188 },
+  ];
+
   return (
     <div className="p-4 lg:p-8 space-y-8 font-display">
       {/* Page Title & Filters */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 dark:text-slate-100 tracking-tight">
-            Sales Analytics
-          </h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-1">
-            Detailed overview of your rental performance and revenue.
-          </p>
+          <h1 className="text-3xl font-black text-slate-900 dark:text-slate-100 tracking-tight">Sales Analytics</h1>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">Detailed overview of your rental performance and revenue.</p>
         </div>
         <div className="flex items-center gap-3">
           <button className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors shadow-sm">
-            <span className="material-symbols-outlined text-lg">
-              calendar_today
-            </span>
+            <span className="material-symbols-outlined text-lg">calendar_today</span>
             Last 30 Days
-            <span className="material-symbols-outlined text-lg">
-              expand_more
-            </span>
+            <span className="material-symbols-outlined text-lg">expand_more</span>
           </button>
           <button className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors shadow-sm">
             <span className="material-symbols-outlined text-lg">home</span>
             All Properties
-            <span className="material-symbols-outlined text-lg">
-              expand_more
-            </span>
+            <span className="material-symbols-outlined text-lg">expand_more</span>
           </button>
         </div>
       </div>
@@ -100,25 +107,16 @@ function Reports() {
       {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {summaryCards.map((card, idx) => (
-          <div
-            key={idx}
-            className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm"
-          >
+          <div key={idx} className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
             <div className="flex justify-between items-start mb-4">
-              <div
-                className={`p-2 rounded-lg ${card.color === "primary" ? "bg-primary/10 text-primary" : `bg-${card.color}/10 text-${card.color}`}`}
-              >
+              <div className={`p-2 rounded-lg ${card.color === "primary" ? "bg-primary/10 text-primary" : `bg-${card.color}/10 text-${card.color}`}`}>
                 <span className="material-symbols-outlined">{card.icon}</span>
               </div>
-              <span
-                className={`text-sm font-bold flex items-center px-2 py-1 rounded-full ${card.trend === "0%" ? "bg-slate-100 dark:bg-slate-800 text-slate-500" : "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-500"}`}
-              >
+              <span className={`text-sm font-bold flex items-center px-2 py-1 rounded-full ${card.trend === "0%" ? "bg-slate-100 dark:bg-slate-800 text-slate-500" : "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-500"}`}>
                 {card.trend}
               </span>
             </div>
-            <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">
-              {card.label}
-            </p>
+            <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">{card.label}</p>
             <p className="text-2xl font-black mt-1">{card.value}</p>
           </div>
         ))}
@@ -135,29 +133,16 @@ function Reports() {
               <span className="text-xs text-slate-500">Revenue</span>
             </div>
           </div>
-          <div className="h-64 relative">
-            <div className="absolute inset-0 flex items-end justify-between px-2">
-              <div className="w-full h-full bg-linear-to-t from-primary/10 to-transparent rounded-t-lg relative overflow-hidden">
-                <svg
-                  className="absolute bottom-0 left-0 w-full h-40 overflow-visible"
-                  preserveAspectRatio="none"
-                >
-                  <path
-                    d="M0 160 C 100 120, 200 140, 300 80 S 500 100, 600 40 S 800 60, 1000 20 V 160 H 0 Z"
-                    fill="rgba(255, 92, 97, 0.15)"
-                    stroke="#ff5c61"
-                    strokeWidth="3"
-                  ></path>
-                </svg>
-              </div>
-            </div>
-            <div className="absolute -bottom-6 w-full flex justify-between text-[10px] text-slate-400 px-2">
-              <span>01 Oct</span>
-              <span>07 Oct</span>
-              <span>14 Oct</span>
-              <span>21 Oct</span>
-              <span>28 Oct</span>
-            </div>
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={revenueData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="date" />
+                <YAxis />
+                <Tooltip />
+                <Line type="monotone" dataKey="revenue" stroke="#ff5c61" strokeWidth={3} />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
         </div>
 
@@ -165,32 +150,18 @@ function Reports() {
         <div className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
           <div className="flex items-center justify-between mb-8">
             <h3 className="font-bold text-lg">Bookings per Property</h3>
-            <span className="material-symbols-outlined text-slate-400 cursor-pointer">
-              more_horiz
-            </span>
+            <span className="material-symbols-outlined text-slate-400 cursor-pointer">more_horiz</span>
           </div>
-          <div className="h-64 flex items-end justify-around gap-4 px-2">
-            {[
-              { label: "Skyline", h: "h-4/5" },
-              { label: "Ocean", h: "h-3/5" },
-              { label: "Mountain", h: "h-5/6" },
-              { label: "Urban", h: "h-2/5" },
-              { label: "Desert", h: "h-3/4" },
-            ].map((bar, i) => (
-              <div
-                key={i}
-                className="flex flex-col items-center gap-2 w-full group"
-              >
-                <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-t-lg relative h-48">
-                  <div
-                    className={`absolute bottom-0 w-full bg-primary/40 rounded-t-lg group-hover:bg-primary transition-all duration-300 ${bar.h}`}
-                  ></div>
-                </div>
-                <span className="text-[10px] text-slate-400 rotate-45 origin-left truncate w-12">
-                  {bar.label}
-                </span>
-              </div>
-            ))}
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={bookingData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="bookings" fill="#ff5c61" radius={[6, 6, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
         </div>
       </div>
@@ -199,9 +170,7 @@ function Reports() {
       <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
         <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
           <h3 className="font-bold text-lg">Sales by Property</h3>
-          <button className="text-sm font-semibold text-primary hover:underline">
-            View All
-          </button>
+          <button className="text-sm font-semibold text-primary hover:underline">View All</button>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left">
@@ -216,10 +185,7 @@ function Reports() {
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
               {propertySales.map((item, idx) => (
-                <tr
-                  key={idx}
-                  className="hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
-                >
+                <tr key={idx} className="hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <div
@@ -232,9 +198,7 @@ function Reports() {
                     </div>
                   </td>
                   <td className="px-6 py-4 text-sm">{item.bookings}</td>
-                  <td className="px-6 py-4 text-sm font-semibold">
-                    {item.revenue}
-                  </td>
+                  <td className="px-6 py-4 text-sm font-semibold">{item.revenue}</td>
                   <td className="px-6 py-4 text-sm">{item.avg}</td>
                   <td className="px-6 py-4">
                     <span
