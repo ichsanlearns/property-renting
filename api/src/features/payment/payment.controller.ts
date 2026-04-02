@@ -21,3 +21,17 @@ export const uploadPaymentProofController = catchAsync(async (req, res) => {
     data: result,
   });
 });
+
+export const confirmPaymentController = catchAsync(async (req, res) => {
+  const { reservationId } = req.body;
+
+  const result = await paymentService.confirmPayment({
+    reservationId,
+    tenantId: req.user!.userId,
+  });
+
+  res.status(200).json({
+    message: "Payment confirmed successfully",
+    data: result,
+  });
+});
