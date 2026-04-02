@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 
-function ResetPassword() {
+function ForgotPassword() {
   return (
     <div className="bg-mesh min-h-screen flex items-center justify-center p-6">
       <main className="w-full max-w-md">
@@ -97,4 +97,4 @@ function ResetPassword() {
   );
 }
 
-export default ResetPassword;
+export default ForgotPassword;

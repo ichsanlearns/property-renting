@@ -196,7 +196,7 @@ function Login() {
                 <div className="flex justify-end">
                   <Link
                     className="text-xs mt-2 font-bold text-primary hover:opacity-80 transition-opacity"
-                    to="/reset-password"
+                    to="/forgot-password"
                   >
                     Forgot password?
                   </Link>
