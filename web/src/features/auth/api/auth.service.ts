@@ -40,6 +40,11 @@ type ForgotPasswordPayload = {
   email: string;
 };
 
+type ResetPasswordPayload = {
+  password: string;
+  token: string;
+};
+
 export const loginRequest = async (data: LoginPayload) => {
   const response = await apiAuth.post<ApiResponse<LoginResponse>>(
     AUTH_ENDPOINTS.LOGIN,
@@ -97,6 +102,15 @@ export const updateProfileRequest = async (data: UpdateProfilePayload) => {
 export const forgotPasswordRequest = async (data: ForgotPasswordPayload) => {
   const response = await apiAuth.post<ApiResponse<void>>(
     AUTH_ENDPOINTS.FORGOT_PASSWORD,
+    data,
+  );
+
+  return response.data;
+};
+
+export const resetPasswordRequest = async (data: ResetPasswordPayload) => {
+  const response = await apiAuth.patch<ApiResponse<void>>(
+    AUTH_ENDPOINTS.RESET_PASSWORD,
     data,
   );
 
