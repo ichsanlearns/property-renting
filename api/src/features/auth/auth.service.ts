@@ -443,6 +443,49 @@ export const resetPassword = async ({ email }: { email: string }) => {
   });
 };
 
+export const updateResetPassword = async ({
+  password,
+  token,
+}: {
+  password: string;
+  token: string;
+}) => {
+  const hashedToken = await hashToken({ token });
+
+  const registerToken = await prisma.registerToken.findUnique({
+    where: { token: hashedToken },
+  });
+
+  if (!registerToken) throw new AppError("Invalid token", 400);
+
+  const user = await prisma.user.findUnique({
+    where: { email: registerToken.email },
+  });
+
+  if (!user) throw new AppError("User not found", 404);
+
+  const isPasswordMatch = await bcrypt.compare(password, user.password!);
+
+  if (isPasswordMatch)
+    throw new AppError(
+      "Password already used, please use another password",
+      400,
+    );
+
+  await prisma.registerToken.deleteMany({
+    where: { email: registerToken.email, type: "RESET_PASSWORD" },
+  });
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  await prisma.user.update({
+    where: { email: registerToken.email },
+    data: { password: hashedPassword },
+  });
+
+  return registerToken.email;
+};
+
 export const refreshSession = async ({
   oldRefreshToken,
 }: {

@@ -129,6 +129,18 @@ export const resetPassword = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+export const updateResetPassword = catchAsync(
+  async (req: Request, res: Response) => {
+    const { password, token } = req.body;
+
+    await authService.updateResetPassword({ password, token });
+
+    res.status(200).json({
+      message: "Password updated successfully, please login again",
+    });
+  },
+);
+
 export const authRefreshToken = catchAsync(
   async (req: Request, res: Response) => {
     const oldRefreshToken = req.cookies.refreshToken;
