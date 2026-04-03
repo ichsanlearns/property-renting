@@ -10,6 +10,7 @@ module.exports = {
         "background-dark": "#230f0f",
         background: "#f8f5f5",
         tertiary: "#006c4a",
+        "tertiary-container": "#00a976",
         "surface-container-high": "#ebe7e7",
         "surface-container-highest": "#e5e1e1",
         "surface-variant": "#f1eeee",

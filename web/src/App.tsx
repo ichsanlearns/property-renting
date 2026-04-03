@@ -29,6 +29,7 @@ import type { User } from "./shared/types/user.type";
 import MyProfile from "./features/profile/pages/MyProfile";
 import PaymentProof from "./features/tenant/order-list/pages/PaymentProof";
 import ForgotPassword from "./features/auth/pages/ForgotPassword";
+import ResetPassword from "./features/auth/pages/ResetPassword";
 
 function requireOnboarding(user: User | null) {
   if (!user?.fullName && user?.email) {
@@ -122,6 +123,10 @@ const router = createBrowserRouter([
       {
         path: "/forgot-password",
         element: <ForgotPassword />,
+      },
+      {
+        path: "/reset-password",
+        element: <ResetPassword />,
       },
     ],
   },
