@@ -68,6 +68,7 @@ function Password() {
                 {...register("password")}
               />
               <button
+                tabIndex={-1}
                 className="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-primary transition-colors"
                 type="button"
               >

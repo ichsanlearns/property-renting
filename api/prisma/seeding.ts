@@ -6,12 +6,15 @@ import { generateReferralCode } from "../src/shared/utils/referral.util.js";
 
 const seed = async () => {
   try {
+    console.log("Deleting all data...");
+
     await prisma.refreshToken.deleteMany({});
     await prisma.account.deleteMany({});
     await prisma.propertyAmenity.deleteMany({});
     await prisma.propertyImage.deleteMany({});
     await prisma.roomTypeImage.deleteMany({});
     await prisma.property.deleteMany({});
+    await prisma.registerToken.deleteMany({});
     await prisma.propertyCategory.deleteMany({});
     await prisma.amenity.deleteMany({});
     await prisma.roomType.deleteMany({});

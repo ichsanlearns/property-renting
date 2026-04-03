@@ -7,10 +7,11 @@ import { AppError } from "../../shared/utils/app-error.util.js";
 import { generateAuthToken } from "../../shared/utils/jwt.util.js";
 import { generateToken, hashToken } from "../../shared/utils/token.util.js";
 import { sendEmail } from "../../shared/services/email/email.service.js";
-import { registrationEmailTemplate } from "../../shared/services/email/email.template.js";
+import { registrationEmailTemplate } from "../../shared/services/email/registration.template.js";
 import { verifyGoogleToken } from "../../shared/utils/verify-token.util.js";
 import { generateReferralCode } from "../../shared/utils/referral.util.js";
 import type { Role } from "../../generated/prisma/enums.js";
+import { resetPasswordEmailTemplate } from "../../shared/services/email/resetpassword.template.js";
 
 export const login = async ({
   email,
@@ -438,8 +439,51 @@ export const resetPassword = async ({ email }: { email: string }) => {
   await sendEmail({
     to: email,
     subject: "Reset your password",
-    html: registrationEmailTemplate(verifyUrl),
+    html: resetPasswordEmailTemplate(verifyUrl),
   });
+};
+
+export const updateResetPassword = async ({
+  password,
+  token,
+}: {
+  password: string;
+  token: string;
+}) => {
+  const hashedToken = await hashToken({ token });
+
+  const registerToken = await prisma.registerToken.findUnique({
+    where: { token: hashedToken },
+  });
+
+  if (!registerToken) throw new AppError("Invalid token", 400);
+
+  const user = await prisma.user.findUnique({
+    where: { email: registerToken.email },
+  });
+
+  if (!user) throw new AppError("User not found", 404);
+
+  const isPasswordMatch = await bcrypt.compare(password, user.password!);
+
+  if (isPasswordMatch)
+    throw new AppError(
+      "Password already used, please use another password",
+      400,
+    );
+
+  await prisma.registerToken.deleteMany({
+    where: { email: registerToken.email, type: "RESET_PASSWORD" },
+  });
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  await prisma.user.update({
+    where: { email: registerToken.email },
+    data: { password: hashedPassword },
+  });
+
+  return registerToken.email;
 };
 
 export const refreshSession = async ({
