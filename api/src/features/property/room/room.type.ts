@@ -10,7 +10,7 @@ export type CreateRoomPayload = {
   name: string;
   description: string;
   basePrice: number;
-  quantity: number;
+  totalRooms: number;
   bedType: BedType;
   bedCount: number;
   viewType: ViewType;

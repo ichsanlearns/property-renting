@@ -65,7 +65,7 @@ function FormRoom() {
       name: data.name,
       description: data.description,
       basePrice: data.basePrice,
-      quantity: data.quantity,
+      totalRooms: data.totalRooms,
       bedType: data.bedType,
       bedCount: data.bedCount,
       viewType: data.viewType,
@@ -236,7 +236,7 @@ function FormRoom() {
                     Room Total
                   </label>
                   <input
-                    {...register("quantity", {
+                    {...register("totalRooms", {
                       valueAsNumber: true,
                     })}
                     type="number"

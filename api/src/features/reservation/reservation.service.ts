@@ -9,8 +9,15 @@ const normalizeDate = (date: Date) => {
   return d;
 };
 
-export const createReservation = async ({ userId, payload }: { userId: string; payload: CreateReservationInput }) => {
-  const { roomTypeId, checkInDate, checkOutDate, guestCount, usePoints } = payload;
+export const createReservation = async ({
+  userId,
+  payload,
+}: {
+  userId: string;
+  payload: CreateReservationInput;
+}) => {
+  const { roomTypeId, checkInDate, checkOutDate, guestCount, usePoints } =
+    payload;
 
   //  normalize date
   const checkIn = normalizeDate(new Date(checkInDate));
@@ -42,7 +49,7 @@ export const createReservation = async ({ userId, payload }: { userId: string; p
     }
 
     //  pakai range query (LEBIH AMAN)
-    const availability = await tx.roomAvailability.findMany({
+    const availability = await tx.roomTypePrice.findMany({
       where: {
         roomTypeId,
         date: {
@@ -59,20 +66,21 @@ export const createReservation = async ({ userId, payload }: { userId: string; p
 
     //  cek stok
     for (const day of availability) {
-      if (day.availableQuantity <= 0) {
+      if (day.availableRooms <= 0) {
         throw new AppError("Room fully booked on selected date", 400);
       }
     }
 
     //  hitung harga
-    const totalAmount = Number(roomType.basePrice) * dates.length - (usePoints ?? 0);
+    const totalAmount =
+      Number(roomType.basePrice) * dates.length - (usePoints ?? 0);
 
     //  update availability
     for (const day of availability) {
-      await tx.roomAvailability.update({
+      await tx.roomTypePrice.update({
         where: { id: day.id },
         data: {
-          availableQuantity: {
+          availableRooms: {
             decrement: 1,
           },
         },

@@ -21,11 +21,12 @@ const seed = async () => {
     await prisma.reservation.deleteMany({});
     await prisma.user.deleteMany({});
     await prisma.review.deleteMany({});
-    await prisma.priceAdjustment.deleteMany({});
     await prisma.voucher.deleteMany({});
     await prisma.point.deleteMany({});
     await prisma.coupon.deleteMany({});
-    await prisma.roomAvailability.deleteMany({});
+    await prisma.roomTypePrice.deleteMany({});
+    await prisma.priceOverride.deleteMany({});
+    await prisma.pricingRule.deleteMany({});
 
     console.info("🌱 Seeding started...");
 
@@ -252,7 +253,7 @@ const seed = async () => {
           date.setDate(today.getDate() + i);
           date.setHours(0, 0, 0, 0);
 
-          await prisma.roomAvailability.upsert({
+          await prisma.roomTypePrice.upsert({
             where: {
               roomTypeId_date: {
                 roomTypeId: room.id,
@@ -260,12 +261,13 @@ const seed = async () => {
               },
             },
             update: {
-              availableQuantity: room.quantity,
+              availableRooms: room.totalRooms,
             },
             create: {
               roomTypeId: room.id,
               date: date,
-              availableQuantity: room.quantity,
+              availableRooms: room.totalRooms,
+              price: room.basePrice,
             },
           });
         }
