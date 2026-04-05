@@ -1,5 +1,6 @@
 import { prisma } from "../../../shared/lib/prisma.lib.js";
 import { AppError } from "../../../shared/utils/app-error.util.js";
+import { isWeekend } from "../../../shared/utils/date.util.js";
 import type { CreateRoomPayload } from "./room.type.js";
 
 export const createRoom = async ({
@@ -89,15 +90,36 @@ export const ensurePrices = async ({
     startDate.setDate(startDate.getDate() + 1);
   }
 
+  if (startDate > endDate) {
+    return;
+  }
+
+  const pricingRules = await prisma.pricingRule.findMany({
+    where: {
+      isActive: true,
+    },
+  });
+  const weekendRule = pricingRules.find((rule) => rule.type === "WEEKEND");
+
   const priceToCreates = [];
 
   let currentDate = new Date(startDate);
 
   while (currentDate <= endDate) {
+    let price = Number(roomType.basePrice);
+
+    if (isWeekend({ date: currentDate })) {
+      if (weekendRule?.adjustmentType === "NOMINAL") {
+        price += Number(weekendRule.value);
+      } else if (weekendRule?.adjustmentType === "PERCENTAGE") {
+        price += (Number(roomType.basePrice) * Number(weekendRule.value)) / 100;
+      }
+    }
+
     priceToCreates.push({
       roomTypeId,
       date: new Date(currentDate),
-      price: roomType.basePrice,
+      price,
       availableRooms: roomType.totalRooms,
       isClosed: false,
     });
