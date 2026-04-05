@@ -29,7 +29,7 @@ export default function MapPicker({
   return (
     <MapContainer
       // @ts-ignore
-      center={[-6.9, 107.6]} // Bandung default
+      center={[-6.9, 107.6]}
       zoom={13}
       className="h-[300px] w-full rounded-xl"
     >

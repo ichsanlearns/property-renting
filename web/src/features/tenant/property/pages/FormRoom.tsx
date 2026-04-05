@@ -52,20 +52,25 @@ function FormRoom() {
 
   const [selectedBathroomType, setSelectedBathroomType] = useState<string>("");
 
-  const { register, watch, handleSubmit, setValue } =
-    useForm<CreateRoomPayload>({
-      resolver: zodResolver(createRoomSchema),
-      defaultValues: {
-        bedCount: 1,
-      },
-    });
+  const {
+    register,
+    watch,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm<CreateRoomPayload>({
+    resolver: zodResolver(createRoomSchema),
+    defaultValues: {
+      bedCount: 1,
+    },
+  });
 
   const onSubmit = async (data: CreateRoomPayload) => {
     const payload = {
       name: data.name,
       description: data.description,
       basePrice: data.basePrice,
-      quantity: data.quantity,
+      totalRooms: data.totalRooms,
       bedType: data.bedType,
       bedCount: data.bedCount,
       viewType: data.viewType,
@@ -193,7 +198,13 @@ function FormRoom() {
                     placeholder="e.g. Master Oceanfront Suite"
                     type="text"
                   />
+                  {errors.name && (
+                    <p className="text-red-500 text-sm -mt-1">
+                      {errors.name.message}
+                    </p>
+                  )}
                 </div>
+
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
                     Description
@@ -204,6 +215,11 @@ function FormRoom() {
                     placeholder="Describe the room's unique features, view, and layout to help guests choose their perfect stay..."
                     rows={4}
                   ></textarea>
+                  {errors.description && (
+                    <p className="text-red-500 text-sm -mt-2">
+                      {errors.description.message}
+                    </p>
+                  )}
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
@@ -225,6 +241,11 @@ function FormRoom() {
                       type="number"
                     />
                   </div>
+                  {errors.basePrice && (
+                    <p className="text-red-500 text-sm -mt-1">
+                      {errors.basePrice.message}
+                    </p>
+                  )}
                   <p className="text-[10px] text-slate-400 mt-1 leading-relaxed">
                     This is the default price. Seasonal or date-based pricing
                     can be configured later.
@@ -236,13 +257,18 @@ function FormRoom() {
                     Room Total
                   </label>
                   <input
-                    {...register("quantity", {
+                    {...register("totalRooms", {
                       valueAsNumber: true,
                     })}
                     type="number"
                     placeholder="e.g. 2"
                     className="w-full p-4 bg-slate-50 hover:bg-white focus:bg-white border-slate-200 border rounded-xl text-sm font-semibold focus:ring-2 focus:ring-primary/20 transition-all"
                   />
+                  {errors.totalRooms && (
+                    <p className="text-red-500 text-sm -mt-1">
+                      {errors.totalRooms.message}
+                    </p>
+                  )}
                 </div>
               </div>
             </section>
@@ -271,6 +297,11 @@ function FormRoom() {
                       </option>
                     ))}
                   </select>
+                  {errors.bedType && (
+                    <p className="text-red-500 text-sm -mt-1">
+                      {errors.bedType.message}
+                    </p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
@@ -284,6 +315,11 @@ function FormRoom() {
                     placeholder="e.g. 2"
                     className="w-full p-4 bg-slate-50 hover:bg-white focus:bg-white border-slate-200 border rounded-xl text-sm font-semibold focus:ring-2 focus:ring-primary/20 transition-all"
                   />
+                  {errors.capacity && (
+                    <p className="text-red-500 text-sm -mt-1">
+                      {errors.capacity.message}
+                    </p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
@@ -299,6 +335,11 @@ function FormRoom() {
                       </option>
                     ))}
                   </select>
+                  {errors.viewType && (
+                    <p className="text-red-500 text-sm -mt-1">
+                      {errors.viewType.message}
+                    </p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
@@ -319,6 +360,11 @@ function FormRoom() {
                       </button>
                     ))}
                   </div>
+                  {errors.bathroomType && (
+                    <p className="text-red-500 text-sm -mt-1">
+                      {errors.bathroomType.message}
+                    </p>
+                  )}
                 </div>
                 <div className="md:col-span-2 space-y-2">
                   <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
@@ -344,6 +390,11 @@ function FormRoom() {
                       className="w-12 h-12 bg-primary text-white flex text-center justify-center font-bold rounded-xl shrink-0 shadow-lg shadow-primary/20"
                     />
                   </div>
+                  {errors.bedCount && (
+                    <p className="text-red-500 text-sm -mt-1">
+                      {errors.bedCount.message}
+                    </p>
+                  )}
                 </div>
               </div>
             </section>
@@ -384,9 +435,9 @@ function FormRoom() {
                     >
                       {publishStatuses.map((status) => (
                         <option
-                          selected={status.value === "published"}
                           key={status.value}
                           value={status.value}
+                          defaultChecked={status.value === "published"}
                         >
                           {status.label}
                         </option>
@@ -399,7 +450,6 @@ function FormRoom() {
                     </span>
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input
-                        checked
                         className="sr-only peer"
                         type="checkbox"
                         value=""

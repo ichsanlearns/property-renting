@@ -1,5 +1,10 @@
 import { prisma } from "../src/shared/lib/prisma.lib.js";
-import { Role, AmenityType } from "../src/generated/prisma/enums.js";
+import {
+  Role,
+  AmenityType,
+  PricingRuleType,
+  PriceAdjustmentType,
+} from "../src/generated/prisma/enums.js";
 import bcrypt from "bcrypt";
 
 import { generateReferralCode } from "../src/shared/utils/referral.util.js";
@@ -21,11 +26,12 @@ const seed = async () => {
     await prisma.reservation.deleteMany({});
     await prisma.user.deleteMany({});
     await prisma.review.deleteMany({});
-    await prisma.priceAdjustment.deleteMany({});
     await prisma.voucher.deleteMany({});
     await prisma.point.deleteMany({});
     await prisma.coupon.deleteMany({});
-    await prisma.roomAvailability.deleteMany({});
+    await prisma.roomTypePrice.deleteMany({});
+    await prisma.priceOverride.deleteMany({});
+    await prisma.pricingRule.deleteMany({});
 
     console.info("🌱 Seeding started...");
 
@@ -252,7 +258,7 @@ const seed = async () => {
           date.setDate(today.getDate() + i);
           date.setHours(0, 0, 0, 0);
 
-          await prisma.roomAvailability.upsert({
+          await prisma.roomTypePrice.upsert({
             where: {
               roomTypeId_date: {
                 roomTypeId: room.id,
@@ -260,12 +266,13 @@ const seed = async () => {
               },
             },
             update: {
-              availableQuantity: room.quantity,
+              availableRooms: room.totalRooms,
             },
             create: {
               roomTypeId: room.id,
               date: date,
-              availableQuantity: room.quantity,
+              availableRooms: room.totalRooms,
+              price: room.basePrice,
             },
           });
         }
@@ -275,6 +282,35 @@ const seed = async () => {
     };
 
     await seedRoomAvailability();
+
+    // =============================
+    // PRICING RULES
+    // =============================
+
+    const pricingRules = [
+      {
+        id: "012e717a-2429-4757-945f-e24724bcd7ac",
+        type: PricingRuleType.WEEKEND,
+        value: 10,
+        adjustmentType: PriceAdjustmentType.PERCENTAGE,
+      },
+      {
+        id: "17a6619c-f6b5-469a-adf4-66196a67d187",
+        type: PricingRuleType.HOLIDAY,
+        value: 20,
+        adjustmentType: PriceAdjustmentType.PERCENTAGE,
+      },
+      {
+        id: "b1eac0c3-61c0-4f3f-b8fa-3a5c6b0e8b2c",
+        type: PricingRuleType.SEASONAL,
+        value: 15,
+        adjustmentType: PriceAdjustmentType.PERCENTAGE,
+      },
+    ];
+
+    await prisma.pricingRule.createMany({
+      data: pricingRules,
+    });
 
     // =============================
     // DONE

@@ -14,7 +14,7 @@ export const createRoomController = catchAsync(
       name,
       description,
       basePrice,
-      quantity,
+      totalRooms,
       bedType,
       bedCount,
       viewType,
@@ -29,7 +29,7 @@ export const createRoomController = catchAsync(
       name,
       description,
       basePrice: Number(basePrice),
-      quantity: Number(quantity),
+      totalRooms: Number(totalRooms),
       bedType: bedType.toUpperCase(),
       bedCount: Number(bedCount),
       viewType: viewType.toUpperCase(),
@@ -56,6 +56,11 @@ export const createRoomController = catchAsync(
       data,
       images,
       amenities,
+    });
+
+    RoomService.ensurePrices({
+      roomTypeId: room.id,
+      daysAhead: 30,
     });
 
     res.status(201).json({

@@ -45,6 +45,12 @@ enum PriceAdjustmentType {
   PERCENTAGE
 }
 
+enum PricingRuleType {
+  WEEKEND
+  HOLIDAY
+  SEASONAL
+}
+
 enum VerificationStatus {
   PENDING
   VERIFIED
@@ -279,7 +285,7 @@ model RoomType {
   name              String
   description       String
   basePrice         Decimal    @map("base_price")            @db.Decimal(10,2) 
-  quantity          Int
+  totalRooms        Int        @map("total_rooms")
 
   bedType           BedType    @map("bed_type")
   bedCount          Int        @map("bed_count")
@@ -296,11 +302,11 @@ model RoomType {
 
   property Property @relation(fields: [propertyId], references: [id])
 
-  roomAvailability RoomAvailability[]
-  priceAdjustments PriceAdjustment[]
   reservations      Reservation[]
   roomTypeImages  RoomTypeImage[]
   roomAmenities    RoomTypeAmenity[]
+  roomTypePrices   RoomTypePrice[]
+  priceOverrides   PriceOverride[]
 
   @@map("room_types")
 }
@@ -339,12 +345,13 @@ model RoomTypeImage {
   @@map("room_type_images")
 }
 
-model RoomAvailability {
-  id                String                                   @id @default(uuid())
-  roomTypeId        String     @map("room_type_id")
-
-  date              DateTime
-  availableQuantity Int        @map("available_quantity")
+model RoomTypePrice {
+  id              String                              @id @default(uuid())
+  roomTypeId      String     @map("room_type_id")
+  date            DateTime
+  price           Decimal    @db.Decimal(10,2)
+  availableRooms  Int        @map("available_rooms")
+  isClosed        Boolean    @map("is_closed")        @default(false)
 
   createdAt         DateTime   @map("created_at")            @default(now()) 
   updatedAt         DateTime   @map("updated_at")            @updatedAt
@@ -356,30 +363,42 @@ model RoomAvailability {
 
   @@unique([roomTypeId, date])
 
-  @@map("room_availability")
+  @@map("room_type_prices")
+}
+
+model PriceOverride {
+  id          String                              @id @default(uuid())
+  roomTypeId  String     @map("room_type_id")
+  date        DateTime
+  price       Decimal    @db.Decimal(10,2)
+
+  createdAt   DateTime   @map("created_at")            @default(now()) 
+  updatedAt   DateTime   @map("updated_at")            @updatedAt
+
+  roomType    RoomType  @relation(fields: [roomTypeId], references: [id])
+
+  @@unique([roomTypeId, date])
+
+  @@map("price_overrides")
+}
+
+model PricingRule {
+  id              String                              @id @default(uuid())
+  type            PricingRuleType
+  adjustmentType  PriceAdjustmentType                 @map("adjustment_type")
+  value           Decimal    @db.Decimal(10,2)
+
+  dayOfWeek       Int?                          @map("day_of_week")
+  
+  isActive        Boolean                             @default(true) @map("is_active")
+
+  createdAt       DateTime   @map("created_at")            @default(now()) 
+  updatedAt       DateTime   @map("updated_at")            @updatedAt
+
+  @@map("pricing_rules")
 }
 
 
-model PriceAdjustment {
-  id                 String                                            @id @default(uuid())
-  roomTypeId         String              @map("room_type_id")
-
-  startDate          DateTime            @map("start_date")
-  endDate            DateTime            @map("end_date")
-
-  adjustmentType     PriceAdjustmentType @map("adjustment_type")
-  adjustmentValue    Decimal             @map("adjustment_value")      @db.Decimal(10,2) 
-
-  reason             String
-
-  createdAt          DateTime            @map("created_at")            @default(now()) 
-  updatedAt          DateTime            @map("updated_at")            @updatedAt
-  deletedAt          DateTime?           @map("deleted_at")
-
-  roomType RoomType @relation(fields: [roomTypeId], references: [id])
-
-  @@map("price_adjustments")
-}
 
 model Reservation {
   id                 String                               @id @default(uuid())

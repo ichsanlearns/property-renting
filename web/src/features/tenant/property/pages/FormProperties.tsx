@@ -35,13 +35,18 @@ function Properties() {
 
   const [images, setImages] = useState<ImageType[]>([]);
 
-  const { register, handleSubmit, setValue, watch } =
-    useForm<CreatePropertyPayload>({
-      resolver: zodResolver(createPropertySchema),
-      defaultValues: {
-        numberOfBathrooms: 1,
-      },
-    });
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm<CreatePropertyPayload>({
+    resolver: zodResolver(createPropertySchema),
+    defaultValues: {
+      numberOfBathrooms: 1,
+    },
+  });
 
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -178,6 +183,11 @@ function Properties() {
                     {...register("name")}
                     className="w-full rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary transition-all p-3.5"
                   />
+                  {errors.name && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.name.message}
+                    </p>
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
@@ -195,6 +205,11 @@ function Properties() {
                       </option>
                     ))}
                   </select>
+                  {errors.categoryId && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.categoryId.message}
+                    </p>
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
@@ -206,6 +221,11 @@ function Properties() {
                     className="w-full rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary p-3.5 min-h-[120px]"
                     rows={4}
                   ></textarea>
+                  {errors.description && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.description.message}
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
@@ -270,6 +290,11 @@ function Properties() {
 
                 <div className="relative">
                   <Map onSelect={handleMapSelect} />
+                  {errors.latitude && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.latitude.message}
+                    </p>
+                  )}
 
                   {isFetching && (
                     <div className="absolute inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-1000">
