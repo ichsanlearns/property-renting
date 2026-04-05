@@ -1,5 +1,10 @@
 import { prisma } from "../src/shared/lib/prisma.lib.js";
-import { Role, AmenityType } from "../src/generated/prisma/enums.js";
+import {
+  Role,
+  AmenityType,
+  PricingRuleType,
+  PriceAdjustmentType,
+} from "../src/generated/prisma/enums.js";
 import bcrypt from "bcrypt";
 
 import { generateReferralCode } from "../src/shared/utils/referral.util.js";
@@ -277,6 +282,35 @@ const seed = async () => {
     };
 
     await seedRoomAvailability();
+
+    // =============================
+    // PRICING RULES
+    // =============================
+
+    const pricingRules = [
+      {
+        id: "012e717a-2429-4757-945f-e24724bcd7ac",
+        type: PricingRuleType.WEEKEND,
+        value: 10,
+        adjustmentType: PriceAdjustmentType.PERCENTAGE,
+      },
+      {
+        id: "17a6619c-f6b5-469a-adf4-66196a67d187",
+        type: PricingRuleType.HOLIDAY,
+        value: 20,
+        adjustmentType: PriceAdjustmentType.PERCENTAGE,
+      },
+      {
+        id: "b1eac0c3-61c0-4f3f-b8fa-3a5c6b0e8b2c",
+        type: PricingRuleType.SEASONAL,
+        value: 15,
+        adjustmentType: PriceAdjustmentType.PERCENTAGE,
+      },
+    ];
+
+    await prisma.pricingRule.createMany({
+      data: pricingRules,
+    });
 
     // =============================
     // DONE
