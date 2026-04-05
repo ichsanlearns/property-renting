@@ -8,19 +8,24 @@ async function deleteSeed() {
     console.info("🌱 Deleting everything...");
 
     await prisma.refreshToken.deleteMany({});
+    await prisma.account.deleteMany({});
     await prisma.propertyAmenity.deleteMany({});
     await prisma.propertyImage.deleteMany({});
     await prisma.roomTypeImage.deleteMany({});
     await prisma.property.deleteMany({});
+    await prisma.registerToken.deleteMany({});
     await prisma.propertyCategory.deleteMany({});
     await prisma.amenity.deleteMany({});
+    await prisma.roomType.deleteMany({});
+    await prisma.reservation.deleteMany({});
     await prisma.user.deleteMany({});
     await prisma.review.deleteMany({});
-    await prisma.reservation.deleteMany({});
-    await prisma.priceAdjustment.deleteMany({});
     await prisma.voucher.deleteMany({});
     await prisma.point.deleteMany({});
     await prisma.coupon.deleteMany({});
+    await prisma.roomTypePrice.deleteMany({});
+    await prisma.priceOverride.deleteMany({});
+    await prisma.pricingRule.deleteMany({});
 
     console.info("✅ Deleting everything completed successfully");
   } catch (error) {
