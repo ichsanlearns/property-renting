@@ -58,6 +58,11 @@ export const createRoomController = catchAsync(
       amenities,
     });
 
+    RoomService.ensurePrices({
+      roomTypeId: room.id,
+      daysAhead: 30,
+    });
+
     res.status(201).json({
       message: "Room created successfully",
       data: {

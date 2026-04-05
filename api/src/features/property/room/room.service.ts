@@ -128,5 +128,6 @@ export const ensurePrices = async ({
 
   await prisma.roomTypePrice.createMany({
     data: priceToCreates,
+    skipDuplicates: true,
   });
 };
