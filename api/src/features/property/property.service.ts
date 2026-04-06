@@ -152,6 +152,8 @@ export const getById = async ({ id }: { id: string }) => {
       propertyImages: {
         select: {
           imageUrl: true,
+          isCover: true,
+          order: true,
         },
       },
     },

@@ -1,10 +1,16 @@
+import { useParams } from "react-router-dom";
+import { usePropertyDetail } from "../../tenant/property/hooks/useProperty";
+
 function PropertyDetail() {
+  const { propertyId } = useParams() as { propertyId: string };
+  const { data: property } = usePropertyDetail({ propertyId });
+
   return (
     <div className="bg-background text-on-surface antialiased">
       <main className="max-w-7xl mx-auto px-6 pt-28 pb-24">
         <header className="mb-8">
           <h1 className="text-3xl font-extrabold tracking-tight text-on-surface mb-2">
-            Ocean Breeze Villa in Malibu
+            {property?.name}
           </h1>
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-4 text-sm font-semibold">
@@ -15,12 +21,14 @@ function PropertyDetail() {
                 >
                   star
                 </span>
-                4.92 ·{" "}
-                <span className="underline cursor-pointer">128 reviews</span>
+                {property?.averageRating ?? 0} ·{" "}
+                <span className="underline cursor-pointer">
+                  {property?.reviewCount ?? 0} reviews
+                </span>
               </span>
               <span className="text-on-surface-variant">·</span>
               <span className="underline cursor-pointer">
-                Malibu, California, United States
+                {property?.city}, {property?.province}, {property?.country}
               </span>
             </div>
             <div className="flex items-center gap-2">
@@ -39,47 +47,22 @@ function PropertyDetail() {
             </div>
           </div>
         </header>
-        <section className="grid grid-cols-1 md:grid-cols-4 grid-rows-2 gap-3 h-[500px] mb-12 rounded-2xl overflow-hidden group">
-          <div className="md:col-span-2 md:row-span-2 overflow-hidden relative">
-            <img
-              alt="Main villa view"
-              className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-              data-alt="Modern white beachfront villa with palm trees"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDvAREB87iUaIPiQrQFjElsMZyP7AtyHYsZwqCultjARJMdx9SPObsw6XMIrkxy4RziMfqvefbdOYLLmFbq-CFR0CNhBXn5lZm3DRa-7rjiYz_s0R5c5_w_KLYnMdmg2pwKzuf8Rm-qCWL78KMF4_6R9YHK13j3i3Kx2HJPLjFW8J2hwwL3DewojeAwEfwldIk8246KJXfY--tWUoVoDpOMekNOMqoLFY09uiT5_BGDVF0hlHr8L8buidi0O-ipjoSmeKuuBOWMFipL"
-            />
-          </div>
-          <div className="overflow-hidden">
-            <img
-              alt="Interior living room"
-              className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-              data-alt="Minimalist airy living room with ocean view"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQ7GeYDTKx3Ujhkn2U9wMWHBesuXpt8uJKpkUNOw1icqcJi1tBs9GademUA9BLBQE3xeuE2NXk0fugQ_OtRiwMVzb6Ypts-QVavs8noRhUCSnDb_ajMjaM4TmbI6ezmTFUGRpZa6k9DvniyUl0qoNuzLDbhBi63KdD5m78Yq4PUTt8F1xmoAbRoEV0VU41_wnq5HtmATbafAFHQyhcoA_2BI12CBlOSvCnJLlSrjje3g6lq-EFHaMZfgXYb0L0PgCaf-fcq7k45bvf"
-            />
-          </div>
-          <div className="overflow-hidden">
-            <img
-              alt="Bedroom view"
-              className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-              data-alt="Luxurious bedroom with king bed and balcony"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDFhkJeSSDP9F7lzWJpj_IB7a8PhQG0cg95sZtfM6tk74OvZGGWNlqrqJTrEoT4EihEuEJeetk7vCVu_B05NMufVJ8q5ITFn2j5YrJFvqrzjeRyFxz9xTt0f5Fvc1uCe_uiD2TChuScrkn_6q2P9OHzyS8FocN9EazSaGLWv6FqYQEjtKOK1YDCr8q67JVfVb7jmsFn_2_8sf89S6dfv8mUm39fmWbgzx98uhWmMRf3DSTKiDpYjzUNyUxXFVcy2acbiHCA91JPhNzn"
-            />
-          </div>
-          <div className="overflow-hidden">
-            <img
-              alt="Pool area"
-              className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-              data-alt="Infinity pool overlooking the Pacific Ocean"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuAHutSE0OjHRron2_P6tl-u9u6mGBOajrPBgwBt-SP0CgeDPf4NEFse7llZVdRcdrPsqN_ATMvlOrlj55ZHII9tCM1R8w_YG-O0yyA8OJqyDagyueCFWrd5whu3TcvxuHJjtfeQr0DN0dr1JxyNgFcNfhlwo7bBHP2j1EdA6lHKvJEfNr5Q-c8zDbTVIohFdzkrTvJNhOWQuFR0yuByRRCo-6uKZczQtjT-iPwZ-F1GiNPSqasuae9_gRVfFGBa8fRIcYVhBTcp_LRn"
-            />
-          </div>
-          <div className="overflow-hidden">
-            <img
-              alt="Exterior dusk"
-              className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-              data-alt="Evening shot of coastal villa architecture"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuAzzL-FcjdXpJLH_mMxBLUXXJPlC8vDKm0nLPfx3ysaYxvESxqcjAMm3Qb_W21jeCBITn8POjoBtIoHQbp8Sphne290bn71kiTxI53wB_H3bGfk4PABV3EWCJZdy_TJl2kxkH8YdPq9n-8do-H8WzlmQUcrc4CbsTbevsn7tQv9t-VOJdF542l7fo1O3s-1ZCkmMkCtZn1P8hxNO2JiYuNzFJKlPIUV1kHkM6ZldNhDzxC9QlHaKfjvCHRpwoTl_CsbhVQnni8ofrQv"
-            />
-          </div>
+        <section
+          className={`grid grid-cols-1 md:grid-cols-4 grid-rows-2 gap-3 h-[500px] mb-12 rounded-2xl overflow-hidden group`}
+        >
+          {property?.images.map((image, index) => (
+            <div
+              key={index}
+              className={`${image.isCover && "md:col-span-2 md:row-span-2"} overflow-hidden relative`}
+            >
+              <img
+                alt="Main villa view"
+                className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                data-alt="Modern white beachfront villa with palm trees"
+                src={image.imageUrl}
+              />
+            </div>
+          ))}
         </section>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
           <div className="lg:col-span-2 space-y-12">
@@ -87,17 +70,22 @@ function PropertyDetail() {
               <div className="flex justify-between items-start border-b border-primary/10 pb-8 mb-8">
                 <div>
                   <h2 className="text-2xl font-bold">
-                    Entire villa hosted by Sarah
+                    Entire {property?.category.name} hosted by{" "}
+                    {property?.tenant.firstName}
                   </h2>
                   <p className="text-on-surface-variant font-medium mt-1">
-                    10 guests · 5 bedrooms · 6 beds · 5.5 baths
+                    10 guests · 5 bedrooms · 6 beds ·{" "}
+                    {property?.numberOfBathrooms} baths
                   </p>
                 </div>
                 <div className="relative">
                   <img
                     className="w-14 h-14 rounded-full object-cover border border-primary/10"
                     data-alt="Friendly female host portrait Sarah"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXLfQBTsR1eJmR23drdfOZAB26FIBd7TI5C_RyYufiUFClPhG4LqWdD_m_tt4qgF7YUfu0cpnszGjYiuuJGOst8yzbhKZ_pGPiY3sluBJw-3_d1HhjU2O9yNocQTw8BylI2Y0OpKPkGWej6C5V_5LyWgB64fwmyVu4RxG-wE-xDuHRgZaWYId8Max1qN30InhuJPqkfgW-d6vuJfFurrqgc5zyPge1pf8f33CRh0XbSzoyERLnWzCGqjHp1ctNdTWbL6pFPsaw9gZQ"
+                    src={
+                      property?.tenant.profileImage ||
+                      `https://ui-avatars.com/api/?name=${property?.tenant.firstName}`
+                    }
                   />
                   <div className="absolute -bottom-1 -right-1 bg-primary text-white rounded-full p-1 border-2 border-white">
                     <span

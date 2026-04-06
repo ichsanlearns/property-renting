@@ -21,6 +21,8 @@ type CategoryResponse = {
 
 type PropertyImageResponse = {
   imageUrl: string;
+  isCover: boolean;
+  order: number;
 };
 
 export type GetPropertyByIdResponse = {
