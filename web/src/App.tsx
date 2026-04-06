@@ -30,7 +30,7 @@ import MyProfile from "./features/profile/pages/MyProfile";
 import PaymentProof from "./features/tenant/order-list/pages/PaymentProof";
 import ForgotPassword from "./features/auth/pages/ForgotPassword";
 import ResetPassword from "./features/auth/pages/ResetPassword";
-import PropertyDetail from "./features/property/pages/PropertyDetail";
+import PropertyDetail from "./features/public/pages/PropertyDetail";
 
 function requireOnboarding(user: User | null) {
   if (!user?.fullName && user?.email) {

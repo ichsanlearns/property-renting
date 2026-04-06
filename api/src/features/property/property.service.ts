@@ -113,3 +113,119 @@ export const getByIdBasic = async (id: string) => {
     coverImage: property.propertyImages[0]?.imageUrl,
   };
 };
+
+export const getById = async ({ id }: { id: string }) => {
+  const property = await prisma.property.findUnique({
+    where: {
+      id,
+    },
+    select: {
+      name: true,
+      description: true,
+      country: true,
+      city: true,
+      province: true,
+      fullAddress: true,
+
+      latitude: true,
+      longitude: true,
+
+      numberOfBathrooms: true,
+
+      averageRating: true,
+      reviewCount: true,
+
+      tenant: {
+        select: {
+          id: true,
+          firstName: true,
+          profileImage: true,
+        },
+      },
+
+      category: {
+        select: {
+          name: true,
+        },
+      },
+
+      propertyImages: {
+        select: {
+          imageUrl: true,
+          isCover: true,
+          order: true,
+        },
+      },
+
+      propertyAmenities: {
+        select: {
+          amenity: {
+            select: {
+              name: true,
+              icon: true,
+              description: true,
+            },
+          },
+        },
+      },
+
+      roomTypes: {
+        select: {
+          name: true,
+          basePrice: true,
+          capacity: true,
+          bedType: true,
+          bedCount: true,
+          viewType: true,
+          bathroomType: true,
+
+          averageRating: true,
+          reviewCount: true,
+
+          roomTypeImages: {
+            select: {
+              imageUrl: true,
+            },
+          },
+
+          roomAmenities: {
+            select: {
+              amenity: {
+                select: {
+                  icon: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!property) {
+    throw new AppError("Property not found", 404);
+  }
+
+  return {
+    name: property.name,
+    description: property.description,
+    country: property.country,
+    city: property.city,
+    province: property.province,
+    fullAddress: property.fullAddress,
+
+    latitude: property.latitude,
+    longitude: property.longitude,
+
+    numberOfBathrooms: property.numberOfBathrooms,
+
+    averageRating: property.averageRating,
+    reviewCount: property.reviewCount,
+
+    tenant: property.tenant,
+    category: property.category,
+    propertyImages: property.propertyImages,
+    propertyAmenities: property.propertyAmenities,
+    roomTypes: property.roomTypes,
+  };
+};
