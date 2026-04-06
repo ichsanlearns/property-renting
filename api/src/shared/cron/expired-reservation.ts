@@ -22,7 +22,7 @@ export const expiredReservationJob = () => {
       const end = new Date(reservation.checkOutDate);
 
       while (current < end) {
-        await prisma.roomAvailability.updateMany({
+        await prisma.roomTypePrice.updateMany({
           where: {
             roomTypeId: reservation.roomTypeId,
             date: {
@@ -31,7 +31,7 @@ export const expiredReservationJob = () => {
             },
           },
           data: {
-            availableQuantity: {
+            availableRooms: {
               increment: 1,
             },
           },
