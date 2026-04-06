@@ -113,3 +113,73 @@ export const getByIdBasic = async (id: string) => {
     coverImage: property.propertyImages[0]?.imageUrl,
   };
 };
+
+export const getById = async ({ id }: { id: string }) => {
+  const property = await prisma.property.findUnique({
+    where: {
+      id,
+    },
+    select: {
+      name: true,
+      description: true,
+      country: true,
+      city: true,
+      province: true,
+      fullAddress: true,
+
+      latitude: true,
+      longitude: true,
+
+      numberOfBathrooms: true,
+
+      averageRating: true,
+      reviewCount: true,
+
+      tenant: {
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          profileImage: true,
+        },
+      },
+
+      category: {
+        select: {
+          name: true,
+        },
+      },
+
+      propertyImages: {
+        select: {
+          imageUrl: true,
+        },
+      },
+    },
+  });
+
+  if (!property) {
+    throw new AppError("Property not found", 404);
+  }
+
+  return {
+    name: property.name,
+    description: property.description,
+    country: property.country,
+    city: property.city,
+    province: property.province,
+    fullAddress: property.fullAddress,
+
+    latitude: property.latitude,
+    longitude: property.longitude,
+
+    numberOfBathrooms: property.numberOfBathrooms,
+
+    averageRating: property.averageRating,
+    reviewCount: property.reviewCount,
+
+    tenant: property.tenant,
+    category: property.category,
+    images: property.propertyImages,
+  };
+};

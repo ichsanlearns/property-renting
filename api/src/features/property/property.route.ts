@@ -16,6 +16,7 @@ router.post(
 );
 
 router.get("/:id/basic", PropertyController.getByIdBasic);
+router.get("/:id", PropertyController.getById);
 
 router.use("/:propertyId/rooms", createRoomRouter);
 

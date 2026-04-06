@@ -83,3 +83,14 @@ export const getByIdBasic = catchAsync(async (req: Request, res: Response) => {
     data: property,
   });
 });
+
+export const getById = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params as { id: string };
+
+  const property = await PropertyService.getById({ id });
+
+  res.status(200).json({
+    message: "Property fetched successfully",
+    data: property,
+  });
+});
