@@ -25,6 +25,37 @@ type PropertyImageResponse = {
   order: number;
 };
 
+type PropertyAmenityResponse = {
+  amenity: {
+    name: string;
+    icon: string;
+    description: string;
+  };
+};
+
+type RoomTypeImageResponse = {
+  imageUrl: string;
+};
+
+type RoomTypeAmenityResponse = {
+  amenity: {
+    icon: string;
+  };
+};
+
+type RoomTypeResponse = {
+  name: string;
+  basePrice: number;
+  capacity: number;
+  bedType: string;
+  bedCount: number;
+  viewType: string;
+  bathroomType: string;
+
+  roomTypeImages: RoomTypeImageResponse[];
+  roomAmenities: RoomTypeAmenityResponse[];
+};
+
 export type GetPropertyByIdResponse = {
   name: string;
   description: string;
@@ -43,7 +74,9 @@ export type GetPropertyByIdResponse = {
 
   tenant: TenantResponse;
   category: CategoryResponse;
-  images: PropertyImageResponse[];
+  propertyImages: PropertyImageResponse[];
+  propertyAmenities: PropertyAmenityResponse[];
+  roomTypes: RoomTypeResponse[];
 };
 
 export type CreatePropertyResponse = PropertyBasicResponse;

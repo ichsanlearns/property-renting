@@ -156,6 +156,46 @@ export const getById = async ({ id }: { id: string }) => {
           order: true,
         },
       },
+
+      propertyAmenities: {
+        select: {
+          amenity: {
+            select: {
+              name: true,
+              icon: true,
+              description: true,
+            },
+          },
+        },
+      },
+
+      roomTypes: {
+        select: {
+          name: true,
+          basePrice: true,
+          capacity: true,
+          bedType: true,
+          bedCount: true,
+          viewType: true,
+          bathroomType: true,
+
+          roomTypeImages: {
+            select: {
+              imageUrl: true,
+            },
+          },
+
+          roomAmenities: {
+            select: {
+              amenity: {
+                select: {
+                  icon: true,
+                },
+              },
+            },
+          },
+        },
+      },
     },
   });
 
@@ -181,6 +221,8 @@ export const getById = async ({ id }: { id: string }) => {
 
     tenant: property.tenant,
     category: property.category,
-    images: property.propertyImages,
+    propertyImages: property.propertyImages,
+    propertyAmenities: property.propertyAmenities,
+    roomTypes: property.roomTypes,
   };
 };

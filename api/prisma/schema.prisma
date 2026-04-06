@@ -232,6 +232,7 @@ model Amenity {
   id                String                                   @id @default(uuid())
   name              String
   icon              String
+  description       String?
   type              AmenityType
 
   createdAt         DateTime   @map("created_at")            @default(now()) 
