@@ -297,6 +297,9 @@ model RoomType {
   isVerified        VerificationStatus    @map("is_verified")           @default(PENDING)
   isPublished       PublishStatus    @map("is_published")          @default(DRAFT)
 
+  averageRating     Decimal?     @map("average_rating")      @db.Decimal(1,1)
+  reviewCount       Int        @map("review_count")          @default(0)
+
   createdAt         DateTime   @map("created_at")            @default(now()) 
   updatedAt         DateTime   @map("updated_at")            @updatedAt
   deletedAt         DateTime?  @map("deleted_at")

@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom";
 import { usePropertyDetail } from "../../tenant/property/hooks/useProperty";
+import { toTitleCase } from "../../../shared/utils/string.util";
 
 function PropertyDetail() {
   const { propertyId } = useParams() as { propertyId: string };
@@ -146,8 +147,9 @@ function PropertyDetail() {
                           </span>
                         </div>
                         <p className="text-on-surface-variant text-sm mt-1">
-                          {roomType.bedType} bed · {roomType.viewType} view ·{" "}
-                          {roomType.bathroomType} bathroom
+                          {toTitleCase(roomType.bedType)} bed ·{" "}
+                          {toTitleCase(roomType.viewType)} view ·{" "}
+                          {toTitleCase(roomType.bathroomType)} bathroom
                         </p>
                       </div>
                       <div className="flex items-center gap-2">

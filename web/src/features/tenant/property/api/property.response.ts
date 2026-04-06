@@ -52,6 +52,9 @@ type RoomTypeResponse = {
   viewType: string;
   bathroomType: string;
 
+  averageRating: number;
+  reviewCount: number;
+
   roomTypeImages: RoomTypeImageResponse[];
   roomAmenities: RoomTypeAmenityResponse[];
 };

@@ -179,6 +179,9 @@ export const getById = async ({ id }: { id: string }) => {
           viewType: true,
           bathroomType: true,
 
+          averageRating: true,
+          reviewCount: true,
+
           roomTypeImages: {
             select: {
               imageUrl: true,
