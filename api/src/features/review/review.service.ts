@@ -1,0 +1,69 @@
+import { prisma } from "../../shared/lib/prisma.lib.js";
+import { AppError } from "../../shared/utils/app-error.util.js";
+import { ReservationStatus } from "../../generated/prisma/enums.js";
+
+export const createReview = async ({ userId, reservationId, rating, comment }: { userId: string; reservationId: string; rating: number; comment: string }) => {
+  return await prisma.$transaction(async (tx) => {
+    const reservation = await tx.reservation.findUnique({
+      where: { id: reservationId },
+      include: {
+        roomType: true,
+      },
+    });
+
+    if (!reservation) {
+      throw new AppError("Reservation not found", 404);
+    }
+
+    if (reservation.customerId !== userId) {
+      throw new AppError("Unauthorized to review this reservation", 403);
+    }
+
+    if (reservation.status !== ReservationStatus.PAID) {
+      throw new AppError("You can only review paid reservations", 400);
+    }
+
+    // cek apakah sudah pernah review atau belum
+    const existingReview = await tx.review.findUnique({
+      where: { reservationId },
+    });
+
+    if (existingReview) {
+      throw new AppError("You have already reviewed this reservation", 400);
+    }
+
+    const review = await tx.review.create({
+      data: {
+        reservationId,
+        customerId: userId,
+        propertyId: reservation.roomType.propertyId,
+        rating,
+        comment,
+      },
+    });
+
+    const reviews = await tx.review.findMany({
+      where: { propertyId: reservation.roomType.propertyId },
+    });
+
+    const avg = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
+
+    await tx.property.update({
+      where: { id: reservation.roomType.propertyId },
+      data: {
+        averageRating: avg,
+        reviewCount: reviews.length,
+      },
+    });
+
+    // update reservation status (opsional)
+    await tx.reservation.update({
+      where: { id: reservationId },
+      data: {
+        status: ReservationStatus.REVIEWED,
+      },
+    });
+
+    return review;
+  });
+};
