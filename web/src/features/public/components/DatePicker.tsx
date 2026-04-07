@@ -4,6 +4,25 @@ import { DayPicker, type DateRange } from "react-day-picker";
 function DatePicker() {
   const [range, setRange] = useState<DateRange | undefined>();
 
+  const mockCalendarData = [
+    { date: "2026-04-06", price: 1200, isAvailable: false },
+    { date: "2026-04-07", price: 1300, isAvailable: false },
+    { date: "2026-04-08", price: 1400, isAvailable: true },
+    { date: "2026-04-09", price: 1500, isAvailable: true },
+    { date: "2026-04-10", price: 1600, isAvailable: true },
+    { date: "2026-04-11", price: 1700, isAvailable: true },
+    { date: "2026-04-12", price: 1800, isAvailable: true },
+    { date: "2026-04-13", price: 2000, isAvailable: false },
+    { date: "2026-04-14", price: 1200, isAvailable: false },
+    { date: "2026-04-15", price: 1300, isAvailable: false },
+    { date: "2026-04-16", price: 1400, isAvailable: true },
+    { date: "2026-04-17", price: 1500, isAvailable: true },
+    { date: "2026-04-18", price: 1600, isAvailable: true },
+    { date: "2026-04-19", price: 1700, isAvailable: true },
+    { date: "2026-04-20", price: 1800, isAvailable: true },
+    { date: "2026-04-21", price: 2000, isAvailable: false },
+  ];
+
   return (
     <section className="bg-surface p-8 rounded-3xl border border-outline shadow-sm ">
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-6">
