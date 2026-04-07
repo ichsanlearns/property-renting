@@ -67,3 +67,27 @@ export const createReview = async ({ userId, reservationId, rating, comment }: {
     return review;
   });
 };
+
+//get
+export const getPropertyReviews = async (propertyId: string) => {
+  const reviews = await prisma.review.findMany({
+    where: { propertyId },
+    include: {
+      customer: {
+        select: {
+          id: true,
+          firstName: true,
+          profileImage: true,
+        },
+      },
+    },
+  });
+
+  const averageRating = reviews.length > 0 ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length : 0;
+
+  return {
+    averageRating,
+    totalReviews: reviews.length,
+    reviews,
+  };
+};
