@@ -1,4 +1,9 @@
+import { useState } from "react";
+import { DayPicker, type DateRange } from "react-day-picker";
+
 function DatePicker() {
+  const [range, setRange] = useState<DateRange | undefined>();
+
   return (
     <section className="bg-surface p-8 rounded-3xl border border-outline shadow-sm ">
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-6">
@@ -30,7 +35,8 @@ function DatePicker() {
             <span>SA</span>
           </div>
           <div className="pb-4 px-4 grid grid-cols-7 gap-1 text-center">
-            <div className="py-2 text-slate-300">29</div>
+            <DayPicker mode="range" selected={range} onSelect={setRange} />
+            {/* <div className="py-2 text-slate-300">29</div>
             <div className="py-2 text-slate-300">30</div>
             <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
               1
@@ -126,7 +132,7 @@ function DatePicker() {
               31
             </div>
             <div className="py-2 text-slate-300">1</div>
-            <div className="py-2 text-slate-300">2</div>
+            <div className="py-2 text-slate-300">2</div> */}
           </div>
         </div>
       </div>
