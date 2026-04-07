@@ -17,3 +17,14 @@ export const createReviewController = catchAsync(async (req, res) => {
     data: result,
   });
 });
+
+export const getPropertyReviewsController = catchAsync(async (req, res) => {
+  const { propertyId } = req.params as { propertyId: string };
+
+  const result = await reviewService.getPropertyReviews(propertyId);
+
+  res.status(200).json({
+    message: "Property Reviews Retrieved Successfully",
+    data: result,
+  });
+});
