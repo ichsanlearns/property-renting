@@ -30,7 +30,7 @@ function DatePicker() {
             <span>SA</span>
           </div>
           <div className="pb-4 px-4 grid grid-cols-7 gap-1 text-center">
-            {/* <div className="py-2 text-slate-300">29</div>
+            <div className="py-2 text-slate-300">29</div>
             <div className="py-2 text-slate-300">30</div>
             <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
               1
@@ -126,7 +126,7 @@ function DatePicker() {
               31
             </div>
             <div className="py-2 text-slate-300">1</div>
-            <div className="py-2 text-slate-300">2</div> */}
+            <div className="py-2 text-slate-300">2</div>
           </div>
         </div>
       </div>
