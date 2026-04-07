@@ -9,15 +9,8 @@ const normalizeDate = (date: Date) => {
   return d;
 };
 
-export const createReservation = async ({
-  userId,
-  payload,
-}: {
-  userId: string;
-  payload: CreateReservationInput;
-}) => {
-  const { roomTypeId, checkInDate, checkOutDate, guestCount, usePoints } =
-    payload;
+export const createReservation = async ({ userId, payload }: { userId: string; payload: CreateReservationInput }) => {
+  const { roomTypeId, checkInDate, checkOutDate, guestCount, usePoints } = payload;
 
   //  normalize date
   const checkIn = normalizeDate(new Date(checkInDate));
@@ -72,8 +65,7 @@ export const createReservation = async ({
     }
 
     //  hitung harga
-    const totalAmount =
-      Number(roomType.basePrice) * dates.length - (usePoints ?? 0);
+    const totalAmount = Number(roomType.basePrice) * dates.length - (usePoints ?? 0);
 
     //  update availability
     for (const day of availability) {
@@ -103,5 +95,47 @@ export const createReservation = async ({
     });
 
     return reservation;
+  });
+};
+
+export const getMyReservations = async (userId: string) => {
+  return await prisma.reservation.findMany({
+    where: {
+      customerId: userId,
+    },
+    include: {
+      roomType: {
+        include: {
+          property: true,
+          roomTypeImages: true,
+        },
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+};
+
+export const getTenantReservations = async (tenantId: string) => {
+  return await prisma.reservation.findMany({
+    where: {
+      roomType: {
+        property: {
+          tenantId: tenantId,
+        },
+      },
+    },
+    include: {
+      customer: true,
+      roomType: {
+        include: {
+          property: true,
+        },
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
   });
 };

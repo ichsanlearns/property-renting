@@ -15,3 +15,21 @@ export const createReservationController = catchAsync(async (req: Request, res: 
     data: result,
   });
 });
+
+export const getMyReservationsController = catchAsync(async (req: Request, res: Response) => {
+  const result = await reservationService.getMyReservations(req.user!.userId);
+
+  res.status(200).json({
+    message: "Success get my reservations",
+    data: result,
+  });
+});
+
+export const getTenantReservationsController = catchAsync(async (req: Request, res: Response) => {
+  const result = await reservationService.getTenantReservations(req.user!.userId);
+
+  res.status(200).json({
+    message: "Success get tenant reservations",
+    data: result,
+  });
+});

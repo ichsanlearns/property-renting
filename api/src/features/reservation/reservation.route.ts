@@ -1,9 +1,10 @@
 import { Router } from "express";
-import { createReservationController } from "./reservation.controller.js";
+import { createReservationController, getMyReservationsController, getTenantReservationsController } from "./reservation.controller.js";
 import { authMiddleware } from "../../shared/middleware/auth.middleware.js";
 
 const router = Router();
 
 router.post("/", authMiddleware, createReservationController);
-
+router.get("/me", authMiddleware, getMyReservationsController);
+router.get("/tenant", authMiddleware, getTenantReservationsController);
 export default router;
