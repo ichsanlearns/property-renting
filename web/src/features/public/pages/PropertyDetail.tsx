@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import { usePropertyDetail } from "../../tenant/property/hooks/useProperty";
 import { toTitleCase } from "../../../shared/utils/string.util";
+import DatePicker from "../components/DatePicker";
 
 function PropertyDetail() {
   const { propertyId } = useParams() as { propertyId: string };
@@ -119,6 +120,7 @@ function PropertyDetail() {
                 {property?.description}
               </p>
             </section>
+            <DatePicker />
             <section>
               <h2 className="text-2xl font-bold mb-6">Where you'll sleep</h2>
               <div className="flex flex-col gap-4">
