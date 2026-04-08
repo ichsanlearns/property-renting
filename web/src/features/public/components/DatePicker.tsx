@@ -6,6 +6,30 @@ function DatePicker() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const days = generateCalendar({ month: currentMonth });
 
+  const [selectedDate, setSelectedDate] = useState<{
+    startDate: Date | null;
+    endDate: Date | null;
+  }>({
+    startDate: null,
+    endDate: null,
+  });
+
+  function handleSelect(date: Date) {
+    if (
+      !selectedDate.startDate ||
+      (selectedDate.startDate && selectedDate.endDate)
+    ) {
+      setSelectedDate({ startDate: date, endDate: null });
+      return;
+    }
+
+    if (date < selectedDate.startDate) {
+      setSelectedDate({ startDate: date, endDate: null });
+    } else {
+      setSelectedDate({ startDate: selectedDate.startDate, endDate: date });
+    }
+  }
+
   return (
     <section className="bg-surface p-8 rounded-3xl border border-outline shadow-sm ">
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-6">
@@ -55,23 +79,34 @@ function DatePicker() {
                 price: number;
               }) => (
                 <button
-                  disabled={!day.isAvailable}
+                  onClick={() => handleSelect(day.date)}
+                  disabled={!day.isAvailable || !day.isCurrentMonth}
                   key={day.date.toISOString()}
                   className={`py-2 rounded-lg ${
                     !day.isAvailable
                       ? "text-slate-300 cursor-not-allowed"
                       : !day.isCurrentMonth
                         ? "text-slate-300"
-                        : day.isToday
+                        : selectedDate.startDate?.getTime() ===
+                              day.date.getTime() ||
+                            selectedDate.endDate?.getTime() ===
+                              day.date.getTime()
                           ? "bg-primary text-white font-bold hover:bg-primary-container hover:text-primary cursor-pointer"
-                          : day.isWeekend
-                            ? "text-red-500 hover:bg-surface-container hover:text-primary cursor-pointer"
-                            : "hover:bg-surface-container hover:text-primary cursor-pointer"
+                          : selectedDate.startDate?.getTime() &&
+                              selectedDate.endDate?.getTime() &&
+                              day.date.getTime() >
+                                selectedDate.startDate.getTime() &&
+                              day.date.getTime() <
+                                selectedDate.endDate.getTime()
+                            ? "bg-primary-container text-primary font-bold hover:bg-primary hover:text-white cursor-pointer"
+                            : day.isWeekend
+                              ? "text-red-500 hover:bg-surface-container hover:text-primary cursor-pointer"
+                              : "hover:bg-surface-container hover:text-primary cursor-pointer"
                   }`}
                 >
                   <div className="flex flex-col items-center">
                     {format(day.date, "d")}
-                    {day.isAvailable && (
+                    {day.isAvailable && day.isCurrentMonth && (
                       <span className="text-xs text-on-surface-variant">
                         ${day.price}
                       </span>
