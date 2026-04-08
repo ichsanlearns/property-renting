@@ -1,8 +1,10 @@
-import { format } from "date-fns";
+import { addMonths, format, subMonths } from "date-fns";
 import { generateCalendar } from "../../../shared/utils/calendar.util";
+import { useState } from "react";
 
 function DatePicker() {
-  const days = generateCalendar({ month: new Date() });
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const days = generateCalendar({ month: currentMonth });
 
   return (
     <section className="bg-surface p-8 rounded-3xl border border-outline shadow-sm ">
@@ -15,12 +17,20 @@ function DatePicker() {
       <div className="grid grid-cols-1 gap-4">
         <div className="border border-slate-200 rounded-2xl overflow-hidden">
           <div className="bg-surface-container-high px-4 py-3 flex justify-between items-center border-b border-slate-200">
-            <span className="font-bold text-lg">October 2024</span>
+            <span className="font-bold text-lg">
+              {format(currentMonth, "MMMM yyyy")}
+            </span>
             <div className="flex gap-4">
-              <span className="material-symbols-outlined cursor-pointer hover:text-primary">
+              <span
+                onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
+                className="material-symbols-outlined cursor-pointer hover:text-primary"
+              >
                 chevron_left
               </span>
-              <span className="material-symbols-outlined cursor-pointer hover:text-primary">
+              <span
+                onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
+                className="material-symbols-outlined cursor-pointer hover:text-primary"
+              >
                 chevron_right
               </span>
             </div>
