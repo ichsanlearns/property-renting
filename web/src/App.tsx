@@ -7,6 +7,7 @@ import GuestRoute from "./shared/layouts/GuestRoutes";
 
 import HomePage from "./features/public/pages/HomePage";
 import MyBooking from "./features/public/pages/MyBooking";
+import ReviewPage from "./features/public/pages/ReviewPage";
 
 import NotFoundPage from "./features/public/pages/NotFoundPage";
 import Login from "./features/auth/pages/Login";
@@ -58,6 +59,10 @@ const router = createBrowserRouter([
           {
             path: "mybooking",
             element: <MyBooking />,
+          },
+          {
+            path: "review",
+            element: <ReviewPage />,
           },
           {
             path: "myprofile",

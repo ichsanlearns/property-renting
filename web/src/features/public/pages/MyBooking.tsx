@@ -1,8 +1,10 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../auth/stores/auth.store";
+import Footer from "../../../shared/ui/Footer";
 
 function MyBooking() {
   const { user } = useAuthStore();
+  const navigate = useNavigate();
 
   if (!user) {
     return <Navigate to={`/login`} replace />;
@@ -162,7 +164,9 @@ function MyBooking() {
                     </>
                   ) : booking.isCompleted ? (
                     <div className="flex gap-3">
-                      <button className="flex-1 border border-primary text-primary font-bold py-2.5 rounded-lg hover:bg-primary/5 transition-colors text-sm">Review Stay</button>
+                      <button onClick={() => navigate("/review")} className="flex-1 border border-primary text-primary font-bold py-2.5 rounded-lg hover:bg-primary/5 transition-colors text-sm">
+                        Review Stay
+                      </button>
                       <button className="flex-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold py-2.5 rounded-lg hover:bg-slate-200 transition-colors text-sm">Receipt</button>
                     </div>
                   ) : (
@@ -197,17 +201,7 @@ function MyBooking() {
         </div>
       </main>
 
-      <footer className="max-w-7xl mx-auto px-4 py-8 border-t border-primary/10 text-center text-slate-500 dark:text-slate-400 text-sm">
-        <p>© 2023 StayHub Inc. All rights reserved.</p>
-        <div className="mt-2 flex justify-center gap-4">
-          <a className="hover:text-primary underline-offset-4 hover:underline" href="#">
-            Privacy Policy
-          </a>
-          <a className="hover:text-primary underline-offset-4 hover:underline" href="#">
-            Terms of Service
-          </a>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
