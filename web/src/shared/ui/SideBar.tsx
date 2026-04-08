@@ -4,12 +4,7 @@ import { useAuthStore } from "../../features/auth/stores/auth.store";
 function SideBar() {
   const { user } = useAuthStore();
 
-  const roleLabel =
-    user?.role === "TENANT"
-      ? "Tenant"
-      : user?.role === "CUSTOMER"
-        ? "Customer"
-        : "";
+  const roleLabel = user?.role === "TENANT" ? "Tenant" : user?.role === "CUSTOMER" ? "Customer" : "";
   const menu = [
     {
       label: "Dashboard",
@@ -91,9 +86,7 @@ function SideBar() {
             <p className="text-xs font-bold truncate">{user?.fullName}</p>
             <p className="text-[10px] text-slate-500 truncate">{roleLabel}</p>
           </div>
-          <button className="material-symbols-outlined text-slate-400 hover:text-primary transition-colors">
-            settings
-          </button>
+          <button className="material-symbols-outlined text-slate-400 hover:text-primary transition-colors">settings</button>
         </div>
       </div>
     </aside>

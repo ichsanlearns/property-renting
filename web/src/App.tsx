@@ -14,6 +14,7 @@ import Login from "./features/auth/pages/Login";
 
 import OrderList from "./features/tenant/order-list/pages/OrderList";
 import Reports from "./features/tenant/reports/pages/Reports";
+import DashboardTenantPage from "./features/tenant/dashboard-tenant/DashboardTenantPage";
 
 import FormProperties from "./features/tenant/property/pages/FormProperties";
 import FormRoom from "./features/tenant/property/pages/FormRoom";
@@ -93,6 +94,10 @@ const router = createBrowserRouter([
           {
             path: "reports",
             element: <Reports />,
+          },
+          {
+            path: "dashboard",
+            element: <DashboardTenantPage />,
           },
         ],
       },
