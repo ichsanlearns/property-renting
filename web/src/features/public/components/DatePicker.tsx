@@ -45,14 +45,41 @@ function DatePicker() {
             <span>SA</span>
           </div>
           <div className="pb-4 px-4 grid grid-cols-7 gap-1 text-center">
-            {days.map((day: Date) => (
-              <div
-                key={day.toISOString()}
-                className="py-2 hover:bg-surface-container rounded-lg cursor-pointer"
-              >
-                {format(day, "d")}
-              </div>
-            ))}
+            {days.map(
+              (day: {
+                date: Date;
+                isCurrentMonth: boolean;
+                isToday: boolean;
+                isWeekend: boolean;
+                isAvailable: boolean;
+                price: number;
+              }) => (
+                <button
+                  disabled={!day.isAvailable}
+                  key={day.date.toISOString()}
+                  className={`py-2 rounded-lg ${
+                    !day.isAvailable
+                      ? "text-slate-300 cursor-not-allowed"
+                      : !day.isCurrentMonth
+                        ? "text-slate-300"
+                        : day.isToday
+                          ? "bg-primary text-white font-bold hover:bg-primary-container hover:text-primary cursor-pointer"
+                          : day.isWeekend
+                            ? "text-red-500 hover:bg-surface-container hover:text-primary cursor-pointer"
+                            : "hover:bg-surface-container hover:text-primary cursor-pointer"
+                  }`}
+                >
+                  <div className="flex flex-col items-center">
+                    {format(day.date, "d")}
+                    {day.isAvailable && (
+                      <span className="text-xs text-on-surface-variant">
+                        ${day.price}
+                      </span>
+                    )}
+                  </div>
+                </button>
+              ),
+            )}
             {/* <div className="py-2 text-slate-300">29</div>
             <div className="py-2 text-slate-300">30</div>
             <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
