@@ -82,6 +82,14 @@ export type GetPropertyByIdResponse = {
   roomTypes: RoomTypeResponse[];
 };
 
+export type GetPropertyRoomPricesDateResponse = {
+  roomTypeId: string;
+  date: string;
+  price: number;
+  availableRooms: number;
+  isClosed: boolean;
+};
+
 export type CreatePropertyResponse = PropertyBasicResponse;
 
 export type GetPropertyByIdBasicResponse = PropertyBasicResponse;

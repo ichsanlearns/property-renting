@@ -259,6 +259,7 @@ export const getPropertyRoomPricesDate = async ({
       date: "asc",
     },
     select: {
+      roomTypeId: true,
       date: true,
       price: true,
       availableRooms: true,
