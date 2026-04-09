@@ -1,10 +1,25 @@
-import { addMonths, format, subMonths } from "date-fns";
+import {
+  addMonths,
+  endOfMonth,
+  format,
+  startOfMonth,
+  subMonths,
+} from "date-fns";
 import { generateCalendar } from "../../../shared/utils/calendar.util";
 import { useState } from "react";
+import { usePropertyRoomPricesDate } from "../../tenant/property/hooks/useProperty";
 
-function DatePicker() {
+function DatePicker({ propertyId }: { propertyId: string }) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const days = generateCalendar({ month: currentMonth });
+
+  const { data: roomPricesDate } = usePropertyRoomPricesDate({
+    propertyId,
+    startDate: format(startOfMonth(currentMonth), "yyyy-MM-dd"),
+    endDate: format(endOfMonth(currentMonth), "yyyy-MM-dd"),
+  });
+
+  console.log(roomPricesDate);
 
   const [selectedDate, setSelectedDate] = useState<{
     startDate: Date | null;
@@ -108,7 +123,17 @@ function DatePicker() {
                     {format(day.date, "d")}
                     {day.isAvailable && day.isCurrentMonth && (
                       <span className="text-xs text-on-surface-variant">
-                        ${day.price}
+                        {roomPricesDate?.map((roomPrice) => (
+                          <span key={roomPrice.date}>
+                            {roomPrice.availableRooms > 0 &&
+                              new Date(roomPrice.date).getTime() ===
+                                day.date.getTime() && (
+                                <span className="text-xs text-on-surface-variant">
+                                  Rp. {roomPrice.price}
+                                </span>
+                              )}
+                          </span>
+                        ))}
                       </span>
                     )}
                   </div>

@@ -43,8 +43,8 @@ export const getPropertyRoomPricesDate = async ({
   endDate,
 }: {
   propertyId: string;
-  startDate: Date;
-  endDate: Date;
+  startDate: string;
+  endDate: string;
 }) => {
   const response = await api.get<
     ApiResponse<GetPropertyRoomPricesDateResponse[]>

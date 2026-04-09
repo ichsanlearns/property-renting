@@ -120,7 +120,7 @@ function PropertyDetail() {
                 {property?.description}
               </p>
             </section>
-            <DatePicker />
+            <DatePicker propertyId={propertyId} />
             <section>
               <h2 className="text-2xl font-bold mb-6">Where you'll sleep</h2>
               <div className="flex flex-col gap-4">
