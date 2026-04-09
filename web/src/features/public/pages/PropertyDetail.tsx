@@ -2,10 +2,18 @@ import { useParams } from "react-router-dom";
 import { usePropertyDetail } from "../../tenant/property/hooks/useProperty";
 import { toTitleCase } from "../../../shared/utils/string.util";
 import DatePicker from "../components/DatePicker";
+import { useState } from "react";
 
 function PropertyDetail() {
   const { propertyId } = useParams() as { propertyId: string };
   const { data: property } = usePropertyDetail({ propertyId });
+
+  const [selectedDateRoom, setSelectedDateRoom] = useState<
+    {
+      roomTypeId: string;
+      averagePrice: number;
+    }[]
+  >([]);
 
   return (
     <div className="bg-background text-on-surface antialiased">
@@ -120,7 +128,10 @@ function PropertyDetail() {
                 {property?.description}
               </p>
             </section>
-            <DatePicker propertyId={propertyId} />
+            <DatePicker
+              propertyId={propertyId}
+              setSelectedDateRoom={setSelectedDateRoom}
+            />
             <section>
               <h2 className="text-2xl font-bold mb-6">Where you'll sleep</h2>
               <div className="flex flex-col gap-4">

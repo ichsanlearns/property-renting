@@ -6,10 +6,26 @@ import {
   subMonths,
 } from "date-fns";
 import { generateCalendar } from "../../../shared/utils/calendar.util";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { usePropertyRoomPricesDate } from "../../tenant/property/hooks/useProperty";
+import type { GetPropertyRoomPricesDateResponse } from "../../tenant/property/api/property.response";
+import { getAvailableRoomTypesForRange } from "../utils/availability.util";
 
-function DatePicker({ propertyId }: { propertyId: string }) {
+function DatePicker({
+  propertyId,
+  setSelectedDateRoom,
+}: {
+  propertyId: string;
+
+  setSelectedDateRoom: React.Dispatch<
+    React.SetStateAction<
+      {
+        roomTypeId: string;
+        averagePrice: number;
+      }[]
+    >
+  >;
+}) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const days = generateCalendar({ month: currentMonth });
 
@@ -19,7 +35,20 @@ function DatePicker({ propertyId }: { propertyId: string }) {
     endDate: format(endOfMonth(currentMonth), "yyyy-MM-dd"),
   });
 
-  console.log(roomPricesDate);
+  const roomTypeIds = useMemo(() => {
+    return [...new Set((roomPricesDate ?? []).map((item) => item.roomTypeId))];
+  }, [roomPricesDate]);
+
+  const availabilityMap = useMemo(() => {
+    const map = new Map<string, GetPropertyRoomPricesDateResponse>();
+
+    for (const item of roomPricesDate ?? []) {
+      const dateKey = format(new Date(item.date), "yyyy-MM-dd");
+      map.set(`${item.roomTypeId}-${dateKey}`, item);
+    }
+
+    return map;
+  }, [roomPricesDate]);
 
   const [selectedDate, setSelectedDate] = useState<{
     startDate: Date | null;
@@ -35,13 +64,23 @@ function DatePicker({ propertyId }: { propertyId: string }) {
       (selectedDate.startDate && selectedDate.endDate)
     ) {
       setSelectedDate({ startDate: date, endDate: null });
+      setSelectedDateRoom([]);
       return;
     }
 
     if (date < selectedDate.startDate) {
       setSelectedDate({ startDate: date, endDate: null });
+      setSelectedDateRoom([]);
     } else {
       setSelectedDate({ startDate: selectedDate.startDate, endDate: date });
+      const availableRooms = getAvailableRoomTypesForRange({
+        checkInDate: selectedDate.startDate,
+        checkOutDate: date,
+        availabilityMap,
+        roomTypeIds,
+      });
+
+      setSelectedDateRoom(availableRooms);
     }
   }
 
