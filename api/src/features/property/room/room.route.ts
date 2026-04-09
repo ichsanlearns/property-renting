@@ -11,10 +11,3 @@ export const createRoomRouter = router.post(
   uploadCloud.array("images", 3),
   RoomController.createRoomController,
 );
-
-router.get(
-  "/:propertyId/availability",
-  RoomController.getPropertyRoomPricesDate,
-);
-
-export default router;

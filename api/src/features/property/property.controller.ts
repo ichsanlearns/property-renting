@@ -74,9 +74,9 @@ export const create = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const getByIdBasic = catchAsync(async (req: Request, res: Response) => {
-  const { id } = req.params as { id: string };
+  const { propertyId } = req.params as { propertyId: string };
 
-  const property = await PropertyService.getByIdBasic(id);
+  const property = await PropertyService.getByIdBasic(propertyId);
 
   res.status(200).json({
     message: "Property fetched successfully",
@@ -85,12 +85,33 @@ export const getByIdBasic = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const getById = catchAsync(async (req: Request, res: Response) => {
-  const { id } = req.params as { id: string };
+  const { propertyId } = req.params as { propertyId: string };
 
-  const property = await PropertyService.getById({ id });
+  const property = await PropertyService.getById({ id: propertyId });
 
   res.status(200).json({
     message: "Property fetched successfully",
     data: property,
   });
 });
+
+export const getPropertyRoomPricesDate = catchAsync(
+  async (req: Request, res: Response) => {
+    const { propertyId } = req.params as { propertyId: string };
+    const { startDate, endDate } = req.query as {
+      startDate: string;
+      endDate: string;
+    };
+
+    const prices = await PropertyService.getPropertyRoomPricesDate({
+      propertyId,
+      startDate: new Date(startDate),
+      endDate: new Date(endDate),
+    });
+
+    res.status(200).json({
+      message: "Property room prices by date fetched successfully",
+      data: prices,
+    });
+  },
+);
