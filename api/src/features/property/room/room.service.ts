@@ -131,3 +131,40 @@ export const ensurePrices = async ({
     skipDuplicates: true,
   });
 };
+
+export const getPropertyRoomPricesDate = async ({
+  propertyId,
+  startDate,
+  endDate,
+}: {
+  propertyId: string;
+  startDate: Date;
+  endDate: Date;
+}) => {
+  const roomTypes = await prisma.roomType.findMany({
+    where: { propertyId },
+  });
+
+  const roomTypeIds = roomTypes.map((roomType) => roomType.id);
+
+  return await prisma.roomTypePrice.findMany({
+    where: {
+      roomTypeId: {
+        in: roomTypeIds,
+      },
+      date: {
+        gte: startDate,
+        lt: endDate,
+      },
+    },
+    orderBy: {
+      date: "asc",
+    },
+    select: {
+      date: true,
+      price: true,
+      availableRooms: true,
+      isClosed: true,
+    },
+  });
+};

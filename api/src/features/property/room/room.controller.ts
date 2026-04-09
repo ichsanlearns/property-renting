@@ -73,3 +73,24 @@ export const createRoomController = catchAsync(
     });
   },
 );
+
+export const getPropertyRoomPricesDate = catchAsync(
+  async (req: Request, res: Response) => {
+    const { propertyId } = req.params as { propertyId: string };
+    const { startDate, endDate } = req.query as {
+      startDate: string;
+      endDate: string;
+    };
+
+    const prices = await RoomService.getPropertyRoomPricesDate({
+      propertyId,
+      startDate: new Date(startDate),
+      endDate: new Date(endDate),
+    });
+
+    res.status(200).json({
+      message: "Property room prices by date fetched successfully",
+      data: prices,
+    });
+  },
+);
