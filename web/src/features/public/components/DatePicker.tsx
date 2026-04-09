@@ -13,18 +13,16 @@ import { getAvailableRoomTypesForRange } from "../utils/availability.util";
 
 function DatePicker({
   propertyId,
-  setSelectedDateRoom,
+  handleSelectDateRoom,
 }: {
   propertyId: string;
 
-  setSelectedDateRoom: React.Dispatch<
-    React.SetStateAction<
-      {
-        roomTypeId: string;
-        averagePrice: number;
-      }[]
-    >
-  >;
+  handleSelectDateRoom: (
+    selectedDateRoom: {
+      roomTypeId: string;
+      averagePrice: number;
+    }[],
+  ) => void;
 }) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const days = generateCalendar({ month: currentMonth });
@@ -64,13 +62,13 @@ function DatePicker({
       (selectedDate.startDate && selectedDate.endDate)
     ) {
       setSelectedDate({ startDate: date, endDate: null });
-      setSelectedDateRoom([]);
+      handleSelectDateRoom([]);
       return;
     }
 
     if (date < selectedDate.startDate) {
       setSelectedDate({ startDate: date, endDate: null });
-      setSelectedDateRoom([]);
+      handleSelectDateRoom([]);
     } else {
       setSelectedDate({ startDate: selectedDate.startDate, endDate: date });
       const availableRooms = getAvailableRoomTypesForRange({
@@ -80,7 +78,7 @@ function DatePicker({
         roomTypeIds,
       });
 
-      setSelectedDateRoom(availableRooms);
+      handleSelectDateRoom(availableRooms);
     }
   }
 

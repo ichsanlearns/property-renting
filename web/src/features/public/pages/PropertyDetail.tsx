@@ -4,16 +4,59 @@ import { toTitleCase } from "../../../shared/utils/string.util";
 import DatePicker from "../components/DatePicker";
 import { useState } from "react";
 
+type SelectedDateRoomAvailability = {
+  id: string;
+  price: number;
+
+  name: string;
+  capacity: number;
+  bedType: string;
+  bedCount: number;
+  viewType: string;
+  bathroomType: string;
+
+  averageRating: number;
+  reviewCount: number;
+
+  roomTypeImages: {
+    imageUrl: string;
+  }[];
+  roomAmenities: {
+    amenity: {
+      icon: string;
+    };
+  }[];
+};
+
 function PropertyDetail() {
   const { propertyId } = useParams() as { propertyId: string };
   const { data: property } = usePropertyDetail({ propertyId });
 
-  const [selectedDateRoom, setSelectedDateRoom] = useState<
-    {
+  const [selectedDateRoomAvailability, setSelectedDateRoomAvailability] =
+    useState<SelectedDateRoomAvailability[]>([]);
+
+  const handleSelectDateRoom = (
+    selectedDateRoom: {
       roomTypeId: string;
       averagePrice: number;
-    }[]
-  >([]);
+    }[],
+  ) => {
+    const roomTypeAvailability = property?.roomTypes.map((roomType) => {
+      const data = selectedDateRoom.find(
+        (room) => room.roomTypeId === roomType.id,
+      );
+      return {
+        ...roomType,
+        price: data?.averagePrice ?? roomType.price,
+      };
+    });
+    setSelectedDateRoomAvailability(roomTypeAvailability || []);
+  };
+
+  const roomAvailability =
+    selectedDateRoomAvailability.length > 0
+      ? selectedDateRoomAvailability
+      : (property?.roomTypes ?? []);
 
   return (
     <div className="bg-background text-on-surface antialiased">
@@ -130,12 +173,12 @@ function PropertyDetail() {
             </section>
             <DatePicker
               propertyId={propertyId}
-              setSelectedDateRoom={setSelectedDateRoom}
+              handleSelectDateRoom={handleSelectDateRoom}
             />
             <section>
               <h2 className="text-2xl font-bold mb-6">Where you'll sleep</h2>
               <div className="flex flex-col gap-4">
-                {property?.roomTypes.map((roomType, index) => (
+                {roomAvailability.map((roomType, index) => (
                   <div
                     key={index}
                     className="flex bg-surface-container-lowest rounded-xl border border-primary/10 overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
@@ -156,7 +199,7 @@ function PropertyDetail() {
                         <div className="flex justify-between items-start">
                           <h3 className="font-bold text-lg">{roomType.name}</h3>
                           <span className="text-primary font-bold text-sm">
-                            IDR {roomType.basePrice.toLocaleString()}/night
+                            IDR {roomType.price?.toLocaleString()}/night
                           </span>
                         </div>
                         <p className="text-on-surface-variant text-sm mt-1">

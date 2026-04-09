@@ -44,8 +44,9 @@ type RoomTypeAmenityResponse = {
 };
 
 type RoomTypeResponse = {
+  id: string;
   name: string;
-  basePrice: number;
+  price: number;
   capacity: number;
   bedType: string;
   bedCount: number;

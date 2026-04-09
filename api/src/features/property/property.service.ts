@@ -171,6 +171,7 @@ export const getById = async ({ id }: { id: string }) => {
 
       roomTypes: {
         select: {
+          id: true,
           name: true,
           basePrice: true,
           capacity: true,
@@ -226,7 +227,10 @@ export const getById = async ({ id }: { id: string }) => {
     category: property.category,
     propertyImages: property.propertyImages,
     propertyAmenities: property.propertyAmenities,
-    roomTypes: property.roomTypes,
+    roomTypes: property.roomTypes.map((roomType) => ({
+      ...roomType,
+      price: roomType.basePrice,
+    })),
   };
 };
 
