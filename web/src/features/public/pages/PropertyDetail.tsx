@@ -1,10 +1,19 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { usePropertyDetail } from "../../tenant/property/hooks/useProperty";
 import { toTitleCase } from "../../../shared/utils/string.util";
 import DatePicker from "../components/DatePicker";
 import { useState } from "react";
 import { format } from "date-fns";
 import { formatRupiah } from "../../../shared/utils/price.util";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  createReservationSchema,
+  type CreateReservationInput,
+} from "../../reservations/schema/reservations.schema";
+import toast from "react-hot-toast";
+import { createReservationRequest } from "../../reservations/api/reservations.service";
+import { useAuthStore } from "../../auth/stores/auth.store";
 
 type SelectedDateRoomAvailability = {
   id: string;
@@ -31,27 +40,33 @@ type SelectedDateRoomAvailability = {
 };
 
 function PropertyDetail() {
+  const navigate = useNavigate();
+  const { user } = useAuthStore();
+
   const { propertyId } = useParams() as { propertyId: string };
   const { data: property } = usePropertyDetail({ propertyId });
   const [dateRange, setDateRange] = useState<{
-    startDate: Date | null;
-    endDate: Date | null;
-    nights: number;
+    checkInDate: Date | null;
+    checkOutDate: Date | null;
+    numberOfNights: number;
   }>({
-    startDate: null,
-    endDate: null,
-    nights: 0,
+    checkInDate: null,
+    checkOutDate: null,
+    numberOfNights: 0,
   });
   const [selectedRoom, setSelectedRoom] =
     useState<SelectedDateRoomAvailability | null>(null);
-
   const [selectedDateRoomAvailability, setSelectedDateRoomAvailability] =
     useState<SelectedDateRoomAvailability[]>([]);
 
+  const { setValue, handleSubmit } = useForm<CreateReservationInput>({
+    resolver: zodResolver(createReservationSchema),
+  });
+
   const handleSelectDateRoom = (selectedDateRoom: {
-    startDate: Date | null;
-    endDate: Date | null;
-    nights: number;
+    checkInDate: Date | null;
+    checkOutDate: Date | null;
+    numberOfNights: number;
     availableRooms: {
       roomTypeId: string;
       averagePrice: number;
@@ -69,16 +84,62 @@ function PropertyDetail() {
     });
     setSelectedDateRoomAvailability(roomTypeAvailability || []);
     setDateRange({
-      startDate: selectedDateRoom.startDate,
-      endDate: selectedDateRoom.endDate,
-      nights: selectedDateRoom.nights,
+      checkInDate: selectedDateRoom.checkInDate,
+      checkOutDate: selectedDateRoom.checkOutDate,
+      numberOfNights: selectedDateRoom.numberOfNights,
     });
+
+    setValue(
+      "checkInDate",
+      format(selectedDateRoom.checkInDate!, "yyyy-MM-dd"),
+    );
+    setValue(
+      "checkOutDate",
+      format(selectedDateRoom.checkOutDate!, "yyyy-MM-dd"),
+    );
+    setValue("numberOfNights", selectedDateRoom.numberOfNights);
   };
 
   const roomAvailability =
     selectedDateRoomAvailability.length > 0
       ? selectedDateRoomAvailability
       : (property?.roomTypes ?? []);
+
+  const handleSelectRoom = (roomType: SelectedDateRoomAvailability) => {
+    setSelectedRoom(roomType);
+    setValue("roomTypeId", roomType.id);
+    setValue("roomNameSnapshot", roomType.name);
+    setValue("averageRoomPerNightSnapshot", Number(roomType.price));
+  };
+
+  const onSubmit = async (data: CreateReservationInput) => {
+    if (!user) {
+      toast.error("Please login to create a reservation");
+      return;
+    }
+
+    if (!selectedRoom) {
+      toast.error("Please select a room");
+      return;
+    }
+    const totalAmount = selectedRoom?.price * data.numberOfNights;
+    try {
+      toast.loading("Creating reservation...");
+      const response = await createReservationRequest({
+        ...data,
+        totalAmount,
+        propertyNameSnapshot: property?.name ?? "",
+      });
+      toast.dismiss();
+      toast.success("Reservation created successfully");
+      navigate(`/reservations/${response.data.reservationCode}`);
+    } catch (error: any) {
+      toast.dismiss();
+      toast.error(
+        error.response?.data.message || "Failed to create reservation",
+      );
+    }
+  };
 
   return (
     <div className="bg-background text-on-surface antialiased">
@@ -204,7 +265,7 @@ function PropertyDetail() {
                 {roomAvailability?.map((roomType, index) => (
                   <div
                     key={index}
-                    onClick={() => setSelectedRoom(roomType)}
+                    onClick={() => handleSelectRoom(roomType)}
                     className={`flex bg-surface-container-lowest rounded-xl border overflow-hidden cursor-pointer hover:shadow-md transition-shadow ${
                       selectedRoom?.id === roomType.id
                         ? "border-primary"
@@ -293,8 +354,8 @@ function PropertyDetail() {
                       Check-in
                     </label>
                     <span className="text-sm font-medium">
-                      {dateRange.startDate
-                        ? format(dateRange.startDate, "MMM dd, yyyy")
+                      {dateRange.checkInDate
+                        ? format(dateRange.checkInDate, "MMM dd, yyyy")
                         : "Select date"}
                     </span>
                   </div>
@@ -303,8 +364,8 @@ function PropertyDetail() {
                       Check-out
                     </label>
                     <span className="text-sm font-medium">
-                      {dateRange.endDate
-                        ? format(dateRange.endDate, "MMM dd, yyyy")
+                      {dateRange.checkOutDate
+                        ? format(dateRange.checkOutDate, "MMM dd, yyyy")
                         : "Select date"}
                     </span>
                   </div>
@@ -318,21 +379,28 @@ function PropertyDetail() {
                   </span>
                 </div>
               </div>
-              <button className="w-full bg-primary text-on-primary py-3.5 rounded-xl font-extrabold text-lg shadow-md active:scale-[0.98] transition-all hover:opacity-95 mb-6">
+              <button
+                onClick={handleSubmit(onSubmit, (errors) => {
+                  console.log(errors);
+                })}
+                className="w-full bg-primary text-on-primary py-3.5 rounded-xl font-extrabold text-lg shadow-md active:scale-[0.98] transition-all hover:opacity-95 mb-6"
+              >
                 Reserve Room
               </button>
               <p className="text-center text-on-surface-variant text-sm mb-6">
                 You won't be charged yet
               </p>
-              {selectedRoom?.price && dateRange.nights > 0 && (
+              {selectedRoom?.price && dateRange.numberOfNights > 0 && (
                 <div className="space-y-4">
                   <div className="flex justify-between text-sm">
                     <span className="underline text-on-surface-variant font-medium">
-                      {formatRupiah(selectedRoom?.price)} x {dateRange.nights}{" "}
-                      nights
+                      {formatRupiah(selectedRoom?.price)} x{" "}
+                      {dateRange.numberOfNights} nights
                     </span>
                     <span className="font-medium">
-                      {formatRupiah(selectedRoom?.price * dateRange.nights)}
+                      {formatRupiah(
+                        selectedRoom?.price * dateRange.numberOfNights,
+                      )}
                     </span>
                   </div>
 
@@ -342,7 +410,7 @@ function PropertyDetail() {
                     </span>
                     <span className="font-medium">
                       {formatRupiah(
-                        selectedRoom?.price * dateRange.nights * 0.1,
+                        selectedRoom?.price * dateRange.numberOfNights * 0.1,
                       )}
                     </span>
                   </div>
@@ -351,8 +419,8 @@ function PropertyDetail() {
                     <span>Total</span>
                     <span>
                       {formatRupiah(
-                        selectedRoom?.price * dateRange.nights +
-                          selectedRoom?.price * dateRange.nights * 0.1,
+                        selectedRoom?.price * dateRange.numberOfNights +
+                          selectedRoom?.price * dateRange.numberOfNights * 0.1,
                       )}
                     </span>
                   </div>

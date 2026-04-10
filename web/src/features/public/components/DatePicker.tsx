@@ -20,9 +20,9 @@ function DatePicker({
   propertyId: string;
   propertyName?: string;
   handleSelectDateRoom: (selectedDateRoom: {
-    startDate: Date | null;
-    endDate: Date | null;
-    nights: number;
+    checkInDate: Date | null;
+    checkOutDate: Date | null;
+    numberOfNights: number;
     availableRooms: {
       roomTypeId: string;
       averagePrice: number;
@@ -54,56 +54,64 @@ function DatePicker({
   }, [roomPricesDate]);
 
   const [selectedDate, setSelectedDate] = useState<{
-    startDate: Date | null;
-    endDate: Date | null;
-    nights: number;
+    checkInDate: Date | null;
+    checkOutDate: Date | null;
+    numberOfNights: number;
   }>({
-    startDate: null,
-    endDate: null,
-    nights: 0,
+    checkInDate: null,
+    checkOutDate: null,
+    numberOfNights: 0,
   });
 
   function handleSelect(date: Date) {
     if (
-      !selectedDate.startDate ||
-      (selectedDate.startDate && selectedDate.endDate)
+      !selectedDate.checkInDate ||
+      (selectedDate.checkInDate && selectedDate.checkOutDate)
     ) {
-      setSelectedDate({ startDate: date, endDate: null, nights: 0 });
+      setSelectedDate({
+        checkInDate: date,
+        checkOutDate: null,
+        numberOfNights: 0,
+      });
       handleSelectDateRoom({
-        startDate: null,
-        endDate: null,
-        nights: 0,
+        checkInDate: null,
+        checkOutDate: null,
+        numberOfNights: 0,
         availableRooms: [],
       });
       return;
     }
 
-    if (date < selectedDate.startDate) {
-      setSelectedDate({ startDate: date, endDate: null, nights: 0 });
+    if (date < selectedDate.checkInDate) {
+      setSelectedDate({
+        checkInDate: date,
+        checkOutDate: null,
+        numberOfNights: 0,
+      });
       handleSelectDateRoom({
-        startDate: null,
-        endDate: null,
-        nights: 0,
+        checkInDate: null,
+        checkOutDate: null,
+        numberOfNights: 0,
         availableRooms: [],
       });
     } else {
       setSelectedDate({
-        startDate: selectedDate.startDate,
-        endDate: date,
-        nights: date.getDate() - selectedDate.startDate.getDate(),
+        checkInDate: selectedDate.checkInDate,
+        checkOutDate: date,
+        numberOfNights: date.getDate() - selectedDate.checkInDate.getDate(),
       });
 
       const availableRooms = getAvailableRoomTypesForRange({
-        checkInDate: selectedDate.startDate,
+        checkInDate: selectedDate.checkInDate,
         checkOutDate: date,
         availabilityMap,
         roomTypeIds,
       });
 
       const availableRoomsDate = {
-        startDate: selectedDate.startDate,
-        endDate: date,
-        nights: date.getDate() - selectedDate.startDate.getDate(),
+        checkInDate: selectedDate.checkInDate,
+        checkOutDate: date,
+        numberOfNights: date.getDate() - selectedDate.checkInDate.getDate(),
         availableRooms,
       };
 
@@ -115,9 +123,9 @@ function DatePicker({
     <section className="bg-surface p-8 rounded-3xl border border-outline shadow-sm ">
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-6">
         <h2 className="text-2xl font-bold tracking-tight">Select your stay</h2>
-        {selectedDate.startDate && selectedDate.endDate && (
+        {selectedDate.checkInDate && selectedDate.checkOutDate && (
           <span className="text-sm font-semibold text-on-surface-variant uppercase tracking-widest">
-            {selectedDate.nights} Nights in{" "}
+            {selectedDate.numberOfNights} Nights in{" "}
             <span className="text-primary text-lg">
               {propertyName?.split(" ")[0]}
             </span>
@@ -173,17 +181,17 @@ function DatePicker({
                       ? "text-slate-300 cursor-not-allowed"
                       : !day.isCurrentMonth
                         ? "text-slate-300"
-                        : selectedDate.startDate?.getTime() ===
+                        : selectedDate.checkInDate?.getTime() ===
                               day.date.getTime() ||
-                            selectedDate.endDate?.getTime() ===
+                            selectedDate.checkOutDate?.getTime() ===
                               day.date.getTime()
                           ? "bg-primary text-white font-bold hover:bg-primary-container hover:text-primary cursor-pointer"
-                          : selectedDate.startDate?.getTime() &&
-                              selectedDate.endDate?.getTime() &&
+                          : selectedDate.checkInDate?.getTime() &&
+                              selectedDate.checkOutDate?.getTime() &&
                               day.date.getTime() >
-                                selectedDate.startDate.getTime() &&
+                                selectedDate.checkInDate.getTime() &&
                               day.date.getTime() <
-                                selectedDate.endDate.getTime()
+                                selectedDate.checkOutDate.getTime()
                             ? "bg-primary-container text-primary font-bold hover:bg-primary hover:text-white cursor-pointer"
                             : day.isWeekend
                               ? "text-red-500 hover:bg-surface-container hover:text-primary cursor-pointer"
@@ -211,103 +219,6 @@ function DatePicker({
                 </button>
               ),
             )}
-            {/* <div className="py-2 text-slate-300">29</div>
-            <div className="py-2 text-slate-300">30</div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              1
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              2
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              3
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              4
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              5
-            </div>
-            <div className="py-2 bg-primary text-white font-bold rounded-lg cursor-pointer">
-              6
-            </div>
-            <div className="py-2 bg-primary-container text-primary font-bold cursor-pointer">
-              7
-            </div>
-            <div className="py-2 bg-primary-container text-primary font-bold cursor-pointer">
-              8
-            </div>
-            <div className="py-2 bg-primary-container text-primary font-bold cursor-pointer">
-              9
-            </div>
-            <div className="py-2 bg-primary text-white font-bold rounded-lg cursor-pointer">
-              10
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              11
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              12
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              13
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              14
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              15
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              16
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              17
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              18
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              19
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              20
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              21
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              22
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              23
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              24
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              25
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              26
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              27
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              28
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              29
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              30
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              31
-            </div>
-            <div className="py-2 text-slate-300">1</div>
-            <div className="py-2 text-slate-300">2</div> */}
           </div>
         </div>
       </div>
