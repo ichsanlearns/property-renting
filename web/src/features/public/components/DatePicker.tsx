@@ -17,12 +17,14 @@ function DatePicker({
 }: {
   propertyId: string;
 
-  handleSelectDateRoom: (
-    selectedDateRoom: {
+  handleSelectDateRoom: (selectedDateRoom: {
+    startDate: Date | null;
+    endDate: Date | null;
+    availableRooms: {
       roomTypeId: string;
       averagePrice: number;
-    }[],
-  ) => void;
+    }[];
+  }) => void;
 }) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const days = generateCalendar({ month: currentMonth });
@@ -62,13 +64,21 @@ function DatePicker({
       (selectedDate.startDate && selectedDate.endDate)
     ) {
       setSelectedDate({ startDate: date, endDate: null });
-      handleSelectDateRoom([]);
+      handleSelectDateRoom({
+        startDate: null,
+        endDate: null,
+        availableRooms: [],
+      });
       return;
     }
 
     if (date < selectedDate.startDate) {
       setSelectedDate({ startDate: date, endDate: null });
-      handleSelectDateRoom([]);
+      handleSelectDateRoom({
+        startDate: null,
+        endDate: null,
+        availableRooms: [],
+      });
     } else {
       setSelectedDate({ startDate: selectedDate.startDate, endDate: date });
       const availableRooms = getAvailableRoomTypesForRange({
@@ -78,7 +88,15 @@ function DatePicker({
         roomTypeIds,
       });
 
-      handleSelectDateRoom(availableRooms);
+      const availableRoomsDate = {
+        startDate: selectedDate.startDate,
+        endDate: date,
+        availableRooms,
+      };
+
+      console.log(availableRoomsDate);
+
+      handleSelectDateRoom(availableRoomsDate);
     }
   }
 

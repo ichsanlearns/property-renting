@@ -3,6 +3,7 @@ import { usePropertyDetail } from "../../tenant/property/hooks/useProperty";
 import { toTitleCase } from "../../../shared/utils/string.util";
 import DatePicker from "../components/DatePicker";
 import { useState } from "react";
+import { format } from "date-fns";
 
 type SelectedDateRoomAvailability = {
   id: string;
@@ -31,26 +32,39 @@ type SelectedDateRoomAvailability = {
 function PropertyDetail() {
   const { propertyId } = useParams() as { propertyId: string };
   const { data: property } = usePropertyDetail({ propertyId });
+  const [dateRange, setDateRange] = useState<{
+    startDate: Date | null;
+    endDate: Date | null;
+  }>({
+    startDate: null,
+    endDate: null,
+  });
+  const [selectedRoom, setSelectedRoom] =
+    useState<SelectedDateRoomAvailability | null>(null);
 
   const [selectedDateRoomAvailability, setSelectedDateRoomAvailability] =
     useState<SelectedDateRoomAvailability[]>([]);
 
-  const handleSelectDateRoom = (
-    selectedDateRoom: {
+  const handleSelectDateRoom = (selectedDateRoom: {
+    startDate: Date | null;
+    endDate: Date | null;
+    availableRooms: {
       roomTypeId: string;
       averagePrice: number;
-    }[],
-  ) => {
+    }[];
+  }) => {
+    setSelectedRoom(null);
     const roomTypeAvailability = property?.roomTypes.map((roomType) => {
-      const data = selectedDateRoom.find(
+      const data = selectedDateRoom.availableRooms.find(
         (room) => room.roomTypeId === roomType.id,
       );
       return {
         ...roomType,
-        price: data?.averagePrice ?? roomType.price,
+        price: data?.averagePrice ?? Number(roomType.price),
       };
     });
     setSelectedDateRoomAvailability(roomTypeAvailability || []);
+    setDateRange(selectedDateRoom);
   };
 
   const roomAvailability =
@@ -178,10 +192,15 @@ function PropertyDetail() {
             <section>
               <h2 className="text-2xl font-bold mb-6">Where you'll sleep</h2>
               <div className="flex flex-col gap-4">
-                {roomAvailability.map((roomType, index) => (
+                {roomAvailability?.map((roomType, index) => (
                   <div
                     key={index}
-                    className="flex bg-surface-container-lowest rounded-xl border border-primary/10 overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
+                    onClick={() => setSelectedRoom(roomType)}
+                    className={`flex bg-surface-container-lowest rounded-xl border overflow-hidden cursor-pointer hover:shadow-md transition-shadow ${
+                      selectedRoom?.id === roomType.id
+                        ? "border-primary"
+                        : "border-primary/10"
+                    }`}
                   >
                     <div className="w-1/3 aspect-4/3 relative">
                       <img
@@ -251,13 +270,21 @@ function PropertyDetail() {
                     <label className="block text-[10px] font-extrabold text-on-surface uppercase tracking-wider">
                       Check-in
                     </label>
-                    <span className="text-sm font-medium">Oct 12, 2023</span>
+                    <span className="text-sm font-medium">
+                      {dateRange.startDate
+                        ? format(dateRange.startDate, "MMM dd, yyyy")
+                        : "Select date"}
+                    </span>
                   </div>
                   <div className="p-3 hover:bg-slate-50 cursor-pointer">
                     <label className="block text-[10px] font-extrabold text-on-surface uppercase tracking-wider">
                       Check-out
                     </label>
-                    <span className="text-sm font-medium">Oct 17, 2023</span>
+                    <span className="text-sm font-medium">
+                      {dateRange.endDate
+                        ? format(dateRange.endDate, "MMM dd, yyyy")
+                        : "Select date"}
+                    </span>
                   </div>
                 </div>
                 <div className="p-3 hover:bg-slate-50 cursor-pointer">
