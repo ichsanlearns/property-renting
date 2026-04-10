@@ -2,6 +2,7 @@ import { prisma } from "../../shared/lib/prisma.lib.js";
 import { AppError } from "../../shared/utils/app-error.util.js";
 import { ReservationStatus } from "../../generated/prisma/enums.js";
 import type { CreateReservationInput } from "./reservation.validator.js";
+import { generateReservationCode } from "./utils/generate-code.util.js";
 
 const normalizeDate = (date: Date) => {
   const d = new Date(date);
@@ -93,7 +94,7 @@ export const createReservation = async ({
       });
     }
 
-    const reservationCode = "reservationCode";
+    const reservationCode = generateReservationCode(propertyNameSnapshot);
 
     const data = {
       customerId: userId,
