@@ -411,7 +411,7 @@ model Reservation {
   couponId           String?   @map("coupon_id")
   voucherId          String?   @map("voucher_id")
 
-  reservationCode    String    @map("reservation_code")
+  reservationCode    String    @map("reservation_code") @unique
 
   checkInDate        DateTime  @map("check_in_date")
   checkOutDate       DateTime  @map("check_out_date")

@@ -9,10 +9,24 @@ const normalizeDate = (date: Date) => {
   return d;
 };
 
-export const createReservation = async ({ userId, payload }: { userId: string; payload: CreateReservationInput }) => {
-  const { roomTypeId, checkInDate, checkOutDate, guestCount, usePoints } = payload;
+export const createReservation = async ({
+  userId,
+  payload,
+}: {
+  userId: string;
+  payload: CreateReservationInput;
+}) => {
+  const {
+    roomTypeId,
+    checkInDate,
+    checkOutDate,
+    numberOfNights,
+    totalAmount,
+    roomNameSnapshot,
+    propertyNameSnapshot,
+    averageRoomPerNightSnapshot,
+  } = payload;
 
-  //  normalize date
   const checkIn = normalizeDate(new Date(checkInDate));
   const checkOut = normalizeDate(new Date(checkOutDate));
 
@@ -20,7 +34,6 @@ export const createReservation = async ({ userId, payload }: { userId: string; p
     throw new AppError("Invalid date range", 400);
   }
 
-  //  generate dates
   const dates: string[] = [];
 
   let current = new Date(checkInDate);
@@ -37,11 +50,6 @@ export const createReservation = async ({ userId, payload }: { userId: string; p
 
     if (!roomType) throw new AppError("Room type not found", 404);
 
-    if (guestCount > roomType.capacity) {
-      throw new AppError("Guest exceeds room capacity", 400);
-    }
-
-    //  pakai range query (LEBIH AMAN)
     const availability = await tx.roomTypePrice.findMany({
       where: {
         roomTypeId,
@@ -52,22 +60,28 @@ export const createReservation = async ({ userId, payload }: { userId: string; p
       },
     });
 
-    //  cek apakah semua tanggal ada
     if (availability.length !== dates.length) {
       throw new AppError("Room not available for selected dates", 400);
     }
 
-    //  cek stok
     for (const day of availability) {
       if (day.availableRooms <= 0) {
         throw new AppError("Room fully booked on selected date", 400);
       }
     }
 
-    //  hitung harga
-    const totalAmount = Number(roomType.basePrice) * dates.length - (usePoints ?? 0);
+    const totalPriceDate = availability.reduce(
+      (acc, day) => acc + Number(day.price),
+      0,
+    );
 
-    //  update availability
+    if (totalPriceDate !== totalAmount) {
+      throw new AppError(
+        "Theres change in price, please refresh the page",
+        400,
+      );
+    }
+
     for (const day of availability) {
       await tx.roomTypePrice.update({
         where: { id: day.id },
@@ -79,22 +93,28 @@ export const createReservation = async ({ userId, payload }: { userId: string; p
       });
     }
 
-    // create reservation
-    const reservation = await tx.reservation.create({
-      data: {
-        customerId: userId,
-        roomTypeId,
-        checkInDate: checkIn,
-        checkOutDate: checkOut,
-        guestCount,
-        usingPoints: usePoints ?? 0,
-        totalAmount,
-        status: ReservationStatus.WAITING_PAYMENT,
-        paymentDeadline: new Date(Date.now() + 2 * 60 * 60 * 1000),
-      },
+    const reservationCode = "reservationCode";
+
+    const data = {
+      customerId: userId,
+      roomTypeId,
+      reservationCode,
+      checkInDate: checkIn,
+      checkOutDate: checkOut,
+      numberOfNights,
+      totalAmount,
+      status: ReservationStatus.WAITING_PAYMENT,
+      paymentDeadline: new Date(Date.now() + 2 * 60 * 60 * 1000),
+      roomNameSnapshot,
+      propertyNameSnapshot,
+      averageRoomPerNightSnapshot,
+    };
+
+    await tx.reservation.create({
+      data,
     });
 
-    return reservation;
+    return { reservationCode };
   });
 };
 
