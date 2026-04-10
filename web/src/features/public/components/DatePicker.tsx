@@ -10,16 +10,19 @@ import { useState, useMemo } from "react";
 import { usePropertyRoomPricesDate } from "../../tenant/property/hooks/useProperty";
 import type { GetPropertyRoomPricesDateResponse } from "../../tenant/property/api/property.response";
 import { getAvailableRoomTypesForRange } from "../utils/availability.util";
+import { formatRupiah } from "../../../shared/utils/price.util";
 
 function DatePicker({
   propertyId,
+  propertyName,
   handleSelectDateRoom,
 }: {
   propertyId: string;
-
+  propertyName?: string;
   handleSelectDateRoom: (selectedDateRoom: {
     startDate: Date | null;
     endDate: Date | null;
+    nights: number;
     availableRooms: {
       roomTypeId: string;
       averagePrice: number;
@@ -53,9 +56,11 @@ function DatePicker({
   const [selectedDate, setSelectedDate] = useState<{
     startDate: Date | null;
     endDate: Date | null;
+    nights: number;
   }>({
     startDate: null,
     endDate: null,
+    nights: 0,
   });
 
   function handleSelect(date: Date) {
@@ -63,24 +68,31 @@ function DatePicker({
       !selectedDate.startDate ||
       (selectedDate.startDate && selectedDate.endDate)
     ) {
-      setSelectedDate({ startDate: date, endDate: null });
+      setSelectedDate({ startDate: date, endDate: null, nights: 0 });
       handleSelectDateRoom({
         startDate: null,
         endDate: null,
+        nights: 0,
         availableRooms: [],
       });
       return;
     }
 
     if (date < selectedDate.startDate) {
-      setSelectedDate({ startDate: date, endDate: null });
+      setSelectedDate({ startDate: date, endDate: null, nights: 0 });
       handleSelectDateRoom({
         startDate: null,
         endDate: null,
+        nights: 0,
         availableRooms: [],
       });
     } else {
-      setSelectedDate({ startDate: selectedDate.startDate, endDate: date });
+      setSelectedDate({
+        startDate: selectedDate.startDate,
+        endDate: date,
+        nights: date.getDate() - selectedDate.startDate.getDate(),
+      });
+
       const availableRooms = getAvailableRoomTypesForRange({
         checkInDate: selectedDate.startDate,
         checkOutDate: date,
@@ -91,10 +103,9 @@ function DatePicker({
       const availableRoomsDate = {
         startDate: selectedDate.startDate,
         endDate: date,
+        nights: date.getDate() - selectedDate.startDate.getDate(),
         availableRooms,
       };
-
-      console.log(availableRoomsDate);
 
       handleSelectDateRoom(availableRoomsDate);
     }
@@ -104,9 +115,14 @@ function DatePicker({
     <section className="bg-surface p-8 rounded-3xl border border-outline shadow-sm ">
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-6">
         <h2 className="text-2xl font-bold tracking-tight">Select your stay</h2>
-        <span className="text-sm font-semibold text-on-surface-variant uppercase tracking-widest">
-          4 Nights in Amalfi Coast
-        </span>
+        {selectedDate.startDate && selectedDate.endDate && (
+          <span className="text-sm font-semibold text-on-surface-variant uppercase tracking-widest">
+            {selectedDate.nights} Nights in{" "}
+            <span className="text-primary text-lg">
+              {propertyName?.split(" ")[0]}
+            </span>
+          </span>
+        )}
       </div>
       <div className="grid grid-cols-1 gap-4">
         <div className="border border-slate-200 rounded-2xl overflow-hidden">
@@ -184,7 +200,7 @@ function DatePicker({
                               new Date(roomPrice.date).getTime() ===
                                 day.date.getTime() && (
                                 <span className="text-xs text-on-surface-variant">
-                                  Rp. {roomPrice.price}
+                                  {formatRupiah(roomPrice.price)}
                                 </span>
                               )}
                           </span>

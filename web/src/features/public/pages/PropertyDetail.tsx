@@ -4,6 +4,7 @@ import { toTitleCase } from "../../../shared/utils/string.util";
 import DatePicker from "../components/DatePicker";
 import { useState } from "react";
 import { format } from "date-fns";
+import { formatRupiah } from "../../../shared/utils/price.util";
 
 type SelectedDateRoomAvailability = {
   id: string;
@@ -35,9 +36,11 @@ function PropertyDetail() {
   const [dateRange, setDateRange] = useState<{
     startDate: Date | null;
     endDate: Date | null;
+    nights: number;
   }>({
     startDate: null,
     endDate: null,
+    nights: 0,
   });
   const [selectedRoom, setSelectedRoom] =
     useState<SelectedDateRoomAvailability | null>(null);
@@ -48,6 +51,7 @@ function PropertyDetail() {
   const handleSelectDateRoom = (selectedDateRoom: {
     startDate: Date | null;
     endDate: Date | null;
+    nights: number;
     availableRooms: {
       roomTypeId: string;
       averagePrice: number;
@@ -64,7 +68,11 @@ function PropertyDetail() {
       };
     });
     setSelectedDateRoomAvailability(roomTypeAvailability || []);
-    setDateRange(selectedDateRoom);
+    setDateRange({
+      startDate: selectedDateRoom.startDate,
+      endDate: selectedDateRoom.endDate,
+      nights: selectedDateRoom.nights,
+    });
   };
 
   const roomAvailability =
@@ -187,6 +195,7 @@ function PropertyDetail() {
             </section>
             <DatePicker
               propertyId={propertyId}
+              propertyName={property?.name}
               handleSelectDateRoom={handleSelectDateRoom}
             />
             <section>
@@ -218,7 +227,7 @@ function PropertyDetail() {
                         <div className="flex justify-between items-start">
                           <h3 className="font-bold text-lg">{roomType.name}</h3>
                           <span className="text-primary font-bold text-sm">
-                            IDR {roomType.price?.toLocaleString()}/night
+                            {formatRupiah(roomType.price)}/night
                           </span>
                         </div>
                         <p className="text-on-surface-variant text-sm mt-1">
@@ -246,24 +255,37 @@ function PropertyDetail() {
           <div className="lg:col-span-1">
             <div className="sticky top-28 bg-white rounded-2xl p-6 shadow-xl shadow-primary/5 border border-primary/10">
               <div className="flex justify-between items-baseline mb-6">
-                <div className="flex items-baseline gap-1">
-                  <span className="text-2xl font-extrabold text-on-surface">
-                    $380
-                  </span>
-                  <span className="text-on-surface-variant text-sm font-medium">
-                    night
-                  </span>
-                </div>
-                <div className="flex items-center gap-1 text-sm font-bold">
-                  <span
-                    className="material-symbols-outlined text-primary text-sm"
-                    style={{ fontVariationSettings: "'FILL' 1" }}
-                  >
-                    star
-                  </span>
-                  4.92
-                </div>
+                {selectedRoom ? (
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-2xl font-extrabold text-on-surface">
+                      {formatRupiah(selectedRoom?.price)}
+                    </span>
+                    <span className="text-on-surface-variant text-sm font-medium">
+                      /night
+                    </span>
+                  </div>
+                ) : (
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-2xl font-extrabold text-on-surface">
+                      Select room
+                    </span>
+                  </div>
+                )}
+                {selectedRoom && selectedRoom?.reviewCount > 0 ? (
+                  <div className="flex items-center gap-1 text-sm font-bold">
+                    <span
+                      className="material-symbols-outlined text-primary text-sm"
+                      style={{ fontVariationSettings: "'FILL' 1" }}
+                    >
+                      star
+                    </span>
+                    {selectedRoom?.averageRating || 0}
+                  </div>
+                ) : (
+                  ""
+                )}
               </div>
+
               <div className="border border-slate-300 rounded-xl mb-6 overflow-hidden">
                 <div className="grid grid-cols-2 border-b border-slate-300">
                   <div className="p-3 border-r border-slate-300 hover:bg-slate-50 cursor-pointer">
@@ -292,7 +314,7 @@ function PropertyDetail() {
                     Selected Room
                   </label>
                   <span className="text-sm font-bold text-primary">
-                    Guest Suite
+                    {selectedRoom?.name || "Select room"}
                   </span>
                 </div>
               </div>
@@ -302,31 +324,40 @@ function PropertyDetail() {
               <p className="text-center text-on-surface-variant text-sm mb-6">
                 You won't be charged yet
               </p>
-              <div className="space-y-4">
-                <div className="flex justify-between text-sm">
-                  <span className="underline text-on-surface-variant font-medium">
-                    $380 x 5 nights
-                  </span>
-                  <span className="font-medium">$1,900</span>
+              {selectedRoom?.price && dateRange.nights > 0 && (
+                <div className="space-y-4">
+                  <div className="flex justify-between text-sm">
+                    <span className="underline text-on-surface-variant font-medium">
+                      {formatRupiah(selectedRoom?.price)} x {dateRange.nights}{" "}
+                      nights
+                    </span>
+                    <span className="font-medium">
+                      {formatRupiah(selectedRoom?.price * dateRange.nights)}
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between text-sm">
+                    <span className="underline text-on-surface-variant font-medium">
+                      Occupancy taxes &amp; fees
+                    </span>
+                    <span className="font-medium">
+                      {formatRupiah(
+                        selectedRoom?.price * dateRange.nights * 0.1,
+                      )}
+                    </span>
+                  </div>
+                  <hr className="border-primary/10" />
+                  <div className="flex justify-between text-lg font-extrabold">
+                    <span>Total</span>
+                    <span>
+                      {formatRupiah(
+                        selectedRoom?.price * dateRange.nights +
+                          selectedRoom?.price * dateRange.nights * 0.1,
+                      )}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span className="underline text-on-surface-variant font-medium">
-                    Oceanic service fee
-                  </span>
-                  <span className="font-medium">$285</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="underline text-on-surface-variant font-medium">
-                    Occupancy taxes &amp; fees
-                  </span>
-                  <span className="font-medium">$205</span>
-                </div>
-                <hr className="border-primary/10" />
-                <div className="flex justify-between text-lg font-extrabold">
-                  <span>Total</span>
-                  <span>$2,390</span>
-                </div>
-              </div>
+              )}
             </div>
           </div>
         </div>
