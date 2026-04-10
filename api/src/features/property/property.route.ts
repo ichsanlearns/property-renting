@@ -15,8 +15,12 @@ router.post(
   PropertyController.create,
 );
 
-router.get("/:id/basic", PropertyController.getByIdBasic);
-router.get("/:id", PropertyController.getById);
+router.get("/:propertyId/basic", PropertyController.getByIdBasic);
+router.get("/:propertyId", PropertyController.getById);
+router.get(
+  "/:propertyId/availability",
+  PropertyController.getPropertyRoomPricesDate,
+);
 
 router.use("/:propertyId/rooms", createRoomRouter);
 

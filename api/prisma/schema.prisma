@@ -411,17 +411,24 @@ model Reservation {
   couponId           String?   @map("coupon_id")
   voucherId          String?   @map("voucher_id")
 
+  reservationCode    String    @map("reservation_code") @unique
+
   checkInDate        DateTime  @map("check_in_date")
   checkOutDate       DateTime  @map("check_out_date")
+  numberOfNights     Int       @map("number_of_nights")
 
-  guestCount         Int       @map("guest_count")
+  guestCount         Int?       @map("guest_count")
 
-  usingPoints        Decimal   @map("using_points")       @db.Decimal(10,2)
+  usingPoints        Decimal?   @map("using_points")       @db.Decimal(10,2) @default(0)
   totalAmount        Decimal   @map("total_amount")       @db.Decimal(10,2)
   status             ReservationStatus
 
   paymentDeadline    DateTime  @map("payment_deadline")
   paymentProof       String?   @map("payment_proof")
+  
+  roomNameSnapshot   String    @map("room_name_snapshot")
+  propertyNameSnapshot String    @map("property_name_snapshot")
+  averageRoomPerNightSnapshot Decimal    @map("average_room_per_night_snapshot") @db.Decimal(10,2)
 
   createdAt          DateTime  @map("created_at")         @default(now()) 
   updatedAt          DateTime  @map("updated_at")         @updatedAt

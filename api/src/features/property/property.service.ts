@@ -171,6 +171,7 @@ export const getById = async ({ id }: { id: string }) => {
 
       roomTypes: {
         select: {
+          id: true,
           name: true,
           basePrice: true,
           capacity: true,
@@ -226,6 +227,47 @@ export const getById = async ({ id }: { id: string }) => {
     category: property.category,
     propertyImages: property.propertyImages,
     propertyAmenities: property.propertyAmenities,
-    roomTypes: property.roomTypes,
+    roomTypes: property.roomTypes.map((roomType) => ({
+      ...roomType,
+      price: roomType.basePrice,
+    })),
   };
+};
+
+export const getPropertyRoomPricesDate = async ({
+  propertyId,
+  startDate,
+  endDate,
+}: {
+  propertyId: string;
+  startDate: Date;
+  endDate: Date;
+}) => {
+  const roomTypes = await prisma.roomType.findMany({
+    where: { propertyId },
+  });
+
+  const roomTypeIds = roomTypes.map((roomType) => roomType.id);
+
+  return await prisma.roomTypePrice.findMany({
+    where: {
+      roomTypeId: {
+        in: roomTypeIds,
+      },
+      date: {
+        gte: startDate,
+        lt: endDate,
+      },
+    },
+    orderBy: {
+      date: "asc",
+    },
+    select: {
+      roomTypeId: true,
+      date: true,
+      price: true,
+      availableRooms: true,
+      isClosed: true,
+    },
+  });
 };
