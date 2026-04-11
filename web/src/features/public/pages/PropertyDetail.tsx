@@ -381,7 +381,7 @@ function PropertyDetail() {
               </div>
               <button
                 onClick={handleSubmit(onSubmit, (errors) => {
-                  console.log(errors);
+                  console.error(errors);
                 })}
                 className="w-full bg-primary text-on-primary py-3.5 rounded-xl font-extrabold text-lg shadow-md active:scale-[0.98] transition-all hover:opacity-95 mb-6"
               >

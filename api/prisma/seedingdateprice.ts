@@ -3,7 +3,7 @@ import { prisma } from "../src/shared/lib/prisma.lib.js";
 
 async function main() {
   try {
-    console.log("Seeding prices...");
+    console.info("Seeding prices...");
 
     await prisma.roomTypePrice.deleteMany({
       where: {
@@ -15,7 +15,7 @@ async function main() {
       roomTypeId: "2f1a064b-2a23-439c-a7f1-617cdd983023",
       daysAhead: 30,
     });
-    console.log("Prices seeded successfully");
+    console.info("Prices seeded successfully");
   } catch (error) {
     console.error(error);
   } finally {

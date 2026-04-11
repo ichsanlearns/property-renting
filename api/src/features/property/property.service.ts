@@ -1,3 +1,4 @@
+import { eachDayOfInterval, format } from "date-fns";
 import { prisma } from "../../shared/lib/prisma.lib.js";
 
 import { AppError } from "../../shared/utils/app-error.util.js";
@@ -249,7 +250,7 @@ export const getPropertyRoomPricesDate = async ({
 
   const roomTypeIds = roomTypes.map((roomType) => roomType.id);
 
-  return await prisma.roomTypePrice.findMany({
+  const roomTypePrices = await prisma.roomTypePrice.findMany({
     where: {
       roomTypeId: {
         in: roomTypeIds,
@@ -270,4 +271,35 @@ export const getPropertyRoomPricesDate = async ({
       isClosed: true,
     },
   });
+
+  const roomTypePricesMap = new Map(
+    roomTypePrices.map((roomTypePrice) => [
+      `${roomTypePrice.roomTypeId}-${format(roomTypePrice.date, "yyyy-MM-dd")}`,
+      roomTypePrice,
+    ]),
+  );
+
+  const allDates = eachDayOfInterval({
+    start: startDate,
+    end: new Date(endDate.getTime() - 1),
+  });
+
+  const normalizedDates = allDates.map((date) => format(date, "yyyy-MM-dd"));
+
+  const result = roomTypeIds.flatMap((roomTypeId) =>
+    normalizedDates.map((date) => {
+      const key = `${roomTypeId}-${date}`;
+      const data = roomTypePricesMap.get(key);
+
+      return {
+        roomTypeId,
+        date,
+        price: data?.price ?? null,
+        availableRooms: data?.availableRooms ?? null,
+        isClosed: data?.isClosed ?? null,
+      };
+    }),
+  );
+
+  return result;
 };

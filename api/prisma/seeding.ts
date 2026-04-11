@@ -11,7 +11,7 @@ import { generateReferralCode } from "../src/shared/utils/referral.util.js";
 
 const seed = async () => {
   try {
-    console.log("Deleting all data...");
+    console.info("Deleting all data...");
 
     await prisma.refreshToken.deleteMany({});
     await prisma.account.deleteMany({});
@@ -295,7 +295,7 @@ const seed = async () => {
         }
       }
 
-      console.log("✅ Room availability seeded (UPSERT)");
+      console.info("✅ Room availability seeded (UPSERT)");
     };
 
     await seedRoomAvailability();

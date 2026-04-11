@@ -4,7 +4,7 @@ import { ReservationStatus } from "../../generated/prisma/client.js";
 
 export const expiredReservationJob = () => {
   cron.schedule("0 * * * *", async () => {
-    console.log("Running expired reservation job....");
+    console.info("Running expired reservation job....");
 
     const now = new Date();
 
@@ -49,6 +49,6 @@ export const expiredReservationJob = () => {
       });
     }
 
-    console.log(`✅ Expired ${expiredReservations.length} reservations`);
+    console.info(`✅ Expired ${expiredReservations.length} reservations`);
   });
 };
