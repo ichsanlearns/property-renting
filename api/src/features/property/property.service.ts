@@ -1,8 +1,13 @@
-import { eachDayOfInterval, format } from "date-fns";
 import { prisma } from "../../shared/lib/prisma.lib.js";
 
 import { AppError } from "../../shared/utils/app-error.util.js";
 import type { CreatePropertyDto } from "./property.type.js";
+import {
+  buildDateKey,
+  getDatesInRangeExclusive,
+  toDateKey,
+  toLocalMidnight,
+} from "../../shared/utils/date.util.js";
 
 export const create = async ({
   data,
@@ -241,8 +246,8 @@ export const getPropertyRoomPricesDate = async ({
   endDate,
 }: {
   propertyId: string;
-  startDate: Date;
-  endDate: Date;
+  startDate: string;
+  endDate: string;
 }) => {
   const roomTypes = await prisma.roomType.findMany({
     where: { propertyId },
@@ -256,8 +261,8 @@ export const getPropertyRoomPricesDate = async ({
         in: roomTypeIds,
       },
       date: {
-        gte: startDate,
-        lt: endDate,
+        gte: new Date(startDate),
+        lt: new Date(endDate),
       },
     },
     orderBy: {
@@ -274,26 +279,26 @@ export const getPropertyRoomPricesDate = async ({
 
   const roomTypePricesMap = new Map(
     roomTypePrices.map((roomTypePrice) => [
-      `${roomTypePrice.roomTypeId}-${format(roomTypePrice.date, "yyyy-MM-dd")}`,
+      buildDateKey(
+        roomTypePrice.roomTypeId,
+        toLocalMidnight(roomTypePrice.date),
+      ),
       roomTypePrice,
     ]),
   );
 
-  const allDates = eachDayOfInterval({
-    start: startDate,
-    end: new Date(endDate.getTime() - 1),
-  });
+  const allDates = getDatesInRangeExclusive(startDate, endDate);
 
-  const normalizedDates = allDates.map((date) => format(date, "yyyy-MM-dd"));
+  console.log(roomTypePrices);
 
   const result = roomTypeIds.flatMap((roomTypeId) =>
-    normalizedDates.map((date) => {
-      const key = `${roomTypeId}-${date}`;
+    allDates.map((date) => {
+      const key = buildDateKey(roomTypeId, date);
       const data = roomTypePricesMap.get(key);
 
       return {
         roomTypeId,
-        date,
+        date: toDateKey(date),
         price: data?.price ?? null,
         availableRooms: data?.availableRooms ?? null,
         isClosed: data?.isClosed ?? null,
