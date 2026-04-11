@@ -181,17 +181,17 @@ function DatePicker({
                       ? "text-slate-300 cursor-not-allowed"
                       : !day.isCurrentMonth
                         ? "text-slate-300"
-                        : selectedDate.checkInDate?.getTime() ===
-                              day.date.getTime() ||
-                            selectedDate.checkOutDate?.getTime() ===
-                              day.date.getTime()
+                        : selectedDate.checkInDate?.getDate() ===
+                              day.date.getDate() ||
+                            selectedDate.checkOutDate?.getDate() ===
+                              day.date.getDate()
                           ? "bg-primary text-white font-bold hover:bg-primary-container hover:text-primary cursor-pointer"
-                          : selectedDate.checkInDate?.getTime() &&
-                              selectedDate.checkOutDate?.getTime() &&
-                              day.date.getTime() >
-                                selectedDate.checkInDate.getTime() &&
-                              day.date.getTime() <
-                                selectedDate.checkOutDate.getTime()
+                          : selectedDate.checkInDate?.getDate() &&
+                              selectedDate.checkOutDate?.getDate() &&
+                              day.date.getDate() >
+                                selectedDate.checkInDate.getDate() &&
+                              day.date.getDate() <
+                                selectedDate.checkOutDate.getDate()
                             ? "bg-primary-container text-primary font-bold hover:bg-primary hover:text-white cursor-pointer"
                             : day.isWeekend
                               ? "text-red-500 hover:bg-surface-container hover:text-primary cursor-pointer"
@@ -205,8 +205,8 @@ function DatePicker({
                         {roomPricesDate?.map((roomPrice) => (
                           <span key={roomPrice.date}>
                             {roomPrice.availableRooms > 0 &&
-                              new Date(roomPrice.date).getTime() ===
-                                day.date.getTime() && (
+                              new Date(roomPrice.date).getDate() ===
+                                day.date.getDate() && (
                                 <span className="text-xs text-on-surface-variant">
                                   {formatRupiah(roomPrice.price)}
                                 </span>
