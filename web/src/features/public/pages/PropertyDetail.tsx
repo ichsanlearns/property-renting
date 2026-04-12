@@ -45,6 +45,7 @@ function PropertyDetail() {
 
   const { propertyId } = useParams() as { propertyId: string };
   const { data: property } = usePropertyDetail({ propertyId });
+  const [noRoomAvailable, setNoRoomAvailable] = useState(false);
   const [dateRange, setDateRange] = useState<{
     checkInDate: Date | null;
     checkOutDate: Date | null;
@@ -73,16 +74,51 @@ function PropertyDetail() {
     }[];
   }) => {
     setSelectedRoom(null);
-    const roomTypeAvailability = property?.roomTypes.map((roomType) => {
-      const data = selectedDateRoom.availableRooms.find(
-        (room) => room.roomTypeId === roomType.id,
-      );
-      return {
-        ...roomType,
-        price: data?.averagePrice ?? Number(roomType.price),
-      };
-    });
-    setSelectedDateRoomAvailability(roomTypeAvailability || []);
+
+    if (selectedDateRoom.checkInDate && selectedDateRoom.checkOutDate) {
+      if (selectedDateRoom.availableRooms.length > 0) {
+        const availableMap = new Map(
+          selectedDateRoom.availableRooms.map((room) => [
+            room.roomTypeId,
+            room,
+          ]),
+        );
+
+        const roomTypeAvailability = property?.roomTypes
+          .filter((roomType) => availableMap.has(roomType.id))
+          .map((roomType) => {
+            const data = availableMap.get(roomType.id);
+
+            return {
+              ...roomType,
+              price: data?.averagePrice ?? Number(roomType.price),
+            };
+          });
+
+        if (roomTypeAvailability?.length === 0) {
+          setSelectedDateRoomAvailability([
+            {
+              viewType: "NO_DATA",
+            } as SelectedDateRoomAvailability,
+          ]);
+          setNoRoomAvailable(true);
+        } else {
+          setSelectedDateRoomAvailability(roomTypeAvailability!);
+          setNoRoomAvailable(false);
+        }
+      } else {
+        setSelectedDateRoomAvailability([
+          {
+            viewType: "NO_DATA",
+          } as SelectedDateRoomAvailability,
+        ]);
+        setNoRoomAvailable(true);
+      }
+    } else {
+      setSelectedDateRoomAvailability([]);
+      setNoRoomAvailable(false);
+    }
+
     setDateRange({
       checkInDate: selectedDateRoom.checkInDate,
       checkOutDate: selectedDateRoom.checkOutDate,
@@ -101,11 +137,23 @@ function PropertyDetail() {
   };
 
   const roomAvailability =
-    selectedDateRoomAvailability.length > 0
+    selectedDateRoomAvailability.length > 0 &&
+    selectedDateRoomAvailability[0]?.viewType !== "NO_DATA"
       ? selectedDateRoomAvailability
       : (property?.roomTypes ?? []);
 
   const handleSelectRoom = (roomType: SelectedDateRoomAvailability) => {
+    if (!selectedDateRoomAvailability.length) {
+      toast.error("Please select a date range first");
+      return;
+    }
+    if (selectedRoom?.id === roomType.id) {
+      setSelectedRoom(null);
+      setValue("roomTypeId", "");
+      setValue("roomNameSnapshot", "");
+      setValue("averageRoomPerNightSnapshot", 0);
+      return;
+    }
     setSelectedRoom(roomType);
     setValue("roomTypeId", roomType.id);
     setValue("roomNameSnapshot", roomType.name);
@@ -259,58 +307,77 @@ function PropertyDetail() {
               propertyName={property?.name}
               handleSelectDateRoom={handleSelectDateRoom}
             />
-            <section>
-              <h2 className="text-2xl font-bold mb-6">Where you'll sleep</h2>
-              <div className="flex flex-col gap-4">
-                {roomAvailability?.map((roomType, index) => (
-                  <div
-                    key={index}
-                    onClick={() => handleSelectRoom(roomType)}
-                    className={`flex bg-surface-container-lowest rounded-xl border overflow-hidden cursor-pointer hover:shadow-md transition-shadow ${
-                      selectedRoom?.id === roomType.id
-                        ? "border-primary"
-                        : "border-primary/10"
-                    }`}
-                  >
-                    <div className="w-1/3 aspect-4/3 relative">
-                      <img
-                        className="w-full h-full object-cover"
-                        data-alt="Luxury master suite with ocean view"
-                        src={roomType.roomTypeImages[0].imageUrl}
-                      />
-                      <div className="absolute bottom-2 right-2 bg-black/60 text-white text-[10px] font-bold px-1.5 py-0.5 rounded backdrop-blur-sm">
-                        {roomType.roomTypeImages.length > 1 &&
-                          `+${roomType.roomTypeImages.length - 1} photos`}
-                      </div>
-                    </div>
-                    <div className="p-4 flex flex-col justify-between w-2/3">
-                      <div>
-                        <div className="flex justify-between items-start">
-                          <h3 className="font-bold text-lg">{roomType.name}</h3>
-                          <span className="text-primary font-bold text-sm">
-                            {formatRupiah(roomType.price)}/night
-                          </span>
+            <section className={`${noRoomAvailable ? "text-center" : ""}`}>
+              <h2 className="text-2xl font-bold ">{`${selectedDateRoomAvailability.length > 0 ? (noRoomAvailable ? "No rooms available for " : "Available rooms for ") : "Where you'll stay"}`}</h2>
+              {selectedDateRoomAvailability.length > 0 ? (
+                <p className="text-primary text-sm mt-0.5 mb-6 font-bold">
+                  {format(dateRange.checkInDate!, "dd MMMM yyyy")} -{" "}
+                  {format(dateRange.checkOutDate!, "dd MMMM yyyy")}
+                </p>
+              ) : (
+                <p className="text-red-500 italic text-sm mt-0.5 mb-6 font-bold">
+                  (* Select dates to see available rooms )
+                </p>
+              )}
+              {!noRoomAvailable && (
+                <div className="flex flex-col gap-4">
+                  {roomAvailability?.map((roomType, index) => (
+                    <div
+                      key={index}
+                      onClick={() => handleSelectRoom(roomType)}
+                      className={`flex  rounded-xl border overflow-hidden cursor-pointer hover:shadow-md transition-shadow ${
+                        selectedRoom?.id === roomType.id
+                          ? "border-primary bg-primary/2 border-2"
+                          : "border-primary/10 bg-white"
+                      }`}
+                    >
+                      <div className="w-1/3 aspect-4/3 relative">
+                        <img
+                          className="w-full h-full object-cover"
+                          data-alt="Luxury master suite with ocean view"
+                          src={roomType.roomTypeImages[0].imageUrl}
+                        />
+                        <div className="absolute bottom-2 right-2 bg-black/60 text-white text-[10px] font-bold px-1.5 py-0.5 rounded backdrop-blur-sm">
+                          {roomType.roomTypeImages.length > 1 &&
+                            `+${roomType.roomTypeImages.length - 1} photos`}
                         </div>
-                        <p className="text-on-surface-variant text-sm mt-1">
-                          {toTitleCase(roomType.bedType)} bed ·{" "}
-                          {toTitleCase(roomType.viewType)} view ·{" "}
-                          {toTitleCase(roomType.bathroomType)} bathroom
-                        </p>
                       </div>
-                      <div className="flex items-center gap-2">
-                        {roomType.roomAmenities.map((amenity, index) => (
-                          <span
-                            key={index}
-                            className="material-symbols-outlined text-on-surface-variant text-lg"
-                          >
-                            {amenity.amenity.icon}
-                          </span>
-                        ))}
+                      <div className="p-4 flex flex-col justify-between w-2/3">
+                        <div>
+                          <div className="flex justify-between items-start">
+                            <h3 className="font-bold text-lg">
+                              {roomType.name}
+                            </h3>
+                            <span className="text-primary font-bold text-sm">
+                              {formatRupiah(roomType.price)}/night
+                            </span>
+                          </div>
+                          <p className="text-on-surface-variant text-sm mt-1">
+                            {toTitleCase(roomType.bedType)} bed ·{" "}
+                            {toTitleCase(roomType.viewType)} view ·{" "}
+                            {toTitleCase(roomType.bathroomType)} bathroom
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {roomType.roomAmenities.map((amenity, index) => (
+                            <span
+                              key={index}
+                              className="material-symbols-outlined text-on-surface-variant text-lg"
+                            >
+                              {amenity.amenity.icon}
+                            </span>
+                          ))}
+                          {selectedRoom?.id === roomType.id && (
+                            <span className="bg-primary text-white px-2.5 py-1 rounded-lg text-[11px] font-extrabold uppercase tracking-wide ml-auto">
+                              Selected
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </section>
           </div>
           <div className="lg:col-span-1">

@@ -289,8 +289,6 @@ export const getPropertyRoomPricesDate = async ({
 
   const allDates = getDatesInRangeExclusive(startDate, endDate);
 
-  console.log(roomTypePrices);
-
   const result = roomTypeIds.flatMap((roomTypeId) =>
     allDates.map((date) => {
       const key = buildDateKey(roomTypeId, date);
