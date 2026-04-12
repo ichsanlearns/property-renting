@@ -5,13 +5,20 @@ import { createReservationSchema } from "./reservation.validator.js";
 
 export const createReservationController = catchAsync(
   async (req: Request, res: Response) => {
-    const parsed = createReservationSchema.parse(req.body);
+    const parsed = createReservationSchema.safeParse(req.body);
+
+    if (!parsed.success) {
+      return res.status(400).json({
+        message: "Invalid request data",
+        errors: parsed.error.issues,
+      });
+    }
 
     const userId = req.user!.userId;
 
     const result = await reservationService.createReservation({
       userId,
-      payload: parsed,
+      payload: parsed.data,
     });
 
     res.status(201).json({
