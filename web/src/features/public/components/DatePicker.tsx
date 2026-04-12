@@ -2,6 +2,7 @@ import {
   addMonths,
   endOfMonth,
   format,
+  startOfDay,
   startOfMonth,
   subMonths,
 } from "date-fns";
@@ -194,7 +195,8 @@ function DatePicker({
                   disabled={!day.isAvailable || !day.isCurrentMonth}
                   key={day.date.toISOString()}
                   className={`py-2 rounded-lg ${
-                    !day.isAvailable
+                    !day.isAvailable ||
+                    day.date.getTime() < startOfDay(Date.now()).getTime() - 1
                       ? "text-slate-300 cursor-not-allowed"
                       : !day.isCurrentMonth
                         ? "text-slate-300"
@@ -223,7 +225,9 @@ function DatePicker({
                           <span key={roomPrice.date}>
                             {roomPrice.availableRooms > 0 &&
                               new Date(roomPrice.date).getDate() ===
-                                day.date.getDate() && (
+                                day.date.getDate() &&
+                              day.date.getTime() >
+                                startOfDay(Date.now()).getTime() - 1 && (
                                 <span className="text-xs text-on-surface-variant">
                                   {formatRupiah(roomPrice.price)}
                                 </span>
