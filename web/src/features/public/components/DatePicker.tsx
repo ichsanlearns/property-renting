@@ -64,6 +64,23 @@ function DatePicker({
   });
 
   function handleSelect(date: Date) {
+    if (!(selectedDate.checkInDate && selectedDate.checkOutDate)) {
+      if (date.getDate() === selectedDate.checkInDate?.getDate()) {
+        setSelectedDate({
+          checkInDate: null,
+          checkOutDate: null,
+          numberOfNights: 0,
+        });
+        handleSelectDateRoom({
+          checkInDate: null,
+          checkOutDate: null,
+          numberOfNights: 0,
+          availableRooms: [],
+        });
+        return;
+      }
+    }
+
     if (
       !selectedDate.checkInDate ||
       (selectedDate.checkInDate && selectedDate.checkOutDate)

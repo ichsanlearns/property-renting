@@ -14,6 +14,7 @@ import {
 import toast from "react-hot-toast";
 import { createReservationRequest } from "../../reservations/api/reservations.service";
 import { useAuthStore } from "../../auth/stores/auth.store";
+import FullPageLoader from "../../../shared/ui/FullPageLoader";
 
 type SelectedDateRoomAvailability = {
   id: string;
@@ -44,7 +45,9 @@ function PropertyDetail() {
   const { user } = useAuthStore();
 
   const { propertyId } = useParams() as { propertyId: string };
-  const { data: property } = usePropertyDetail({ propertyId });
+
+  const { data: property, isLoading } = usePropertyDetail({ propertyId });
+
   const [noRoomAvailable, setNoRoomAvailable] = useState(false);
   const [dateRange, setDateRange] = useState<{
     checkInDate: Date | null;
@@ -188,6 +191,10 @@ function PropertyDetail() {
       );
     }
   };
+
+  if (isLoading) {
+    return <FullPageLoader />;
+  }
 
   return (
     <div className="bg-background text-on-surface antialiased">
