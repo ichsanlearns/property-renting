@@ -17,19 +17,20 @@ export const createReservation = async ({
   userId: string;
   payload: CreateReservationInput;
 }) => {
-  const {
-    roomTypeId,
-    checkInDate,
-    checkOutDate,
-    numberOfNights,
-    totalAmount,
-    roomNameSnapshot,
-    propertyNameSnapshot,
-    averageRoomPerNightSnapshot,
-  } = payload;
+  const existingReservation = await prisma.reservation.findFirst({
+    where: {
+      customerId: userId,
+      roomTypeId: payload.roomTypeId,
+      status: ReservationStatus.WAITING_PAYMENT,
+    },
+  });
 
-  const checkIn = normalizeDate(new Date(checkInDate));
-  const checkOut = normalizeDate(new Date(checkOutDate));
+  if (existingReservation) {
+    throw new AppError("You have an existing reservation", 400);
+  }
+
+  const checkIn = normalizeDate(new Date(payload.checkInDate));
+  const checkOut = normalizeDate(new Date(payload.checkOutDate));
 
   if (checkOut <= checkIn) {
     throw new AppError("Invalid date range", 400);
@@ -37,26 +38,26 @@ export const createReservation = async ({
 
   const dates: string[] = [];
 
-  let current = new Date(checkInDate);
+  let current = new Date(payload.checkInDate);
 
-  while (current < new Date(checkOutDate)) {
+  while (current < new Date(payload.checkOutDate)) {
     dates.push(current.toISOString().split("T")[0]!);
     current.setDate(current.getDate() + 1);
   }
 
   return await prisma.$transaction(async (tx) => {
     const roomType = await tx.roomType.findUnique({
-      where: { id: roomTypeId },
+      where: { id: payload.roomTypeId },
     });
 
     if (!roomType) throw new AppError("Room type not found", 404);
 
     const availability = await tx.roomTypePrice.findMany({
       where: {
-        roomTypeId,
+        roomTypeId: payload.roomTypeId,
         date: {
-          gte: new Date(checkInDate),
-          lt: new Date(checkOutDate),
+          gte: new Date(payload.checkInDate),
+          lt: new Date(payload.checkOutDate),
         },
       },
     });
@@ -76,7 +77,7 @@ export const createReservation = async ({
       0,
     );
 
-    if (totalPriceDate !== totalAmount) {
+    if (totalPriceDate !== payload.totalAmount) {
       throw new AppError(
         "Theres change in price, please refresh the page",
         400,
@@ -94,26 +95,36 @@ export const createReservation = async ({
       });
     }
 
-    const reservationCode = generateReservationCode(propertyNameSnapshot);
+    let reservationCode: string;
+    while (true) {
+      reservationCode = generateReservationCode(payload.propertyNameSnapshot);
 
-    const data = {
-      customerId: userId,
-      roomTypeId,
-      reservationCode,
-      checkInDate: checkIn,
-      checkOutDate: checkOut,
-      numberOfNights,
-      totalAmount,
-      status: ReservationStatus.WAITING_PAYMENT,
-      paymentDeadline: new Date(Date.now() + 2 * 60 * 60 * 1000),
-      roomNameSnapshot,
-      propertyNameSnapshot,
-      averageRoomPerNightSnapshot,
-    };
+      try {
+        const data = {
+          customerId: userId,
+          roomTypeId: payload.roomTypeId,
+          reservationCode,
+          checkInDate: checkIn,
+          checkOutDate: checkOut,
+          numberOfNights: payload.numberOfNights,
+          totalAmount: payload.totalAmount,
+          status: ReservationStatus.WAITING_PAYMENT,
+          paymentDeadline: new Date(Date.now() + 2 * 60 * 60 * 1000),
+          roomNameSnapshot: payload.roomNameSnapshot,
+          propertyNameSnapshot: payload.propertyNameSnapshot,
+          averageRoomPerNightSnapshot: payload.averageRoomPerNightSnapshot,
+        };
 
-    await tx.reservation.create({
-      data,
-    });
+        await tx.reservation.create({ data });
+
+        break;
+      } catch (error: any) {
+        if (error.code === "P2002") {
+          continue;
+        }
+        throw error;
+      }
+    }
 
     return { reservationCode };
   });

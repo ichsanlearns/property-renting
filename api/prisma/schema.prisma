@@ -352,7 +352,7 @@ model RoomTypeImage {
 model RoomTypePrice {
   id              String                              @id @default(uuid())
   roomTypeId      String     @map("room_type_id")
-  date            DateTime
+  date            DateTime                            @db.Date
   price           Decimal    @db.Decimal(10,2)
   availableRooms  Int        @map("available_rooms")
   isClosed        Boolean    @map("is_closed")        @default(false)
@@ -413,8 +413,8 @@ model Reservation {
 
   reservationCode    String    @map("reservation_code") @unique
 
-  checkInDate        DateTime  @map("check_in_date")
-  checkOutDate       DateTime  @map("check_out_date")
+  checkInDate        DateTime  @map("check_in_date") @db.Date
+  checkOutDate       DateTime  @map("check_out_date") @db.Date
   numberOfNights     Int       @map("number_of_nights")
 
   guestCount         Int?       @map("guest_count")

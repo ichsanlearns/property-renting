@@ -267,7 +267,7 @@ function Login() {
                     handleGoogleLogin(credentialResponse)
                   }
                   onError={() => {
-                    console.log("Login Failed");
+                    console.error("Login Failed");
                   }}
                   useOneTap={false}
                   containerProps={{

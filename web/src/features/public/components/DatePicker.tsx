@@ -2,6 +2,7 @@ import {
   addMonths,
   endOfMonth,
   format,
+  startOfDay,
   startOfMonth,
   subMonths,
 } from "date-fns";
@@ -64,6 +65,23 @@ function DatePicker({
   });
 
   function handleSelect(date: Date) {
+    if (!(selectedDate.checkInDate && selectedDate.checkOutDate)) {
+      if (date.getDate() === selectedDate.checkInDate?.getDate()) {
+        setSelectedDate({
+          checkInDate: null,
+          checkOutDate: null,
+          numberOfNights: 0,
+        });
+        handleSelectDateRoom({
+          checkInDate: null,
+          checkOutDate: null,
+          numberOfNights: 0,
+          availableRooms: [],
+        });
+        return;
+      }
+    }
+
     if (
       !selectedDate.checkInDate ||
       (selectedDate.checkInDate && selectedDate.checkOutDate)
@@ -177,21 +195,22 @@ function DatePicker({
                   disabled={!day.isAvailable || !day.isCurrentMonth}
                   key={day.date.toISOString()}
                   className={`py-2 rounded-lg ${
-                    !day.isAvailable
+                    !day.isAvailable ||
+                    day.date.getTime() < startOfDay(Date.now()).getTime() - 1
                       ? "text-slate-300 cursor-not-allowed"
                       : !day.isCurrentMonth
                         ? "text-slate-300"
-                        : selectedDate.checkInDate?.getTime() ===
-                              day.date.getTime() ||
-                            selectedDate.checkOutDate?.getTime() ===
-                              day.date.getTime()
+                        : selectedDate.checkInDate?.getDate() ===
+                              day.date.getDate() ||
+                            selectedDate.checkOutDate?.getDate() ===
+                              day.date.getDate()
                           ? "bg-primary text-white font-bold hover:bg-primary-container hover:text-primary cursor-pointer"
-                          : selectedDate.checkInDate?.getTime() &&
-                              selectedDate.checkOutDate?.getTime() &&
-                              day.date.getTime() >
-                                selectedDate.checkInDate.getTime() &&
-                              day.date.getTime() <
-                                selectedDate.checkOutDate.getTime()
+                          : selectedDate.checkInDate?.getDate() &&
+                              selectedDate.checkOutDate?.getDate() &&
+                              day.date.getDate() >
+                                selectedDate.checkInDate.getDate() &&
+                              day.date.getDate() <
+                                selectedDate.checkOutDate.getDate()
                             ? "bg-primary-container text-primary font-bold hover:bg-primary hover:text-white cursor-pointer"
                             : day.isWeekend
                               ? "text-red-500 hover:bg-surface-container hover:text-primary cursor-pointer"
@@ -205,8 +224,10 @@ function DatePicker({
                         {roomPricesDate?.map((roomPrice) => (
                           <span key={roomPrice.date}>
                             {roomPrice.availableRooms > 0 &&
-                              new Date(roomPrice.date).getTime() ===
-                                day.date.getTime() && (
+                              new Date(roomPrice.date).getDate() ===
+                                day.date.getDate() &&
+                              day.date.getTime() >
+                                startOfDay(Date.now()).getTime() - 1 && (
                                 <span className="text-xs text-on-surface-variant">
                                   {formatRupiah(roomPrice.price)}
                                 </span>

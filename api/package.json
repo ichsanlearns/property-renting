@@ -7,6 +7,7 @@
     "dev": "tsx --watch src/app.ts",
     "build": "tsc",
     "seed": "tsx prisma/seeding.ts",
+    "seed:dateprice": "tsx prisma/seedingdateprice.ts",
     "start": "node dist/src/app.js",
     "delete": "tsx prisma/deleteeverything.ts",
     "test": "echo \"Error: no test specified\" && exit 1",

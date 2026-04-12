@@ -125,20 +125,16 @@ export const logoutRequest = async () => {
 
 export const refreshSession = async () => {
   try {
-    console.log("refreshing basic session");
     const response = await apiAuth.post<ApiResponse<RefreshSessionResponse>>(
       AUTH_ENDPOINTS.REFRESH,
     );
-    console.log("refreshing basic session success");
 
     return response.data;
   } catch (error: any) {
     if (!error.response) {
-      console.log("refreshing session because no response");
       const response = await apiAuth.post<ApiResponse<RefreshSessionResponse>>(
         AUTH_ENDPOINTS.REFRESH,
       );
-      console.log("refreshing session because no response success");
 
       return response.data;
     }

@@ -105,8 +105,8 @@ export const getPropertyRoomPricesDate = catchAsync(
 
     const prices = await PropertyService.getPropertyRoomPricesDate({
       propertyId,
-      startDate: new Date(startDate),
-      endDate: new Date(endDate),
+      startDate,
+      endDate,
     });
 
     res.status(200).json({
