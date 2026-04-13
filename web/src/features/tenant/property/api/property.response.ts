@@ -44,8 +44,9 @@ type RoomTypeAmenityResponse = {
 };
 
 type RoomTypeResponse = {
+  id: string;
   name: string;
-  basePrice: number;
+  price: number;
   capacity: number;
   bedType: string;
   bedCount: number;
@@ -80,6 +81,14 @@ export type GetPropertyByIdResponse = {
   propertyImages: PropertyImageResponse[];
   propertyAmenities: PropertyAmenityResponse[];
   roomTypes: RoomTypeResponse[];
+};
+
+export type GetPropertyRoomPricesDateResponse = {
+  roomTypeId: string;
+  date: string;
+  price: number;
+  availableRooms: number;
+  isClosed: boolean;
 };
 
 export type CreatePropertyResponse = PropertyBasicResponse;

@@ -1,32 +1,139 @@
-import { addMonths, format, subMonths } from "date-fns";
+import {
+  addMonths,
+  endOfMonth,
+  format,
+  startOfDay,
+  startOfMonth,
+  subMonths,
+} from "date-fns";
 import { generateCalendar } from "../../../shared/utils/calendar.util";
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { usePropertyRoomPricesDate } from "../../tenant/property/hooks/useProperty";
+import type { GetPropertyRoomPricesDateResponse } from "../../tenant/property/api/property.response";
+import { getAvailableRoomTypesForRange } from "../utils/availability.util";
+import { formatRupiah } from "../../../shared/utils/price.util";
 
-function DatePicker() {
+function DatePicker({
+  propertyId,
+  propertyName,
+  handleSelectDateRoom,
+}: {
+  propertyId: string;
+  propertyName?: string;
+  handleSelectDateRoom: (selectedDateRoom: {
+    checkInDate: Date | null;
+    checkOutDate: Date | null;
+    numberOfNights: number;
+    availableRooms: {
+      roomTypeId: string;
+      averagePrice: number;
+    }[];
+  }) => void;
+}) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const days = generateCalendar({ month: currentMonth });
 
+  const { data: roomPricesDate } = usePropertyRoomPricesDate({
+    propertyId,
+    startDate: format(startOfMonth(currentMonth), "yyyy-MM-dd"),
+    endDate: format(endOfMonth(currentMonth), "yyyy-MM-dd"),
+  });
+
+  const roomTypeIds = useMemo(() => {
+    return [...new Set((roomPricesDate ?? []).map((item) => item.roomTypeId))];
+  }, [roomPricesDate]);
+
+  const availabilityMap = useMemo(() => {
+    const map = new Map<string, GetPropertyRoomPricesDateResponse>();
+
+    for (const item of roomPricesDate ?? []) {
+      const dateKey = format(new Date(item.date), "yyyy-MM-dd");
+      map.set(`${item.roomTypeId}-${dateKey}`, item);
+    }
+
+    return map;
+  }, [roomPricesDate]);
+
   const [selectedDate, setSelectedDate] = useState<{
-    startDate: Date | null;
-    endDate: Date | null;
+    checkInDate: Date | null;
+    checkOutDate: Date | null;
+    numberOfNights: number;
   }>({
-    startDate: null,
-    endDate: null,
+    checkInDate: null,
+    checkOutDate: null,
+    numberOfNights: 0,
   });
 
   function handleSelect(date: Date) {
+    if (!(selectedDate.checkInDate && selectedDate.checkOutDate)) {
+      if (date.getDate() === selectedDate.checkInDate?.getDate()) {
+        setSelectedDate({
+          checkInDate: null,
+          checkOutDate: null,
+          numberOfNights: 0,
+        });
+        handleSelectDateRoom({
+          checkInDate: null,
+          checkOutDate: null,
+          numberOfNights: 0,
+          availableRooms: [],
+        });
+        return;
+      }
+    }
+
     if (
-      !selectedDate.startDate ||
-      (selectedDate.startDate && selectedDate.endDate)
+      !selectedDate.checkInDate ||
+      (selectedDate.checkInDate && selectedDate.checkOutDate)
     ) {
-      setSelectedDate({ startDate: date, endDate: null });
+      setSelectedDate({
+        checkInDate: date,
+        checkOutDate: null,
+        numberOfNights: 0,
+      });
+      handleSelectDateRoom({
+        checkInDate: null,
+        checkOutDate: null,
+        numberOfNights: 0,
+        availableRooms: [],
+      });
       return;
     }
 
-    if (date < selectedDate.startDate) {
-      setSelectedDate({ startDate: date, endDate: null });
+    if (date < selectedDate.checkInDate) {
+      setSelectedDate({
+        checkInDate: date,
+        checkOutDate: null,
+        numberOfNights: 0,
+      });
+      handleSelectDateRoom({
+        checkInDate: null,
+        checkOutDate: null,
+        numberOfNights: 0,
+        availableRooms: [],
+      });
     } else {
-      setSelectedDate({ startDate: selectedDate.startDate, endDate: date });
+      setSelectedDate({
+        checkInDate: selectedDate.checkInDate,
+        checkOutDate: date,
+        numberOfNights: date.getDate() - selectedDate.checkInDate.getDate(),
+      });
+
+      const availableRooms = getAvailableRoomTypesForRange({
+        checkInDate: selectedDate.checkInDate,
+        checkOutDate: date,
+        availabilityMap,
+        roomTypeIds,
+      });
+
+      const availableRoomsDate = {
+        checkInDate: selectedDate.checkInDate,
+        checkOutDate: date,
+        numberOfNights: date.getDate() - selectedDate.checkInDate.getDate(),
+        availableRooms,
+      };
+
+      handleSelectDateRoom(availableRoomsDate);
     }
   }
 
@@ -34,9 +141,14 @@ function DatePicker() {
     <section className="bg-surface p-8 rounded-3xl border border-outline shadow-sm ">
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-6">
         <h2 className="text-2xl font-bold tracking-tight">Select your stay</h2>
-        <span className="text-sm font-semibold text-on-surface-variant uppercase tracking-widest">
-          4 Nights in Amalfi Coast
-        </span>
+        {selectedDate.checkInDate && selectedDate.checkOutDate && (
+          <span className="text-sm font-semibold text-on-surface-variant uppercase tracking-widest">
+            {selectedDate.numberOfNights} Nights in{" "}
+            <span className="text-primary text-lg">
+              {propertyName?.split(" ")[0]}
+            </span>
+          </span>
+        )}
       </div>
       <div className="grid grid-cols-1 gap-4">
         <div className="border border-slate-200 rounded-2xl overflow-hidden">
@@ -83,21 +195,22 @@ function DatePicker() {
                   disabled={!day.isAvailable || !day.isCurrentMonth}
                   key={day.date.toISOString()}
                   className={`py-2 rounded-lg ${
-                    !day.isAvailable
+                    !day.isAvailable ||
+                    day.date.getTime() < startOfDay(Date.now()).getTime() - 1
                       ? "text-slate-300 cursor-not-allowed"
                       : !day.isCurrentMonth
                         ? "text-slate-300"
-                        : selectedDate.startDate?.getTime() ===
-                              day.date.getTime() ||
-                            selectedDate.endDate?.getTime() ===
-                              day.date.getTime()
+                        : selectedDate.checkInDate?.getDate() ===
+                              day.date.getDate() ||
+                            selectedDate.checkOutDate?.getDate() ===
+                              day.date.getDate()
                           ? "bg-primary text-white font-bold hover:bg-primary-container hover:text-primary cursor-pointer"
-                          : selectedDate.startDate?.getTime() &&
-                              selectedDate.endDate?.getTime() &&
-                              day.date.getTime() >
-                                selectedDate.startDate.getTime() &&
-                              day.date.getTime() <
-                                selectedDate.endDate.getTime()
+                          : selectedDate.checkInDate?.getDate() &&
+                              selectedDate.checkOutDate?.getDate() &&
+                              day.date.getDate() >
+                                selectedDate.checkInDate.getDate() &&
+                              day.date.getDate() <
+                                selectedDate.checkOutDate.getDate()
                             ? "bg-primary-container text-primary font-bold hover:bg-primary hover:text-white cursor-pointer"
                             : day.isWeekend
                               ? "text-red-500 hover:bg-surface-container hover:text-primary cursor-pointer"
@@ -108,110 +221,25 @@ function DatePicker() {
                     {format(day.date, "d")}
                     {day.isAvailable && day.isCurrentMonth && (
                       <span className="text-xs text-on-surface-variant">
-                        ${day.price}
+                        {roomPricesDate?.map((roomPrice) => (
+                          <span key={roomPrice.date}>
+                            {roomPrice.availableRooms > 0 &&
+                              new Date(roomPrice.date).getDate() ===
+                                day.date.getDate() &&
+                              day.date.getTime() >
+                                startOfDay(Date.now()).getTime() - 1 && (
+                                <span className="text-xs text-on-surface-variant">
+                                  {formatRupiah(roomPrice.price)}
+                                </span>
+                              )}
+                          </span>
+                        ))}
                       </span>
                     )}
                   </div>
                 </button>
               ),
             )}
-            {/* <div className="py-2 text-slate-300">29</div>
-            <div className="py-2 text-slate-300">30</div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              1
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              2
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              3
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              4
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              5
-            </div>
-            <div className="py-2 bg-primary text-white font-bold rounded-lg cursor-pointer">
-              6
-            </div>
-            <div className="py-2 bg-primary-container text-primary font-bold cursor-pointer">
-              7
-            </div>
-            <div className="py-2 bg-primary-container text-primary font-bold cursor-pointer">
-              8
-            </div>
-            <div className="py-2 bg-primary-container text-primary font-bold cursor-pointer">
-              9
-            </div>
-            <div className="py-2 bg-primary text-white font-bold rounded-lg cursor-pointer">
-              10
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              11
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              12
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              13
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              14
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              15
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              16
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              17
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              18
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              19
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              20
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              21
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              22
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              23
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              24
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              25
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              26
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              27
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              28
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              29
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              30
-            </div>
-            <div className="py-2 hover:bg-surface-container rounded-lg cursor-pointer">
-              31
-            </div>
-            <div className="py-2 text-slate-300">1</div>
-            <div className="py-2 text-slate-300">2</div> */}
           </div>
         </div>
       </div>

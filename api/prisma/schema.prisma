@@ -352,7 +352,7 @@ model RoomTypeImage {
 model RoomTypePrice {
   id              String                              @id @default(uuid())
   roomTypeId      String     @map("room_type_id")
-  date            DateTime
+  date            DateTime                            @db.Date
   price           Decimal    @db.Decimal(10,2)
   availableRooms  Int        @map("available_rooms")
   isClosed        Boolean    @map("is_closed")        @default(false)
@@ -411,17 +411,24 @@ model Reservation {
   couponId           String?   @map("coupon_id")
   voucherId          String?   @map("voucher_id")
 
-  checkInDate        DateTime  @map("check_in_date")
-  checkOutDate       DateTime  @map("check_out_date")
+  reservationCode    String    @map("reservation_code") @unique
 
-  guestCount         Int       @map("guest_count")
+  checkInDate        DateTime  @map("check_in_date") @db.Date
+  checkOutDate       DateTime  @map("check_out_date") @db.Date
+  numberOfNights     Int       @map("number_of_nights")
 
-  usingPoints        Decimal   @map("using_points")       @db.Decimal(10,2)
+  guestCount         Int?       @map("guest_count")
+
+  usingPoints        Decimal?   @map("using_points")       @db.Decimal(10,2) @default(0)
   totalAmount        Decimal   @map("total_amount")       @db.Decimal(10,2)
   status             ReservationStatus
 
   paymentDeadline    DateTime  @map("payment_deadline")
   paymentProof       String?   @map("payment_proof")
+  
+  roomNameSnapshot   String    @map("room_name_snapshot")
+  propertyNameSnapshot String    @map("property_name_snapshot")
+  averageRoomPerNightSnapshot Decimal    @map("average_room_per_night_snapshot") @db.Decimal(10,2)
 
   createdAt          DateTime  @map("created_at")         @default(now()) 
   updatedAt          DateTime  @map("updated_at")         @updatedAt

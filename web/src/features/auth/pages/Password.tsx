@@ -52,7 +52,7 @@ function Password() {
         </div>
         <form
           onSubmit={handleSubmit(onSubmit, (errors) => {
-            console.log(errors);
+            console.error(errors);
           })}
           className="space-y-6"
         >

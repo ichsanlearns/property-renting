@@ -7,6 +7,7 @@ import type {
   CreatePropertyResponse,
   GetPropertyByIdBasicResponse,
   GetPropertyByIdResponse,
+  GetPropertyRoomPricesDateResponse,
 } from "./property.response";
 
 export const createProperty = async (data: FormData) => {
@@ -33,5 +34,25 @@ export const getPropertyById = async (propertyId: string) => {
   const response = await api.get<ApiResponse<GetPropertyByIdResponse>>(
     PROPERTY_ENDPOINTS.GET_BY_ID(propertyId),
   );
+  return response.data;
+};
+
+export const getPropertyRoomPricesDate = async ({
+  propertyId,
+  startDate,
+  endDate,
+}: {
+  propertyId: string;
+  startDate: string;
+  endDate: string;
+}) => {
+  const response = await api.get<
+    ApiResponse<GetPropertyRoomPricesDateResponse[]>
+  >(PROPERTY_ENDPOINTS.GET_PROPERTY_ROOM_PRICES_DATE(propertyId), {
+    params: {
+      startDate,
+      endDate,
+    },
+  });
   return response.data;
 };

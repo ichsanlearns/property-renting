@@ -2,6 +2,12 @@ import { prisma } from "../../shared/lib/prisma.lib.js";
 
 import { AppError } from "../../shared/utils/app-error.util.js";
 import type { CreatePropertyDto } from "./property.type.js";
+import {
+  buildDateKey,
+  getDatesInRangeExclusive,
+  toDateKey,
+  toLocalMidnight,
+} from "../../shared/utils/date.util.js";
 
 export const create = async ({
   data,
@@ -171,6 +177,7 @@ export const getById = async ({ id }: { id: string }) => {
 
       roomTypes: {
         select: {
+          id: true,
           name: true,
           basePrice: true,
           capacity: true,
@@ -226,6 +233,76 @@ export const getById = async ({ id }: { id: string }) => {
     category: property.category,
     propertyImages: property.propertyImages,
     propertyAmenities: property.propertyAmenities,
-    roomTypes: property.roomTypes,
+    roomTypes: property.roomTypes.map((roomType) => ({
+      ...roomType,
+      price: roomType.basePrice,
+    })),
   };
+};
+
+export const getPropertyRoomPricesDate = async ({
+  propertyId,
+  startDate,
+  endDate,
+}: {
+  propertyId: string;
+  startDate: string;
+  endDate: string;
+}) => {
+  const roomTypes = await prisma.roomType.findMany({
+    where: { propertyId },
+  });
+
+  const roomTypeIds = roomTypes.map((roomType) => roomType.id);
+
+  const roomTypePrices = await prisma.roomTypePrice.findMany({
+    where: {
+      roomTypeId: {
+        in: roomTypeIds,
+      },
+      date: {
+        gte: new Date(startDate),
+        lt: new Date(endDate),
+      },
+    },
+    orderBy: {
+      date: "asc",
+    },
+    select: {
+      roomTypeId: true,
+      date: true,
+      price: true,
+      availableRooms: true,
+      isClosed: true,
+    },
+  });
+
+  const roomTypePricesMap = new Map(
+    roomTypePrices.map((roomTypePrice) => [
+      buildDateKey(
+        roomTypePrice.roomTypeId,
+        toLocalMidnight(roomTypePrice.date),
+      ),
+      roomTypePrice,
+    ]),
+  );
+
+  const allDates = getDatesInRangeExclusive(startDate, endDate);
+
+  const result = roomTypeIds.flatMap((roomTypeId) =>
+    allDates.map((date) => {
+      const key = buildDateKey(roomTypeId, date);
+      const data = roomTypePricesMap.get(key);
+
+      return {
+        roomTypeId,
+        date: toDateKey(date),
+        price: data?.price ?? null,
+        availableRooms: data?.availableRooms ?? null,
+        isClosed: data?.isClosed ?? null,
+      };
+    }),
+  );
+
+  return result;
 };

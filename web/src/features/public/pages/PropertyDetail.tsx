@@ -1,11 +1,200 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { usePropertyDetail } from "../../tenant/property/hooks/useProperty";
 import { toTitleCase } from "../../../shared/utils/string.util";
 import DatePicker from "../components/DatePicker";
+import { useState } from "react";
+import { format } from "date-fns";
+import { formatRupiah } from "../../../shared/utils/price.util";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  createReservationSchema,
+  type CreateReservationInput,
+} from "../../reservations/schema/reservations.schema";
+import toast from "react-hot-toast";
+import { createReservationRequest } from "../../reservations/api/reservations.service";
+import { useAuthStore } from "../../auth/stores/auth.store";
+import FullPageLoader from "../../../shared/ui/FullPageLoader";
+
+type SelectedDateRoomAvailability = {
+  id: string;
+  price: number;
+
+  name: string;
+  capacity: number;
+  bedType: string;
+  bedCount: number;
+  viewType: string;
+  bathroomType: string;
+
+  averageRating: number;
+  reviewCount: number;
+
+  roomTypeImages: {
+    imageUrl: string;
+  }[];
+  roomAmenities: {
+    amenity: {
+      icon: string;
+    };
+  }[];
+};
 
 function PropertyDetail() {
+  const navigate = useNavigate();
+  const { user } = useAuthStore();
+
   const { propertyId } = useParams() as { propertyId: string };
-  const { data: property } = usePropertyDetail({ propertyId });
+
+  const { data: property, isLoading } = usePropertyDetail({ propertyId });
+
+  const [noRoomAvailable, setNoRoomAvailable] = useState(false);
+  const [dateRange, setDateRange] = useState<{
+    checkInDate: Date | null;
+    checkOutDate: Date | null;
+    numberOfNights: number;
+  }>({
+    checkInDate: null,
+    checkOutDate: null,
+    numberOfNights: 0,
+  });
+  const [selectedRoom, setSelectedRoom] =
+    useState<SelectedDateRoomAvailability | null>(null);
+  const [selectedDateRoomAvailability, setSelectedDateRoomAvailability] =
+    useState<SelectedDateRoomAvailability[]>([]);
+
+  const { setValue, handleSubmit } = useForm<CreateReservationInput>({
+    resolver: zodResolver(createReservationSchema),
+  });
+
+  const handleSelectDateRoom = (selectedDateRoom: {
+    checkInDate: Date | null;
+    checkOutDate: Date | null;
+    numberOfNights: number;
+    availableRooms: {
+      roomTypeId: string;
+      averagePrice: number;
+    }[];
+  }) => {
+    setSelectedRoom(null);
+
+    if (selectedDateRoom.checkInDate && selectedDateRoom.checkOutDate) {
+      if (selectedDateRoom.availableRooms.length > 0) {
+        const availableMap = new Map(
+          selectedDateRoom.availableRooms.map((room) => [
+            room.roomTypeId,
+            room,
+          ]),
+        );
+
+        const roomTypeAvailability = property?.roomTypes
+          .filter((roomType) => availableMap.has(roomType.id))
+          .map((roomType) => {
+            const data = availableMap.get(roomType.id);
+
+            return {
+              ...roomType,
+              price: data?.averagePrice ?? Number(roomType.price),
+            };
+          });
+
+        if (roomTypeAvailability?.length === 0) {
+          setSelectedDateRoomAvailability([
+            {
+              viewType: "NO_DATA",
+            } as SelectedDateRoomAvailability,
+          ]);
+          setNoRoomAvailable(true);
+        } else {
+          setSelectedDateRoomAvailability(roomTypeAvailability!);
+          setNoRoomAvailable(false);
+        }
+      } else {
+        setSelectedDateRoomAvailability([
+          {
+            viewType: "NO_DATA",
+          } as SelectedDateRoomAvailability,
+        ]);
+        setNoRoomAvailable(true);
+      }
+    } else {
+      setSelectedDateRoomAvailability([]);
+      setNoRoomAvailable(false);
+    }
+
+    setDateRange({
+      checkInDate: selectedDateRoom.checkInDate,
+      checkOutDate: selectedDateRoom.checkOutDate,
+      numberOfNights: selectedDateRoom.numberOfNights,
+    });
+
+    setValue(
+      "checkInDate",
+      format(selectedDateRoom.checkInDate!, "yyyy-MM-dd"),
+    );
+    setValue(
+      "checkOutDate",
+      format(selectedDateRoom.checkOutDate!, "yyyy-MM-dd"),
+    );
+    setValue("numberOfNights", selectedDateRoom.numberOfNights);
+  };
+
+  const roomAvailability =
+    selectedDateRoomAvailability.length > 0 &&
+    selectedDateRoomAvailability[0]?.viewType !== "NO_DATA"
+      ? selectedDateRoomAvailability
+      : (property?.roomTypes ?? []);
+
+  const handleSelectRoom = (roomType: SelectedDateRoomAvailability) => {
+    if (!selectedDateRoomAvailability.length) {
+      toast.error("Please select a date range first");
+      return;
+    }
+    if (selectedRoom?.id === roomType.id) {
+      setSelectedRoom(null);
+      setValue("roomTypeId", "");
+      setValue("roomNameSnapshot", "");
+      setValue("averageRoomPerNightSnapshot", 0);
+      return;
+    }
+    setSelectedRoom(roomType);
+    setValue("roomTypeId", roomType.id);
+    setValue("roomNameSnapshot", roomType.name);
+    setValue("averageRoomPerNightSnapshot", Number(roomType.price));
+  };
+
+  const onSubmit = async (data: CreateReservationInput) => {
+    if (!user) {
+      toast.error("Please login to create a reservation");
+      return;
+    }
+
+    if (!selectedRoom) {
+      toast.error("Please select a room");
+      return;
+    }
+    const totalAmount = selectedRoom?.price * data.numberOfNights;
+    try {
+      toast.loading("Creating reservation...");
+      const response = await createReservationRequest({
+        ...data,
+        totalAmount,
+        propertyNameSnapshot: property?.name ?? "",
+      });
+      toast.dismiss();
+      toast.success("Reservation created successfully");
+      navigate(`/reservations/${response.data.reservationCode}`);
+    } catch (error: any) {
+      toast.dismiss();
+      toast.error(
+        error.response?.data.message || "Failed to create reservation",
+      );
+    }
+  };
+
+  if (isLoading) {
+    return <FullPageLoader />;
+  }
 
   return (
     <div className="bg-background text-on-surface antialiased">
@@ -82,92 +271,197 @@ function PropertyDetail() {
             <section className="border-b border-primary/10 pb-8 mb-8">
               <p className="text-slate-700 leading-relaxed">{property?.description}</p>
             </section>
-            <DatePicker />
-            <section>
-              <h2 className="text-2xl font-bold mb-6">Where you'll sleep</h2>
-              <div className="flex flex-col gap-4">
-                {property?.roomTypes.map((roomType, index) => (
-                  <div key={index} className="flex bg-surface-container-lowest rounded-xl border border-primary/10 overflow-hidden cursor-pointer hover:shadow-md transition-shadow">
-                    <div className="w-1/3 aspect-4/3 relative">
-                      <img className="w-full h-full object-cover" data-alt="Luxury master suite with ocean view" src={roomType.roomTypeImages[0].imageUrl} />
-                      <div className="absolute bottom-2 right-2 bg-black/60 text-white text-[10px] font-bold px-1.5 py-0.5 rounded backdrop-blur-sm">
-                        {roomType.roomTypeImages.length > 1 && `+${roomType.roomTypeImages.length - 1} photos`}
-                      </div>
-                    </div>
-                    <div className="p-4 flex flex-col justify-between w-2/3">
-                      <div>
-                        <div className="flex justify-between items-start">
-                          <h3 className="font-bold text-lg">{roomType.name}</h3>
-                          <span className="text-primary font-bold text-sm">IDR {roomType.basePrice.toLocaleString()}/night</span>
+            <DatePicker
+              propertyId={propertyId}
+              propertyName={property?.name}
+              handleSelectDateRoom={handleSelectDateRoom}
+            />
+            <section className={`${noRoomAvailable ? "text-center" : ""}`}>
+              <h2 className="text-2xl font-bold ">{`${selectedDateRoomAvailability.length > 0 ? (noRoomAvailable ? "No rooms available for " : "Available rooms for ") : "Where you'll stay"}`}</h2>
+              {selectedDateRoomAvailability.length > 0 ? (
+                <p className="text-primary text-sm mt-0.5 mb-6 font-bold">
+                  {format(dateRange.checkInDate!, "dd MMMM yyyy")} -{" "}
+                  {format(dateRange.checkOutDate!, "dd MMMM yyyy")}
+                </p>
+              ) : (
+                <p className="text-red-500 italic text-sm mt-0.5 mb-6 font-bold">
+                  (* Select dates to see available rooms )
+                </p>
+              )}
+              {!noRoomAvailable && (
+                <div className="flex flex-col gap-4">
+                  {roomAvailability?.map((roomType, index) => (
+                    <div
+                      key={index}
+                      onClick={() => handleSelectRoom(roomType)}
+                      className={`flex  rounded-xl border overflow-hidden cursor-pointer hover:shadow-md transition-shadow ${
+                        selectedRoom?.id === roomType.id
+                          ? "border-primary bg-primary/2 border-2"
+                          : "border-primary/10 bg-white"
+                      }`}
+                    >
+                      <div className="w-1/3 aspect-4/3 relative">
+                        <img
+                          className="w-full h-full object-cover"
+                          data-alt="Luxury master suite with ocean view"
+                          src={roomType.roomTypeImages[0].imageUrl}
+                        />
+                        <div className="absolute bottom-2 right-2 bg-black/60 text-white text-[10px] font-bold px-1.5 py-0.5 rounded backdrop-blur-sm">
+                          {roomType.roomTypeImages.length > 1 &&
+                            `+${roomType.roomTypeImages.length - 1} photos`}
                         </div>
-                        <p className="text-on-surface-variant text-sm mt-1">
-                          {toTitleCase(roomType.bedType)} bed · {toTitleCase(roomType.viewType)} view · {toTitleCase(roomType.bathroomType)} bathroom
-                        </p>
                       </div>
-                      <div className="flex items-center gap-2">
-                        {roomType.roomAmenities.map((amenity, index) => (
-                          <span key={index} className="material-symbols-outlined text-on-surface-variant text-lg">
-                            {amenity.amenity.icon}
-                          </span>
-                        ))}
+                      <div className="p-4 flex flex-col justify-between w-2/3">
+                        <div>
+                          <div className="flex justify-between items-start">
+                            <h3 className="font-bold text-lg">
+                              {roomType.name}
+                            </h3>
+                            <span className="text-primary font-bold text-sm">
+                              {formatRupiah(roomType.price)}/night
+                            </span>
+                          </div>
+                          <p className="text-on-surface-variant text-sm mt-1">
+                            {toTitleCase(roomType.bedType)} bed ·{" "}
+                            {toTitleCase(roomType.viewType)} view ·{" "}
+                            {toTitleCase(roomType.bathroomType)} bathroom
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {roomType.roomAmenities.map((amenity, index) => (
+                            <span
+                              key={index}
+                              className="material-symbols-outlined text-on-surface-variant text-lg"
+                            >
+                              {amenity.amenity.icon}
+                            </span>
+                          ))}
+                          {selectedRoom?.id === roomType.id && (
+                            <span className="bg-primary text-white px-2.5 py-1 rounded-lg text-[11px] font-extrabold uppercase tracking-wide ml-auto">
+                              Selected
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </section>
           </div>
           <div className="lg:col-span-1">
             <div className="sticky top-28 bg-white rounded-2xl p-6 shadow-xl shadow-primary/5 border border-primary/10">
               <div className="flex justify-between items-baseline mb-6">
-                <div className="flex items-baseline gap-1">
-                  <span className="text-2xl font-extrabold text-on-surface">$380</span>
-                  <span className="text-on-surface-variant text-sm font-medium">night</span>
-                </div>
-                <div className="flex items-center gap-1 text-sm font-bold">
-                  <span className="material-symbols-outlined text-primary text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>
-                    star
-                  </span>
-                  4.92
-                </div>
+                {selectedRoom ? (
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-2xl font-extrabold text-on-surface">
+                      {formatRupiah(selectedRoom?.price)}
+                    </span>
+                    <span className="text-on-surface-variant text-sm font-medium">
+                      /night
+                    </span>
+                  </div>
+                ) : (
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-2xl font-extrabold text-on-surface">
+                      Select room
+                    </span>
+                  </div>
+                )}
+                {selectedRoom && selectedRoom?.reviewCount > 0 ? (
+                  <div className="flex items-center gap-1 text-sm font-bold">
+                    <span
+                      className="material-symbols-outlined text-primary text-sm"
+                      style={{ fontVariationSettings: "'FILL' 1" }}
+                    >
+                      star
+                    </span>
+                    {selectedRoom?.averageRating || 0}
+                  </div>
+                ) : (
+                  ""
+                )}
               </div>
+
               <div className="border border-slate-300 rounded-xl mb-6 overflow-hidden">
                 <div className="grid grid-cols-2 border-b border-slate-300">
                   <div className="p-3 border-r border-slate-300 hover:bg-slate-50 cursor-pointer">
-                    <label className="block text-[10px] font-extrabold text-on-surface uppercase tracking-wider">Check-in</label>
-                    <span className="text-sm font-medium">Oct 12, 2023</span>
+                    <label className="block text-[10px] font-extrabold text-on-surface uppercase tracking-wider">
+                      Check-in
+                    </label>
+                    <span className="text-sm font-medium">
+                      {dateRange.checkInDate
+                        ? format(dateRange.checkInDate, "MMM dd, yyyy")
+                        : "Select date"}
+                    </span>
                   </div>
                   <div className="p-3 hover:bg-slate-50 cursor-pointer">
-                    <label className="block text-[10px] font-extrabold text-on-surface uppercase tracking-wider">Check-out</label>
-                    <span className="text-sm font-medium">Oct 17, 2023</span>
+                    <label className="block text-[10px] font-extrabold text-on-surface uppercase tracking-wider">
+                      Check-out
+                    </label>
+                    <span className="text-sm font-medium">
+                      {dateRange.checkOutDate
+                        ? format(dateRange.checkOutDate, "MMM dd, yyyy")
+                        : "Select date"}
+                    </span>
                   </div>
                 </div>
                 <div className="p-3 hover:bg-slate-50 cursor-pointer">
-                  <label className="block text-[10px] font-extrabold text-on-surface uppercase tracking-wider">Selected Room</label>
-                  <span className="text-sm font-bold text-primary">Guest Suite</span>
+                  <label className="block text-[10px] font-extrabold text-on-surface uppercase tracking-wider">
+                    Selected Room
+                  </label>
+                  <span className="text-sm font-bold text-primary">
+                    {selectedRoom?.name || "Select room"}
+                  </span>
                 </div>
               </div>
-              <button className="w-full bg-primary text-on-primary py-3.5 rounded-xl font-extrabold text-lg shadow-md active:scale-[0.98] transition-all hover:opacity-95 mb-6">Reserve Room</button>
-              <p className="text-center text-on-surface-variant text-sm mb-6">You won't be charged yet</p>
-              <div className="space-y-4">
-                <div className="flex justify-between text-sm">
-                  <span className="underline text-on-surface-variant font-medium">$380 x 5 nights</span>
-                  <span className="font-medium">$1,900</span>
+              <button
+                onClick={handleSubmit(onSubmit, (errors) => {
+                  console.error(errors);
+                })}
+                className="w-full bg-primary text-on-primary py-3.5 rounded-xl font-extrabold text-lg shadow-md active:scale-[0.98] transition-all hover:opacity-95 mb-6"
+              >
+                Reserve Room
+              </button>
+              <p className="text-center text-on-surface-variant text-sm mb-6">
+                You won't be charged yet
+              </p>
+              {selectedRoom?.price && dateRange.numberOfNights > 0 && (
+                <div className="space-y-4">
+                  <div className="flex justify-between text-sm">
+                    <span className="underline text-on-surface-variant font-medium">
+                      {formatRupiah(selectedRoom?.price)} x{" "}
+                      {dateRange.numberOfNights} nights
+                    </span>
+                    <span className="font-medium">
+                      {formatRupiah(
+                        selectedRoom?.price * dateRange.numberOfNights,
+                      )}
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between text-sm">
+                    <span className="underline text-on-surface-variant font-medium">
+                      Occupancy taxes &amp; fees
+                    </span>
+                    <span className="font-medium">
+                      {formatRupiah(
+                        selectedRoom?.price * dateRange.numberOfNights * 0.1,
+                      )}
+                    </span>
+                  </div>
+                  <hr className="border-primary/10" />
+                  <div className="flex justify-between text-lg font-extrabold">
+                    <span>Total</span>
+                    <span>
+                      {formatRupiah(
+                        selectedRoom?.price * dateRange.numberOfNights +
+                          selectedRoom?.price * dateRange.numberOfNights * 0.1,
+                      )}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span className="underline text-on-surface-variant font-medium">Oceanic service fee</span>
-                  <span className="font-medium">$285</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="underline text-on-surface-variant font-medium">Occupancy taxes &amp; fees</span>
-                  <span className="font-medium">$205</span>
-                </div>
-                <hr className="border-primary/10" />
-                <div className="flex justify-between text-lg font-extrabold">
-                  <span>Total</span>
-                  <span>$2,390</span>
-                </div>
-              </div>
+              )}
             </div>
           </div>
         </div>

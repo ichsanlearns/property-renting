@@ -3,33 +3,51 @@ import * as reservationService from "./reservation.service.js";
 import { catchAsync } from "../../shared/utils/catch-async.util.js";
 import { createReservationSchema } from "./reservation.validator.js";
 
-export const createReservationController = catchAsync(async (req: Request, res: Response) => {
-  const parsed = createReservationSchema.parse(req.body);
+export const createReservationController = catchAsync(
+  async (req: Request, res: Response) => {
+    const parsed = createReservationSchema.safeParse(req.body);
 
-  const result = await reservationService.createReservation({
-    userId: req.user!.userId,
-    payload: parsed,
-  });
-  res.status(201).json({
-    message: "Reservation created successfully",
-    data: result,
-  });
-});
+    if (!parsed.success) {
+      return res.status(400).json({
+        message: "Invalid request data",
+        errors: parsed.error.issues,
+      });
+    }
 
-export const getMyReservationsController = catchAsync(async (req: Request, res: Response) => {
-  const result = await reservationService.getMyReservations(req.user!.userId);
+    const userId = req.user!.userId;
 
-  res.status(200).json({
-    message: "Success get my reservations",
-    data: result,
-  });
-});
+    const result = await reservationService.createReservation({
+      userId,
+      payload: parsed.data,
+    });
 
-export const getTenantReservationsController = catchAsync(async (req: Request, res: Response) => {
-  const result = await reservationService.getTenantReservations(req.user!.userId);
+    res.status(201).json({
+      message: "Reservation created successfully",
+      data: result,
+    });
+  },
+);
 
-  res.status(200).json({
-    message: "Success get tenant reservations",
-    data: result,
-  });
-});
+export const getMyReservationsController = catchAsync(
+  async (req: Request, res: Response) => {
+    const result = await reservationService.getMyReservations(req.user!.userId);
+
+    res.status(200).json({
+      message: "Success get my reservations",
+      data: result,
+    });
+  },
+);
+
+export const getTenantReservationsController = catchAsync(
+  async (req: Request, res: Response) => {
+    const result = await reservationService.getTenantReservations(
+      req.user!.userId,
+    );
+
+    res.status(200).json({
+      message: "Success get tenant reservations",
+      data: result,
+    });
+  },
+);

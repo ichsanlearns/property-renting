@@ -4,14 +4,48 @@ import {
   AmenityType,
   PricingRuleType,
   PriceAdjustmentType,
+  BedType,
+  ViewType,
+  BathroomType,
+  PublishStatus,
 } from "../src/generated/prisma/enums.js";
 import bcrypt from "bcrypt";
 
 import { generateReferralCode } from "../src/shared/utils/referral.util.js";
+import { create } from "../src/features/property/property.service.js";
+import { createRoom } from "../src/features/property/room/room.service.js";
+
+const imageList = [
+  {
+    link: "https://lh3.googleusercontent.com/aida-public/AB6AXuDvAREB87iUaIPiQrQFjElsMZyP7AtyHYsZwqCultjARJMdx9SPObsw6XMIrkxy4RziMfqvefbdOYLLmFbq-CFR0CNhBXn5lZm3DRa-7rjiYz_s0R5c5_w_KLYnMdmg2pwKzuf8Rm-qCWL78KMF4_6R9YHK13j3i3Kx2HJPLjFW8J2hwwL3DewojeAwEfwldIk8246KJXfY--tWUoVoDpOMekNOMqoLFY09uiT5_BGDVF0hlHr8L8buidi0O-ipjoSmeKuuBOWMFipL",
+    isCover: true,
+    order: 1,
+  },
+  {
+    link: "https://lh3.googleusercontent.com/aida-public/AB6AXuBQ7GeYDTKx3Ujhkn2U9wMWHBesuXpt8uJKpkUNOw1icqcJi1tBs9GademUA9BLBQE3xeuE2NXk0fugQ_OtRiwMVzb6Ypts-QVavs8noRhUCSnDb_ajMjaM4TmbI6ezmTFUGRpZa6k9DvniyUl0qoNuzLDbhBi63KdD5m78Yq4PUTt8F1xmoAbRoEV0VU41_wnq5HtmATbafAFHQyhcoA_2BI12CBlOSvCnJLlSrjje3g6lq-EFHaMZfgXYb0L0PgCaf-fcq7k45bvf",
+    isCover: false,
+    order: 2,
+  },
+  {
+    link: "https://lh3.googleusercontent.com/aida-public/AB6AXuDFhkJeSSDP9F7lzWJpj_IB7a8PhQG0cg95sZtfM6tk74OvZGGWNlqrqJTrEoT4EihEuEJeetk7vCVu_B05NMufVJ8q5ITFn2j5YrJFvqrzjeRyFxz9xTt0f5Fvc1uCe_uiD2TChuScrkn_6q2P9OHzyS8FocN9EazSaGLWv6FqYQEjtKOK1YDCr8q67JVfVb7jmsFn_2_8sf89S6dfv8mUm39fmWbgzx98uhWmMRf3DSTKiDpYjzUNyUxXFVcy2acbiHCA91JPhNzn",
+    isCover: false,
+    order: 3,
+  },
+  {
+    link: "https://lh3.googleusercontent.com/aida-public/AB6AXuAHutSE0OjHRron2_P6tl-u9u6mGBOajrPBgwBt-SP0CgeDPf4NEFse7llZVdRcdrPsqN_ATMvlOrlj55ZHII9tCM1R8w_YG-O0yyA8OJqyDagyueCFWrd5whu3TcvxuHJjtfeQr0DN0dr1JxyNgFcNfhlwo7bBHP2j1EdA6lHKvJEfNr5Q-c8zDbTVIohFdzkrTvJNhOWQuFR0yuByRRCo-6uKZczQtjT-iPwZ-F1GiNPSqasuae9_gRVfFGBa8fRIcYVhBTcp_LRn",
+    isCover: false,
+    order: 4,
+  },
+  {
+    link: "https://lh3.googleusercontent.com/aida-public/AB6AXuAzzL-FcjdXpJLH_mMxBLUXXJPlC8vDKm0nLPfx3ysaYxvESxqcjAMm3Qb_W21jeCBITn8POjoBtIoHQbp8Sphne290bn71kiTxI53wB_H3bGfk4PABV3EWCJZdy_TJl2kxkH8YdPq9n-8do-H8WzlmQUcrc4CbsTbevsn7tQv9t-VOJdF542l7fo1O3s-1ZCkmMkCtZn1P8hxNO2JiYuNzFJKlPIUV1kHkM6ZldNhDzxC9QlHaKfjvCHRpwoTl_CsbhVQnni8ofrQv",
+    isCover: false,
+    order: 5,
+  },
+];
 
 const seed = async () => {
   try {
-    console.log("Deleting all data...");
+    console.info("Deleting all data...");
 
     await prisma.refreshToken.deleteMany({});
     await prisma.account.deleteMany({});
@@ -295,7 +329,7 @@ const seed = async () => {
         }
       }
 
-      console.log("✅ Room availability seeded (UPSERT)");
+      console.info("✅ Room availability seeded (UPSERT)");
     };
 
     await seedRoomAvailability();
@@ -327,6 +361,110 @@ const seed = async () => {
 
     await prisma.pricingRule.createMany({
       data: pricingRules,
+    });
+
+    // =============================
+    // CREATE PROPERTY
+    // =============================
+
+    const property = await create({
+      data: {
+        categoryId: propertyCategories[0]!.id,
+        name: "Property 1",
+        description: "Description 1",
+        latitude: -6.2088,
+        longitude: 106.8456,
+        numberOfBathrooms: 1,
+        country: "Indonesia",
+        city: "Jakarta",
+        province: "DKI Jakarta",
+        fullAddress: "Jl. Sudirman No. 1",
+      },
+      tenantId: users[1]!.id,
+      images: [
+        {
+          imageUrl: imageList[0]!.link,
+          isCover: imageList[0]!.isCover,
+          order: imageList[0]!.order,
+        },
+        {
+          imageUrl: imageList[1]!.link,
+          isCover: imageList[1]!.isCover,
+          order: imageList[1]!.order,
+        },
+        {
+          imageUrl: imageList[2]!.link,
+          isCover: imageList[2]!.isCover,
+          order: imageList[2]!.order,
+        },
+        {
+          imageUrl: imageList[3]!.link,
+          isCover: imageList[3]!.isCover,
+          order: imageList[3]!.order,
+        },
+        {
+          imageUrl: imageList[4]!.link,
+          isCover: imageList[4]!.isCover,
+          order: imageList[4]!.order,
+        },
+      ],
+      amenities: [
+        propertyAmenities[0]!.id,
+        propertyAmenities[1]!.id,
+        propertyAmenities[2]!.id,
+      ],
+    });
+
+    // =============================
+    // CREATE ROOM
+    // =============================
+
+    await createRoom({
+      data: {
+        propertyId: property.id,
+        name: "Room 1",
+        description: "Description 1",
+        basePrice: 100000,
+        totalRooms: 10,
+        bedType: BedType.DOUBLE_TWIN,
+        bedCount: 1,
+        viewType: ViewType.CITY_SKYLINE,
+        bathroomType: BathroomType.PRIVATE,
+        capacity: 2,
+        isPublished: PublishStatus.PUBLISHED,
+      },
+      images: [
+        {
+          imageUrl: imageList[0]!.link,
+          isCover: imageList[0]!.isCover,
+          order: imageList[0]!.order,
+        },
+        {
+          imageUrl: imageList[1]!.link,
+          isCover: imageList[1]!.isCover,
+          order: imageList[1]!.order,
+        },
+        {
+          imageUrl: imageList[2]!.link,
+          isCover: imageList[2]!.isCover,
+          order: imageList[2]!.order,
+        },
+        {
+          imageUrl: imageList[3]!.link,
+          isCover: imageList[3]!.isCover,
+          order: imageList[3]!.order,
+        },
+        {
+          imageUrl: imageList[4]!.link,
+          isCover: imageList[4]!.isCover,
+          order: imageList[4]!.order,
+        },
+      ],
+      amenities: [
+        roomAmenities[0]!.id,
+        roomAmenities[1]!.id,
+        roomAmenities[2]!.id,
+      ],
     });
 
     // =============================
