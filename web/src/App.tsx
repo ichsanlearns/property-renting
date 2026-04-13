@@ -36,6 +36,7 @@ import ForgotPassword from "./features/auth/pages/ForgotPassword";
 import ResetPassword from "./features/auth/pages/ResetPassword";
 import PropertyDetail from "./features/public/pages/PropertyDetail";
 import Reservation from "./features/reservations/pages/Reservation";
+import SearchPage from "./features/public/pages/SearchPage";
 
 function requireOnboarding(user: User | null) {
   if (!user?.fullName && user?.email) {
@@ -55,6 +56,10 @@ const router = createBrowserRouter([
           {
             index: true,
             element: <HomePage />,
+          },
+          {
+            path: "/search",
+            element: <SearchPage />,
           },
           {
             path: "/property/:propertyId",
