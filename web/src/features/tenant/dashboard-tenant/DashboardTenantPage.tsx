@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 // --- Sub-Components ---
 
-const KPICard = ({ title, value, change, trend, progressColor, progressWidth }: any) => (
-  <div className="bg-white dark:bg-slate-900 p-6 rounded-xl shadow-[32px_0_48px_-4px_rgba(25,28,30,0.06)] group hover:translate-y-[-2px] transition-all duration-300 border border-slate-50 dark:border-slate-800">
+const KPICard = ({ title, value, change, progressColor, progressWidth }: any) => (
+  <div className="bg-white dark:bg-slate-900 p-6 rounded-xl shadow-[32px_0_48px_-4px_rgba(25,28,30,0.06)] group hover:-translate-y-0.5 transition-all duration-300 border border-slate-50 dark:border-slate-800">
     <div className="flex justify-between items-start mb-4">
       <span className="text-slate-500 dark:text-slate-400 text-sm font-medium">{title}</span>
       {change && <span className="text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20 px-2 py-1 rounded-md text-xs font-bold">{change}</span>}
@@ -79,7 +79,7 @@ export default function DashboardTenantPage() {
 
             {/* Right Column: Spotlight */}
             <div className="col-span-12 lg:col-span-4">
-              <div className="relative h-full min-h-[400px] rounded-xl overflow-hidden shadow-lg flex flex-col justify-end p-8 text-white">
+              <div className="relative h-full min-h-100 rounded-xl overflow-hidden shadow-lg flex flex-col justify-end p-8 text-white">
                 <div
                   className="absolute inset-0 bg-cover bg-center transition-transform hover:scale-105 duration-700"
                   style={{
@@ -87,7 +87,7 @@ export default function DashboardTenantPage() {
                       "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDYYXzFHj1aJW6n8S3cBS8r5ScsqTql_umrJ3aYe-1gvm_pPaUbpIL3iKV-Q197EmKhC6J0adD4cHZDVFNWI9hYvikuLlfxoWdx_-WGGetIZedD3uw6E4CQLF2hEDs-qr2B9o-AxFtFpO2FB2_KJRsymHg8-aZM4WFEp5XvH1bj9jnYxPuBgRxhTJsyOQn2coRtp8GEj-_BcLqhDAVeXHB4Lt34FQh2TMFHSucKW4rDn-kKqMobZVw_FyA5atTC4EMxwaE3aFw-m0M')",
                   }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
+                <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/40 to-transparent"></div>
                 <div className="relative z-10">
                   <span className="inline-block px-3 py-1 bg-[#b52330] text-[10px] font-bold uppercase tracking-widest rounded-full mb-4">Spotlight: High Yield</span>
                   <h4 className="text-2xl font-black font-headline mb-2">Penthouse VIII</h4>
