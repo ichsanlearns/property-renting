@@ -7,6 +7,7 @@ import * as PropertyService from "./property.service.js";
 import * as geocodingService from "./geocoding.service.js";
 
 import * as uploadService from "../../shared/services/upload.service.js";
+import { getByIdBasicSchema } from "./property.validator.js";
 
 export const create = catchAsync(async (req: Request, res: Response) => {
   if (!req.user) throw new AppError("Unauthorized", 401);
@@ -73,10 +74,23 @@ export const create = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-export const getByIdBasic = catchAsync(async (req: Request, res: Response) => {
-  const { propertyId } = req.params as { propertyId: string };
+export const getAllBasic = catchAsync(async (req: Request, res: Response) => {
+  const properties = await PropertyService.getAllBasic();
 
-  const property = await PropertyService.getByIdBasic(propertyId);
+  res.status(200).json({
+    message: "Properties fetched successfully",
+    data: properties,
+  });
+});
+
+export const getByIdBasic = catchAsync(async (req: Request, res: Response) => {
+  const parsed = getByIdBasicSchema.safeParse(req.params);
+
+  if (!parsed.success) {
+    throw new AppError("Invalid property ID", 400);
+  }
+
+  const property = await PropertyService.getByIdBasic(parsed.data.propertyId);
 
   res.status(200).json({
     message: "Property fetched successfully",
