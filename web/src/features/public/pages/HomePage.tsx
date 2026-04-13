@@ -41,7 +41,7 @@ function HomePage() {
                 search
               </span>
               <input
-                className="w-full bg-transparent border-none focus:ring-0 text-slate-800 placeholder-slate-400 font-medium text-base"
+                className="w-full bg-transparent border-none outline-none focus:ring-0 text-slate-800 placeholder-slate-400 font-medium text-base"
                 placeholder="Search city, country, or property"
                 type="text"
               />
@@ -123,16 +123,20 @@ function HomePage() {
                     </span>
                   </p>
                 </div>
-                <div className="flex items-center gap-1 h-fit">
-                  <span
-                    className="material-symbols-outlined text-sm"
-                    data-icon="star"
-                    style={{ fontVariationSettings: "'FILL' 1" }}
-                  >
-                    star
-                  </span>
-                  <span className="text-sm font-bold">4.92</span>
-                </div>
+                {property.averageRating && (
+                  <div className="flex items-center gap-1 h-fit">
+                    <span
+                      className="material-symbols-outlined text-sm"
+                      data-icon="star"
+                      style={{ fontVariationSettings: "'FILL' 1" }}
+                    >
+                      star
+                    </span>
+                    <span className="text-sm font-bold">
+                      {property.averageRating}
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
           ))}
