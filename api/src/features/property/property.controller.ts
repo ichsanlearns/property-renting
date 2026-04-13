@@ -109,6 +109,32 @@ export const getById = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+export const searchByParams = catchAsync(
+  async (req: Request, res: Response) => {
+    const { search, sortBy, order } = req.query;
+
+    const finalSearch = typeof search === "string" ? search : undefined;
+
+    const finalSortBy =
+      sortBy === "name" || sortBy === "price" || sortBy === "createdAt"
+        ? sortBy
+        : "createdAt";
+
+    const finalOrder = order === "asc" || order === "desc" ? order : "desc";
+
+    const properties = await PropertyService.searchByParams({
+      sortBy: finalSortBy,
+      order: finalOrder,
+      ...(finalSearch && { search: finalSearch }),
+    });
+
+    res.status(200).json({
+      message: "Properties search fetched successfully",
+      data: properties,
+    });
+  },
+);
+
 export const getPropertyRoomPricesDate = catchAsync(
   async (req: Request, res: Response) => {
     const { propertyId } = req.params as { propertyId: string };
