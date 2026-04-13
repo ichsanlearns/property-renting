@@ -1,4 +1,15 @@
+import { formatRupiah } from "../../../shared/utils/price.util";
+import { usePropertySearch } from "../../tenant/property/hooks/useProperty";
+import { useSearchParams } from "react-router-dom";
+
 function SearchPage() {
+  const [searchParams] = useSearchParams();
+  const search = searchParams.get("search");
+
+  const { data: properties } = usePropertySearch({
+    search: search || "",
+  });
+
   return (
     <>
       <div className="fixed top-[73px] w-full z-40 bg-white shadow-sm">
@@ -10,7 +21,6 @@ function SearchPage() {
                 id="search-input"
                 placeholder="Search city, country, or property"
                 type="text"
-                value="Malibu, California"
               />
               <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-primary p-2 rounded-full flex items-center justify-center hover:opacity-90 transition-opacity">
                 <span
@@ -88,58 +98,68 @@ function SearchPage() {
               className="text-sm font-medium text-on-surface-variant"
               id="results-heading"
             >
-              640+ stays in Malibu, California
+              {properties?.length} stays found
             </h1>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-10">
-            <div
-              className="group cursor-pointer"
-              data-location="Malibu Beach, California"
-            >
-              <div className="relative aspect-4/3 rounded-xl overflow-hidden mb-3">
-                <img
-                  alt="Luxury villa with ocean view"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  data-alt="luxury beachfront villa with infinity pool overlooking the pacific ocean at sunset with warm orange lighting"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5HhyZBQY-jFMgrrz2qOQJygDJTWHa0nOlKqmhnmB-8VWaB8yubF4yznn4T2T_sPAcdOBLezCVWjOqsccqVp58ppEWw2Y_yl8_P5zMu4CBvlzi8UQ9_c3jeVjcj2xCqi_Q6sYkq0NdUzVlp7Eo8X7ygK6N0yCdqFP93MlTvihwQUv-3POCPqBpaPn5vQSTEobUS0f3gPoeo349IIFfkG3SA4Ok2hryP-_ZMtJlYU1MvnVQQIStI9e4oTtvqw_yXuTRHCS5XYJ8-42q"
-                />
-                <div className="absolute top-3 left-3 bg-white px-3 py-1 rounded-full text-xs font-bold shadow-sm">
-                  Rare Find
+            {properties?.map((property) => (
+              <div
+                key={property.id}
+                className="group cursor-pointer"
+                data-location="Malibu Beach, California"
+              >
+                <div className="relative aspect-4/3 rounded-xl overflow-hidden mb-3">
+                  <img
+                    alt="Luxury villa with ocean view"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    data-alt="luxury beachfront villa with infinity pool overlooking the pacific ocean at sunset with warm orange lighting"
+                    src={property.coverImage}
+                  />
+                  <div className="absolute top-3 left-3 bg-white px-3 py-1 rounded-full text-xs font-bold shadow-sm">
+                    Rare Find
+                  </div>
+                  <button className="absolute top-3 right-3 text-white drop-shadow-md hover:scale-110 transition-transform">
+                    <span
+                      className="material-symbols-outlined"
+                      data-icon="favorite"
+                    >
+                      favorite
+                    </span>
+                  </button>
                 </div>
-                <button className="absolute top-3 right-3 text-white drop-shadow-md hover:scale-110 transition-transform">
-                  <span
-                    className="material-symbols-outlined"
-                    data-icon="favorite"
-                  >
-                    favorite
-                  </span>
-                </button>
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h3 className="font-bold text-on-surface">
+                      {property.name}
+                    </h3>
+                    <p className="text-on-surface-variant text-sm">
+                      {property.city}, {property.country}
+                    </p>
+                    <p className="mt-1 font-semibold text-sm">
+                      <span className="font-bold">
+                        {formatRupiah(property.price)}
+                      </span>{" "}
+                      / night
+                    </p>
+                  </div>
+                  {property.averageRating && (
+                    <div className="flex items-center space-x-1">
+                      <span
+                        className="material-symbols-outlined text-sm"
+                        data-icon="star"
+                        style={{ fontVariationSettings: "'FILL' 1" }}
+                      >
+                        star
+                      </span>
+                      <span className="text-sm font-medium">
+                        {property.averageRating}
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
-              <div className="flex justify-between items-start">
-                <div>
-                  <h3 className="font-bold text-on-surface">
-                    Oceanfront Serenity Villa
-                  </h3>
-                  <p className="text-on-surface-variant text-sm">
-                    Malibu Beach, California
-                  </p>
-                  <p className="mt-1 font-semibold text-sm">
-                    <span className="font-bold">$850</span> / night
-                  </p>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <span
-                    className="material-symbols-outlined text-sm"
-                    data-icon="star"
-                    style={{ fontVariationSettings: "'FILL' 1" }}
-                  >
-                    star
-                  </span>
-                  <span className="text-sm font-medium">4.98</span>
-                </div>
-              </div>
-            </div>
-            <div
+            ))}
+            {/* <div
               className="group cursor-pointer"
               data-location="Topanga Canyon, Malibu"
             >
@@ -328,7 +348,7 @@ function SearchPage() {
                   <span className="text-sm font-medium">4.79</span>
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
         <div className="hidden lg:block lg:w-[40%] sticky top-[220px] h-[calc(100vh-220px)] bg-surface-container overflow-hidden">
