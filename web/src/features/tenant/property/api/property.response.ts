@@ -94,3 +94,5 @@ export type GetPropertyRoomPricesDateResponse = {
 export type CreatePropertyResponse = PropertyBasicResponse;
 
 export type GetPropertyByIdBasicResponse = PropertyBasicResponse;
+
+export type GetPropertyAllBasicResponse = PropertyBasicResponse[];
