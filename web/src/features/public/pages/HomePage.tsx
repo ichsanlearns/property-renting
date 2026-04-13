@@ -1,6 +1,15 @@
 import Footer from "../../../shared/ui/Footer";
+import { usePropertyAllBasic } from "../../tenant/property/hooks/useProperty";
+import { useNavigate } from "react-router-dom";
 
 function HomePage() {
+  const navigate = useNavigate();
+  const { data: properties } = usePropertyAllBasic();
+
+  const handleCardClick = (id: string) => {
+    navigate(`/property/${id}`);
+  };
+
   return (
     <main>
       <section className="relative h-[870px] min-h-[600px] w-full flex items-center justify-center overflow-hidden">
@@ -72,193 +81,64 @@ function HomePage() {
           </a>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          <div className="group cursor-pointer">
-            <div className="relative aspect-4/5 rounded-3xl overflow-hidden property-card-shadow transition-all duration-300 transform group-hover:scale-[1.02]">
-              <img
-                alt="Modern wood cabin"
-                className="w-full h-full object-cover"
-                data-alt="Architectural wood and glass cabin nestled in a snowy pine forest with warm interior lights glowing against the blue dusk"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVyrzkBgCYbSXfCshAtz6fZ6Q3z1CXvjpom1BZGh5q-bX8C5Yn-vip9RWBlM_bUDfLKLn-RYKSmlbuqVlRD9opPE4va5oLSiY6MdR-HOG-UMzog35J52LKryFF3O8QEA5ZMwkPualAg6-vjJzFKPNfpngs1JwtEaQ9dFUuK_oPvKSfo2IytNkWR4Faiqox6wiQHDZ4UPKD5l4-shNJCWCkc4mCBzzuvFHShTxNnTtxIEvt9bo2z-EX6KrgMsTj3y8HuiXasYPMvwDE"
-              />
-              <button className="absolute top-4 right-4 bg-white/20 backdrop-blur-md p-2 rounded-full hover:bg-white transition-colors">
-                <span
-                  className="material-symbols-outlined text-white group-hover:text-[#ff5c61]"
-                  data-icon="favorite"
-                >
-                  favorite
-                </span>
-              </button>
-              <div className="absolute bottom-0 left-0 right-0 p-6 bg-linear-to-t from-black/60 to-transparent">
-                <span className="bg-white/20 backdrop-blur-md text-white text-[10px] uppercase font-bold px-3 py-1 rounded-full border border-white/30">
-                  Rare find
-                </span>
-              </div>
-            </div>
-            <div className="mt-4 flex justify-between">
-              <div>
-                <h3 className="font-bold text-on-surface text-lg">
-                  Alpine Mirror House
-                </h3>
-                <p className="text-on-surface-variant text-sm">
-                  Chamonix, France
-                </p>
-                <p className="mt-2 font-bold text-[#ff5c61]">
-                  $450
-                  <span className="text-on-surface-variant font-normal">
-                    / night
+          {properties?.map((property) => (
+            <div
+              onClick={() => handleCardClick(property.id)}
+              key={property.id}
+              className="group cursor-pointer"
+            >
+              <div className="relative aspect-4/5 rounded-3xl overflow-hidden property-card-shadow transition-all duration-300 transform group-hover:scale-[1.02]">
+                <img
+                  alt="Modern wood cabin"
+                  className="w-full h-full object-cover"
+                  data-alt="Architectural wood and glass cabin nestled in a snowy pine forest with warm interior lights glowing against the blue dusk"
+                  src={property.coverImage}
+                />
+                <button className="absolute top-4 right-4 bg-white/20 backdrop-blur-md p-2 rounded-full hover:bg-white transition-colors">
+                  <span
+                    className="material-symbols-outlined text-white group-hover:text-[#ff5c61]"
+                    data-icon="favorite"
+                  >
+                    favorite
                   </span>
-                </p>
-              </div>
-              <div className="flex items-center gap-1 h-fit">
-                <span
-                  className="material-symbols-outlined text-sm"
-                  data-icon="star"
-                  style={{ fontVariationSettings: "'FILL' 1" }}
-                >
-                  star
-                </span>
-                <span className="text-sm font-bold">4.92</span>
-              </div>
-            </div>
-          </div>
-          <div className="group cursor-pointer">
-            <div className="relative aspect-4/5 rounded-3xl overflow-hidden property-card-shadow transition-all duration-300 transform group-hover:scale-[1.02]">
-              <img
-                alt="Beach house"
-                className="w-full h-full object-cover"
-                data-alt="A minimalist white beach house on stilts above turquoise ocean water with clear blue skies and tropical palm trees"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-xSFIWBYCiMpc--CQJk-ZPPg8QDh2pOKPClP2hMCLTL6j75jn94vF1HOMGTX4s5ChaLGf1vnFlN2BJVpplOZDuIVnz9FGPmlBOXTTDqiasIX-B-0bd362njuuFingtqC6fVhsTM5Ae3MgZz_FUpomedIBtGV4rhJ3OQp1oMJD576KYnOJE-LbjlZsOQ8S7NbEIk3FBAaSy46fPbgVxHgALgVqfT_qyPWU4OrRuIzbSC_DDGFisA0FMkZJ5YbGk3Z17hMbN4R0SKfa"
-              />
-              <button className="absolute top-4 right-4 bg-white/20 backdrop-blur-md p-2 rounded-full hover:bg-white transition-colors">
-                <span
-                  className="material-symbols-outlined text-white group-hover:text-[#ff5c61]"
-                  data-icon="favorite"
-                >
-                  favorite
-                </span>
-              </button>
-            </div>
-            <div className="mt-4 flex justify-between">
-              <div>
-                <h3 className="font-bold text-on-surface text-lg">
-                  The Blue Lagoon Hut
-                </h3>
-                <p className="text-on-surface-variant text-sm">
-                  Male, Maldives
-                </p>
-                <p className="mt-2 font-bold text-[#ff5c61]">
-                  $820
-                  <span className="text-on-surface-variant font-normal">
-                    / night
+                </button>
+                <div className="absolute bottom-0 left-0 right-0 p-6 bg-linear-to-t from-black/60 to-transparent">
+                  <span className="bg-white/20 backdrop-blur-md text-white text-[10px] uppercase font-bold px-3 py-1 rounded-full border border-white/30">
+                    Rare find
                   </span>
-                </p>
+                </div>
               </div>
-              <div className="flex items-center gap-1 h-fit">
-                <span
-                  className="material-symbols-outlined text-sm"
-                  data-icon="star"
-                  style={{ fontVariationSettings: "'FILL' 1" }}
-                >
-                  star
-                </span>
-                <span className="text-sm font-bold">4.98</span>
-              </div>
-            </div>
-          </div>
-          <div className="group cursor-pointer">
-            <div className="relative aspect-4/5 rounded-3xl overflow-hidden property-card-shadow transition-all duration-300 transform group-hover:scale-[1.02]">
-              <img
-                alt="Cozy apartment"
-                className="w-full h-full object-cover"
-                data-alt="Stylish Parisian loft apartment with floor-to-ceiling windows overlooking city rooftops, featuring eclectic mid-century furniture and soft morning light"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAeLwNZ9RyaUYf1Pr8rsR-p25ViGhzZsMbnhMBHlltTcDQnUYRVknUHy4UL7CbUqaN4P848wbjrXSq4H7QbdakHKazmSglyBY7CnQb8fnklijsiZIBE0bSV_gUx05OxkuO40kYa71fVBz2VzXYbfbTC5LX691Cp1xTNbqHS1zweG0Z3hSMSXcD36ueQeZRnDeH1G_7c8O4U8t0J9S965iKisyJT7PNJ1u_s8We64FbjfSauU4-R6shHE-OshST9G6lSX0jUQ4DEaf-8"
-              />
-              <button className="absolute top-4 right-4 bg-white/20 backdrop-blur-md p-2 rounded-full hover:bg-white transition-colors">
-                <span
-                  className="material-symbols-outlined text-white group-hover:text-[#ff5c61]"
-                  data-icon="favorite"
-                >
-                  favorite
-                </span>
-              </button>
-            </div>
-            <div className="mt-4 flex justify-between">
-              <div>
-                <h3 className="font-bold text-on-surface text-lg">
-                  Artist Loft Paris
-                </h3>
-                <p className="text-on-surface-variant text-sm">Paris, France</p>
-                <p className="mt-2 font-bold text-[#ff5c61]">
-                  $290
-                  <span className="text-on-surface-variant font-normal">
-                    / night
+              <div className="mt-4 flex justify-between">
+                <div>
+                  <h3 className="font-bold text-on-surface text-lg">
+                    {property.name}
+                  </h3>
+                  <p className="text-on-surface-variant text-sm">
+                    {property.city}, {property.country}
+                  </p>
+                  <p className="mt-2 font-bold text-[#ff5c61]">
+                    Rp. {property.price}
+                    <span className="text-on-surface-variant font-normal">
+                      / night
+                    </span>
+                  </p>
+                </div>
+                <div className="flex items-center gap-1 h-fit">
+                  <span
+                    className="material-symbols-outlined text-sm"
+                    data-icon="star"
+                    style={{ fontVariationSettings: "'FILL' 1" }}
+                  >
+                    star
                   </span>
-                </p>
-              </div>
-              <div className="flex items-center gap-1 h-fit">
-                <span
-                  className="material-symbols-outlined text-sm"
-                  data-icon="star"
-                  style={{ fontVariationSettings: "'FILL' 1" }}
-                >
-                  star
-                </span>
-                <span className="text-sm font-bold">4.85</span>
+                  <span className="text-sm font-bold">4.92</span>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="group cursor-pointer">
-            <div className="relative aspect-4/5 rounded-3xl overflow-hidden property-card-shadow transition-all duration-300 transform group-hover:scale-[1.02]">
-              <img
-                alt="Modern villa"
-                className="w-full h-full object-cover"
-                data-alt="A cliffside concrete and glass villa overlooking the Mediterranean sea with a minimalist patio and sleek outdoor furniture"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuANk15lhSRgfhCj2m2a2i0xwbclwz4Gx_wsBaEeiuakUekS_tX8-n7_0EXr8ROk_kM_b6C98_oHxMzRU82QSD7xwaEXgQEKR-KAYEZypOeqTI7yq7eeM_F4DHjwpnDqwuByoxbv_WLfgCdILz0gwWMDTfP5-4OK-_usxIuhq7wCIXLwn6oVeRPWVNGufgYJ6TmQxoB-XyJg8vlfmE1igYgxp1phgu_kCrTuD7DFDL4a27OVHXK4WiDqyc0csN_jushDBJoQ1_YvPPmA"
-              />
-              <button className="absolute top-4 right-4 bg-white/20 backdrop-blur-md p-2 rounded-full hover:bg-white transition-colors">
-                <span
-                  className="material-symbols-outlined text-white group-hover:text-[#ff5c61]"
-                  data-icon="favorite"
-                >
-                  favorite
-                </span>
-              </button>
-              <div className="absolute top-4 left-4">
-                <span className="bg-[#ff5c61] text-white text-[10px] uppercase font-extrabold px-3 py-1 rounded-full">
-                  New Arrival
-                </span>
-              </div>
-            </div>
-            <div className="mt-4 flex justify-between">
-              <div>
-                <h3 className="font-bold text-on-surface text-lg">
-                  Cliff Edge Retreat
-                </h3>
-                <p className="text-on-surface-variant text-sm">
-                  Santorini, Greece
-                </p>
-                <p className="mt-2 font-bold text-[#ff5c61]">
-                  $640
-                  <span className="text-on-surface-variant font-normal">
-                    / night
-                  </span>
-                </p>
-              </div>
-              <div className="flex items-center gap-1 h-fit">
-                <span
-                  className="material-symbols-outlined text-sm"
-                  data-icon="star"
-                  style={{ fontVariationSettings: "'FILL' 1" }}
-                >
-                  star
-                </span>
-                <span className="text-sm font-bold">5.0</span>
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
       </section>
-      <section className="py-16 px-6 md:px-12 max-w-[1440px] mx-auto bg-surface-variant/50 rounded-[3rem] my-12">
+      {/* <section className="py-16 px-6 md:px-12 max-w-[1440px] mx-auto bg-surface-variant/50 rounded-[3rem] my-12">
         <h2 className="text-3xl font-extrabold text-on-background tracking-tight mb-10 text-center">
           Popular right now
         </h2>
@@ -312,7 +192,7 @@ function HomePage() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
       <section className="py-20 px-6 text-center max-w-4xl mx-auto">
         <h2 className="text-4xl font-extrabold text-on-background mb-6 tracking-tight">
           Ready to start your journey?
