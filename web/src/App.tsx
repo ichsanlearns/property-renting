@@ -15,6 +15,8 @@ import Login from "./features/auth/pages/Login";
 import OrderList from "./features/tenant/order-list/pages/OrderList";
 import Reports from "./features/tenant/reports/pages/Reports";
 import DashboardTenantPage from "./features/tenant/dashboard-tenant/DashboardTenantPage";
+import TenantReviewPage from "./features/tenant/review/pages/TenantReviewPage";
+import DetailReviewPage from "./features/tenant/review/pages/DetailReviewPage";
 
 import FormProperties from "./features/tenant/property/pages/FormProperties";
 import FormRoom from "./features/tenant/property/pages/FormRoom";
@@ -98,6 +100,15 @@ const router = createBrowserRouter([
           {
             path: "dashboard",
             element: <DashboardTenantPage />,
+          },
+
+          {
+            path: "review",
+            element: <TenantReviewPage />,
+          },
+          {
+            path: "detail-review",
+            element: <DetailReviewPage />,
           },
         ],
       },

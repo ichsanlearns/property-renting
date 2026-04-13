@@ -145,7 +145,7 @@ export default function DashboardTenantPage() {
 
             {/* Right Column: Spotlight */}
             <div className="col-span-12 lg:col-span-4">
-              <div className="relative h-full min-h-[400px] rounded-xl overflow-hidden shadow-lg flex flex-col justify-end p-8 text-white">
+              <div className="relative h-full min-h-100 rounded-xl overflow-hidden shadow-lg flex flex-col justify-end p-8 text-white">
                 <div
                   className="absolute inset-0 bg-cover bg-center transition-transform hover:scale-105 duration-700"
                   style={{

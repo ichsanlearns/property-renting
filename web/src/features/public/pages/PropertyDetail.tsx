@@ -200,22 +200,14 @@ function PropertyDetail() {
     <div className="bg-background text-on-surface antialiased">
       <main className="max-w-7xl mx-auto px-6 pt-28 pb-24">
         <header className="mb-8">
-          <h1 className="text-3xl font-extrabold tracking-tight text-on-surface mb-2">
-            {property?.name}
-          </h1>
+          <h1 className="text-3xl font-extrabold tracking-tight text-on-surface mb-2">{property?.name}</h1>
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-4 text-sm font-semibold">
               <span className="flex items-center gap-1">
-                <span
-                  className="material-symbols-outlined text-primary text-lg"
-                  style={{ fontVariationSettings: "'FILL' 1" }}
-                >
+                <span className="material-symbols-outlined text-primary text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>
                   star
                 </span>
-                {property?.averageRating ?? 0} ·{" "}
-                <span className="underline cursor-pointer">
-                  {property?.reviewCount ?? 0} reviews
-                </span>
+                {property?.averageRating ?? 0} · <span className="underline cursor-pointer">{property?.reviewCount ?? 0} reviews</span>
               </span>
               <span className="text-on-surface-variant">·</span>
               <span className="underline cursor-pointer">
@@ -224,34 +216,20 @@ function PropertyDetail() {
             </div>
             <div className="flex items-center gap-2">
               <button className="flex items-center gap-2 px-3 py-2 hover:bg-surface-container rounded-lg transition-colors">
-                <span className="material-symbols-outlined text-lg">
-                  ios_share
-                </span>
+                <span className="material-symbols-outlined text-lg">ios_share</span>
                 <span className="text-sm font-bold">Share</span>
               </button>
               <button className="flex items-center gap-2 px-3 py-2 hover:bg-surface-container rounded-lg transition-colors">
-                <span className="material-symbols-outlined text-lg">
-                  favorite
-                </span>
+                <span className="material-symbols-outlined text-lg">favorite</span>
                 <span className="text-sm font-bold">Save</span>
               </button>
             </div>
           </div>
         </header>
-        <section
-          className={`grid grid-cols-1 md:grid-cols-4 grid-rows-2 gap-3 h-[500px] mb-12 rounded-2xl overflow-hidden group`}
-        >
+        <section className={`grid grid-cols-1 md:grid-cols-4 grid-rows-2 gap-3 h-125 mb-12 rounded-2xl overflow-hidden group`}>
           {property?.propertyImages.map((image, index) => (
-            <div
-              key={index}
-              className={`${image.isCover && "md:col-span-2 md:row-span-2"} overflow-hidden relative`}
-            >
-              <img
-                alt="Main villa view"
-                className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                data-alt="Modern white beachfront villa with palm trees"
-                src={image.imageUrl}
-              />
+            <div key={index} className={`${image.isCover && "md:col-span-2 md:row-span-2"} overflow-hidden relative`}>
+              <img alt="Main villa view" className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" data-alt="Modern white beachfront villa with palm trees" src={image.imageUrl} />
             </div>
           ))}
         </section>
@@ -261,28 +239,18 @@ function PropertyDetail() {
               <div className="flex justify-between items-start border-b border-primary/10 pb-8 mb-8">
                 <div>
                   <h2 className="text-2xl font-bold">
-                    Entire {property?.category.name} hosted by{" "}
-                    {property?.tenant.firstName}
+                    Entire {property?.category.name} hosted by {property?.tenant.firstName}
                   </h2>
-                  <p className="text-on-surface-variant font-medium mt-1">
-                    10 guests · 5 bedrooms · 6 beds ·{" "}
-                    {property?.numberOfBathrooms} baths
-                  </p>
+                  <p className="text-on-surface-variant font-medium mt-1">10 guests · 5 bedrooms · 6 beds · {property?.numberOfBathrooms} baths</p>
                 </div>
                 <div className="relative">
                   <img
                     className="w-14 h-14 rounded-full object-cover border border-primary/10"
                     data-alt="Friendly female host portrait Sarah"
-                    src={
-                      property?.tenant.profileImage ||
-                      `https://ui-avatars.com/api/?name=${property?.tenant.firstName}`
-                    }
+                    src={property?.tenant.profileImage || `https://ui-avatars.com/api/?name=${property?.tenant.firstName}`}
                   />
                   <div className="absolute -bottom-1 -right-1 bg-primary text-white rounded-full p-1 border-2 border-white">
-                    <span
-                      className="material-symbols-outlined text-[12px]"
-                      style={{ fontVariationSettings: "'FILL' 1" }}
-                    >
+                    <span className="material-symbols-outlined text-[12px]" style={{ fontVariationSettings: "'FILL' 1" }}>
                       verified
                     </span>
                   </div>
@@ -291,23 +259,17 @@ function PropertyDetail() {
               <div className="space-y-6">
                 {property?.propertyAmenities.map((amenity, index) => (
                   <div key={index} className="flex gap-6">
-                    <span className="material-symbols-outlined text-2xl text-on-surface">
-                      {amenity.amenity.icon}
-                    </span>
+                    <span className="material-symbols-outlined text-2xl text-on-surface">{amenity.amenity.icon}</span>
                     <div>
                       <h3 className="font-bold">{amenity.amenity.name}</h3>
-                      <p className="text-on-surface-variant text-sm mt-0.5">
-                        {amenity.amenity.description}
-                      </p>
+                      <p className="text-on-surface-variant text-sm mt-0.5">{amenity.amenity.description}</p>
                     </div>
                   </div>
                 ))}
               </div>
             </section>
             <section className="border-b border-primary/10 pb-8 mb-8">
-              <p className="text-slate-700 leading-relaxed">
-                {property?.description}
-              </p>
+              <p className="text-slate-700 leading-relaxed">{property?.description}</p>
             </section>
             <DatePicker
               propertyId={propertyId}
