@@ -21,6 +21,20 @@ export type GetPropertyAllBasicResponse = {
   coverImage: string;
 }[];
 
+export type GetPropertySearchResponse = {
+  id: string;
+  name: string;
+  city: string;
+  province: string;
+  country: string;
+  latitude: number;
+  longitude: number;
+  price: number;
+  averageRating: number;
+  reviewCount: number;
+  coverImage: string;
+}[];
+
 type TenantResponse = {
   id: string;
   firstName: string;

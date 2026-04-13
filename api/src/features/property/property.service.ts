@@ -317,6 +317,9 @@ export const searchByParams = async (params: SearchPropertiesParams) => {
       province: true,
       country: true,
 
+      latitude: true,
+      longitude: true,
+
       averageRating: true,
       reviewCount: true,
 
@@ -346,6 +349,8 @@ export const searchByParams = async (params: SearchPropertiesParams) => {
     name: property.name,
     city: property.city,
     province: property.province,
+    latitude: property.latitude,
+    longitude: property.longitude,
     country: property.country,
     price: property.roomTypes[0]?.basePrice,
     averageRating: property.averageRating,
