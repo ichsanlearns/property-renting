@@ -79,6 +79,52 @@ export const create = async ({
   });
 };
 
+export const getAllBasic = async () => {
+  const properties = await prisma.property.findMany({
+    select: {
+      id: true,
+      name: true,
+      city: true,
+      province: true,
+      country: true,
+
+      averageRating: true,
+      reviewCount: true,
+
+      propertyImages: {
+        where: {
+          isCover: true,
+        },
+        select: {
+          imageUrl: true,
+        },
+      },
+
+      roomTypes: {
+        select: {
+          basePrice: true,
+        },
+        orderBy: {
+          basePrice: "asc",
+        },
+        take: 1,
+      },
+    },
+  });
+
+  return properties.map((property) => ({
+    id: property.id,
+    name: property.name,
+    city: property.city,
+    province: property.province,
+    country: property.country,
+    price: property.roomTypes[0]?.basePrice,
+    averageRating: property.averageRating,
+    reviewCount: property.reviewCount,
+    coverImage: property.propertyImages[0]?.imageUrl,
+  }));
+};
+
 export const getByIdBasic = async (id: string) => {
   const property = await prisma.property.findUnique({
     where: {

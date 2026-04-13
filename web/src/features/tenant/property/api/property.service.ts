@@ -5,6 +5,7 @@ import { PROPERTY_ENDPOINTS } from "./property.endpoint";
 import type { ApiResponse } from "../../../../shared/types/api-response";
 import type {
   CreatePropertyResponse,
+  GetPropertyAllBasicResponse,
   GetPropertyByIdBasicResponse,
   GetPropertyByIdResponse,
   GetPropertyRoomPricesDateResponse,
@@ -19,6 +20,13 @@ export const createProperty = async (data: FormData) => {
         "Content-Type": "multipart/form-data",
       },
     },
+  );
+  return response.data;
+};
+
+export const getPropertyAllBasic = async () => {
+  const response = await api.get<ApiResponse<GetPropertyAllBasicResponse>>(
+    PROPERTY_ENDPOINTS.GET_ALL_BASIC,
   );
   return response.data;
 };

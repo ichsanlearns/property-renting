@@ -9,6 +9,18 @@ export type PropertyBasicResponse = {
   coverImage: string;
 };
 
+export type GetPropertyAllBasicResponse = {
+  id: string;
+  name: string;
+  city: string;
+  province: string;
+  country: string;
+  price: number;
+  averageRating: number;
+  reviewCount: number;
+  coverImage: string;
+}[];
+
 type TenantResponse = {
   id: string;
   firstName: string;

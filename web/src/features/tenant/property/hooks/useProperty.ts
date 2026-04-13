@@ -1,11 +1,22 @@
 import { useQuery } from "@tanstack/react-query";
 
 import {
+  getPropertyAllBasic,
   getPropertyById,
   getPropertyByIdBasic,
   getPropertyRoomPricesDate,
 } from "../api/property.service";
 import { queryKeys } from "../../../../shared/lib/queryKeys.lib";
+
+export const usePropertyAllBasic = () => {
+  return useQuery({
+    queryKey: queryKeys.property.allBasic(),
+    queryFn: () => getPropertyAllBasic(),
+    select: (res) => res.data,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+  });
+};
 
 export const usePropertyBasic = (propertyId: string) => {
   return useQuery({
@@ -14,6 +25,7 @@ export const usePropertyBasic = (propertyId: string) => {
     select: (res) => res.data,
     enabled: !!propertyId,
     staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
   });
 };
 
@@ -24,6 +36,7 @@ export const usePropertyDetail = ({ propertyId }: { propertyId: string }) => {
     select: (res) => res.data,
     enabled: !!propertyId,
     staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
   });
 };
 
@@ -43,5 +56,6 @@ export const usePropertyRoomPricesDate = ({
     select: (res) => res.data,
     enabled: !!propertyId && !!startDate && !!endDate,
     staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
   });
 };

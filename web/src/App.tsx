@@ -35,6 +35,7 @@ import PaymentProof from "./features/tenant/order-list/pages/PaymentProof";
 import ForgotPassword from "./features/auth/pages/ForgotPassword";
 import ResetPassword from "./features/auth/pages/ResetPassword";
 import PropertyDetail from "./features/public/pages/PropertyDetail";
+import Reservation from "./features/reservations/pages/Reservation";
 
 function requireOnboarding(user: User | null) {
   if (!user?.fullName && user?.email) {
@@ -71,8 +72,13 @@ const router = createBrowserRouter([
             path: "myprofile",
             element: <MyProfile />,
           },
+          {
+            path: "/reservation/:reservationCode",
+            element: <Reservation />,
+          },
         ],
       },
+
       {
         path: "/tenant/",
         element: <DashboardLayout />,

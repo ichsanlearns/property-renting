@@ -2,7 +2,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { usePropertyDetail } from "../../tenant/property/hooks/useProperty";
 import { toTitleCase } from "../../../shared/utils/string.util";
 import DatePicker from "../components/DatePicker";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { formatRupiah } from "../../../shared/utils/price.util";
 import { useForm } from "react-hook-form";
@@ -66,6 +66,13 @@ function PropertyDetail() {
   const { setValue, handleSubmit } = useForm<CreateReservationInput>({
     resolver: zodResolver(createReservationSchema),
   });
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, []);
 
   const handleSelectDateRoom = (selectedDateRoom: {
     checkInDate: Date | null;

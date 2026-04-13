@@ -200,12 +200,18 @@ function DatePicker({
                       ? "text-slate-300 cursor-not-allowed"
                       : !day.isCurrentMonth
                         ? "text-slate-300"
-                        : selectedDate.checkInDate?.getDate() ===
+                        : (selectedDate.checkInDate?.getMonth() ||
+                              selectedDate.checkOutDate?.getMonth()) ===
+                              day.date.getMonth() &&
+                            (selectedDate.checkInDate?.getDate() ===
                               day.date.getDate() ||
-                            selectedDate.checkOutDate?.getDate() ===
-                              day.date.getDate()
+                              selectedDate.checkOutDate?.getDate() ===
+                                day.date.getDate())
                           ? "bg-primary text-white font-bold hover:bg-primary-container hover:text-primary cursor-pointer"
-                          : selectedDate.checkInDate?.getDate() &&
+                          : (selectedDate.checkInDate?.getMonth() ||
+                                selectedDate.checkOutDate?.getMonth()) ===
+                                day.date.getMonth() &&
+                              selectedDate.checkInDate?.getDate() &&
                               selectedDate.checkOutDate?.getDate() &&
                               day.date.getDate() >
                                 selectedDate.checkInDate.getDate() &&
