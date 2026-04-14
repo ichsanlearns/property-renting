@@ -1,8 +1,9 @@
-import { Link, NavLink } from "react-router";
+import { Link, NavLink, useNavigate } from "react-router";
 import { useAuthStore } from "../../features/auth/stores/auth.store";
 
 function SideBar() {
   const { user } = useAuthStore();
+  const navigate = useNavigate();
 
   const roleLabel = user?.role === "TENANT" ? "Tenant" : user?.role === "CUSTOMER" ? "Customer" : "";
   const menu = [
@@ -19,9 +20,9 @@ function SideBar() {
       role: "TENANT",
     },
     {
-      label: "Rooms",
-      path: "/tenant/properties/:propertyId/rooms/create",
-      icon: "bed",
+      label: "Peak Season",
+      path: "/tenant/peak-season",
+      icon: "calendar_month",
       role: "TENANT",
     },
     {
@@ -29,7 +30,7 @@ function SideBar() {
       path: "/tenant/orderlist",
       icon: "receipt_long",
       role: "TENANT",
-    },
+    }, 
     {
       label: "Reviews",
       path: "/tenant/review",
@@ -64,7 +65,7 @@ function SideBar() {
               end={item.path === "/tenant"}
               className={({ isActive }) =>
                 `flex items-center gap-3 px-3 py-2 rounded-lg
-        ${isActive ? "bg-primary text-white shadow-lg shadow-primary/20" : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"}`
+        ${isActive ? "bg-primary text-white shadow-lg shadow-primary/20" : "text-slate-600 dark:text-slate-400 hover:bg-primary/10 dark:hover:bg-slate-800 transition-colors"}`
               }
             >
               <span className="material-symbols-outlined">{item.icon}</span>
@@ -74,7 +75,7 @@ function SideBar() {
         })}
       </nav>
       <div className="p-4 border-t border-slate-200 dark:border-slate-800 mt-auto">
-        <div className="flex items-center gap-3 p-2 rounded-xl bg-slate-50 dark:bg-slate-800/50">
+        <div onClick={() => navigate("/myprofile")} className="flex items-center gap-3 p-2 rounded-xl bg-slate-50 hover:bg-primary/10 dark:bg-slate-800/50 cursor-pointer">
           <div
             className="size-10 rounded-full bg-slate-200 bg-cover bg-center"
             data-alt="Avatar of the current user admin"

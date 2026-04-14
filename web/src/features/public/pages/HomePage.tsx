@@ -2,10 +2,11 @@ import Footer from "../../../shared/ui/Footer";
 import { usePropertyAllBasic } from "../../tenant/property/hooks/useProperty";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import LoaderFetching from "../../../shared/ui/LoaderFetching";
 
 function HomePage() {
   const navigate = useNavigate();
-  const { data: properties } = usePropertyAllBasic();
+  const { data: properties, isLoading } = usePropertyAllBasic();
 
   const handleCardClick = (id: string) => {
     navigate(`/property/${id}`);
@@ -97,6 +98,7 @@ function HomePage() {
             </span>
           </a>
         </div>
+        {isLoading && <LoaderFetching />}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {properties?.map((property) => (
             <div
@@ -111,14 +113,14 @@ function HomePage() {
                   data-alt="Architectural wood and glass cabin nestled in a snowy pine forest with warm interior lights glowing against the blue dusk"
                   src={property.coverImage}
                 />
-                <button className="absolute top-4 right-4 bg-white/20 backdrop-blur-md p-2 rounded-full hover:bg-white transition-colors">
+                {/* <button className="absolute top-4 right-4 bg-white/20 backdrop-blur-md p-2 rounded-full hover:bg-white transition-colors">
                   <span
                     className="material-symbols-outlined text-white group-hover:text-[#ff5c61]"
                     data-icon="favorite"
                   >
                     favorite
                   </span>
-                </button>
+                </button> */}
                 <div className="absolute bottom-0 left-0 right-0 p-6 bg-linear-to-t from-black/60 to-transparent">
                   <span className="bg-white/20 backdrop-blur-md text-white text-[10px] uppercase font-bold px-3 py-1 rounded-full border border-white/30">
                     Rare find
