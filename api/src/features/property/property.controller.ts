@@ -7,7 +7,7 @@ import * as PropertyService from "./property.service.js";
 import * as geocodingService from "./geocoding.service.js";
 
 import * as uploadService from "../../shared/services/upload.service.js";
-import { getByIdBasicSchema } from "./property.validator.js";
+import { getByIdBasicSchema, searchByParamsSchema } from "./property.validator.js";
 
 export const create = catchAsync(async (req: Request, res: Response) => {
   if (!req.user) throw new AppError("Unauthorized", 401);
@@ -111,7 +111,13 @@ export const getById = catchAsync(async (req: Request, res: Response) => {
 
 export const searchByParams = catchAsync(
   async (req: Request, res: Response) => {
-    const { search, sortBy, order } = req.query;
+    const parsed = searchByParamsSchema.safeParse(req.query);
+
+    if (!parsed.success) {
+      throw new AppError("Invalid search parameters", 400);
+    }
+
+    const { search, sortBy, order } = parsed.data;
 
     const finalSearch = typeof search === "string" ? search : undefined;
 
