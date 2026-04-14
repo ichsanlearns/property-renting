@@ -11,7 +11,7 @@ import { createReservationSchema, type CreateReservationInput } from "../../rese
 import toast from "react-hot-toast";
 import { createReservationRequest } from "../../reservations/api/reservations.service";
 import { useAuthStore } from "../../auth/stores/auth.store";
-import FullPageLoader from "../../../shared/ui/FullPageLoader";
+import LoaderFetching from "../../../shared/ui/LoaderFetching";
 
 type SelectedDateRoomAvailability = {
   id: string;
@@ -178,7 +178,7 @@ function PropertyDetail() {
   };
 
   if (isLoading) {
-    return <FullPageLoader />;
+    return <LoaderFetching />;
   }
 
   return (

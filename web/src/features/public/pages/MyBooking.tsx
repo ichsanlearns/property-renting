@@ -5,7 +5,7 @@ import { getMyReservationsRequest } from "../../reservations/api/reservations.se
 import { format } from "date-fns";
 import { formatRupiah } from "../../../shared/utils/price.util";
 import Footer from "../../../shared/ui/Footer";
-import FullPageLoader from "../../../shared/ui/FullPageLoader";
+import LoaderFullPage from "../../../shared/ui/LoaderFullPage";
 
 function MyBooking() {
   const { user } = useAuthStore();
@@ -92,7 +92,7 @@ function MyBooking() {
   });
 
   if (loading) {
-    return <FullPageLoader />;
+    return <LoaderFullPage />;
   }
   return (
     <div className="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">

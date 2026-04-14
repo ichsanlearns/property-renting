@@ -3,13 +3,13 @@ import { Navigate, Outlet } from "react-router";
 import { useAuthStore } from "../../features/auth/stores/auth.store";
 
 import SideBar from "../ui/SideBar";
-import FullPageLoader from "../ui/FullPageLoader";
+import LoaderFullPage from "../ui/LoaderFullPage";
 
 function DashboardLayout() {
   const { user, authLoading } = useAuthStore();
 
   if (authLoading) {
-    return <FullPageLoader />;
+    return <LoaderFullPage />;
   }
 
   if (!user || user.role !== "TENANT") {

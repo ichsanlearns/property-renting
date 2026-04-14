@@ -22,32 +22,22 @@ const propertyImageList = [
   {
     imageUrl:
       "https://lh3.googleusercontent.com/aida-public/AB6AXuDvAREB87iUaIPiQrQFjElsMZyP7AtyHYsZwqCultjARJMdx9SPObsw6XMIrkxy4RziMfqvefbdOYLLmFbq-CFR0CNhBXn5lZm3DRa-7rjiYz_s0R5c5_w_KLYnMdmg2pwKzuf8Rm-qCWL78KMF4_6R9YHK13j3i3Kx2HJPLjFW8J2hwwL3DewojeAwEfwldIk8246KJXfY--tWUoVoDpOMekNOMqoLFY09uiT5_BGDVF0hlHr8L8buidi0O-ipjoSmeKuuBOWMFipL",
-    isCover: true,
-    order: 1,
   },
   {
     imageUrl:
       "https://lh3.googleusercontent.com/aida-public/AB6AXuBQ7GeYDTKx3Ujhkn2U9wMWHBesuXpt8uJKpkUNOw1icqcJi1tBs9GademUA9BLBQE3xeuE2NXk0fugQ_OtRiwMVzb6Ypts-QVavs8noRhUCSnDb_ajMjaM4TmbI6ezmTFUGRpZa6k9DvniyUl0qoNuzLDbhBi63KdD5m78Yq4PUTt8F1xmoAbRoEV0VU41_wnq5HtmATbafAFHQyhcoA_2BI12CBlOSvCnJLlSrjje3g6lq-EFHaMZfgXYb0L0PgCaf-fcq7k45bvf",
-    isCover: false,
-    order: 2,
   },
   {
     imageUrl:
       "https://lh3.googleusercontent.com/aida-public/AB6AXuDFhkJeSSDP9F7lzWJpj_IB7a8PhQG0cg95sZtfM6tk74OvZGGWNlqrqJTrEoT4EihEuEJeetk7vCVu_B05NMufVJ8q5ITFn2j5YrJFvqrzjeRyFxz9xTt0f5Fvc1uCe_uiD2TChuScrkn_6q2P9OHzyS8FocN9EazSaGLWv6FqYQEjtKOK1YDCr8q67JVfVb7jmsFn_2_8sf89S6dfv8mUm39fmWbgzx98uhWmMRf3DSTKiDpYjzUNyUxXFVcy2acbiHCA91JPhNzn",
-    isCover: false,
-    order: 3,
   },
   {
     imageUrl:
       "https://lh3.googleusercontent.com/aida-public/AB6AXuAHutSE0OjHRron2_P6tl-u9u6mGBOajrPBgwBt-SP0CgeDPf4NEFse7llZVdRcdrPsqN_ATMvlOrlj55ZHII9tCM1R8w_YG-O0yyA8OJqyDagyueCFWrd5whu3TcvxuHJjtfeQr0DN0dr1JxyNgFcNfhlwo7bBHP2j1EdA6lHKvJEfNr5Q-c8zDbTVIohFdzkrTvJNhOWQuFR0yuByRRCo-6uKZczQtjT-iPwZ-F1GiNPSqasuae9_gRVfFGBa8fRIcYVhBTcp_LRn",
-    isCover: false,
-    order: 4,
   },
   {
     imageUrl:
       "https://lh3.googleusercontent.com/aida-public/AB6AXuAzzL-FcjdXpJLH_mMxBLUXXJPlC8vDKm0nLPfx3ysaYxvESxqcjAMm3Qb_W21jeCBITn8POjoBtIoHQbp8Sphne290bn71kiTxI53wB_H3bGfk4PABV3EWCJZdy_TJl2kxkH8YdPq9n-8do-H8WzlmQUcrc4CbsTbevsn7tQv9t-VOJdF542l7fo1O3s-1ZCkmMkCtZn1P8hxNO2JiYuNzFJKlPIUV1kHkM6ZldNhDzxC9QlHaKfjvCHRpwoTl_CsbhVQnni8ofrQv",
-    isCover: false,
-    order: 5,
   },
 ];
 
@@ -55,26 +45,18 @@ const roomImageList = [
   {
     imageUrl:
       "https://lh3.googleusercontent.com/aida-public/AB6AXuDNFgtW4CWvDHWvY-nNMM_63NZrd6ZGDVqusBPOias7qisl3YWBXYFXG2qWBEewWgsZW8cwFksmyn3DjrAOH2bKXvgzxpqBl_aFWyCIWwiKGFSayktigbmSpMcUZcj-meqCQ5lHvN-I1gAW64SI3Tpbm8E72cTYk4szHXdxiXC3RIgy7dYlTwl7ORe6kChL4OvOTZc8ROjqKNM-HRB3YuWhqJaJR3P4oAKU_tcYWgzWUoiVE0yu85OAIqOBNjuTM9smgMQz12TklQnL",
-    isCover: true,
-    order: 1,
   },
   {
     imageUrl:
       "https://lh3.googleusercontent.com/aida-public/AB6AXuB13Rf8Lpn9C4ffn9M2yMSzlkXrHa15KENVrM-19ay66RoKNwhrDsZ5v8_9x-rp8gLS_8Eo4fpzQEqmR4m7jetYC1hXcFVDPmhU0GukR0vqATtdKl4uLpKIBNb9MqC2oxowgGCu3MdDqF9QabxZHRAhHgJsBg8NDjyhPKenrn7DITfLUIZLeKuqrVR2mOfQ29lNM2G0qjVLHmlPn9pjvNaUxtuIbrgl2edzlR-WEfWyPZeOuqVsXyZt-OnrRXDK1F7l3P8S4V2QBRXy",
-    isCover: false,
-    order: 2,
   },
   {
     imageUrl:
       "https://lh3.googleusercontent.com/aida-public/AB6AXuAcDLLVQrOylPqeiPNIxfloWw2CfmGQh6znggU7ZhOnHfrozWoJUDmE8XRstCz2Ak4W0DqtBDYrrF7Jb02Byl6NEShBucIKlG_1NkjKhtj47M1EIlkZzyfbUMyw_CQ_JggrDtm7i3-bcksq9jgozScGFiWGWm7aMN8dJdPB_dpI0aW-KTsuJ_x43zCURyjqdmE6jxTb_7TCn1oaZw92vnBEoLJgvu7W_xVIP0I7ttjIhqQg3u3OeJQKHC1u559B6WUEVhzZXwvyvA2k",
-    isCover: false,
-    order: 3,
   },
   {
     imageUrl:
       "https://lh3.googleusercontent.com/aida-public/AB6AXuDyI4P2oFgSZJxNQLG4bea26CjfX-UgF9rcfHmRlHX3brzKeGYm9zTx62wtP04tRpATQVP6BPj15y6dj2fZtcAc6zW8F1FM2rNu-9b0Fw-xfhRu7MKfbVGGsrDRAOHD-USAQ9Z_y719i0PhhVm6fEfEoyP58LOx4noHzG-ToUMhDIGmWcKgZjSmAKIt_oH3xy5Y8l9Vg1N4R3w3j-_n_EEmR5wA-Qr5XBgbvNpBz6CvO3TzS-0SPfOxaIx28gBCcrMIPckXmXdgDGHy",
-    isCover: false,
-    order: 4,
   },
 ];
 
@@ -415,7 +397,7 @@ const seed = async () => {
     // CREATE PROPERTY
     // =============================
 
-    const property = await create({
+    const property1 = await create({
       data: {
         categoryId: propertyCategories[0]!.id,
         name: "Property 1",
@@ -432,28 +414,28 @@ const seed = async () => {
       images: [
         {
           imageUrl: propertyImageList[0]!.imageUrl,
-          isCover: propertyImageList[0]!.isCover,
-          order: propertyImageList[0]!.order,
+          isCover: true,
+          order: 1,
         },
         {
           imageUrl: propertyImageList[1]!.imageUrl,
-          isCover: propertyImageList[1]!.isCover,
-          order: propertyImageList[1]!.order,
+          isCover: false,
+          order: 2,
         },
         {
           imageUrl: propertyImageList[2]!.imageUrl,
-          isCover: propertyImageList[2]!.isCover,
-          order: propertyImageList[2]!.order,
+          isCover: false,
+          order: 3,
         },
         {
           imageUrl: propertyImageList[3]!.imageUrl,
-          isCover: propertyImageList[3]!.isCover,
-          order: propertyImageList[3]!.order,
+          isCover: false,
+          order: 4,
         },
         {
           imageUrl: propertyImageList[4]!.imageUrl,
-          isCover: propertyImageList[4]!.isCover,
-          order: propertyImageList[4]!.order,
+          isCover: false,
+          order: 5,
         },
       ],
       amenities: [
@@ -469,7 +451,7 @@ const seed = async () => {
 
     const room1 = await createRoom({
       data: {
-        propertyId: property.id,
+        propertyId: property1.id,
         name: "Room 1",
         description: "Description 1",
         basePrice: 100000,
@@ -484,18 +466,18 @@ const seed = async () => {
       images: [
         {
           imageUrl: roomImageList[0]!.imageUrl,
-          isCover: roomImageList[0]!.isCover,
-          order: roomImageList[0]!.order,
+          isCover: true,
+          order: 1,
         },
         {
           imageUrl: roomImageList[1]!.imageUrl,
-          isCover: roomImageList[1]!.isCover,
-          order: roomImageList[1]!.order,
+          isCover: false,
+          order: 2,
         },
         {
           imageUrl: roomImageList[2]!.imageUrl,
-          isCover: roomImageList[2]!.isCover,
-          order: roomImageList[2]!.order,
+          isCover: false,
+          order: 3,
         },
       ],
       amenities: [
@@ -505,7 +487,46 @@ const seed = async () => {
       ],
     });
 
+    const room2 = await createRoom({
+      data: {
+        propertyId: property1.id,
+        name: "Room 2",
+        description: "Description 2",
+        basePrice: 200000,
+        totalRooms: 10,
+        bedType: BedType.DOUBLE_TWIN,
+        bedCount: 1,
+        viewType: ViewType.CITY_SKYLINE,
+        bathroomType: BathroomType.PRIVATE,
+        capacity: 2,
+        isPublished: PublishStatus.PUBLISHED,
+      },
+      images: [
+        {
+          imageUrl: roomImageList[3]!.imageUrl,
+          isCover: true,
+          order: 1,
+        },
+        {
+          imageUrl: roomImageList[1]!.imageUrl,
+          isCover: false,
+          order: 2,
+        },
+        {
+          imageUrl: roomImageList[2]!.imageUrl,
+          isCover: false,
+          order: 3,
+        },
+      ],
+      amenities: [
+        roomAmenities[3]!.id,
+        roomAmenities[4]!.id,
+        roomAmenities[5]!.id,
+      ],
+    });
+
     await ensurePrices({ roomTypeId: room1.id, daysAhead: 30 });
+    await ensurePrices({ roomTypeId: room2.id, daysAhead: 30 });
 
     // =============================
     // DONE

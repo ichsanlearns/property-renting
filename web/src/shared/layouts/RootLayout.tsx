@@ -1,7 +1,7 @@
 import { Outlet } from "react-router";
 
 import NavBar from "../ui/NavBar";
-import FullPageLoader from "../ui/FullPageLoader";
+import LoaderFullPage from "../ui/LoaderFullPage";
 
 import { useAuthStore } from "../../features/auth/stores/auth.store";
 
@@ -9,7 +9,7 @@ function RootLayout() {
   const { authLoading } = useAuthStore();
 
   if (authLoading) {
-    return <FullPageLoader />;
+    return <LoaderFullPage />;
   }
   return (
     <>

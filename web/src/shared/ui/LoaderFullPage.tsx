@@ -1,7 +1,7 @@
 import * as LottieModule from "lottie-react";
 import loaderAnimation from "../../../assets/loading.json";
 
-function FullPageLoader() {
+function LoaderFullPage() {
   const Lottie = (LottieModule as any).default.default;
 
   return (
@@ -15,4 +15,4 @@ function FullPageLoader() {
   );
 }
 
-export default FullPageLoader;
+export default LoaderFullPage;
