@@ -16,6 +16,7 @@ router.post(
 );
 
 router.get("/", PropertyController.getAllBasic);
+router.get("/search", PropertyController.searchByParams);
 router.get("/:propertyId/basic", PropertyController.getByIdBasic);
 router.get("/:propertyId", PropertyController.getById);
 router.get(

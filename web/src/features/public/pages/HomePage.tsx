@@ -10,6 +10,10 @@ function HomePage() {
     navigate(`/property/${id}`);
   };
 
+  const handleSearch = (search: string) => {
+    navigate(`/search?search=${search}`);
+  };
+
   return (
     <main>
       <section className="relative h-[870px] min-h-[600px] w-full flex items-center justify-center overflow-hidden">
@@ -41,6 +45,11 @@ function HomePage() {
                 search
               </span>
               <input
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleSearch(e.currentTarget.value);
+                  }
+                }}
                 className="w-full bg-transparent border-none outline-none focus:ring-0 text-slate-800 placeholder-slate-400 font-medium text-base"
                 placeholder="Search city, country, or property"
                 type="text"

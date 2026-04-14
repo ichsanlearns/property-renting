@@ -9,6 +9,12 @@ import {
   toLocalMidnight,
 } from "../../shared/utils/date.util.js";
 
+type SearchPropertiesParams = {
+  search?: string;
+  sortBy?: "name" | "price" | "createdAt";
+  order?: "asc" | "desc";
+};
+
 export const create = async ({
   data,
   tenantId,
@@ -284,6 +290,73 @@ export const getById = async ({ id }: { id: string }) => {
       price: roomType.basePrice,
     })),
   };
+};
+
+export const searchByParams = async (params: SearchPropertiesParams) => {
+  const where = params.search
+    ? {
+        OR: [
+          { name: { contains: params.search, mode: "insensitive" as const } },
+          { city: { contains: params.search, mode: "insensitive" as const } },
+          {
+            country: { contains: params.search, mode: "insensitive" as const },
+          },
+        ],
+      }
+    : {};
+
+  const properties = await prisma.property.findMany({
+    where,
+    orderBy: {
+      [params.sortBy as string]: params.order,
+    },
+    select: {
+      id: true,
+      name: true,
+      city: true,
+      province: true,
+      country: true,
+
+      latitude: true,
+      longitude: true,
+
+      averageRating: true,
+      reviewCount: true,
+
+      propertyImages: {
+        where: {
+          isCover: true,
+        },
+        select: {
+          imageUrl: true,
+        },
+      },
+
+      roomTypes: {
+        select: {
+          basePrice: true,
+        },
+        orderBy: {
+          basePrice: "asc",
+        },
+        take: 1,
+      },
+    },
+  });
+
+  return properties.map((property) => ({
+    id: property.id,
+    name: property.name,
+    city: property.city,
+    province: property.province,
+    latitude: property.latitude,
+    longitude: property.longitude,
+    country: property.country,
+    price: property.roomTypes[0]?.basePrice,
+    averageRating: property.averageRating,
+    reviewCount: property.reviewCount,
+    coverImage: property.propertyImages[0]?.imageUrl,
+  }));
 };
 
 export const getPropertyRoomPricesDate = async ({
