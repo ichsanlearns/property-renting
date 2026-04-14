@@ -1,6 +1,7 @@
 import Footer from "../../../shared/ui/Footer";
 import { usePropertyAllBasic } from "../../tenant/property/hooks/useProperty";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 function HomePage() {
   const navigate = useNavigate();
@@ -14,9 +15,16 @@ function HomePage() {
     navigate(`/search?search=${search}`);
   };
 
+  useEffect(() => {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }, []);
+
   return (
     <main>
-      <section className="relative h-[870px] min-h-[600px] w-full flex items-center justify-center overflow-hidden">
+      <section className="relative h-[500px] min-h-[500px] w-full flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img
             alt="Luxury villa with pool at sunset"
@@ -29,14 +37,14 @@ function HomePage() {
         <div className="relative z-10 w-full max-w-5xl px-6 text-center">
           <h1 className="text-4xl md:text-7xl font-extrabold text-white mb-6 tracking-tight leading-[1.1]">
             Your gateway to <br />
-            <span className="text-[#ff5c61]">extraordinary</span>
+            <span className="text-[#ff5c61]">extraordinary {" "} </span>
             stays.
           </h1>
           <p className="text-lg md:text-xl text-white/90 mb-12 max-w-2xl mx-auto font-medium">
             Discover unique homes and unforgettable experiences in over 190
             countries.
           </p>
-          <div className="glass-search max-w-4xl mx-auto rounded-full p-2 shadow-2xl flex flex-col md:flex-row items-center gap-2 group transition-all duration-500 hover:rounded-3xl">
+          <div className="glass-search max-w-3xl mx-auto rounded-full shadow-2xl flex flex-col md:flex-row items-center gap-2 group transition-all duration-500 hover:h-20  h-16 p-2">
             <div className="flex-1 w-full flex items-center px-6 py-3 border-r border-slate-200/50">
               <span
                 className="material-symbols-outlined text-slate-400 mr-3"
@@ -56,7 +64,7 @@ function HomePage() {
               />
             </div>
 
-            <button className="w-full md:w-auto bg-[#ff5c61] text-white p-4 rounded-full flex items-center justify-center hover:bg-[#e64a50] transition-colors shadow-lg shadow-[#ff5c61]/30">
+            <button onClick={() => handleSearch("")} className="w-full md:w-auto bg-[#ff5c61] text-white p-3 rounded-full flex items-center justify-center hover:bg-[#e64a50] transition-colors shadow-lg shadow-[#ff5c61]/30 cursor-pointer">
               <span className="material-symbols-outlined" data-icon="search">
                 search
               </span>
@@ -215,12 +223,12 @@ function HomePage() {
           stays with StayHub.
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <button className="w-full sm:w-auto bg-[#ff5c61] text-white px-10 py-4 rounded-full text-lg font-bold shadow-xl shadow-[#ff5c61]/20 hover:opacity-90 active:scale-95 transition-all">
+          <button onClick={() => navigate("/search")} className="w-full sm:w-auto bg-[#ff5c61] text-white px-10 py-4 rounded-full text-lg font-bold shadow-xl shadow-[#ff5c61]/20 hover:opacity-90 active:scale-95 transition-all cursor-pointer">
             Start Searching
           </button>
-          <button className="w-full sm:w-auto bg-white border-2 border-slate-200 px-10 py-4 rounded-full text-lg font-bold hover:bg-slate-50 transition-colors">
+          {/* <button className="w-full sm:w-auto bg-white border-2 border-slate-200 px-10 py-4 rounded-full text-lg font-bold hover:bg-slate-50 transition-colors">
             Learn More
-          </button>
+          </button> */}
         </div>
       </section>
       <Footer />

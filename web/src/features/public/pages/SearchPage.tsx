@@ -91,7 +91,7 @@ function SearchPage() {
           </div> */}
         </div>
       </div>
-      <main className="pt-[220px] flex min-h-screen">
+      <main className="pt-[170px] flex min-h-screen">
         <div className="w-full lg:w-[60%] px-6 md:px-12 pb-12 overflow-y-auto">
           <div className="mb-6">
             <h1

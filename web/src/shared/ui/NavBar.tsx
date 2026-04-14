@@ -59,7 +59,7 @@ function NavBar() {
   }, [setIsMenuOpen]);
 
   return (
-    <header className="sticky top-0 z-50 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-primary/10 px-4 md:px-20 py-4">
+    <header className="sticky top-0 z-50 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-primary/10 px-4 md:px-20 py-1">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2 text-primary">
           <span className="material-symbols-outlined text-3xl font-bold">
@@ -101,7 +101,7 @@ function NavBar() {
               <div className="flex items-center gap-3">
                 <Link
                   to="/myprofile"
-                  className="flex items-center gap-3 bg-red-500/20 hover:bg-red-500/40 px-3 py-2 rounded-xl transition"
+                  className="flex items-center gap-3 bg-primary/20 hover:bg-primary/40 px-3 py-2 rounded-xl transition"
                 >
                   <img
                     src={
@@ -121,7 +121,7 @@ function NavBar() {
                   onClick={() => {
                     handleLogout();
                   }}
-                  className="hidden md:flex p-2 text-black/80 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition"
+                  className="hidden md:flex p-2 text-black/80 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition cursor-pointer"
                   title="Logout"
                 >
                   <LogOut size={20} />
@@ -161,7 +161,7 @@ function NavBar() {
 
       <div
         ref={sidebarRef}
-        className={`fixed right-0 top-0  h-screen w-[80%]  z-50 bg-white dark:bg-slate-900 shadow-2xl flex flex-col transform transition-transform duration-300 ease-in-out ${isMenuOpen ? "translate-x-0" : "translate-x-full"}`}
+        className={`fixed right-0 md:hidden top-0  h-screen w-[80%]  z-50 bg-white dark:bg-slate-900 shadow-2xl flex flex-col transform transition-transform duration-300 ease-in-out ${isMenuOpen ? "translate-x-0" : "translate-x-full"}`}
       >
         <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 dark:border-slate-800">
           <button
