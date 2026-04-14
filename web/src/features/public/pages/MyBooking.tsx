@@ -1,6 +1,11 @@
 import { Navigate, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../auth/stores/auth.store";
+import { useEffect, useState } from "react";
+import { getMyReservationsRequest } from "../../reservations/api/reservations.service";
+import { format } from "date-fns";
+import { formatRupiah } from "../../../shared/utils/price.util";
 import Footer from "../../../shared/ui/Footer";
+import FullPageLoader from "../../../shared/ui/FullPageLoader";
 
 function MyBooking() {
   const { user } = useAuthStore();
@@ -10,70 +15,85 @@ function MyBooking() {
     return <Navigate to={`/login`} replace />;
   }
 
-  // Data Mockup untuk Booking
-  const bookings = [
-    {
-      id: 1,
-      name: "Azure Bay Villa",
-      type: "Master Suite",
-      price: "$2,000.00",
-      date: "Oct 24 - Oct 29, 2023",
-      guests: 4,
-      status: "Confirmed",
-      statusColor: "bg-emerald-100 text-emerald-700",
-      dotColor: "bg-emerald-500",
-      img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDo92aF5C_JfKo11SyMhXRMbTRuq0Vw_1ToI7LYpZ8MK2o9_MubIY7Nor1A3qEK0y1n0-DEnnkBiJGF2u3EOQt7Ju0R19y2NhcUkLeAlfVSUDRRPZGbPOxkfXq56Oe_xmrMWeDsZcCdRU9S-poGLYHWJKdFTS5_Jv6u3wG4ZoR0ctUpbbH2QvrM4PUqrbg3_-0WSVMWKp5oVx_Bf2_Ksqku6GN-q4nnhlfwD8WIFCP37qi5MCo4gQz7wOjsWXIvf7dgbfHLWbL196Fp",
-    },
-    {
-      id: 2,
-      name: "Ocean Breeze Villa",
-      type: "Entire House",
-      price: "$1,450.00",
-      date: "Nov 12 - Nov 15, 2023",
-      guests: 2,
-      status: "Waiting for Payment",
-      statusColor: "bg-amber-100 text-amber-700",
-      dotColor: "bg-amber-500",
-      img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBjyuD8j1U9Kd8DVudpgMUh5DCWJ1r_l7a94NjjLvB-gz5h44pilX_FMqk6R7UaYEP6491IpKnLQE7k3_6h_KEuMTVp19Rh_Eu5lYVOMHwLhNeW5CKMNdCE2xQ88OvJt-wu9Izni8KZlSjztHNAIoQ6PV37dp8x5DsZerdVlzmZg41Gmlakc8EdQv4G_p_hzkOVHsSS1hVlIAl-1CVA85x6-S6oe22iM3zTTvOik3xnajcbG65MOwffE2MlO7jWc5FQrrhMP_YqNl4s",
-    },
-    {
-      id: 3,
-      name: "Cedar Ridge Cabin",
-      type: "Forest Loft",
-      price: "$850.00",
-      date: "Sep 01 - Sep 05, 2023",
-      guests: 2,
-      status: "Completed",
-      statusColor: "bg-slate-100 text-slate-600",
-      img: "https://lh3.googleusercontent.com/aida-public/AB6AXuA10pneZgn6iPJz5EIZ90LP1M771uYbp5XCIteSGO7tV2a_NkgfGSnZMxW7hVSgigi21YZgsqebwCWA4rK2y41SDcy1EGub9xk6QBdE2Ij4u-8MOnK9eGXMK094LZG5-59mHAbLvDYDs-RESFFqYtz8ujh6ah2LFYLpiUceK2n5v2t8SDxHuVVIZYZ0WaOTfy7GqCScs4jvbtYKwnXepdno5FdUtTWw5slveDmOgtaA0Tp7CHYnB69qYen-6peUeE23KBFz79A6vQCr",
-      isCompleted: true,
-    },
-    {
-      id: 4,
-      name: "Urban Heights Penthouse",
-      type: "Sky View Suite",
-      price: "$3,200.00",
-      date: "Dec 24 - Dec 28, 2023",
-      guests: 6,
-      status: "Cancelled",
-      statusColor: "bg-red-100 text-red-700",
-      img: "https://lh3.googleusercontent.com/aida-public/AB6AXuAcAykTC5ORzhnBuy0OFzMKl8tgzoajibLhTUlM8YDaXJjGycXGygEtosl2BvDaGIML_orU3lSRdMjwvZOaEPIkNXY4E9icl2k_ugMMYxhrmzjBiFFcOF-EIuOJ5YDrFiCEGw0vwP2XG58xC5wPMSAGmWYWuYeCCLfCu2EVBlVLsIfFthh2XBohDWyDJzpTVmQasuDFOonCtTVPATtGDkl8RTqJs91lDS7NSpr1lJZdpcfQW_sle-hIZKy0suJ0PizmVvxqK1chjJvQ",
-      isCancelled: true,
-    },
-    {
-      id: 5,
-      name: "Nordic Light Loft",
-      type: "Entire Apartment",
-      price: "$980.00",
-      date: "Jan 15 - Jan 18, 2024",
-      guests: 2,
-      status: "Confirmed",
-      statusColor: "bg-emerald-100 text-emerald-700",
-      dotColor: "bg-emerald-500",
-      img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBMg_bzQZF4clCVMVoMD0uUSiFn6wJ5O1laNWj6GpGCfq7fjgaGQnlHcUJ5blHnnemjrAfQmGYOIUnsRV8ynHHsfES5HEmNjsLOVE7-cMObmjTN_Hxo1XBme1E_d4NKkdC75tqLs3mVW7DQWInoxrLPKSiOc3VLV0T5opmQwid8X2jVbGrYOl2DoWuKVHsZoM5qLrm1FzRzwJFTBNITcczOukQ27WCbJCRxywNiYedwLG5NeAWAlM_SPElXK4dEnAW809ijlNY7pFgR",
-    },
-  ];
+  const [bookings, setBookings] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await getMyReservationsRequest();
+
+        const mapped = res.data.map((item: any) => {
+          let status = "";
+          let statusColor = "";
+          let dotColor = "";
+
+          switch (item.status) {
+            case "WAITING_PAYMENT":
+              status = "Waiting for Payment";
+              statusColor = "bg-amber-100 text-amber-700";
+              dotColor = "bg-amber-500";
+              break;
+            case "PAID":
+              status = "Confirmed";
+              statusColor = "bg-emerald-100 text-emerald-700";
+              dotColor = "bg-emerald-500";
+              break;
+            case "REVIEWED":
+              status = "Completed";
+              statusColor = "bg-slate-100 text-slate-600";
+              break;
+            case "CANCELED":
+              status = "Cancelled";
+              statusColor = "bg-red-100 text-red-700";
+              break;
+            default:
+              status = item.status;
+              statusColor = "bg-slate-100 text-slate-600";
+          }
+
+          return {
+            id: item.id,
+            name: item.roomType.property.name,
+            type: item.roomNameSnapshot,
+            price: formatRupiah(Number(item.totalAmount)),
+            date: `${format(new Date(item.checkInDate), "MMM dd")} - ${format(new Date(item.checkOutDate), "MMM dd, yyyy")}`,
+            guests: item.guestCount || 2, // fallback
+            status,
+            statusColor,
+            dotColor,
+            img: item.roomType.roomTypeImages?.[0]?.imageUrl || "https://via.placeholder.com/300",
+
+            isCompleted: item.status === "REVIEWED",
+            isCancelled: item.status === "CANCELED",
+            reservationCode: item.reservationCode,
+          };
+        });
+
+        setBookings(mapped);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const filteredBookings = bookings.filter((booking) => {
+    const matchSearch = booking.name.toLowerCase().includes(search.toLowerCase()) || booking.reservationCode.toLowerCase().includes(search.toLowerCase());
+
+    const matchStatus = statusFilter ? booking.status === statusFilter : true;
+
+    return matchSearch && matchStatus;
+  });
+
+  if (loading) {
+    return <FullPageLoader />;
+  }
   return (
     <div className="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
       <main className="max-w-7xl mx-auto px-4 py-8 lg:py-12">
@@ -87,14 +107,24 @@ function MyBooking() {
         <div className="bg-white dark:bg-slate-900 rounded-xl p-4 shadow-sm border border-primary/5 mb-8">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
             <div className="md:col-span-5">
-              <div className="relative group">
+              <div className="relative group flex-1">
                 <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">search</span>
-                <input className="w-full pl-10 pr-4 py-2.5 bg-background-light dark:bg-slate-800 border-none rounded-lg focus:ring-2 focus:ring-primary/50 text-sm" placeholder="Search by Booking ID..." type="text" />
+                <input
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2.5 bg-background-light dark:bg-slate-800 border-none rounded-lg focus:ring-2 focus:ring-primary/50 text-sm"
+                  placeholder="Search by Booking ID..."
+                  type="text"
+                />
               </div>
             </div>
             <div className="md:col-span-3">
               <div className="relative">
-                <select className="w-full pl-4 pr-10 py-2.5 bg-background-light dark:bg-slate-800 border-none rounded-lg focus:ring-2 focus:ring-primary/50 text-sm appearance-none outline-none">
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className="w-full pl-4 pr-10 py-2.5 bg-background-light dark:bg-slate-800 border-none rounded-lg focus:ring-2 focus:ring-primary/50 text-sm appearance-none outline-none"
+                >
                   <option value="">All Statuses</option>
                   <option>Waiting for Payment</option>
                   <option>Waiting for Confirmation</option>
@@ -105,12 +135,7 @@ function MyBooking() {
                 <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">expand_more</span>
               </div>
             </div>
-            <div className="md:col-span-3">
-              <div className="relative">
-                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">calendar_today</span>
-                <input className="w-full pl-10 pr-4 py-2.5 bg-background-light dark:bg-slate-800 border-none rounded-lg focus:ring-2 focus:ring-primary/50 text-sm" placeholder="Select Date Range" type="text" />
-              </div>
-            </div>
+
             <div className="md:col-span-1">
               <button className="w-full h-full flex items-center justify-center bg-primary/10 hover:bg-primary/20 text-primary rounded-lg transition-colors py-2.5">
                 <span className="material-symbols-outlined">filter_list</span>
@@ -121,8 +146,13 @@ function MyBooking() {
 
         {/* Bookings List */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {bookings.map((booking) => (
-            <div key={booking.id} className={`bg-white dark:bg-slate-900 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-primary/5 group ${booking.isCancelled ? "opacity-80" : ""}`}>
+          {filteredBookings.length === 0 && <p className="text-center text-slate-500 col-span-full">No bookings found 😢</p>}
+          {filteredBookings.map((booking) => (
+            <div
+              key={booking.id}
+              // onClick={() => navigate(`/payment/${booking.reservationCode}`)}
+              className="cursor-pointer bg-white dark:bg-slate-900 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all border border-primary/5 group hover:scale-[1.01]"
+            >
               <div className="relative h-48 overflow-hidden">
                 {booking.isCompleted && <div className="absolute inset-0 bg-slate-900/10 z-10"></div>}
                 <img
@@ -159,7 +189,9 @@ function MyBooking() {
                 <div className="flex flex-col gap-2">
                   {booking.status === "Waiting for Payment" ? (
                     <>
-                      <button className="w-full bg-primary text-white font-bold py-2.5 rounded-lg hover:bg-primary/90 transition-colors text-sm">Pay Now</button>
+                      <button onClick={() => navigate(`/payment/${booking.reservationCode}`)} className="w-full bg-primary text-white font-bold py-2.5 rounded-lg hover:bg-primary/90 transition-colors text-sm">
+                        Pay Now
+                      </button>
                       <button className="w-full text-slate-500 hover:text-red-500 font-semibold py-2 transition-colors text-sm">Cancel Booking</button>
                     </>
                   ) : booking.isCompleted ? (
@@ -167,7 +199,12 @@ function MyBooking() {
                       <button onClick={() => navigate("/review")} className="flex-1 border border-primary text-primary font-bold py-2.5 rounded-lg hover:bg-primary/5 transition-colors text-sm">
                         Review Stay
                       </button>
-                      <button className="flex-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold py-2.5 rounded-lg hover:bg-slate-200 transition-colors text-sm">Receipt</button>
+                      <button
+                        onClick={() => navigate(`/payment/${booking.reservationCode}`)}
+                        className="flex-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold py-2.5 rounded-lg hover:bg-slate-200 transition-colors text-sm"
+                      >
+                        Receipt
+                      </button>
                     </div>
                   ) : (
                     <button className="w-full bg-primary text-white font-bold py-2.5 rounded-lg hover:bg-primary/90 transition-colors text-sm">View Details</button>

@@ -1,3 +1,4 @@
 export const RESERVATION_ENDPOINTS = {
   CREATE_RESERVATION: "/reservations",
+  GET_MY_RESERVATIONS: "reservations/me",
 };

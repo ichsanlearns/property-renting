@@ -10,13 +10,7 @@ const normalizeDate = (date: Date) => {
   return d;
 };
 
-export const createReservation = async ({
-  userId,
-  payload,
-}: {
-  userId: string;
-  payload: CreateReservationInput;
-}) => {
+export const createReservation = async ({ userId, payload }: { userId: string; payload: CreateReservationInput }) => {
   const existingReservation = await prisma.reservation.findFirst({
     where: {
       customerId: userId,
@@ -72,16 +66,10 @@ export const createReservation = async ({
       }
     }
 
-    const totalPriceDate = availability.reduce(
-      (acc, day) => acc + Number(day.price),
-      0,
-    );
+    const totalPriceDate = availability.reduce((acc, day) => acc + Number(day.price), 0);
 
     if (totalPriceDate !== payload.totalAmount) {
-      throw new AppError(
-        "Theres change in price, please refresh the page",
-        400,
-      );
+      throw new AppError("Theres change in price, please refresh the page", 400);
     }
 
     for (const day of availability) {
@@ -170,4 +158,28 @@ export const getTenantReservations = async (tenantId: string) => {
       createdAt: "desc",
     },
   });
+};
+
+export const getReservationByCode = async ({ reservationCode, userId }: { reservationCode: string; userId: string }) => {
+  const reservation = await prisma.reservation.findUnique({
+    where: { reservationCode },
+    include: {
+      roomType: {
+        include: {
+          property: true,
+          roomTypeImages: true,
+        },
+      },
+    },
+  });
+
+  if (!reservation) {
+    throw new AppError("Reservation not found", 404);
+  }
+
+  if (reservation.customerId !== userId) {
+    throw new AppError("Unauthorized", 403);
+  }
+
+  return reservation;
 };
