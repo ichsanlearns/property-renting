@@ -14,13 +14,14 @@ type CreateReservationPayload = {
   averageRoomPerNightSnapshot: number;
 };
 
-export const createReservationRequest = async (
-  data: CreateReservationPayload,
-) => {
-  const response = await api.post<ApiResponse<CreateReservationResponse>>(
-    RESERVATION_ENDPOINTS.CREATE_RESERVATION,
-    data,
-  );
+export const createReservationRequest = async (data: CreateReservationPayload) => {
+  const response = await api.post<ApiResponse<CreateReservationResponse>>(RESERVATION_ENDPOINTS.CREATE_RESERVATION, data);
+
+  return response.data;
+};
+
+export const getMyReservationsRequest = async () => {
+  const response = await api.get<ApiResponse<any[]>>(RESERVATION_ENDPOINTS.GET_MY_RESERVATIONS);
 
   return response.data;
 };
