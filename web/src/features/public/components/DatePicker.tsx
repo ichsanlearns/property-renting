@@ -7,7 +7,7 @@ import {
   subMonths,
 } from "date-fns";
 import { generateCalendar } from "../../../shared/utils/calendar.util";
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { usePropertyRoomPricesDate } from "../../tenant/property/hooks/useProperty";
 import { getAvailableRoomTypesForRange } from "../utils/availability.util";
 import { formatRupiah } from "../../../shared/utils/price.util";

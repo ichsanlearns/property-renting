@@ -63,7 +63,11 @@ function PropertyDetail() {
   const [selectedDateRoomAvailability, setSelectedDateRoomAvailability] =
     useState<SelectedDateRoomAvailability[]>([]);
 
-  const { setValue, handleSubmit } = useForm<CreateReservationInput>({
+  const {
+    setValue,
+    handleSubmit,
+    formState: { isSubmitting, errors },
+  } = useForm<CreateReservationInput>({
     resolver: zodResolver(createReservationSchema),
   });
 
@@ -83,8 +87,6 @@ function PropertyDetail() {
       averagePrice: number;
     }[];
   }) => {
-    setSelectedRoom(null);
-
     if (selectedDateRoom.checkInDate && selectedDateRoom.checkOutDate) {
       if (selectedDateRoom.availableRooms.length > 0) {
         const availableMap = new Map(
@@ -138,12 +140,16 @@ function PropertyDetail() {
     setValue(
       "checkInDate",
       format(selectedDateRoom.checkInDate!, "yyyy-MM-dd"),
+      { shouldValidate: true },
     );
     setValue(
       "checkOutDate",
       format(selectedDateRoom.checkOutDate!, "yyyy-MM-dd"),
+      { shouldValidate: true },
     );
-    setValue("numberOfNights", selectedDateRoom.numberOfNights);
+    setValue("numberOfNights", selectedDateRoom.numberOfNights, {
+      shouldValidate: selectedDateRoom.numberOfNights > 0,
+    });
   };
 
   const roomAvailability =
@@ -156,14 +162,18 @@ function PropertyDetail() {
     if (selectedRoom?.id === roomType.id) {
       setSelectedRoom(null);
       setValue("roomTypeId", "");
-      setValue("roomNameSnapshot", "");
-      setValue("averageRoomPerNightSnapshot", 0);
+      setValue("roomNameSnapshot", "", { shouldValidate: true });
+      setValue("averageRoomPerNightSnapshot", 0, {
+        shouldValidate: true,
+      });
       return;
     }
     setSelectedRoom(roomType);
-    setValue("roomTypeId", roomType.id);
-    setValue("roomNameSnapshot", roomType.name);
-    setValue("averageRoomPerNightSnapshot", Number(roomType.price));
+    setValue("roomTypeId", roomType.id, { shouldValidate: true });
+    setValue("roomNameSnapshot", roomType.name, { shouldValidate: true });
+    setValue("averageRoomPerNightSnapshot", Number(roomType.price), {
+      shouldValidate: true,
+    });
   };
 
   const onSubmit = async (data: CreateReservationInput) => {
@@ -176,9 +186,15 @@ function PropertyDetail() {
       toast.error("Please select a room");
       return;
     }
+
     const totalAmount = selectedRoom?.price * data.numberOfNights;
     try {
       toast.loading("Creating reservation...");
+
+      if (!data.checkInDate || !data.checkOutDate) {
+        return;
+      }
+
       const response = await createReservationRequest({
         ...data,
         totalAmount,
@@ -312,13 +328,28 @@ function PropertyDetail() {
                 {property?.description}
               </p>
             </section>
+            {errors.numberOfNights?.message && (
+              <div className="bg-primary-container border border-primary/20 px-4 py-3 rounded-lg flex items-center gap-3 mb-6">
+                <span
+                  className="material-symbols-outlined text-primary"
+                  style={{ fontVariationSettings: "'FILL' 1" }}
+                >
+                  error
+                </span>
+                <p className="text-primary text-sm font-bold uppercase tracking-wide">
+                  Please select check in and check out dates to continue
+                </p>
+              </div>
+            )}
             <DatePicker
               propertyId={propertyId}
               propertyName={property?.name}
               handleSelectDateRoom={handleSelectDateRoom}
               selectedRoomTypeId={selectedRoom?.id ?? null}
             />
-            <section className={`${noRoomAvailable ? "text-center" : ""}`}>
+            <section
+              className={`${noRoomAvailable ? "text-center" : ""} border-b border-primary/10 pb-8 mb-8`}
+            >
               <h2 className="text-2xl font-bold ">{`${selectedDateRoomAvailability.length > 0 ? (noRoomAvailable ? "No rooms available for " : "Available rooms for ") : "Where you'll stay"}`}</h2>
               {selectedDateRoomAvailability.length > 0 ? (
                 <p className="text-primary text-sm mt-0.5 mb-6 font-bold">
@@ -329,6 +360,19 @@ function PropertyDetail() {
                 <p className="text-red-500 italic text-sm mt-0.5 mb-6 font-bold">
                   (* Select dates to see available rooms )
                 </p>
+              )}
+              {errors.roomTypeId?.message && (
+                <div className="bg-primary-container border border-primary/20 px-4 py-3 rounded-lg flex items-center gap-3 mb-6">
+                  <span
+                    className="material-symbols-outlined text-primary"
+                    style={{ fontVariationSettings: "'FILL' 1" }}
+                  >
+                    error
+                  </span>
+                  <p className="text-primary text-sm font-bold uppercase tracking-wide">
+                    Please select a room to continue
+                  </p>
+                </div>
               )}
               {!noRoomAvailable && (
                 <div className="flex flex-col gap-4">
@@ -454,12 +498,20 @@ function PropertyDetail() {
                 </div>
               </div>
               <button
+                disabled={isSubmitting}
                 onClick={handleSubmit(onSubmit, (errors) => {
                   console.error(errors);
                 })}
-                className="w-full bg-primary text-on-primary py-3.5 rounded-xl font-extrabold text-lg shadow-md active:scale-[0.98] transition-all hover:opacity-95 mb-6"
+                className={`w-full bg-primary text-on-primary py-3.5 rounded-xl font-extrabold text-lg shadow-md active:scale-[0.98] transition-all  mb-6 ${isSubmitting ? "opacity-50 cursor-not-allowed" : "hover:opacity-95 cursor-pointer"}`}
               >
-                Reserve Room
+                {isSubmitting ? (
+                  <div className="flex items-center justify-center gap-2">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                    Creating reservation...
+                  </div>
+                ) : (
+                  "Reserve Room"
+                )}
               </button>
               <p className="text-center text-on-surface-variant text-sm mb-6">
                 You won't be charged yet
