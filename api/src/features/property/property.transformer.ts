@@ -6,6 +6,11 @@ type RoomTypePrice = {
   isClosed: boolean;
 };
 
+type RoomType = {
+  id: string;
+  basePrice: number;
+};
+
 type DatePrice = {
   price: number;
   availableRooms: number;
@@ -22,6 +27,7 @@ type Transformed = Record<
 
 export const transformRoomTypePrices = (
   roomTypePrices: RoomTypePrice[],
+  roomTypes: RoomType[],
 ): Transformed => {
   // return roomTypePrices.reduce(
   //   (acc, item) => {
@@ -42,7 +48,9 @@ export const transformRoomTypePrices = (
   return roomTypePrices.reduce((acc, item) => {
     if (!acc[item.roomTypeId]) {
       acc[item.roomTypeId] = {
-        basePrice: item.price,
+        basePrice:
+          roomTypes.find((roomType) => roomType.id === item.roomTypeId)
+            ?.basePrice ?? 0,
         dates: {},
       };
     }

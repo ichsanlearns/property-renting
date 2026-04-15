@@ -9,17 +9,18 @@ import {
 import { generateCalendar } from "../../../shared/utils/calendar.util";
 import { useState, useMemo } from "react";
 import { usePropertyRoomPricesDate } from "../../tenant/property/hooks/useProperty";
-import type { GetPropertyRoomPricesDateResponse } from "../../tenant/property/api/property.response";
 import { getAvailableRoomTypesForRange } from "../utils/availability.util";
 import { formatRupiah } from "../../../shared/utils/price.util";
 
 function DatePicker({
   propertyId,
   propertyName,
+  selectedRoomTypeId,
   handleSelectDateRoom,
 }: {
   propertyId: string;
   propertyName?: string;
+  selectedRoomTypeId: string | null;
   handleSelectDateRoom: (selectedDateRoom: {
     checkInDate: Date | null;
     checkOutDate: Date | null;
@@ -38,21 +39,6 @@ function DatePicker({
     startDate: format(startOfMonth(currentMonth), "yyyy-MM-dd"),
     endDate: format(endOfMonth(currentMonth), "yyyy-MM-dd"),
   });
-
-  const roomTypeIds = useMemo(() => {
-    return [...new Set((roomPricesDate ?? []).map((item) => item.roomTypeId))];
-  }, [roomPricesDate]);
-
-  const availabilityMap = useMemo(() => {
-    const map = new Map<string, GetPropertyRoomPricesDateResponse>();
-
-    for (const item of roomPricesDate ?? []) {
-      const dateKey = format(new Date(item.date), "yyyy-MM-dd");
-      map.set(`${item.roomTypeId}-${dateKey}`, item);
-    }
-
-    return map;
-  }, [roomPricesDate]);
 
   const [selectedDate, setSelectedDate] = useState<{
     checkInDate: Date | null;
@@ -122,8 +108,7 @@ function DatePicker({
       const availableRooms = getAvailableRoomTypesForRange({
         checkInDate: selectedDate.checkInDate,
         checkOutDate: date,
-        availabilityMap,
-        roomTypeIds,
+        data: roomPricesDate!,
       });
 
       const availableRoomsDate = {
@@ -227,7 +212,7 @@ function DatePicker({
                     {format(day.date, "d")}
                     {day.isAvailable && day.isCurrentMonth && (
                       <span className="text-xs text-on-surface-variant">
-                        {roomPricesDate?.map((roomPrice) => (
+                        {/* {roomPricesDate?.map((roomPrice) => (
                           <span key={roomPrice.date}>
                             {roomPrice.availableRooms > 0 &&
                               new Date(roomPrice.date).getDate() ===
@@ -239,7 +224,34 @@ function DatePicker({
                                 </span>
                               )}
                           </span>
-                        ))}
+                        ))} */}
+
+                        <div className="flex flex-col items-center">
+                          {day.isAvailable && day.isCurrentMonth && (
+                            <span className="text-xs text-on-surface-variant">
+                              {(() => {
+                                const dateKey = format(day.date, "yyyy-MM-dd");
+                                const roomTypeId =
+                                  selectedRoomTypeId ??
+                                  Object.keys(roomPricesDate ?? {})[0];
+                                const dayData =
+                                  roomPricesDate?.[roomTypeId]?.dates[dateKey];
+
+                                if (
+                                  !dayData ||
+                                  dayData.availableRooms <= 0 ||
+                                  dayData.isClosed ||
+                                  day.date.getTime() <=
+                                    startOfDay(Date.now()).getTime() - 1
+                                ) {
+                                  return null;
+                                }
+
+                                return formatRupiah(dayData.price);
+                              })()}
+                            </span>
+                          )}
+                        </div>
                       </span>
                     )}
                   </div>
