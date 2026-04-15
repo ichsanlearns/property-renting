@@ -358,8 +358,6 @@ const seed = async () => {
           });
         }
       }
-
-      console.info("✅ Room availability seeded (UPSERT)");
     };
 
     await seedRoomAvailability();

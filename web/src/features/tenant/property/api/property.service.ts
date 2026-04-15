@@ -68,7 +68,7 @@ export const getPropertyRoomPricesDate = async ({
   endDate: string;
 }) => {
   const response = await api.get<
-    ApiResponse<PropertyResponse.GetPropertyRoomPricesDateResponse[]>
+    ApiResponse<PropertyResponse.GetPropertyRoomPricesDateResponse>
   >(PROPERTY_ENDPOINTS.GET_PROPERTY_ROOM_PRICES_DATE(propertyId), {
     params: {
       startDate,

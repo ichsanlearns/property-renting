@@ -109,12 +109,25 @@ export type GetPropertyByIdResponse = {
   roomTypes: RoomTypeResponse[];
 };
 
+// export type GetPropertyRoomPricesDateResponse = {
+//   roomTypeId: string;
+//   date: string;
+//   price: number;
+//   availableRooms: number;
+//   isClosed: boolean;
+// };
+
 export type GetPropertyRoomPricesDateResponse = {
-  roomTypeId: string;
-  date: string;
-  price: number;
-  availableRooms: number;
-  isClosed: boolean;
+  [roomTypeId: string]: {
+    basePrice: number;
+    dates: {
+      [date: string]: {
+        price: number;
+        availableRooms: number;
+        isClosed: boolean;
+      };
+    };
+  };
 };
 
 export type CreatePropertyResponse = PropertyBasicResponse;
