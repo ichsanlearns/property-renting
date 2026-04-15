@@ -7,7 +7,11 @@ import * as PropertyService from "./property.service.js";
 import * as geocodingService from "./geocoding.service.js";
 
 import * as uploadService from "../../shared/services/upload.service.js";
-import { getByIdBasicSchema, searchByParamsSchema } from "./property.validator.js";
+import {
+  getByIdBasicSchema,
+  searchByParamsSchema,
+} from "./property.validator.js";
+import { transformRoomTypePrices } from "./property.transformer.js";
 
 export const create = catchAsync(async (req: Request, res: Response) => {
   if (!req.user) throw new AppError("Unauthorized", 401);
@@ -149,11 +153,13 @@ export const getPropertyRoomPricesDate = catchAsync(
       endDate: string;
     };
 
-    const prices = await PropertyService.getPropertyRoomPricesDate({
+    const raw = await PropertyService.getPropertyRoomPricesDate({
       propertyId,
       startDate,
       endDate,
     });
+
+    const prices = transformRoomTypePrices(raw);
 
     res.status(200).json({
       message: "Property room prices by date fetched successfully",

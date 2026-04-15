@@ -370,6 +370,13 @@ export const getPropertyRoomPricesDate = async ({
 }) => {
   const roomTypes = await prisma.roomType.findMany({
     where: { propertyId },
+    orderBy: {
+      basePrice: "asc",
+    },
+    select: {
+      id: true,
+      basePrice: true,
+    },
   });
 
   const roomTypeIds = roomTypes.map((roomType) => roomType.id);
@@ -422,6 +429,27 @@ export const getPropertyRoomPricesDate = async ({
       };
     }),
   );
+
+  // const result = roomTypes.map((roomType) => {
+  //   const dates = fillEmpty
+  //     .filter((item) => item.roomTypeId === roomType.id)
+  //     .reduce(
+  //       (acc, item) => {
+  //         acc[item.date] = {
+  //           price: item.price,
+  //           availableRooms: item.availableRooms,
+  //           isClosed: item.isClosed,
+  //         };
+  //         return acc;
+  //       },
+  //       {} as Record<string, any>,
+  //     );
+
+  //   return {
+  //     ...roomType,
+  //     dates,
+  //   };
+  // });
 
   return result;
 };
