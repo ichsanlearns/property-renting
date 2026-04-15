@@ -8,6 +8,7 @@ import {
   toDateKey,
   toLocalMidnight,
 } from "../../shared/utils/date.util.js";
+import { transformRoomTypePrices } from "./property.transformer.js";
 
 type SearchPropertiesParams = {
   search?: string;
@@ -379,7 +380,12 @@ export const getPropertyRoomPricesDate = async ({
     },
   });
 
-  const roomTypeIds = roomTypes.map((roomType) => roomType.id);
+  const roomTypesWithBasePrice = roomTypes.map((roomType) => ({
+    ...roomType,
+    basePrice: Number(roomType.basePrice),
+  }));
+
+  const roomTypeIds = roomTypesWithBasePrice.map((roomType) => roomType.id);
 
   const roomTypePrices = await prisma.roomTypePrice.findMany({
     where: {
@@ -415,7 +421,7 @@ export const getPropertyRoomPricesDate = async ({
 
   const allDates = getDatesInRangeExclusive(startDate, endDate);
 
-  const result = roomTypeIds.flatMap((roomTypeId) =>
+  const raw = roomTypeIds.flatMap((roomTypeId) =>
     allDates.map((date) => {
       const key = buildDateKey(roomTypeId, date);
       const data = roomTypePricesMap.get(key);
@@ -423,12 +429,14 @@ export const getPropertyRoomPricesDate = async ({
       return {
         roomTypeId,
         date: toDateKey(date),
-        price: data?.price ?? null,
-        availableRooms: data?.availableRooms ?? null,
-        isClosed: data?.isClosed ?? null,
+        price: Number(data?.price) ?? 0,
+        availableRooms: Number(data?.availableRooms) ?? 0,
+        isClosed: data?.isClosed ?? true,
       };
     }),
   );
+
+  const result = transformRoomTypePrices(raw, roomTypesWithBasePrice);
 
   // const result = roomTypes.map((roomType) => {
   //   const dates = fillEmpty

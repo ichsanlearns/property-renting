@@ -153,17 +153,15 @@ export const getPropertyRoomPricesDate = catchAsync(
       endDate: string;
     };
 
-    const raw = await PropertyService.getPropertyRoomPricesDate({
+    const result = await PropertyService.getPropertyRoomPricesDate({
       propertyId,
       startDate,
       endDate,
     });
 
-    const prices = transformRoomTypePrices(raw);
-
     res.status(200).json({
       message: "Property room prices by date fetched successfully",
-      data: prices,
+      data: result,
     });
   },
 );
