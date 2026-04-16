@@ -1,52 +1,74 @@
 import { Link } from "react-router";
+import { useEffect, useState } from "react";
+import api from "../../../../api/client.ts";
+import { format } from "date-fns";
+import { formatRupiah } from "../../../../shared/utils/price.util.ts";
+import LoaderFetching from "../../../../shared/ui/LoaderFetching.tsx";
 
 function OrderList() {
-  const orders = [
-    {
-      id: "#BK-9021",
-      property: "Skyline Penthouse",
-      room: "Master Suite 01",
-      guest: "Sarah Jenkins",
-      checkIn: "Oct 24, 2023",
-      checkOut: "Oct 28, 2023",
-      price: "$1,420.00",
-      status: "Waiting Payment",
-      statusClass: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
-    },
-    {
-      id: "#BK-8842",
-      property: "Sunset Villa",
-      room: "Ocean View A",
-      guest: "Michael Ross",
-      checkIn: "Oct 20, 2023",
-      checkOut: "Oct 25, 2023",
-      price: "$2,850.00",
-      status: "Waiting Confirmation",
-      statusClass: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
-    },
-    {
-      id: "#BK-8751",
-      property: "Garden Studio",
-      room: "Standard Room",
-      guest: "Emily Blunt",
-      checkIn: "Oct 18, 2023",
-      checkOut: "Oct 19, 2023",
-      price: "$185.00",
-      status: "Confirmed",
-      statusClass: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400",
-    },
-    {
-      id: "#BK-8519",
-      property: "Skyline Penthouse",
-      room: "Guest Suite 04",
-      guest: "John Doe",
-      checkIn: "Oct 15, 2023",
-      checkOut: "Oct 17, 2023",
-      price: "$640.00",
-      status: "Cancelled",
-      statusClass: "bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400",
-    },
-  ];
+  const [orders, setOrders] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const res = await api.get("/reservations/tenant");
+
+        const mapped = res.data.data.map((item: any) => {
+          let status = "";
+          let statusClass = "";
+
+          switch (item.status) {
+            case "WAITING_PAYMENT":
+              status = "Waiting Payment";
+              statusClass = "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400";
+              break;
+            case "WAITING_CONFIRMATION":
+              status = "Waiting Confirmation";
+              statusClass = "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400";
+              break;
+            case "PAID":
+              status = "Confirmed";
+              statusClass = "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400";
+              break;
+            case "CANCELED":
+              status = "Cancelled";
+              statusClass = "bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400";
+              break;
+            default:
+              status = item.status;
+              statusClass = "bg-slate-100 text-slate-600";
+          }
+
+          return {
+            id: item.id,
+            code: item.reservationCode,
+            property: item.roomType.property.name,
+            room: item.roomNameSnapshot,
+            guest: item.customer?.name || "Guest",
+            checkIn: format(new Date(item.checkInDate), "MMM dd, yyyy"),
+            checkOut: format(new Date(item.checkOutDate), "MMM dd, yyyy"),
+            price: formatRupiah(Number(item.totalAmount)),
+            status,
+            statusClass,
+            paymentProof: item.paymentProof,
+          };
+        });
+
+        setOrders(mapped);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrders();
+  }, []);
+
+  if (loading) {
+    return <LoaderFetching />;
+  }
 
   return (
     <div className="p-8">
@@ -103,7 +125,7 @@ function OrderList() {
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
               {orders.map((order, index) => (
                 <tr key={index} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors group">
-                  <td className="px-6 py-4 text-sm font-medium text-slate-900 dark:text-slate-200">{order.id}</td>
+                  <td className="px-6 py-4 text-sm font-medium text-slate-900 dark:text-slate-200">{order.code}</td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <div className="size-10 rounded-lg bg-slate-200 overflow-hidden shrink-0">
@@ -122,7 +144,7 @@ function OrderList() {
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Link to="/tenant/paymentproof">
+                      <Link to={`/tenant/paymentproof/${order.code}`}>
                         <button className="px-3 py-1.5 text-xs font-semibold text-primary hover:bg-primary/10 rounded-md">Review</button>
                       </Link>
                       <button className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 material-symbols-outlined">visibility</button>

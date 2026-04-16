@@ -1,4 +1,61 @@
+import { useParams } from "react-router";
+import { useEffect, useState } from "react";
+import api from "../../../../api/client.ts";
+import { format } from "date-fns";
+import { formatRupiah } from "../../../../shared/utils/price.util";
+import { useNavigate } from "react-router";
+
 function PaymentProof() {
+  const { code } = useParams();
+  const navigate = useNavigate();
+  const [data, setData] = useState<any>(null);
+  const [loadingApprove, setLoadingApprove] = useState(false);
+
+  const fetchData = async () => {
+    try {
+      const res = await api.get("/reservations/tenant");
+
+      const found = res.data.data.find((item: any) => item.reservationCode === code);
+      setData(found);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleApprove = async () => {
+    try {
+      setLoadingApprove(true);
+      await api.patch("/payments/confirm", {
+        reservationId: data.id,
+      });
+      setData((prev: any) => ({
+        ...prev,
+        status: "PAID",
+      }));
+
+      alert("Payment approved successfully!");
+    } catch (err) {
+      console.error(err);
+      alert("Failed to approve payment");
+    } finally {
+      setLoadingApprove(false);
+    }
+    setTimeout(() => {
+      navigate("/tenant/orderslist");
+    }, 1000);
+  };
+
+  if (!data) {
+    return (
+      <div className="p-8 text-center">
+        <p className="text-lg font-bold">Data not found ❌</p>
+      </div>
+    );
+  }
   return (
     <div className="flex-1 overflow-y-auto p-4 lg:p-8 font-display">
       {/* Breadcrumbs */}
@@ -16,9 +73,12 @@ function PaymentProof() {
           <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Review Payment Proof</h2>
           <p className="text-slate-500 mt-1 font-medium">Verify guest bank transfer for booking #BK-9021</p>
         </div>
-        <div className="inline-flex items-center gap-2 px-4 py-2 bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 rounded-full border border-amber-200 dark:border-amber-800/50">
-          <span className="material-symbols-outlined text-lg">pending</span>
-          <span className="text-sm font-bold">Waiting for Confirmation</span>
+        <div
+          className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border
+  ${data.status === "WAITING_CONFIRMATION" ? "bg-amber-50 text-amber-600 border-amber-200" : "bg-emerald-50 text-emerald-600 border-emerald-200"}`}
+        >
+          <span className="material-symbols-outlined">{data.status === "PAID" ? "check_circle" : "pending"}</span>
+          <span className="text-sm font-bold">{data.status === "PAID" ? "Confirmed" : "Waiting for Confirmation"}</span>
         </div>
       </div>
 
@@ -33,29 +93,31 @@ function PaymentProof() {
             <div className="p-6 space-y-5">
               <div className="flex justify-between items-start">
                 <span className="text-sm text-slate-500">Booking ID</span>
-                <span className="text-sm font-bold text-slate-900 dark:text-white">#BK-9021</span>
+                <span className="text-sm font-bold text-slate-900 dark:text-white">{data.reservationCode}</span>
               </div>
               <div className="flex justify-between items-start">
                 <span className="text-sm text-slate-500">Guest Name</span>
-                <span className="text-sm font-bold text-slate-900 dark:text-white">Sarah Jenkins</span>
+                <span className="text-sm font-bold text-slate-900 dark:text-white">{data.customer?.name || "Guest"}</span>
               </div>
               <div className="flex justify-between items-start">
                 <span className="text-sm text-slate-500">Property</span>
                 <div className="text-right">
-                  <p className="text-sm font-bold text-slate-900 dark:text-white">Skyline Penthouse</p>
-                  <p className="text-xs text-slate-500">Master Suite 01</p>
+                  <p className="text-sm font-bold text-slate-900 dark:text-white">{data.roomType.property.name}</p>
+                  <p className="text-xs text-slate-500">{data.roomNameSnapshot}</p>
                 </div>
               </div>
               <div className="flex justify-between items-start">
                 <span className="text-sm text-slate-500">Stay Dates</span>
                 <div className="text-right">
-                  <p className="text-sm font-bold text-slate-900 dark:text-white">Oct 24 - Oct 28, 2023</p>
-                  <p className="text-xs text-slate-500">4 Nights</p>
+                  <p className="text-sm font-bold text-slate-900 dark:text-white">
+                    {" "}
+                    {format(new Date(data.checkInDate), "MMM dd")} - {format(new Date(data.checkOutDate), "MMM dd, yyyy")}
+                  </p>
                 </div>
               </div>
               <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center">
                 <span className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">Total Price</span>
-                <span className="text-xl font-black text-primary">$1,420.00</span>
+                <span className="text-xl font-black text-primary">{formatRupiah(Number(data.totalAmount))}</span>
               </div>
             </div>
           </div>
@@ -86,11 +148,7 @@ function PaymentProof() {
             </div>
             <div className="p-8 flex-1 bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
               <div className="relative group cursor-pointer max-w-lg w-full">
-                <img
-                  alt="Payment Proof"
-                  className="w-full h-auto rounded-lg shadow-2xl border border-slate-200 dark:border-slate-700"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuAHovWHpBRpwnvtzzzJi5GQRRwAg7kH8VJDibIx7CX-1wqSZSWRJEewnkzbBPIRdZ8nyeFlZGrASyaUVrdOrHDdYWsC4JZJu4skxcrxHybbolSE8cLs2zhYnRCBVBaK9LsO1CS9LH65T0a1_xcSRCodZMeIZuRf5sfe48W7Cni7Zrxdm4brJoQaJs9VBZaz5BbCdWHuUUbyN-OQ92mg_U2Kkw7UcQRq1NSq_lgu8mnqCjmSW-wrp2EV7U1fKWH5_PX4vK4jY4kuDo80"
-                />
+                <img alt="Payment Proof" className="w-full h-auto rounded-lg shadow-2xl border border-slate-200 dark:border-slate-700" src={data.paymentProof || "https://via.placeholder.com/400"} />
                 <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100">
                   <div className="bg-white text-slate-900 px-4 py-2 rounded-full font-bold flex items-center gap-2 shadow-lg">
                     <span className="material-symbols-outlined">zoom_in</span>
@@ -105,9 +163,14 @@ function PaymentProof() {
                 <span className="material-symbols-outlined">close</span>
                 Reject Payment
               </button>
-              <button className="flex items-center justify-center gap-2 py-4 px-6 bg-primary text-white rounded-xl font-bold hover:bg-primary/90 shadow-lg shadow-primary/20 transition-all active:scale-95">
+              <button
+                onClick={handleApprove}
+                disabled={loadingApprove || data.status === "PAID"}
+                className={`flex items-center justify-center gap-2 py-4 px-6 rounded-xl font-bold transition-all
+  ${data.status === "PAID" ? "bg-emerald-200 text-emerald-700 cursor-not-allowed" : "bg-primary text-white hover:bg-primary/90"}`}
+              >
                 <span className="material-symbols-outlined">check_circle</span>
-                Approve Payment
+                {loadingApprove ? "Processing..." : data.status === "PAID" ? "Approved" : "Approve Payment"}
               </button>
             </div>
           </div>

@@ -5,7 +5,7 @@ import { getMyReservationsRequest } from "../../reservations/api/reservations.se
 import { format } from "date-fns";
 import { formatRupiah } from "../../../shared/utils/price.util";
 import Footer from "../../../shared/ui/Footer";
-import LoaderFullPage from "../../../shared/ui/LoaderFullPage";
+import LoaderFetching from "../../../shared/ui/LoaderFetching";
 
 function MyBooking() {
   const { user } = useAuthStore();
@@ -92,7 +92,7 @@ function MyBooking() {
   });
 
   if (loading) {
-    return <LoaderFullPage />;
+    return <LoaderFetching />;
   }
   return (
     <div className="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
@@ -207,7 +207,9 @@ function MyBooking() {
                       </button>
                     </div>
                   ) : (
-                    <button className="w-full bg-primary text-white font-bold py-2.5 rounded-lg hover:bg-primary/90 transition-colors text-sm">View Details</button>
+                    <button onClick={() => navigate(`/payment/${booking.reservationCode}`)} className="w-full bg-primary text-white font-bold py-2.5 rounded-lg hover:bg-primary/90 transition-colors text-sm">
+                      View Details
+                    </button>
                   )}
                 </div>
               </div>
@@ -221,7 +223,9 @@ function MyBooking() {
             </div>
             <h3 className="font-bold text-lg mb-1">Book another stay?</h3>
             <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">Explore thousands of amazing properties.</p>
-            <button className="px-6 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold rounded-lg text-sm active:scale-95 transition-transform">Explore Now</button>
+            <button onClick={() => navigate(`/`)} className="px-6 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold rounded-lg text-sm active:scale-95 transition-transform">
+              Explore Now
+            </button>
           </div>
         </div>
 

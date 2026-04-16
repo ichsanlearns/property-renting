@@ -111,7 +111,7 @@ const router = createBrowserRouter([
             element: <OrderList />,
           },
           {
-            path: "paymentproof",
+            path: "paymentproof/:code",
             element: <PaymentProof />,
           },
           {
