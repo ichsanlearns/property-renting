@@ -3,25 +3,36 @@ import { usePropertyAllBasic } from "../../tenant/property/hooks/useProperty";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import LoaderFetching from "../../../shared/ui/LoaderFetching";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { searchSchema, type SearchSchema } from "../schema/search.schema";
 
 function HomePage() {
   const navigate = useNavigate();
   const { data: properties, isLoading } = usePropertyAllBasic();
 
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SearchSchema>({
+    resolver: zodResolver(searchSchema),
+  });
+
   const handleCardClick = (id: string) => {
     navigate(`/property/${id}`);
   };
 
-  const handleSearch = (search: string) => {
-    navigate(`/search?search=${search}`);
+  const handleSearch = (data: SearchSchema) => {
+    navigate(`/search?search=${data.search}`);
   };
 
   useEffect(() => {
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
-    }, []);
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, []);
 
   return (
     <main>
@@ -38,14 +49,19 @@ function HomePage() {
         <div className="relative z-10 w-full max-w-5xl px-6 text-center">
           <h1 className="text-4xl md:text-7xl font-extrabold text-white mb-6 tracking-tight leading-[1.1]">
             Your gateway to <br />
-            <span className="text-[#ff5c61]">extraordinary {" "} </span>
+            <span className="text-[#ff5c61]">extraordinary </span>
             stays.
           </h1>
           <p className="text-lg md:text-xl text-white/90 mb-12 max-w-2xl mx-auto font-medium">
             Discover unique homes and unforgettable experiences in over 190
             countries.
           </p>
-          <div className="glass-search max-w-3xl mx-auto rounded-full shadow-2xl flex flex-col md:flex-row items-center gap-2 group transition-all duration-500 hover:h-20  h-16 p-2">
+          <form
+            onSubmit={handleSubmit(handleSearch, (errors) =>
+              console.error(errors),
+            )}
+            className="glass-search max-w-3xl mx-auto rounded-full shadow-2xl flex flex-col md:flex-row items-center gap-2 group transition-all duration-500 hover:h-20  h-16 p-2"
+          >
             <div className="flex-1 w-full flex items-center px-6 py-3 border-r border-slate-200/50">
               <span
                 className="material-symbols-outlined text-slate-400 mr-3"
@@ -54,24 +70,24 @@ function HomePage() {
                 search
               </span>
               <input
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    handleSearch(e.currentTarget.value);
-                  }
-                }}
+                {...register("search")}
                 className="w-full bg-transparent border-none outline-none focus:ring-0 text-slate-800 placeholder-slate-400 font-medium text-base"
                 placeholder="Search city, country, or property"
                 type="text"
               />
             </div>
 
-            <button onClick={() => handleSearch("")} className="w-full md:w-auto bg-[#ff5c61] text-white p-3 rounded-full flex items-center justify-center hover:bg-[#e64a50] transition-colors shadow-lg shadow-[#ff5c61]/30 cursor-pointer">
+            <button
+              disabled={!!errors.search || isLoading}
+              type="submit"
+              className="w-full md:w-auto bg-[#ff5c61] text-white p-3 rounded-full flex items-center justify-center hover:bg-[#e64a50] transition-colors shadow-lg shadow-[#ff5c61]/30 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            >
               <span className="material-symbols-outlined" data-icon="search">
                 search
               </span>
               <span className="md:hidden ml-2 font-bold">Search</span>
             </button>
-          </div>
+          </form>
         </div>
       </section>
 
@@ -106,7 +122,7 @@ function HomePage() {
               key={property.id}
               className="group cursor-pointer"
             >
-              <div className="relative aspect-4/5 rounded-3xl overflow-hidden property-card-shadow transition-all duration-300 transform group-hover:scale-[1.02]">
+              <div className="relative aspect-4/5 rounded-3xl overflow-hidden transition-all duration-300 transform group-hover:scale-[1.02]">
                 <img
                   alt="Modern wood cabin"
                   className="w-full h-full object-cover"
@@ -225,7 +241,10 @@ function HomePage() {
           stays with StayHub.
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <button onClick={() => navigate("/search")} className="w-full sm:w-auto bg-[#ff5c61] text-white px-10 py-4 rounded-full text-lg font-bold shadow-xl shadow-[#ff5c61]/20 hover:opacity-90 active:scale-95 transition-all cursor-pointer">
+          <button
+            onClick={() => navigate("/search")}
+            className="w-full sm:w-auto bg-[#ff5c61] text-white px-10 py-4 rounded-full text-lg font-bold shadow-xl shadow-[#ff5c61]/20 hover:opacity-90 active:scale-95 transition-all cursor-pointer"
+          >
             Start Searching
           </button>
           {/* <button className="w-full sm:w-auto bg-white border-2 border-slate-200 px-10 py-4 rounded-full text-lg font-bold hover:bg-slate-50 transition-colors">
