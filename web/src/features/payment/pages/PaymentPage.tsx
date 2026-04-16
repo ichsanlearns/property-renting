@@ -37,7 +37,7 @@ export default function PaymentPage() {
       formData.append("file", file);
       formData.append("reservationId", data.id);
 
-      await api.post("/payment/upload-proof", formData, {
+      await api.post("/payments/upload-proof", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -53,70 +53,129 @@ export default function PaymentPage() {
     }
   };
 
-  if (loading) return <div className="text-center mt-20">Loading...</div>;
+  if (loading)
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background-light dark:bg-background-dark">
+        <span className="material-symbols-outlined animate-spin text-primary text-4xl">progress_activity</span>
+      </div>
+    );
 
   if (!data) {
-    return <div className="text-center mt-20">Data not found ❌</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background-light dark:bg-background-dark">
+        <div className="text-center">
+          <p className="text-xl font-bold">Data not found ❌</p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 py-10 px-4 flex justify-center">
-      <div className="max-w-xl w-full bg-white rounded-3xl shadow-xl p-8 space-y-6">
-        {/* HEADER */}
-        <h1 className="text-2xl font-extrabold text-center">Payment Details</h1>
+    <div className="min-h-screen bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased">
+      <div className="layout-container flex h-full grow flex-col">
+        <main className="flex flex-1 justify-center py-8 px-4 md:px-10">
+          <div className="flex flex-col max-w-160 flex-1 gap-6">
+            {/* TITLE */}
+            <div className="flex flex-col gap-2">
+              <h1 className="text-slate-900 dark:text-white text-3xl font-extrabold tracking-tight">Payment Status</h1>
+              <p className="text-slate-500 dark:text-slate-400 text-base">
+                Track the status of your booking: <span className="font-bold text-primary">{reservationCode}</span>
+              </p>
+            </div>
 
-        {/* RESERVATION CODE */}
-        <div className="bg-slate-100 rounded-xl p-4 text-center">
-          <p className="text-xs text-slate-500">Reservation Code</p>
-          <p className="font-bold text-primary text-lg">{reservationCode}</p>
-        </div>
+            {/* STATUS ALERT */}
+            {data.status === "WAITING_CONFIRMATION" && (
+              <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/50 rounded-xl p-5 flex flex-col gap-2">
+                <div className="flex items-center gap-3 text-amber-800 dark:text-amber-200">
+                  <span className="material-symbols-outlined">pending_actions</span>
+                  <span className="text-base font-bold">Payment Under Review</span>
+                </div>
+                <p className="text-amber-700 dark:text-amber-400/80 text-sm leading-relaxed">Verification may take up to 24 hours. Our team is currently verifying ваur payment.</p>
+              </div>
+            )}
 
-        {/* INFO */}
-        <div className="space-y-2 text-sm text-slate-600">
-          <p>
-            📅 {format(new Date(data.checkInDate), "dd MMM")} - {format(new Date(data.checkOutDate), "dd MMM yyyy")}
-          </p>
-          <p>🏨 {data.propertyNameSnapshot}</p>
-          <p>🛏️ {data.roomNameSnapshot}</p>
-        </div>
+            {data.status === "PAID" && (
+              <div className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800/50 rounded-xl p-5 flex flex-col gap-2">
+                <div className="flex items-center gap-3 text-emerald-800 dark:text-emerald-200">
+                  <span className="material-symbols-outlined">check_circle</span>
+                  <span className="text-base font-bold">Payment Confirmed</span>
+                </div>
+                <p className="text-emerald-700 dark:text-emerald-400/80 text-sm leading-relaxed">Your payment has been successfully verified. Enjoy your stay at {data.propertyNameSnapshot}!</p>
+              </div>
+            )}
 
-        {/* TOTAL */}
-        <div className="flex justify-between font-bold text-lg">
-          <span>Total</span>
-          <span className="text-primary">{formatRupiah(Number(data.totalAmount))}</span>
-        </div>
+            {/* PROPERTY SUMMARY CARD */}
+            <div className="bg-white dark:bg-slate-900 rounded-xl p-4 shadow-sm border border-slate-100 dark:border-slate-800 flex flex-col md:flex-row gap-4">
+              <div
+                className="w-full md:w-32 h-32 md:h-24 bg-center bg-no-repeat bg-cover rounded-lg shrink-0 bg-slate-200"
+                style={{
+                  backgroundImage: `url(${data.roomType?.roomTypeImages?.find((img: any) => img.isCover)?.imageUrl || data.roomType?.roomTypeImages?.[0]?.imageUrl || "https://via.placeholder.com/150"})`,
+                }}
+              ></div>
+              <div className="flex flex-col justify-between grow">
+                <div>
+                  <h3 className="text-slate-900 dark:text-white text-lg font-bold">{data.propertyNameSnapshot}</h3>
+                  <p className="text-slate-500 dark:text-slate-400 text-sm">
+                    {data.roomNameSnapshot} • {format(new Date(data.checkInDate), "MMM dd")} - {format(new Date(data.checkOutDate), "MMM dd, yyyy")}
+                  </p>
+                </div>
+                <div className="flex items-baseline gap-1 mt-2">
+                  <span className="text-xs text-slate-400">Total Paid:</span>
+                  <span className="text-primary font-bold text-xl">{formatRupiah(Number(data.totalAmount))}</span>
+                </div>
+              </div>
+            </div>
 
-        <hr />
+            {/* PAYMENT ACTION SECTION */}
+            <section className="bg-white dark:bg-slate-900 rounded-xl p-6 shadow-sm border border-slate-100 dark:border-slate-800">
+              <h3 className="text-slate-900 dark:text-white text-lg font-bold mb-4">Payment Proof</h3>
 
-        {/* STATUS BASED UI */}
+              {data.status === "WAITING_PAYMENT" ? (
+                <div className="space-y-4">
+                  <div className="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl p-8 text-center">
+                    <input type="file" id="upload-proof" className="hidden" onChange={(e) => setFile(e.target.files?.[0] || null)} />
+                    <label htmlFor="upload-proof" className="cursor-pointer flex flex-col items-center gap-2">
+                      <span className="material-symbols-outlined text-4xl text-slate-400">cloud_upload</span>
+                      <span className="text-sm text-slate-500">{file ? file.name : "Click to select payment receipt"}</span>
+                    </label>
+                  </div>
+                  <button
+                    onClick={handleUpload}
+                    disabled={!file || uploading}
+                    className={`w-full py-4 rounded-xl font-bold text-lg transition-all ${!file || uploading ? "bg-slate-200 text-slate-400 cursor-not-allowed" : "bg-primary text-white hover:opacity-90"}`}
+                  >
+                    {uploading ? "Uploading..." : "Upload Proof"}
+                  </button>
+                </div>
+              ) : (
+                <div className="relative group overflow-hidden rounded-lg border border-slate-200 dark:border-slate-800">
+                  <img
+                    alt="Payment Receipt Preview"
+                    className="w-full aspect-4/3 object-cover opacity-90 group-hover:opacity-100 transition-opacity bg-slate-50 dark:bg-slate-950"
+                    src={data.paymentProof || "https://via.placeholder.com/400x300?text=No+Image"}
+                  />
+                  <div className="mt-4 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 p-2">
+                    <div className="flex items-center gap-2">
+                      <span className="material-symbols-outlined text-sm">file_present</span>
+                      <span>payment_proof_{reservationCode}.jpg</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </section>
 
-        {data.status === "WAITING_PAYMENT" && (
-          <div className="space-y-4">
-            <p className="text-center text-slate-500">Upload your payment proof</p>
-
-            <input type="file" onChange={(e) => setFile(e.target.files?.[0] || null)} className="w-full" />
-
-            <button onClick={handleUpload} disabled={uploading} className="w-full bg-primary text-white py-3 rounded-xl font-bold">
-              {uploading ? "Uploading..." : "Upload Proof"}
-            </button>
+            {/* FOOTER INFO */}
+            <div className="pt-4 pb-10">
+              {data.status === "WAITING_CONFIRMATION" && (
+                <div className="w-full bg-slate-100 dark:bg-slate-800 text-slate-500 py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-2">
+                  <span className="material-symbols-outlined animate-spin text-xl">progress_activity</span>
+                  <span>Waiting for Confirmation</span>
+                </div>
+              )}
+              <p className="text-center text-slate-400 text-xs mt-4">We will notify you via email once your booking status changes.</p>
+            </div>
           </div>
-        )}
-
-        {data.status === "WAITING_CONFIRMATION" && (
-          <div className="text-center space-y-3">
-            <div className="text-yellow-500 text-4xl">⏳</div>
-            <p className="font-semibold">Waiting for confirmation</p>
-            <p className="text-sm text-slate-500">Your payment is being reviewed</p>
-          </div>
-        )}
-
-        {data.status === "PAID" && (
-          <div className="text-center space-y-3">
-            <div className="text-green-500 text-4xl">✅</div>
-            <p className="font-semibold">Payment Successful</p>
-            <p className="text-sm text-slate-500">Your booking is confirmed</p>
-          </div>
-        )}
+        </main>
       </div>
     </div>
   );
