@@ -11,11 +11,7 @@ function HomePage() {
   const navigate = useNavigate();
   const { data: properties, isLoading } = usePropertyAllBasic();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<SearchSchema>({
+  const { register, handleSubmit, watch } = useForm<SearchSchema>({
     resolver: zodResolver(searchSchema),
   });
 
@@ -24,7 +20,7 @@ function HomePage() {
   };
 
   const handleSearch = (data: SearchSchema) => {
-    navigate(`/search?search=${data.search}`);
+    navigate(`/search?search=${data.param}`);
   };
 
   useEffect(() => {
@@ -70,7 +66,7 @@ function HomePage() {
                 search
               </span>
               <input
-                {...register("search")}
+                {...register("param")}
                 className="w-full bg-transparent border-none outline-none focus:ring-0 text-slate-800 placeholder-slate-400 font-medium text-base"
                 placeholder="Search city, country, or property"
                 type="text"
@@ -78,7 +74,7 @@ function HomePage() {
             </div>
 
             <button
-              disabled={!!errors.search || isLoading}
+              disabled={!watch("param") || isLoading}
               type="submit"
               className="w-full md:w-auto bg-[#ff5c61] text-white p-3 rounded-full flex items-center justify-center hover:bg-[#e64a50] transition-colors shadow-lg shadow-[#ff5c61]/30 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
