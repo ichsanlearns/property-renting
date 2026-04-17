@@ -151,6 +151,7 @@ export const getTenantReservations = async (tenantId: string) => {
       roomType: {
         include: {
           property: true,
+          roomTypeImages: true,
         },
       },
     },

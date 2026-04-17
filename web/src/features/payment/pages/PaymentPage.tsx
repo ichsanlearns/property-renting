@@ -3,6 +3,7 @@ import { useParams } from "react-router";
 import { format } from "date-fns";
 import { formatRupiah } from "../../../shared/utils/price.util";
 import api from "../../../api/client";
+import toast from "react-hot-toast";
 
 export default function PaymentPage() {
   const { reservationCode } = useParams();
@@ -43,11 +44,11 @@ export default function PaymentPage() {
         },
       });
 
-      alert("Upload success!");
+      toast.success("Payment proof uploaded!");
       fetchReservation(); // refresh status
     } catch (err) {
       console.error(err);
-      alert("Upload failed");
+      toast.error("Upload failed, try again!");
     } finally {
       setUploading(false);
     }
@@ -84,6 +85,16 @@ export default function PaymentPage() {
             </div>
 
             {/* STATUS ALERT */}
+            {data.status === "WAITING_PAYMENT" && data.rejectionReason && (
+              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 rounded-xl p-5 flex flex-col gap-2">
+                <div className="flex items-center gap-3 text-red-700 dark:text-red-300">
+                  <span className="material-symbols-outlined">error</span>
+                  <span className="text-base font-bold">Payment Rejected</span>
+                </div>
+                <p className="text-red-600 dark:text-red-400 text-sm">Reason: {data.rejectionReason}</p>
+                <p className="text-xs text-red-400 mt-1">Please upload a new payment proof.</p>
+              </div>
+            )}
             {data.status === "WAITING_CONFIRMATION" && (
               <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/50 rounded-xl p-5 flex flex-col gap-2">
                 <div className="flex items-center gap-3 text-amber-800 dark:text-amber-200">

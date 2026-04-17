@@ -72,3 +72,39 @@ export const confirmPayment = async ({ reservationId, tenantId }: { reservationI
     return updated;
   });
 };
+
+export const rejectPayment = async ({ reservationId, tenantId, reason }: { reservationId: string; tenantId: string; reason?: string }) => {
+  return await prisma.$transaction(async (tx) => {
+    const reservation = await tx.reservation.findUnique({
+      where: { id: reservationId },
+      include: {
+        roomType: {
+          include: {
+            property: true,
+          },
+        },
+      },
+    });
+
+    if (!reservation) {
+      throw new AppError("Reservation not found", 404);
+    }
+    if (reservation.roomType.property.tenantId !== tenantId) {
+      throw new AppError("Unauthorized", 403);
+    }
+    if (reservation.status !== ReservationStatus.WAITING_CONFIRMATION) {
+      throw new AppError("Invalid reservation status", 400);
+    }
+
+    const updated = await tx.reservation.update({
+      where: { id: reservationId },
+      data: {
+        status: "WAITING_PAYMENT", // balik lagi
+        rejectionReason: reason || "Payment rejected",
+        paymentProof: null, // reset proof
+      },
+    });
+
+    return updated;
+  });
+};
