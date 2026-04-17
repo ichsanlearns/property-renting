@@ -8,6 +8,17 @@ import LoaderFetching from "../../../../shared/ui/LoaderFetching.tsx";
 function OrderList() {
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [filterStatus, setFilterStatus] = useState("ALL");
+  const [filterProperty, setFilterProperty] = useState("ALL");
+  const uniqueProperties = ["ALL", ...new Set(orders.map((o) => o.property))];
+
+  const filteredOrders = orders.filter((order) => {
+    const matchStatus = filterStatus === "ALL" || order.status === filterStatus;
+
+    const matchProperty = filterProperty === "ALL" || order.property === filterProperty;
+
+    return matchStatus && matchProperty;
+  });
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -52,6 +63,7 @@ function OrderList() {
             status,
             statusClass,
             paymentProof: item.paymentProof,
+            roomType: item.roomType,
           };
         });
 
@@ -65,6 +77,17 @@ function OrderList() {
 
     fetchOrders();
   }, []);
+
+  const totalRevenue = orders.reduce((acc, o) => {
+    if (o.status === "Confirmed") {
+      return acc + Number(o.price.replace(/[^\d]/g, ""));
+    }
+    return acc;
+  }, 0);
+
+  const totalConfirmed = orders.filter((o) => o.status === "Confirmed").length;
+  const totalPending = orders.filter((o) => o.status === "Waiting Payment" || o.status === "Waiting Confirmation").length;
+  const totalCancelled = orders.filter((o) => o.status === "Cancelled").length;
 
   if (loading) {
     return <LoaderFetching />;
@@ -82,20 +105,24 @@ function OrderList() {
       <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-4 mb-6 shadow-sm">
         <div className="flex flex-wrap items-center gap-4">
           <div className="flex items-center gap-2 p-1 bg-slate-100 dark:bg-slate-800 rounded-lg overflow-x-auto max-w-full">
-            <button className="px-4 py-1.5 text-sm font-semibold rounded-md bg-white dark:bg-slate-700 shadow-sm text-primary">All</button>
-            {["Waiting Payment", "Waiting Confirmation", "Confirmed", "Cancelled"].map((tab) => (
-              <button key={tab} className="px-4 py-1.5 text-sm font-medium rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900">
-                {tab}
+            {["ALL", "Waiting Payment", "Waiting Confirmation", "Confirmed", "Cancelled"].map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setFilterStatus(tab)}
+                className={`px-4 py-1.5 text-sm rounded-md ${filterStatus === tab ? "bg-white dark:bg-slate-700 shadow-sm text-primary font-semibold" : "text-slate-600 dark:text-slate-400"}`}
+              >
+                {tab === "ALL" ? "All" : tab}
               </button>
             ))}
           </div>
           <div className="flex-1"></div>
           <div className="flex items-center gap-3">
-            <select className="text-sm border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-lg focus:ring-primary focus:border-primary">
-              <option>All Properties</option>
-              <option>Skyline Penthouse</option>
-              <option>Sunset Villa</option>
-              <option>Garden Studio</option>
+            <select value={filterProperty} onChange={(e) => setFilterProperty(e.target.value)} className="text-sm border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-lg">
+              {uniqueProperties.map((prop) => (
+                <option key={prop} value={prop}>
+                  {prop === "ALL" ? "All Properties" : prop}
+                </option>
+              ))}
             </select>
             <div className="relative">
               <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">calendar_today</span>
@@ -123,13 +150,17 @@ function OrderList() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-              {orders.map((order, index) => (
+              {filteredOrders.map((order, index) => (
                 <tr key={index} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors group">
                   <td className="px-6 py-4 text-sm font-medium text-slate-900 dark:text-slate-200">{order.code}</td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <div className="size-10 rounded-lg bg-slate-200 overflow-hidden shrink-0">
-                        <img className="w-full h-full object-cover" src={`https://picsum.photos/seed/${index}/40/40`} alt={order.property} />
+                        <img
+                          className="w-full h-full object-cover"
+                          src={order.roomType?.roomTypeImages?.find((img: any) => img.isCover)?.imageUrl || order.roomType?.roomTypeImages?.[0]?.imageUrl || "https://via.placeholder.com/40"}
+                          alt={order.propertyNameSnapshot}
+                        />
                       </div>
                       <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{order.property}</span>
                     </div>
@@ -176,28 +207,28 @@ function OrderList() {
         {[
           {
             label: "Total Volume",
-            value: "$45,210.00",
+            value: formatRupiah(totalRevenue),
             trend: "+12.5%",
             icon: "analytics",
             color: "blue",
           },
           {
             label: "Confirmed",
-            value: "128",
+            value: totalConfirmed,
             trend: "+4.2%",
             icon: "check_circle",
             color: "emerald",
           },
           {
             label: "Pending",
-            value: "14",
+            value: totalPending,
             trend: "Alert",
             icon: "pending_actions",
             color: "amber",
           },
           {
             label: "Cancellations",
-            value: "8",
+            value: totalCancelled,
             trend: "-1.1%",
             icon: "cancel",
             color: "rose",

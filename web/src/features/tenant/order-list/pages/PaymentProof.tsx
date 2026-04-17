@@ -4,11 +4,13 @@ import api from "../../../../api/client.ts";
 import { format } from "date-fns";
 import { formatRupiah } from "../../../../shared/utils/price.util";
 import { useNavigate } from "react-router";
+import toast from "react-hot-toast";
 
 function PaymentProof() {
   const { code } = useParams();
   const navigate = useNavigate();
   const [data, setData] = useState<any>(null);
+  const [note, setNote] = useState("");
   const [loadingApprove, setLoadingApprove] = useState(false);
 
   const fetchData = async () => {
@@ -37,16 +39,31 @@ function PaymentProof() {
         status: "PAID",
       }));
 
-      alert("Payment approved successfully!");
+      toast.success("Payment approved successfully!");
     } catch (err) {
       console.error(err);
-      alert("Failed to approve payment");
+      toast.error("Failed to approve payment");
     } finally {
       setLoadingApprove(false);
     }
     setTimeout(() => {
-      navigate("/tenant/orderslist");
+      navigate("/tenant/orderlist");
     }, 1000);
+  };
+
+  const handleReject = async () => {
+    try {
+      await api.patch("/payments/reject", {
+        reservationId: data.id,
+        reason: note,
+      });
+
+      toast.error("Payment rejected!");
+      navigate("/tenant/orderlist");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to reject payment");
+    }
   };
 
   if (!data) {
@@ -128,6 +145,8 @@ function PaymentProof() {
               Notes for Rejection (Optional)
             </label>
             <textarea
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
               className="w-full p-4 rounded-lg bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-sm focus:ring-primary focus:border-primary outline-none transition-all"
               id="rejection-notes"
               placeholder="e.g. Account name mismatch, amount incorrect..."
@@ -159,7 +178,10 @@ function PaymentProof() {
             </div>
             {/* Actions Footer */}
             <div className="p-6 border-t border-slate-100 dark:border-slate-800 grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <button className="flex items-center justify-center gap-2 py-4 px-6 border-2 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 rounded-xl font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition-all active:scale-95">
+              <button
+                onClick={handleReject}
+                className="flex items-center justify-center gap-2 py-4 px-6 border-2 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 rounded-xl font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition-all active:scale-95"
+              >
                 <span className="material-symbols-outlined">close</span>
                 Reject Payment
               </button>
