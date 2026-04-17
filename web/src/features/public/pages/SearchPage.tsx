@@ -1,4 +1,3 @@
-import { formatRupiah } from "../../../shared/utils/price.util";
 import { usePropertySearch } from "../../tenant/property/hooks/useProperty";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import type { SearchSchema } from "../schema/search.schema";
