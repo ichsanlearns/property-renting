@@ -1,14 +1,32 @@
-import { formatRupiah } from "../../../shared/utils/price.util";
 import { usePropertySearch } from "../../tenant/property/hooks/useProperty";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import type { SearchSchema } from "../schema/search.schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { searchSchema } from "../schema/search.schema";
+import PropertyCard from "../components/PropertyCard";
 
 function SearchPage() {
   const [searchParams] = useSearchParams();
   const search = searchParams.get("search");
+  const navigate = useNavigate();
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { isLoading },
+  } = useForm<SearchSchema>({
+    resolver: zodResolver(searchSchema),
+  });
 
   const { data: properties } = usePropertySearch({
     search: search || "",
   });
+
+  const handleSearch = (data: SearchSchema) => {
+    navigate(`/search?search=${data.param}`);
+  };
 
   return (
     <>
@@ -16,13 +34,20 @@ function SearchPage() {
         <div className="max-w-screen-2xl mx-auto px-6 md:px-12 py-4 mt-2">
           <div className="flex items-center justify-center gap-4">
             <div className="relative w-full max-w-lg">
-              <input
-                className="w-full h-12 pl-6 pr-14 bg-white border border-outline rounded-full shadow-sm hover:shadow-md focus:ring-2 focus:ring-primary focus:border-primary transition-shadow cursor-text text-sm font-medium text-on-surface"
-                id="search-input"
-                placeholder="Search city, country, or property"
-                type="text"
-              />
-              <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-primary p-2 rounded-full flex items-center justify-center hover:opacity-90 transition-opacity">
+              <form onSubmit={handleSubmit(handleSearch)}>
+                <input
+                  {...register("param")}
+                  className="w-full h-12 pl-6 pr-14 bg-white border border-outline rounded-full shadow-sm hover:shadow-md focus:ring-2 focus:ring-primary focus:border-primary transition-shadow cursor-text text-sm font-medium text-on-surface"
+                  id="search-input"
+                  placeholder="Search city, country, or property"
+                  type="text"
+                />
+              </form>
+              <button
+                type="submit"
+                disabled={!watch("param") || isLoading}
+                className="absolute right-2 top-1/2 -translate-y-1/2 bg-primary p-2 rounded-full flex items-center justify-center cursor-pointer hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+              >
                 <span
                   className="material-symbols-outlined text-white text-sm"
                   data-icon="search"
@@ -102,7 +127,10 @@ function SearchPage() {
             </h1>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-10">
-            {properties?.map((property) => (
+            {properties && (
+              <PropertyCard properties={properties} page="search" />
+            )}
+            {/* {properties?.map((property) => (
               <div
                 key={property.id}
                 className="group cursor-pointer"
@@ -158,7 +186,7 @@ function SearchPage() {
                   )}
                 </div>
               </div>
-            ))}
+            ))} */}
             {/* <div
               className="group cursor-pointer"
               data-location="Topanga Canyon, Malibu"

@@ -15,6 +15,7 @@ export type GetPropertyAllBasicResponse = {
   city: string;
   province: string;
   country: string;
+
   price: number;
   averageRating: number;
   reviewCount: number;
@@ -27,8 +28,10 @@ export type GetPropertySearchResponse = {
   city: string;
   province: string;
   country: string;
+
   latitude: number;
   longitude: number;
+
   price: number;
   averageRating: number;
   reviewCount: number;

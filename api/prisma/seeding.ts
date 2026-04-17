@@ -327,40 +327,40 @@ const seed = async () => {
       data: roomAmenities,
     });
 
-    const seedRoomAvailability = async () => {
-      const roomTypes = await prisma.roomType.findMany();
+    // const seedRoomAvailability = async () => {
+    //   const roomTypes = await prisma.roomType.findMany();
 
-      const today = new Date();
-      const totalDays = 30;
+    //   const today = new Date();
+    //   const totalDays = 30;
 
-      for (const room of roomTypes) {
-        for (let i = 0; i < totalDays; i++) {
-          const date = new Date();
-          date.setDate(today.getDate() + i);
-          date.setHours(0, 0, 0, 0);
+    //   for (const room of roomTypes) {
+    //     for (let i = 0; i < totalDays; i++) {
+    //       const date = new Date();
+    //       date.setDate(today.getDate() + i);
+    //       date.setHours(0, 0, 0, 0);
 
-          await prisma.roomTypePrice.upsert({
-            where: {
-              roomTypeId_date: {
-                roomTypeId: room.id,
-                date: date,
-              },
-            },
-            update: {
-              availableRooms: room.totalRooms,
-            },
-            create: {
-              roomTypeId: room.id,
-              date: date,
-              availableRooms: room.totalRooms,
-              price: room.basePrice,
-            },
-          });
-        }
-      }
-    };
+    //       await prisma.roomTypePrice.upsert({
+    //         where: {
+    //           roomTypeId_date: {
+    //             roomTypeId: room.id,
+    //             date: date,
+    //           },
+    //         },
+    //         update: {
+    //           availableRooms: room.totalRooms,
+    //         },
+    //         create: {
+    //           roomTypeId: room.id,
+    //           date: date,
+    //           availableRooms: room.totalRooms,
+    //           price: room.basePrice,
+    //         },
+    //       });
+    //     }
+    //   }
+    // };
 
-    await seedRoomAvailability();
+    // await seedRoomAvailability();
 
     // =============================
     // PRICING RULES
@@ -443,11 +443,59 @@ const seed = async () => {
       ],
     });
 
+    const property2 = await create({
+      data: {
+        categoryId: propertyCategories[1]!.id,
+        name: "Property 2",
+        description: "Description 2",
+        latitude: -6.9175,
+        longitude: 107.6191,
+        numberOfBathrooms: 4,
+        country: "Indonesia",
+        city: "Bandung",
+        province: "Jawa Barat",
+        fullAddress: "Jl. Asia Afrika No. 1",
+      },
+      tenantId: users[1]!.id,
+      images: [
+        {
+          imageUrl: propertyImageList[3]!.imageUrl,
+          isCover: true,
+          order: 1,
+        },
+        {
+          imageUrl: propertyImageList[4]!.imageUrl,
+          isCover: false,
+          order: 2,
+        },
+        {
+          imageUrl: propertyImageList[2]!.imageUrl,
+          isCover: false,
+          order: 3,
+        },
+        {
+          imageUrl: propertyImageList[0]!.imageUrl,
+          isCover: false,
+          order: 4,
+        },
+        {
+          imageUrl: propertyImageList[1]!.imageUrl,
+          isCover: false,
+          order: 5,
+        },
+      ],
+      amenities: [
+        propertyAmenities[3]!.id,
+        propertyAmenities[4]!.id,
+        propertyAmenities[5]!.id,
+      ],
+    });
+
     // =============================
     // CREATE ROOM
     // =============================
 
-    const room1 = await createRoom({
+    const room1p1 = await createRoom({
       data: {
         propertyId: property1.id,
         name: "Room 1",
@@ -485,7 +533,7 @@ const seed = async () => {
       ],
     });
 
-    const room2 = await createRoom({
+    const room2p1 = await createRoom({
       data: {
         propertyId: property1.id,
         name: "Room 2",
@@ -523,8 +571,87 @@ const seed = async () => {
       ],
     });
 
-    await ensurePrices({ roomTypeId: room1.id, daysAhead: 30 });
-    await ensurePrices({ roomTypeId: room2.id, daysAhead: 30 });
+    await ensurePrices({ roomTypeId: room1p1.id, daysAhead: 30 });
+    await ensurePrices({ roomTypeId: room2p1.id, daysAhead: 30 });
+
+    const room1p2 = await createRoom({
+      data: {
+        propertyId: property2.id,
+        name: "Room 1",
+        description: "Description 1",
+        basePrice: 150000,
+        totalRooms: 4,
+        bedType: BedType.KING_SIZE,
+        bedCount: 1,
+        viewType: ViewType.OCEAN_FRONT,
+        bathroomType: BathroomType.PRIVATE,
+        capacity: 2,
+        isPublished: PublishStatus.PUBLISHED,
+      },
+      images: [
+        {
+          imageUrl: roomImageList[2]!.imageUrl,
+          isCover: true,
+          order: 1,
+        },
+        {
+          imageUrl: roomImageList[1]!.imageUrl,
+          isCover: false,
+          order: 2,
+        },
+        {
+          imageUrl: roomImageList[0]!.imageUrl,
+          isCover: false,
+          order: 3,
+        },
+      ],
+      amenities: [
+        roomAmenities[2]!.id,
+        roomAmenities[1]!.id,
+        roomAmenities[0]!.id,
+      ],
+    });
+
+    const room2p2 = await createRoom({
+      data: {
+        propertyId: property2.id,
+        name: "Room 2",
+        description: "Description 2",
+        basePrice: 200000,
+        totalRooms: 4,
+        bedType: BedType.QUEEN_SIZE,
+        bedCount: 1,
+        viewType: ViewType.POOL_SIDE,
+        bathroomType: BathroomType.PRIVATE,
+        capacity: 2,
+        isPublished: PublishStatus.PUBLISHED,
+      },
+      images: [
+        {
+          imageUrl: roomImageList[1]!.imageUrl,
+          isCover: true,
+          order: 1,
+        },
+        {
+          imageUrl: roomImageList[3]!.imageUrl,
+          isCover: false,
+          order: 2,
+        },
+        {
+          imageUrl: roomImageList[2]!.imageUrl,
+          isCover: false,
+          order: 3,
+        },
+      ],
+      amenities: [
+        roomAmenities[6]!.id,
+        roomAmenities[4]!.id,
+        roomAmenities[5]!.id,
+      ],
+    });
+
+    await ensurePrices({ roomTypeId: room1p2.id, daysAhead: 30 });
+    await ensurePrices({ roomTypeId: room2p2.id, daysAhead: 30 });
 
     // =============================
     // DONE

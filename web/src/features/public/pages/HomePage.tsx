@@ -3,25 +3,29 @@ import { usePropertyAllBasic } from "../../tenant/property/hooks/useProperty";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import LoaderFetching from "../../../shared/ui/LoaderFetching";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { searchSchema, type SearchSchema } from "../schema/search.schema";
+import PropertyCard from "../components/PropertyCard";
 
 function HomePage() {
   const navigate = useNavigate();
   const { data: properties, isLoading } = usePropertyAllBasic();
 
-  const handleCardClick = (id: string) => {
-    navigate(`/property/${id}`);
-  };
+  const { register, handleSubmit, watch } = useForm<SearchSchema>({
+    resolver: zodResolver(searchSchema),
+  });
 
-  const handleSearch = (search: string) => {
-    navigate(`/search?search=${search}`);
+  const handleSearch = (data: SearchSchema) => {
+    navigate(`/search?search=${data.param}`);
   };
 
   useEffect(() => {
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
-    }, []);
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, []);
 
   return (
     <main>
@@ -38,14 +42,19 @@ function HomePage() {
         <div className="relative z-10 w-full max-w-5xl px-6 text-center">
           <h1 className="text-4xl md:text-7xl font-extrabold text-white mb-6 tracking-tight leading-[1.1]">
             Your gateway to <br />
-            <span className="text-[#ff5c61]">extraordinary {" "} </span>
+            <span className="text-[#ff5c61]">extraordinary </span>
             stays.
           </h1>
           <p className="text-lg md:text-xl text-white/90 mb-12 max-w-2xl mx-auto font-medium">
             Discover unique homes and unforgettable experiences in over 190
             countries.
           </p>
-          <div className="glass-search max-w-3xl mx-auto rounded-full shadow-2xl flex flex-col md:flex-row items-center gap-2 group transition-all duration-500 hover:h-20  h-16 p-2">
+          <form
+            onSubmit={handleSubmit(handleSearch, (errors) =>
+              console.error(errors),
+            )}
+            className="glass-search max-w-3xl mx-auto rounded-full shadow-2xl flex flex-col md:flex-row items-center gap-2 group transition-all duration-500 hover:h-20  h-16 p-2"
+          >
             <div className="flex-1 w-full flex items-center px-6 py-3 border-r border-slate-200/50">
               <span
                 className="material-symbols-outlined text-slate-400 mr-3"
@@ -54,24 +63,24 @@ function HomePage() {
                 search
               </span>
               <input
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    handleSearch(e.currentTarget.value);
-                  }
-                }}
+                {...register("param")}
                 className="w-full bg-transparent border-none outline-none focus:ring-0 text-slate-800 placeholder-slate-400 font-medium text-base"
                 placeholder="Search city, country, or property"
                 type="text"
               />
             </div>
 
-            <button onClick={() => handleSearch("")} className="w-full md:w-auto bg-[#ff5c61] text-white p-3 rounded-full flex items-center justify-center hover:bg-[#e64a50] transition-colors shadow-lg shadow-[#ff5c61]/30 cursor-pointer">
+            <button
+              disabled={!watch("param") || isLoading}
+              type="submit"
+              className="w-full md:w-auto bg-[#ff5c61] text-white p-3 rounded-full flex items-center justify-center hover:bg-[#e64a50] transition-colors shadow-lg shadow-[#ff5c61]/30 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            >
               <span className="material-symbols-outlined" data-icon="search">
                 search
               </span>
               <span className="md:hidden ml-2 font-bold">Search</span>
             </button>
-          </div>
+          </form>
         </div>
       </section>
 
@@ -100,27 +109,20 @@ function HomePage() {
         </div>
         {isLoading && <LoaderFetching />}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {properties?.map((property) => (
+          {properties && <PropertyCard properties={properties} />}
+          {/* {properties?.map((property) => (
             <div
               onClick={() => handleCardClick(property.id)}
               key={property.id}
               className="group cursor-pointer"
             >
-              <div className="relative aspect-4/5 rounded-3xl overflow-hidden property-card-shadow transition-all duration-300 transform group-hover:scale-[1.02]">
+              <div className="relative aspect-4/5 rounded-3xl overflow-hidden transition-all duration-300 transform group-hover:scale-[1.02]">
                 <img
                   alt="Modern wood cabin"
                   className="w-full h-full object-cover"
                   data-alt="Architectural wood and glass cabin nestled in a snowy pine forest with warm interior lights glowing against the blue dusk"
                   src={property.coverImage}
                 />
-                {/* <button className="absolute top-4 right-4 bg-white/20 backdrop-blur-md p-2 rounded-full hover:bg-white transition-colors">
-                  <span
-                    className="material-symbols-outlined text-white group-hover:text-[#ff5c61]"
-                    data-icon="favorite"
-                  >
-                    favorite
-                  </span>
-                </button> */}
                 <div className="absolute bottom-0 left-0 right-0 p-6 bg-linear-to-t from-black/60 to-transparent">
                   <span className="bg-white/20 backdrop-blur-md text-white text-[10px] uppercase font-bold px-3 py-1 rounded-full border border-white/30">
                     Rare find
@@ -158,7 +160,7 @@ function HomePage() {
                 )}
               </div>
             </div>
-          ))}
+          ))} */}
         </div>
       </section>
       {/* <section className="py-16 px-6 md:px-12 max-w-[1440px] mx-auto bg-surface-variant/50 rounded-[3rem] my-12">
@@ -225,7 +227,10 @@ function HomePage() {
           stays with StayHub.
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <button onClick={() => navigate("/search")} className="w-full sm:w-auto bg-[#ff5c61] text-white px-10 py-4 rounded-full text-lg font-bold shadow-xl shadow-[#ff5c61]/20 hover:opacity-90 active:scale-95 transition-all cursor-pointer">
+          <button
+            onClick={() => navigate("/search")}
+            className="w-full sm:w-auto bg-[#ff5c61] text-white px-10 py-4 rounded-full text-lg font-bold shadow-xl shadow-[#ff5c61]/20 hover:opacity-90 active:scale-95 transition-all cursor-pointer"
+          >
             Start Searching
           </button>
           {/* <button className="w-full sm:w-auto bg-white border-2 border-slate-200 px-10 py-4 rounded-full text-lg font-bold hover:bg-slate-50 transition-colors">
