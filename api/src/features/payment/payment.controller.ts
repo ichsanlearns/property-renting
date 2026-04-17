@@ -35,3 +35,18 @@ export const confirmPaymentController = catchAsync(async (req, res) => {
     data: result,
   });
 });
+
+export const rejectPaymentController = catchAsync(async (req, res) => {
+  const { reservationId, reason } = req.body;
+
+  const result = await paymentService.rejectPayment({
+    reservationId,
+    tenantId: req.user!.userId,
+    reason,
+  });
+
+  res.status(200).json({
+    message: "Payment rejected",
+    data: result,
+  });
+});

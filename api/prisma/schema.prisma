@@ -425,6 +425,7 @@ model Reservation {
 
   paymentDeadline    DateTime  @map("payment_deadline")
   paymentProof       String?   @map("payment_proof")
+  rejectionReason    String?   @map("rejection_reason")
   
   roomNameSnapshot   String    @map("room_name_snapshot")
   propertyNameSnapshot String    @map("property_name_snapshot")
