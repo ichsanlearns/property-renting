@@ -5,6 +5,7 @@ import type { SearchSchema } from "../schema/search.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { searchSchema } from "../schema/search.schema";
+import PropertyCard from "../components/PropertyCard";
 
 function SearchPage() {
   const [searchParams] = useSearchParams();
@@ -127,7 +128,10 @@ function SearchPage() {
             </h1>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-10">
-            {properties?.map((property) => (
+            {properties && (
+              <PropertyCard properties={properties} page="search" />
+            )}
+            {/* {properties?.map((property) => (
               <div
                 key={property.id}
                 className="group cursor-pointer"
@@ -183,7 +187,7 @@ function SearchPage() {
                   )}
                 </div>
               </div>
-            ))}
+            ))} */}
             {/* <div
               className="group cursor-pointer"
               data-location="Topanga Canyon, Malibu"

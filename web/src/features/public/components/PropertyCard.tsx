@@ -3,8 +3,10 @@ import { useNavigate } from "react-router-dom";
 
 function PropertyCard({
   properties,
+  page,
 }: {
   properties: GetPropertyAllBasicResponse;
+  page?: "search" | "home";
 }) {
   const navigate = useNavigate();
   const handleCardClick = (id: string) => {
@@ -17,7 +19,9 @@ function PropertyCard({
       key={property.id}
       className="group cursor-pointer"
     >
-      <div className="relative aspect-4/5 rounded-3xl overflow-hidden transition-all duration-300 transform group-hover:scale-[1.02]">
+      <div
+        className={`relative ${page === "search" ? "aspect-4/3" : "aspect-4/5"} rounded-3xl overflow-hidden transition-all duration-300 transform group-hover:scale-[1.02]`}
+      >
         <img
           alt="Modern wood cabin"
           className="w-full h-full object-cover"
