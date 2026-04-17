@@ -6,6 +6,7 @@ import LoaderFetching from "../../../shared/ui/LoaderFetching";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { searchSchema, type SearchSchema } from "../schema/search.schema";
+import PropertyCard from "../components/PropertyCard";
 
 function HomePage() {
   const navigate = useNavigate();
@@ -14,10 +15,6 @@ function HomePage() {
   const { register, handleSubmit, watch } = useForm<SearchSchema>({
     resolver: zodResolver(searchSchema),
   });
-
-  const handleCardClick = (id: string) => {
-    navigate(`/property/${id}`);
-  };
 
   const handleSearch = (data: SearchSchema) => {
     navigate(`/search?search=${data.param}`);
@@ -112,7 +109,8 @@ function HomePage() {
         </div>
         {isLoading && <LoaderFetching />}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {properties?.map((property) => (
+          {properties && <PropertyCard properties={properties} />}
+          {/* {properties?.map((property) => (
             <div
               onClick={() => handleCardClick(property.id)}
               key={property.id}
@@ -125,14 +123,6 @@ function HomePage() {
                   data-alt="Architectural wood and glass cabin nestled in a snowy pine forest with warm interior lights glowing against the blue dusk"
                   src={property.coverImage}
                 />
-                {/* <button className="absolute top-4 right-4 bg-white/20 backdrop-blur-md p-2 rounded-full hover:bg-white transition-colors">
-                  <span
-                    className="material-symbols-outlined text-white group-hover:text-[#ff5c61]"
-                    data-icon="favorite"
-                  >
-                    favorite
-                  </span>
-                </button> */}
                 <div className="absolute bottom-0 left-0 right-0 p-6 bg-linear-to-t from-black/60 to-transparent">
                   <span className="bg-white/20 backdrop-blur-md text-white text-[10px] uppercase font-bold px-3 py-1 rounded-full border border-white/30">
                     Rare find
@@ -170,7 +160,7 @@ function HomePage() {
                 )}
               </div>
             </div>
-          ))}
+          ))} */}
         </div>
       </section>
       {/* <section className="py-16 px-6 md:px-12 max-w-[1440px] mx-auto bg-surface-variant/50 rounded-[3rem] my-12">
