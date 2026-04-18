@@ -397,14 +397,16 @@ model PriceOverride {
 
 model PricingRule {
   id              String   @id @default(cuid())
+  name            String?
+  createdBy       String   @map("created_by")
 
   scopeType       ScopeType @map("scope_type")
-  tenantId        String @map("tenant_id")
+  tenantId        String? @map("tenant_id")
   propertyId      String? @map("property_id")
   roomTypeId      String? @map("room_type_id")
 
-  startDate       DateTime @map("start_date") 
-  endDate         DateTime @map("end_date")
+  startDate       DateTime @map("start_date") @db.Date
+  endDate         DateTime @map("end_date") @db.Date
 
   dayOfWeek       Int[] @map("day_of_week")
 
@@ -415,8 +417,6 @@ model PricingRule {
   priority        Int      @default(0)
   isActive        Boolean  @default(true) @map("is_active")
 
-  name            String?
-  createdBy       String   @map("created_by")
 
   createdAt       DateTime @default(now()) @map("created_at")
   updatedAt       DateTime @updatedAt @map("updated_at")
@@ -429,7 +429,7 @@ model PricingRule {
   @@index([tenantId, propertyId])
   @@index([tenantId, roomTypeId])
 
-  tenant User @relation(fields: [tenantId], references: [id])
+  tenant User? @relation(fields: [tenantId], references: [id])
   property Property? @relation(fields: [propertyId], references: [id])
   roomType RoomType? @relation(fields: [roomTypeId], references: [id])
 
