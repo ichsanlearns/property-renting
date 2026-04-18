@@ -45,10 +45,16 @@ enum PriceAdjustmentType {
   PERCENTAGE
 }
 
-enum PricingRuleType {
-  WEEKEND
-  HOLIDAY
-  SEASONAL
+enum PriceAdjustmentDirection {
+  MINUS
+  PLUS
+}
+
+enum ScopeType {
+  SYSTEM
+  TENANT
+  PROPERTY
+  ROOM_TYPE
 }
 
 enum VerificationStatus {
@@ -121,6 +127,7 @@ model User {
   points Point[]
   coupons Coupon[]
   accounts Account[]
+  pricingRules PricingRule[]
 
   @@map("users")
 }
@@ -208,6 +215,7 @@ model Property {
   roomTypes         RoomType[]
   reviews            Review[]
   voucher            Voucher[]
+  pricingRules       PricingRule[]
 
   @@index([city])
   @@index([categoryId])
@@ -311,6 +319,7 @@ model RoomType {
   roomAmenities    RoomTypeAmenity[]
   roomTypePrices   RoomTypePrice[]
   priceOverrides   PriceOverride[]
+  pricingRules       PricingRule[]
 
   @@map("room_types")
 }
@@ -387,17 +396,42 @@ model PriceOverride {
 }
 
 model PricingRule {
-  id              String                              @id @default(uuid())
-  type            PricingRuleType
-  adjustmentType  PriceAdjustmentType                 @map("adjustment_type")
-  value           Decimal    @db.Decimal(10,2)
+  id              String   @id @default(cuid())
 
-  dayOfWeek       Int?                          @map("day_of_week")
-  
-  isActive        Boolean                             @default(true) @map("is_active")
+  scopeType       ScopeType @map("scope_type")
+  tenantId        String @map("tenant_id")
+  propertyId      String? @map("property_id")
+  roomTypeId      String? @map("room_type_id")
 
-  createdAt       DateTime   @map("created_at")            @default(now()) 
-  updatedAt       DateTime   @map("updated_at")            @updatedAt
+  startDate       DateTime @map("start_date") 
+  endDate         DateTime @map("end_date")
+
+  dayOfWeek       Int[] @map("day_of_week")
+
+  adjustmentType  PriceAdjustmentType @map("adjustment_type")
+  adjustmentDirection PriceAdjustmentDirection @map("adjustment_direction")
+  adjustmentValue           Decimal  @db.Decimal(10,2)
+
+  priority        Int      @default(0)
+  isActive        Boolean  @default(true) @map("is_active")
+
+  name            String?
+  createdBy       String   @map("created_by")
+
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@index([tenantId])
+  @@index([propertyId])
+  @@index([roomTypeId])
+  @@index([startDate, endDate])
+  @@index([tenantId, scopeType])
+  @@index([tenantId, propertyId])
+  @@index([tenantId, roomTypeId])
+
+  tenant User @relation(fields: [tenantId], references: [id])
+  property Property? @relation(fields: [propertyId], references: [id])
+  roomType RoomType? @relation(fields: [roomTypeId], references: [id])
 
   @@map("pricing_rules")
 }
