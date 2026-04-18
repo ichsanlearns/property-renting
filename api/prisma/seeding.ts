@@ -375,13 +375,13 @@ const seed = async () => {
 
         scopeType: ScopeType.SYSTEM,
 
-        startDate: "2026-01-01",
-        endDate: "2026-12-31",
+        startDate: new Date("2026-01-01"),
+        endDate: new Date("2026-12-31"),
 
         dayOfWeek: [0, 6],
 
         adjustmentType: PriceAdjustmentType.PERCENTAGE,
-        adjustmentDirection: PriceAdjustmentDirection.PLUS,
+        adjustmentDirection: PriceAdjustmentDirection.INCREASE,
         adjustmentValue: 10,
       },
     ];

@@ -46,8 +46,8 @@ enum PriceAdjustmentType {
 }
 
 enum PriceAdjustmentDirection {
-  MINUS
-  PLUS
+  DECREASE
+  INCREASE
 }
 
 enum ScopeType {

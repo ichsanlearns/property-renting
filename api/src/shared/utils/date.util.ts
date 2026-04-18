@@ -10,7 +10,7 @@ export function parseLocalDate(dateStr: string): Date {
   return new Date(y!, m! - 1, d!);
 }
 
-export function toLocalMidnight(date: Date): Date {
+export function toLocalFromDb(date: Date): Date {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate());
 }
 

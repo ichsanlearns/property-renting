@@ -6,7 +6,7 @@ import {
   buildDateKey,
   getDatesInRangeExclusive,
   toDateKey,
-  toLocalMidnight,
+  toLocalFromDb,
 } from "../../shared/utils/date.util.js";
 import { transformRoomTypePrices } from "./property.transformer.js";
 
@@ -411,10 +411,7 @@ export const getPropertyRoomPricesDate = async ({
 
   const roomTypePricesMap = new Map(
     roomTypePrices.map((roomTypePrice) => [
-      buildDateKey(
-        roomTypePrice.roomTypeId,
-        toLocalMidnight(roomTypePrice.date),
-      ),
+      buildDateKey(roomTypePrice.roomTypeId, toLocalFromDb(roomTypePrice.date)),
       roomTypePrice,
     ]),
   );
