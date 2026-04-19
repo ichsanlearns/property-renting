@@ -4,6 +4,7 @@ import {
   type PriceAdjustmentType,
 } from "../../generated/prisma/enums.js";
 import { prisma } from "../../shared/lib/prisma.lib.js";
+import { calculateAdjustedPrice } from "./utils/calculate-adjusted-price.util.js";
 
 interface CreatePricingRuleInput {
   name: string;
@@ -76,7 +77,7 @@ export const createPricingRule = async (input: CreatePricingRuleInput) => {
     },
   });
 
-  const shouldUpdateIds = currentPrices
+  const updates = currentPrices
     .filter((price) => {
       const currentRule = price.appliedPricingRule;
 
@@ -114,19 +115,22 @@ export const createPricingRule = async (input: CreatePricingRuleInput) => {
 
       return false;
     })
-    .map((p) => p.id);
+    .map((price) => {
+      const newPrice = calculateAdjustedPrice({
+        basePrice: Number(price.roomType.basePrice),
+        adjustmentType: pricingRule.adjustmentType,
+        adjustmentDirection: pricingRule.adjustmentDirection,
+        adjustmentValue: Number(pricingRule.adjustmentValue),
+      });
 
-  if (shouldUpdateIds.length > 0) {
-    await prisma.roomTypePrice.updateMany({
-      where: {
-        id: { in: shouldUpdateIds },
-      },
-      data: {
-        appliedPricingRuleId: pricingRule.id,
-        price: pricingRule.adjustmentValue,
-      },
+      return prisma.roomTypePrice.update({
+        where: { id: price.id },
+        data: {
+          appliedPricingRuleId: pricingRule.id,
+          price: newPrice,
+        },
+      });
     });
-  }
 
-  return pricingRule;
+  await prisma.$transaction(updates);
 };
