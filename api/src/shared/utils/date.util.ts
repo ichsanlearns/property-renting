@@ -27,7 +27,7 @@ export function getDatesInRangeExclusive(
 
   return eachDayOfInterval({
     start,
-    end: addDays(end, -1),
+    end,
   });
 }
 

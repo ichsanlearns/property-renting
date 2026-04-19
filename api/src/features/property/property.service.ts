@@ -394,7 +394,7 @@ export const getPropertyRoomPricesDate = async ({
       },
       date: {
         gte: new Date(startDate),
-        lt: new Date(endDate),
+        lte: new Date(endDate),
       },
     },
     orderBy: {
