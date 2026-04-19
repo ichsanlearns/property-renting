@@ -241,7 +241,7 @@ function DatePicker({
                                   !dayData ||
                                   dayData.availableRooms <= 0 ||
                                   dayData.isClosed ||
-                                  day.date.getTime() <=
+                                  day.date.getTime() <
                                     startOfDay(Date.now()).getTime() - 1
                                 ) {
                                   return null;

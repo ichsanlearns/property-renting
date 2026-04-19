@@ -2,12 +2,13 @@ import { prisma } from "../src/shared/lib/prisma.lib.js";
 import {
   Role,
   AmenityType,
-  PricingRuleType,
   PriceAdjustmentType,
   BedType,
   ViewType,
   BathroomType,
   PublishStatus,
+  ScopeType,
+  PriceAdjustmentDirection,
 } from "../src/generated/prisma/enums.js";
 import bcrypt from "bcrypt";
 
@@ -369,21 +370,19 @@ const seed = async () => {
     const pricingRules = [
       {
         id: "012e717a-2429-4757-945f-e24724bcd7ac",
-        type: PricingRuleType.WEEKEND,
-        value: 10,
+        name: "Global Weekend",
+        createdBy: "SYSTEM",
+
+        scopeType: ScopeType.SYSTEM,
+
+        startDate: new Date("2026-01-01"),
+        endDate: new Date("2026-12-31"),
+
+        daysOfWeek: [0, 6],
+
         adjustmentType: PriceAdjustmentType.PERCENTAGE,
-      },
-      {
-        id: "17a6619c-f6b5-469a-adf4-66196a67d187",
-        type: PricingRuleType.HOLIDAY,
-        value: 20,
-        adjustmentType: PriceAdjustmentType.PERCENTAGE,
-      },
-      {
-        id: "b1eac0c3-61c0-4f3f-b8fa-3a5c6b0e8b2c",
-        type: PricingRuleType.SEASONAL,
-        value: 15,
-        adjustmentType: PriceAdjustmentType.PERCENTAGE,
+        adjustmentDirection: PriceAdjustmentDirection.INCREASE,
+        adjustmentValue: 10,
       },
     ];
 

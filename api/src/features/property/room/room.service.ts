@@ -1,6 +1,6 @@
 import { prisma } from "../../../shared/lib/prisma.lib.js";
 import { AppError } from "../../../shared/utils/app-error.util.js";
-import { isWeekend } from "../../../shared/utils/date.util.js";
+import { isWeekend, toDateKey } from "../../../shared/utils/date.util.js";
 import type { CreateRoomPayload } from "./room.type.js";
 
 export const createRoom = async ({
@@ -68,6 +68,9 @@ export const ensurePrices = async ({
 
   const roomType = await prisma.roomType.findUnique({
     where: { id: roomTypeId },
+    include: {
+      property: true,
+    },
   });
 
   if (!roomType) {
@@ -75,12 +78,8 @@ export const ensurePrices = async ({
   }
 
   const lastGeneratedDate = await prisma.roomTypePrice.findFirst({
-    where: {
-      roomTypeId,
-    },
-    orderBy: {
-      date: "desc",
-    },
+    where: { roomTypeId },
+    orderBy: { date: "desc" },
   });
 
   let startDate = today;
@@ -90,16 +89,26 @@ export const ensurePrices = async ({
     startDate.setDate(startDate.getDate() + 1);
   }
 
-  if (startDate > endDate) {
-    return;
-  }
+  if (startDate > endDate) return;
 
   const pricingRules = await prisma.pricingRule.findMany({
     where: {
       isActive: true,
+      OR: [
+        {
+          scopeType: "SYSTEM",
+        },
+        {
+          tenantId: roomType.property.tenantId,
+          OR: [
+            { roomTypeId },
+            { propertyId: roomType.propertyId },
+            { scopeType: "TENANT" },
+          ],
+        },
+      ],
     },
   });
-  const weekendRule = pricingRules.find((rule) => rule.type === "WEEKEND");
 
   const priceToCreates = [];
 
@@ -108,21 +117,54 @@ export const ensurePrices = async ({
   while (currentDate <= endDate) {
     let price = Number(roomType.basePrice);
 
-    if (isWeekend({ date: currentDate })) {
-      if (weekendRule?.adjustmentType === "NOMINAL") {
-        price += Number(weekendRule.value);
-      } else if (weekendRule?.adjustmentType === "PERCENTAGE") {
-        price += (Number(roomType.basePrice) * Number(weekendRule.value)) / 100;
+    const applicableRules = pricingRules.filter((rule) => {
+      const withinDate =
+        currentDate >= rule.startDate && currentDate <= rule.endDate;
+
+      const matchesDay =
+        rule.daysOfWeek.length === 0 ||
+        rule.daysOfWeek.includes(currentDate.getDay());
+
+      return withinDate && matchesDay;
+    });
+
+    const tenantRules = applicableRules.filter((r) => r.scopeType === "TENANT");
+
+    const systemRules = applicableRules.filter((r) => r.scopeType === "SYSTEM");
+
+    let selectedRules = tenantRules.length > 0 ? tenantRules : systemRules;
+
+    const rule = selectedRules.sort((a, b) => b.priority - a.priority)[0];
+
+    if (rule) {
+      if (rule.adjustmentType === "NOMINAL") {
+        const value = Number(rule.adjustmentValue);
+
+        price += rule.adjustmentDirection === "INCREASE" ? value : -value;
+      } else {
+        const value = (price * Number(rule.adjustmentValue)) / 100;
+
+        price += rule.adjustmentDirection === "INCREASE" ? value : -value;
       }
     }
 
+    const safeDate = new Date(
+      Date.UTC(
+        currentDate.getFullYear(),
+        currentDate.getMonth(),
+        currentDate.getDate(),
+      ),
+    );
+
     priceToCreates.push({
       roomTypeId,
-      date: new Date(currentDate),
+      date: safeDate,
       price,
+      appliedPricingRuleId: rule?.id || null,
       availableRooms: roomType.totalRooms,
       isClosed: false,
     });
+
     currentDate.setDate(currentDate.getDate() + 1);
   }
 
@@ -131,3 +173,82 @@ export const ensurePrices = async ({
     skipDuplicates: true,
   });
 };
+
+// export const ensurePrices = async ({
+//   roomTypeId,
+//   daysAhead,
+// }: {
+//   roomTypeId: string;
+//   daysAhead: number;
+// }) => {
+//   const today = new Date();
+//   today.setHours(0, 0, 0, 0);
+
+//   const endDate = new Date(today);
+//   endDate.setDate(today.getDate() + daysAhead);
+
+//   const roomType = await prisma.roomType.findUnique({
+//     where: { id: roomTypeId },
+//   });
+
+//   if (!roomType) {
+//     throw new AppError("Room type not found", 404);
+//   }
+
+//   const lastGeneratedDate = await prisma.roomTypePrice.findFirst({
+//     where: {
+//       roomTypeId,
+//     },
+//     orderBy: {
+//       date: "desc",
+//     },
+//   });
+
+//   let startDate = today;
+
+//   if (lastGeneratedDate?.date) {
+//     startDate = new Date(lastGeneratedDate.date);
+//     startDate.setDate(startDate.getDate() + 1);
+//   }
+
+//   if (startDate > endDate) {
+//     return;
+//   }
+
+//   const pricingRules = await prisma.pricingRule.findMany({
+//     where: {
+//       isActive: true,
+//     },
+//   });
+//   const weekendRule = pricingRules.find((rule) => rule.type === "WEEKEND");
+
+//   const priceToCreates = [];
+
+//   let currentDate = new Date(startDate);
+
+//   while (currentDate <= endDate) {
+//     let price = Number(roomType.basePrice);
+
+//     if (isWeekend({ date: currentDate })) {
+//       if (weekendRule?.adjustmentType === "NOMINAL") {
+//         price += Number(weekendRule.value);
+//       } else if (weekendRule?.adjustmentType === "PERCENTAGE") {
+//         price += (Number(roomType.basePrice) * Number(weekendRule.value)) / 100;
+//       }
+//     }
+
+//     priceToCreates.push({
+//       roomTypeId,
+//       date: new Date(currentDate),
+//       price,
+//       availableRooms: roomType.totalRooms,
+//       isClosed: false,
+//     });
+//     currentDate.setDate(currentDate.getDate() + 1);
+//   }
+
+//   await prisma.roomTypePrice.createMany({
+//     data: priceToCreates,
+//     skipDuplicates: true,
+//   });
+// };

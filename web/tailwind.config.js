@@ -18,9 +18,11 @@ module.exports = {
         outline: "#e2e8f0",
         "surface-container-low": "#f8f5f5",
         secondary: "#0f172a",
+        "secondary-container": "#f1f5f9",
         surface: "#ffffff",
         "surface-container": "#f1eeee",
         "on-surface-variant": "#475569",
+        error: "#ef4444",
       },
       fontFamily: {
         display: ["Plus Jakarta Sans", "sans-serif"],
