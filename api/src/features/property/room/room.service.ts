@@ -122,8 +122,8 @@ export const ensurePrices = async ({
         currentDate >= rule.startDate && currentDate <= rule.endDate;
 
       const matchesDay =
-        rule.dayOfWeek.length === 0 ||
-        rule.dayOfWeek.includes(currentDate.getDay());
+        rule.daysOfWeek.length === 0 ||
+        rule.daysOfWeek.includes(currentDate.getDay());
 
       return withinDate && matchesDay;
     });

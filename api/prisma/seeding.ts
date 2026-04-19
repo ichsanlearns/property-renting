@@ -378,7 +378,7 @@ const seed = async () => {
         startDate: new Date("2026-01-01"),
         endDate: new Date("2026-12-31"),
 
-        dayOfWeek: [0, 6],
+        daysOfWeek: [0, 6],
 
         adjustmentType: PriceAdjustmentType.PERCENTAGE,
         adjustmentDirection: PriceAdjustmentDirection.INCREASE,

@@ -1,5 +1,7 @@
 import type { Request, Response } from "express";
 import * as UserService from "./user.service.js";
+import * as PricingService from "../pricing/pricing.service.js";
+import { createPricingRuleValidator } from "../pricing/pricing.validator.js";
 
 export const updateMe = async (req: Request, res: Response) => {
   const userId = req.user?.userId;

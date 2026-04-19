@@ -408,7 +408,7 @@ model PricingRule {
   startDate       DateTime @map("start_date") @db.Date
   endDate         DateTime @map("end_date") @db.Date
 
-  dayOfWeek       Int[] @map("day_of_week")
+  daysOfWeek       Int[] @map("days_of_week")
 
   adjustmentType  PriceAdjustmentType @map("adjustment_type")
   adjustmentDirection PriceAdjustmentDirection @map("adjustment_direction")
