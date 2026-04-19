@@ -160,6 +160,7 @@ export const ensurePrices = async ({
       roomTypeId,
       date: safeDate,
       price,
+      appliedPricingRuleId: rule?.id || null,
       availableRooms: roomType.totalRooms,
       isClosed: false,
     });
