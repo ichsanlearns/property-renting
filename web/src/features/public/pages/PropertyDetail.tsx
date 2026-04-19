@@ -87,6 +87,7 @@ function PropertyDetail() {
       averagePrice: number;
     }[];
   }) => {
+    console.log(selectedDateRoom);
     if (selectedDateRoom.checkInDate && selectedDateRoom.checkOutDate) {
       if (selectedDateRoom.availableRooms.length > 0) {
         const availableMap = new Map(
