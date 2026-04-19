@@ -44,5 +44,89 @@ export const createPricingRule = async (input: CreatePricingRuleInput) => {
     },
   });
 
+  let propertyFilter = {};
+
+  if (input.scopeType === ScopeType.TENANT) {
+    if (!input.tenantId) {
+      throw new Error("tenantId is required for TENANT scope");
+    }
+
+    propertyFilter = {
+      tenantId: input.tenantId,
+    };
+  }
+
+  const currentPrices = await prisma.roomTypePrice.findMany({
+    where: {
+      date: {
+        gte: new Date(input.startDate),
+        lte: new Date(input.endDate),
+      },
+      roomType: {
+        property: propertyFilter,
+      },
+    },
+    include: {
+      appliedPricingRule: true,
+      roomType: {
+        select: {
+          basePrice: true,
+        },
+      },
+    },
+  });
+
+  const shouldUpdateIds = currentPrices
+    .filter((price) => {
+      const currentRule = price.appliedPricingRule;
+
+      if (!currentRule) return true;
+
+      if (pricingRule.scopeType === ScopeType.TENANT) {
+        if (
+          currentRule.scopeType === ScopeType.ROOM_TYPE ||
+          currentRule.scopeType === ScopeType.PROPERTY
+        ) {
+          return false;
+        }
+      }
+
+      if (pricingRule.scopeType === ScopeType.SYSTEM) {
+        if (
+          currentRule.scopeType === ScopeType.ROOM_TYPE ||
+          currentRule.scopeType === ScopeType.PROPERTY ||
+          currentRule.scopeType === ScopeType.TENANT
+        ) {
+          return false;
+        }
+      }
+
+      if (pricingRule.scopeType === currentRule.scopeType) {
+        if (pricingRule.priority > currentRule.priority) return true;
+
+        if (
+          pricingRule.priority === currentRule.priority &&
+          pricingRule.createdAt > currentRule.createdAt
+        ) {
+          return true;
+        }
+      }
+
+      return false;
+    })
+    .map((p) => p.id);
+
+  if (shouldUpdateIds.length > 0) {
+    await prisma.roomTypePrice.updateMany({
+      where: {
+        id: { in: shouldUpdateIds },
+      },
+      data: {
+        appliedPricingRuleId: pricingRule.id,
+        price: pricingRule.adjustmentValue,
+      },
+    });
+  }
+
   return pricingRule;
 };
