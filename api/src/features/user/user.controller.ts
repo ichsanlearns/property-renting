@@ -34,3 +34,32 @@ export const updateMe = async (req: Request, res: Response) => {
     data: { user: result },
   });
 };
+
+export const createPricingRule = async (req: Request, res: Response) => {
+  const tenantId = req.user?.userId;
+  const scopeType = "TENANT";
+
+  const input = createPricingRuleValidator.safeParse(req.body);
+
+  if (!input.success) {
+    throw new Error("Invalid input");
+  }
+
+  const result = await PricingService.createPricingRule({
+    ...input.data,
+    createdBy: tenantId,
+
+    scopeType,
+    tenantId,
+
+    daysOfWeek: input.data.daysOfWeek ?? [],
+
+    priority: input.data.priority ?? 0,
+    isActive: input.data.isActive ?? true,
+  });
+
+  res.status(200).json({
+    message: "Pricing rule created successfully",
+    data: { pricingRule: result },
+  });
+};

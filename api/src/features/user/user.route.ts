@@ -8,4 +8,6 @@ const router = Router();
 
 router.patch("/me", authMiddleware, UserController.updateMe);
 
+router.post("/pricing-rule", authMiddleware, UserController.createPricingRule);
+
 export default router;
