@@ -69,7 +69,7 @@ export const usePropertyRoomPricesDate = ({
       startDate ?? null,
       endDate ?? null,
     ),
-    queryFn: () => {
+    queryFn: ({ signal }) => {
       if (!startDate || !endDate) {
         throw new Error("startDate and endDate are required");
       }
@@ -78,6 +78,7 @@ export const usePropertyRoomPricesDate = ({
         propertyId,
         startDate,
         endDate,
+        signal,
       });
     },
     select: (res) => res.data,
