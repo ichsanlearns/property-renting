@@ -7,7 +7,7 @@ import {
   subMonths,
 } from "date-fns";
 import { generateCalendar } from "../../../shared/utils/calendar.util";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePropertyRoomPricesDate } from "../../tenant/property/hooks/useProperty";
 import { getAvailableRoomTypesForRange } from "../utils/availability.util";
 import { formatRupiah } from "../../../shared/utils/price.util";
@@ -48,6 +48,16 @@ function DatePicker({
     checkInDate: null,
     checkOutDate: null,
     numberOfNights: 0,
+  });
+
+  const { data: roomPricesDateRange } = usePropertyRoomPricesDate({
+    propertyId,
+    startDate: selectedDate.checkInDate
+      ? format(selectedDate.checkInDate, "yyyy-MM-dd")
+      : undefined,
+    endDate: selectedDate.checkOutDate
+      ? format(selectedDate.checkOutDate, "yyyy-MM-dd")
+      : undefined,
   });
 
   function handleSelect(date: Date) {
@@ -108,25 +118,42 @@ function DatePicker({
           (1000 * 60 * 60 * 24),
       });
 
-      const availableRooms = getAvailableRoomTypesForRange({
-        checkInDate: selectedDate.checkInDate,
-        checkOutDate: date,
-        data: roomPricesDate!,
-      });
+      // const availableRooms = getAvailableRoomTypesForRange({
+      //   checkInDate: selectedDate.checkInDate,
+      //   checkOutDate: date,
+      //   data: roomPricesDateRange!,
+      // });
 
-      const availableRoomsDate = {
-        checkInDate: selectedDate.checkInDate,
-        checkOutDate: date,
-        numberOfNights:
-          (new Date(date).getTime() -
-            new Date(selectedDate.checkInDate).getTime()) /
-          (1000 * 60 * 60 * 24),
-        availableRooms,
-      };
+      // const availableRoomsDate = {
+      //   checkInDate: selectedDate.checkInDate,
+      //   checkOutDate: date,
+      //   numberOfNights:
+      //     (new Date(date).getTime() -
+      //       new Date(selectedDate.checkInDate).getTime()) /
+      //     (1000 * 60 * 60 * 24),
+      //   availableRooms,
+      // };
 
-      handleSelectDateRoom(availableRoomsDate);
+      // handleSelectDateRoom(availableRoomsDate);
     }
   }
+
+  useEffect(() => {
+    if (!roomPricesDateRange) return;
+
+    const availableRooms = getAvailableRoomTypesForRange({
+      checkInDate: selectedDate.checkInDate!,
+      checkOutDate: selectedDate.checkOutDate!,
+      data: roomPricesDateRange,
+    });
+
+    handleSelectDateRoom({
+      checkInDate: selectedDate.checkInDate,
+      checkOutDate: selectedDate.checkOutDate,
+      numberOfNights: selectedDate.numberOfNights,
+      availableRooms,
+    });
+  }, [roomPricesDateRange]);
 
   return (
     <section className="bg-surface p-8 rounded-3xl border border-outline shadow-sm ">
