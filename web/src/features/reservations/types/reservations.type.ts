@@ -1,11 +1,12 @@
 export type ReservationData = {
   reservationCode: string;
-  propertyName: string;
-  roomName: string;
+  propertyNameSnapshot: string;
+  roomNameSnapshot: string;
   checkInDate: string;
   checkOutDate: string;
   numberOfNights: number;
   totalAmount: number;
   paymentDeadline: string;
   status: string;
+  averageRoomPerNightSnapshot: number;
 };
