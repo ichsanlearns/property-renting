@@ -15,6 +15,8 @@ import toast from "react-hot-toast";
 import { createReservationRequest } from "../../reservations/api/reservations.service";
 import { useAuthStore } from "../../auth/stores/auth.store";
 import LoaderFetching from "../../../shared/ui/LoaderFetching";
+import PropertyImageGallery from "../components/property-images/PropertyImagesGallery";
+import ImageGallery from "../components/ImageGallery";
 
 type SelectedDateRoomAvailability = {
   id: string;
@@ -49,6 +51,9 @@ function PropertyDetail() {
   const { data: property, isLoading } = usePropertyDetail({ propertyId });
 
   const [noRoomAvailable, setNoRoomAvailable] = useState(false);
+  const [showPropertyGallery, setShowPropertyGallery] = useState(false);
+  const [showRoomGallery, setShowRoomGallery] = useState(false);
+
   const [dateRange, setDateRange] = useState<{
     checkInDate: Date | null;
     checkOutDate: Date | null;
@@ -87,6 +92,7 @@ function PropertyDetail() {
       averagePrice: number;
     }[];
   }) => {
+    console.log("selectedDateRoom: ", selectedDateRoom);
     if (selectedDateRoom.checkInDate && selectedDateRoom.checkOutDate) {
       if (selectedDateRoom.availableRooms.length > 0) {
         const availableMap = new Map(
@@ -158,6 +164,9 @@ function PropertyDetail() {
       ? selectedDateRoomAvailability
       : (property?.roomTypes ?? []);
 
+  console.log("roomAvailability: ", roomAvailability);
+  console.log("selectedDateRoomAvailability: ", selectedDateRoomAvailability);
+
   const handleSelectRoom = (roomType: SelectedDateRoomAvailability) => {
     if (selectedRoom?.id === roomType.id) {
       setSelectedRoom(null);
@@ -211,13 +220,18 @@ function PropertyDetail() {
     }
   };
 
+  const handleRoomImageClick = (roomType: SelectedDateRoomAvailability) => {
+    setSelectedRoom(roomType);
+    setShowRoomGallery(true);
+  };
+
   if (isLoading) {
     return <LoaderFetching />;
   }
 
   return (
     <div className="bg-background text-on-surface antialiased">
-      <main className="max-w-7xl mx-auto px-6 pt-28 pb-24">
+      <main className="max-w-7xl mx-auto px-6 pt-16 pb-24">
         <header className="mb-8">
           <h1 className="text-3xl font-extrabold tracking-tight text-on-surface mb-2">
             {property?.name}
@@ -257,7 +271,7 @@ function PropertyDetail() {
             </div>
           </div>
         </header>
-        <section
+        {/* <section
           className={`grid grid-cols-1 md:grid-cols-4 grid-rows-2 gap-3 h-125 mb-12 rounded-2xl overflow-hidden group`}
         >
           {property?.propertyImages.map((image, index) => (
@@ -273,7 +287,11 @@ function PropertyDetail() {
               />
             </div>
           ))}
-        </section>
+        </section> */}
+        <PropertyImageGallery
+          images={property?.propertyImages}
+          handleImageClick={() => setShowPropertyGallery(true)}
+        />
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
           <div className="lg:col-span-2 space-y-12">
             <section>
@@ -379,10 +397,12 @@ function PropertyDetail() {
                   {roomAvailability?.map((roomType, index) => (
                     <div
                       key={index}
-                      onClick={() => handleSelectRoom(roomType)}
                       className={`flex  rounded-xl border overflow-hidden cursor-pointer hover:shadow-md transition-shadow ${selectedRoom?.id === roomType.id ? "border-primary bg-primary/2 border-2" : "border-primary/10 bg-white"}`}
                     >
-                      <div className="w-1/3 aspect-4/3 relative">
+                      <div
+                        onClick={() => handleRoomImageClick(roomType)}
+                        className="w-1/3 aspect-4/3 relative"
+                      >
                         <img
                           className="w-full h-full object-cover"
                           data-alt="Luxury master suite with ocean view"
@@ -393,7 +413,10 @@ function PropertyDetail() {
                             `+${roomType.roomTypeImages.length - 1} photos`}
                         </div>
                       </div>
-                      <div className="p-4 flex flex-col justify-between w-2/3">
+                      <div
+                        onClick={() => handleSelectRoom(roomType)}
+                        className="p-4 flex flex-col justify-between w-2/3"
+                      >
                         <div>
                           <div className="flex justify-between items-start">
                             <h3 className="font-bold text-lg">
@@ -556,6 +579,22 @@ function PropertyDetail() {
           </div>
         </div>
       </main>
+      {showRoomGallery && (
+        <ImageGallery
+          images={selectedRoom?.roomTypeImages!}
+          setShowImageGallery={setShowRoomGallery}
+          title={selectedRoom?.name || ""}
+          location={property?.name || ""}
+        />
+      )}
+      {showPropertyGallery && (
+        <ImageGallery
+          images={property?.propertyImages!}
+          setShowImageGallery={setShowPropertyGallery}
+          title={property?.name || ""}
+          location={property?.city || ""}
+        />
+      )}
     </div>
   );
 }

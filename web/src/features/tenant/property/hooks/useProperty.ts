@@ -60,17 +60,27 @@ export const usePropertyRoomPricesDate = ({
   endDate,
 }: {
   propertyId: string;
-  startDate: string;
-  endDate: string;
+  startDate?: string;
+  endDate?: string;
 }) => {
   return useQuery({
-    queryKey: queryKeys.property.roomPricesDate(propertyId, startDate, endDate),
-    queryFn: () =>
-      PropertyService.getPropertyRoomPricesDate({
+    queryKey: queryKeys.property.roomPricesDate(
+      propertyId,
+      startDate ?? null,
+      endDate ?? null,
+    ),
+    queryFn: ({ signal }) => {
+      if (!startDate || !endDate) {
+        throw new Error("startDate and endDate are required");
+      }
+
+      return PropertyService.getPropertyRoomPricesDate({
         propertyId,
         startDate,
         endDate,
-      }),
+        signal,
+      });
+    },
     select: (res) => res.data,
     enabled: !!propertyId && !!startDate && !!endDate,
     staleTime: 5 * 60 * 1000,

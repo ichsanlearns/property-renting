@@ -7,7 +7,7 @@ import {
   subMonths,
 } from "date-fns";
 import { generateCalendar } from "../../../shared/utils/calendar.util";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePropertyRoomPricesDate } from "../../tenant/property/hooks/useProperty";
 import { getAvailableRoomTypesForRange } from "../utils/availability.util";
 import { formatRupiah } from "../../../shared/utils/price.util";
@@ -48,6 +48,16 @@ function DatePicker({
     checkInDate: null,
     checkOutDate: null,
     numberOfNights: 0,
+  });
+
+  const { data: roomPricesDateRange } = usePropertyRoomPricesDate({
+    propertyId,
+    startDate: selectedDate.checkInDate
+      ? format(selectedDate.checkInDate, "yyyy-MM-dd")
+      : undefined,
+    endDate: selectedDate.checkOutDate
+      ? format(selectedDate.checkOutDate, "yyyy-MM-dd")
+      : undefined,
   });
 
   function handleSelect(date: Date) {
@@ -102,25 +112,48 @@ function DatePicker({
       setSelectedDate({
         checkInDate: selectedDate.checkInDate,
         checkOutDate: date,
-        numberOfNights: date.getDate() - selectedDate.checkInDate.getDate(),
+        numberOfNights:
+          (new Date(date).getTime() -
+            new Date(selectedDate.checkInDate).getTime()) /
+          (1000 * 60 * 60 * 24),
       });
 
-      const availableRooms = getAvailableRoomTypesForRange({
-        checkInDate: selectedDate.checkInDate,
-        checkOutDate: date,
-        data: roomPricesDate!,
-      });
+      // const availableRooms = getAvailableRoomTypesForRange({
+      //   checkInDate: selectedDate.checkInDate,
+      //   checkOutDate: date,
+      //   data: roomPricesDateRange!,
+      // });
 
-      const availableRoomsDate = {
-        checkInDate: selectedDate.checkInDate,
-        checkOutDate: date,
-        numberOfNights: date.getDate() - selectedDate.checkInDate.getDate(),
-        availableRooms,
-      };
+      // const availableRoomsDate = {
+      //   checkInDate: selectedDate.checkInDate,
+      //   checkOutDate: date,
+      //   numberOfNights:
+      //     (new Date(date).getTime() -
+      //       new Date(selectedDate.checkInDate).getTime()) /
+      //     (1000 * 60 * 60 * 24),
+      //   availableRooms,
+      // };
 
-      handleSelectDateRoom(availableRoomsDate);
+      // handleSelectDateRoom(availableRoomsDate);
     }
   }
+
+  useEffect(() => {
+    if (!roomPricesDateRange) return;
+
+    const availableRooms = getAvailableRoomTypesForRange({
+      checkInDate: selectedDate.checkInDate!,
+      checkOutDate: selectedDate.checkOutDate!,
+      data: roomPricesDateRange,
+    });
+
+    handleSelectDateRoom({
+      checkInDate: selectedDate.checkInDate,
+      checkOutDate: selectedDate.checkOutDate,
+      numberOfNights: selectedDate.numberOfNights,
+      availableRooms,
+    });
+  }, [roomPricesDateRange]);
 
   return (
     <section className="bg-surface p-8 rounded-3xl border border-outline shadow-sm ">
@@ -174,89 +207,127 @@ function DatePicker({
                 isWeekend: boolean;
                 isAvailable: boolean;
                 price: number;
-              }) => (
-                <button
-                  onClick={() => handleSelect(day.date)}
-                  disabled={!day.isAvailable || !day.isCurrentMonth}
-                  key={day.date.toISOString()}
-                  className={`py-2 rounded-lg ${
-                    !day.isAvailable ||
-                    day.date.getTime() < startOfDay(Date.now()).getTime() - 1
-                      ? "text-slate-300 cursor-not-allowed"
-                      : !day.isCurrentMonth
-                        ? "text-slate-300"
-                        : (selectedDate.checkInDate?.getMonth() ||
-                              selectedDate.checkOutDate?.getMonth()) ===
-                              day.date.getMonth() &&
-                            (selectedDate.checkInDate?.getDate() ===
-                              day.date.getDate() ||
-                              selectedDate.checkOutDate?.getDate() ===
-                                day.date.getDate())
-                          ? "bg-primary text-white font-bold hover:bg-primary-container hover:text-primary cursor-pointer"
-                          : (selectedDate.checkInDate?.getMonth() ||
-                                selectedDate.checkOutDate?.getMonth()) ===
-                                day.date.getMonth() &&
-                              selectedDate.checkInDate?.getDate() &&
-                              selectedDate.checkOutDate?.getDate() &&
-                              day.date.getDate() >
-                                selectedDate.checkInDate.getDate() &&
-                              day.date.getDate() <
-                                selectedDate.checkOutDate.getDate()
-                            ? "bg-primary-container text-primary font-bold hover:bg-primary hover:text-white cursor-pointer"
-                            : day.isWeekend
-                              ? "text-red-500 hover:bg-surface-container hover:text-primary cursor-pointer"
-                              : "hover:bg-surface-container hover:text-primary cursor-pointer"
-                  }`}
-                >
-                  <div className="flex flex-col items-center">
-                    {format(day.date, "d")}
-                    {day.isAvailable && day.isCurrentMonth && (
-                      <span className="text-xs text-on-surface-variant">
-                        {/* {roomPricesDate?.map((roomPrice) => (
-                          <span key={roomPrice.date}>
-                            {roomPrice.availableRooms > 0 &&
-                              new Date(roomPrice.date).getDate() ===
-                                day.date.getDate() &&
-                              day.date.getTime() >
-                                startOfDay(Date.now()).getTime() - 1 && (
-                                <span className="text-xs text-on-surface-variant">
-                                  {formatRupiah(roomPrice.price)}
-                                </span>
-                              )}
-                          </span>
-                        ))} */}
+              }) => {
+                const today = startOfDay(new Date()).getTime();
+                const current = startOfDay(day.date).getTime();
 
-                        <div className="flex flex-col items-center">
-                          {day.isAvailable && day.isCurrentMonth && (
-                            <span className="text-xs text-on-surface-variant">
-                              {(() => {
-                                const dateKey = format(day.date, "yyyy-MM-dd");
-                                const roomTypeId =
-                                  selectedRoomTypeId ??
-                                  Object.keys(roomPricesDate ?? {})[0];
-                                const dayData =
-                                  roomPricesDate?.[roomTypeId]?.dates[dateKey];
+                const checkIn = selectedDate.checkInDate
+                  ? startOfDay(selectedDate.checkInDate).getTime()
+                  : null;
 
-                                if (
-                                  !dayData ||
-                                  dayData.availableRooms <= 0 ||
-                                  dayData.isClosed ||
-                                  day.date.getTime() <
-                                    startOfDay(Date.now()).getTime() - 1
-                                ) {
-                                  return null;
-                                }
+                const checkOut = selectedDate.checkOutDate
+                  ? startOfDay(selectedDate.checkOutDate).getTime()
+                  : null;
 
-                                return formatRupiah(dayData.price);
-                              })()}
-                            </span>
-                          )}
-                        </div>
-                      </span>
-                    )}
-                  </div>
-                </button>
-              ),
+                const isDisabled = !day.isAvailable || current < today;
+
+                const isSelected =
+                  (checkIn && current === checkIn) ||
+                  (checkOut && current === checkOut);
+
+                const isInRange =
+                  checkIn &&
+                  checkOut &&
+                  current > checkIn &&
+                  current < checkOut;
+
+                const baseClass = "py-2 rounded-lg";
+
+                let stateClass = "";
+
+                if (isDisabled) {
+                  stateClass = "text-slate-300 cursor-not-allowed";
+                } else if (!day.isCurrentMonth) {
+                  stateClass = "text-slate-300";
+                } else if (isSelected) {
+                  stateClass =
+                    "bg-primary text-white font-bold hover:bg-primary-container hover:text-primary cursor-pointer";
+                } else if (isInRange) {
+                  stateClass =
+                    "bg-primary-container text-primary font-bold hover:bg-primary hover:text-white cursor-pointer";
+                } else if (day.isWeekend) {
+                  stateClass =
+                    "text-red-500 hover:bg-surface-container hover:text-primary cursor-pointer";
+                } else {
+                  stateClass =
+                    "hover:bg-surface-container hover:text-primary cursor-pointer";
+                }
+                return (
+                  <button
+                    onClick={() => handleSelect(day.date)}
+                    disabled={!day.isAvailable || !day.isCurrentMonth}
+                    key={day.date.toISOString()}
+                    className={`${baseClass} ${stateClass}`}
+                    // className={`py-2 rounded-lg ${
+                    //   !day.isAvailable ||
+                    //   day.date.getTime() < startOfDay(Date.now()).getTime() - 1
+                    //     ? "text-slate-300 cursor-not-allowed"
+                    //     : !day.isCurrentMonth
+                    //       ? "text-slate-300"
+                    //       : (selectedDate.checkInDate?.getMonth() ||
+                    //             selectedDate.checkOutDate?.getMonth()) ===
+                    //             day.date.getMonth() &&
+                    //           (selectedDate.checkInDate?.getDate() ===
+                    //             day.date.getDate() ||
+                    //             selectedDate.checkOutDate?.getDate() ===
+                    //               day.date.getDate())
+                    //         ? "bg-primary text-white font-bold hover:bg-primary-container hover:text-primary cursor-pointer"
+                    //         : (selectedDate.checkInDate?.getMonth() ||
+                    //               selectedDate.checkOutDate?.getMonth()) ===
+                    //               day.date.getMonth() &&
+                    //             selectedDate.checkInDate?.getDate() &&
+                    //             selectedDate.checkOutDate?.getDate() &&
+                    //             day.date.getDate() >
+                    //               selectedDate.checkInDate.getDate() &&
+                    //             day.date.getDate() <
+                    //               selectedDate.checkOutDate.getDate()
+                    //           ? "bg-primary-container text-primary font-bold hover:bg-primary hover:text-white cursor-pointer"
+                    //           : day.isWeekend
+                    //             ? "text-red-500 hover:bg-surface-container hover:text-primary cursor-pointer"
+                    //             : "hover:bg-surface-container hover:text-primary cursor-pointer"
+                    // }`}
+                  >
+                    <div className="flex flex-col items-center">
+                      {format(day.date, "d")}
+                      {day.isAvailable && day.isCurrentMonth && (
+                        <span className="text-xs text-on-surface-variant">
+                          <div className="flex flex-col items-center">
+                            {day.isAvailable && day.isCurrentMonth && (
+                              <span className="text-xs text-on-surface-variant">
+                                {(() => {
+                                  const dateKey = format(
+                                    day.date,
+                                    "yyyy-MM-dd",
+                                  );
+                                  const roomTypeId =
+                                    selectedRoomTypeId ??
+                                    Object.keys(roomPricesDate ?? {})[0];
+                                  const dayData =
+                                    roomPricesDate?.[roomTypeId]?.dates[
+                                      dateKey
+                                    ];
+
+                                  if (
+                                    !dayData ||
+                                    dayData.availableRooms <= 0 ||
+                                    dayData.isClosed ||
+                                    day.date.getTime() <
+                                      startOfDay(Date.now()).getTime() - 1
+                                  ) {
+                                    return null;
+                                  }
+
+                                  return formatRupiah(dayData.price);
+                                })()}
+                              </span>
+                            )}
+                          </div>
+                        </span>
+                      )}
+                    </div>
+                  </button>
+                );
+              },
             )}
           </div>
         </div>

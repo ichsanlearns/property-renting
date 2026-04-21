@@ -62,10 +62,12 @@ export const getPropertyRoomPricesDate = async ({
   propertyId,
   startDate,
   endDate,
+  signal,
 }: {
   propertyId: string;
   startDate: string;
   endDate: string;
+  signal?: AbortSignal;
 }) => {
   const response = await api.get<
     ApiResponse<PropertyResponse.GetPropertyRoomPricesDateResponse>
@@ -74,6 +76,7 @@ export const getPropertyRoomPricesDate = async ({
       startDate,
       endDate,
     },
+    signal,
   });
   return response.data;
 };
