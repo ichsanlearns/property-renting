@@ -1,4 +1,6 @@
 import LayoutFive from "./LayoutFive";
+import LayoutFour from "./LayoutFour";
+import LayoutThree from "./LayoutThree";
 
 type PropertyImage = {
   imageUrl: string;
@@ -28,6 +30,8 @@ export default function PropertyImageGallery({ images = [] }: Props) {
       imgClass: string;
     }) => React.ReactNode
   > = {
+    3: LayoutThree,
+    4: LayoutFour,
     5: LayoutFive,
   };
 
