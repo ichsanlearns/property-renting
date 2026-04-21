@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type ImageGalleryProps = {
   imageUrl: string;
@@ -31,6 +31,34 @@ function ImageGallery({
     setCurrentImageIndex((prev) => prev - 1);
   };
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+        e.preventDefault();
+      }
+
+      if (e.key === "ArrowRight") {
+        setCurrentImageIndex((prev) =>
+          prev === images.length - 1 ? prev : prev + 1,
+        );
+      }
+
+      if (e.key === "ArrowLeft") {
+        setCurrentImageIndex((prev) => (prev === 0 ? prev : prev - 1));
+      }
+
+      if (e.key === "Escape") {
+        setShowImageGallery(false);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [images.length, setShowImageGallery]);
+
   return (
     <div className="fixed inset-0 p-20 z-50 bg-black/40  text-white w-screen h-screen overflow-hidden font-body selection:bg-primary selection:text-white">
       <div className="absolute inset-0 w-full h-full z-0 p-2 md:p-4">
@@ -50,11 +78,11 @@ function ImageGallery({
         </div>
         <div className="flex items-center gap-3 ">
           <button
+            onClick={() => setShowImageGallery(false)}
             aria-label="close gallery"
             className="bg-black/20 backdrop-blur-lg border border-white/10 hover:bg-white/10 text-white/90 hover:text-white transition-all active:scale-95 duration-200 p-2.5 rounded-full shadow-lg cursor-pointer"
           >
             <span
-              onClick={() => setShowImageGallery(false)}
               className="material-symbols-outlined text-[20px] "
               data-icon="close"
             >
