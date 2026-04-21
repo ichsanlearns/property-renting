@@ -221,7 +221,7 @@ function PropertyDetail() {
 
   return (
     <div className="bg-background text-on-surface antialiased">
-      <main className="max-w-7xl mx-auto px-6 pt-28 pb-24">
+      <main className="max-w-7xl mx-auto px-6 pt-16 pb-24">
         <header className="mb-8">
           <h1 className="text-3xl font-extrabold tracking-tight text-on-surface mb-2">
             {property?.name}

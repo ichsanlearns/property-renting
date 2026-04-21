@@ -458,35 +458,68 @@ const seed = async () => {
       tenantId: users[1]!.id,
       images: [
         {
-          imageUrl: propertyImageList[3]!.imageUrl,
+          imageUrl: propertyImageList[1]!.imageUrl,
           isCover: true,
           order: 1,
         },
         {
-          imageUrl: propertyImageList[4]!.imageUrl,
+          imageUrl: propertyImageList[2]!.imageUrl,
           isCover: false,
           order: 2,
         },
         {
-          imageUrl: propertyImageList[2]!.imageUrl,
+          imageUrl: propertyImageList[3]!.imageUrl,
           isCover: false,
           order: 3,
         },
         {
-          imageUrl: propertyImageList[0]!.imageUrl,
+          imageUrl: propertyImageList[4]!.imageUrl,
           isCover: false,
           order: 4,
         },
+      ],
+      amenities: [
+        propertyAmenities[1]!.id,
+        propertyAmenities[2]!.id,
+        propertyAmenities[3]!.id,
+      ],
+    });
+
+    const property3 = await create({
+      data: {
+        categoryId: propertyCategories[2]!.id,
+        name: "Property 3",
+        description: "Description 3",
+        latitude: -3.595211,
+        longitude: 98.672222,
+        numberOfBathrooms: 4,
+        country: "Indonesia",
+        city: "Medan",
+        province: "Sumatera Utara",
+        fullAddress: "Jl. Asia No. 1",
+      },
+      tenantId: users[1]!.id,
+      images: [
         {
-          imageUrl: propertyImageList[1]!.imageUrl,
+          imageUrl: propertyImageList[2]!.imageUrl,
+          isCover: true,
+          order: 1,
+        },
+        {
+          imageUrl: propertyImageList[3]!.imageUrl,
           isCover: false,
-          order: 5,
+          order: 2,
+        },
+        {
+          imageUrl: propertyImageList[4]!.imageUrl,
+          isCover: false,
+          order: 3,
         },
       ],
       amenities: [
+        propertyAmenities[2]!.id,
         propertyAmenities[3]!.id,
         propertyAmenities[4]!.id,
-        propertyAmenities[5]!.id,
       ],
     });
 
@@ -548,19 +581,14 @@ const seed = async () => {
       },
       images: [
         {
-          imageUrl: roomImageList[3]!.imageUrl,
+          imageUrl: roomImageList[1]!.imageUrl,
           isCover: true,
           order: 1,
         },
         {
-          imageUrl: roomImageList[1]!.imageUrl,
-          isCover: false,
-          order: 2,
-        },
-        {
           imageUrl: roomImageList[2]!.imageUrl,
           isCover: false,
-          order: 3,
+          order: 2,
         },
       ],
       amenities: [
@@ -593,16 +621,6 @@ const seed = async () => {
           isCover: true,
           order: 1,
         },
-        {
-          imageUrl: roomImageList[1]!.imageUrl,
-          isCover: false,
-          order: 2,
-        },
-        {
-          imageUrl: roomImageList[0]!.imageUrl,
-          isCover: false,
-          order: 3,
-        },
       ],
       amenities: [
         roomAmenities[2]!.id,
@@ -627,17 +645,17 @@ const seed = async () => {
       },
       images: [
         {
-          imageUrl: roomImageList[1]!.imageUrl,
+          imageUrl: roomImageList[3]!.imageUrl,
           isCover: true,
           order: 1,
         },
         {
-          imageUrl: roomImageList[3]!.imageUrl,
+          imageUrl: roomImageList[2]!.imageUrl,
           isCover: false,
           order: 2,
         },
         {
-          imageUrl: roomImageList[2]!.imageUrl,
+          imageUrl: roomImageList[1]!.imageUrl,
           isCover: false,
           order: 3,
         },
@@ -651,6 +669,85 @@ const seed = async () => {
 
     await ensurePrices({ roomTypeId: room1p2.id, daysAhead: 30 });
     await ensurePrices({ roomTypeId: room2p2.id, daysAhead: 30 });
+
+    const room1p3 = await createRoom({
+      data: {
+        propertyId: property3.id,
+        name: "Room 1",
+        description: "Description 1",
+        basePrice: 300000,
+        totalRooms: 4,
+        bedType: BedType.KING_SIZE,
+        bedCount: 2,
+        viewType: ViewType.OCEAN_FRONT,
+        bathroomType: BathroomType.PRIVATE,
+        capacity: 4,
+        isPublished: PublishStatus.PUBLISHED,
+      },
+      images: [
+        {
+          imageUrl: roomImageList[2]!.imageUrl,
+          isCover: true,
+          order: 1,
+        },
+        {
+          imageUrl: roomImageList[3]!.imageUrl,
+          isCover: false,
+          order: 2,
+        },
+        {
+          imageUrl: roomImageList[1]!.imageUrl,
+          isCover: false,
+          order: 3,
+        },
+      ],
+      amenities: [
+        roomAmenities[2]!.id,
+        roomAmenities[1]!.id,
+        roomAmenities[0]!.id,
+      ],
+    });
+
+    const room2p3 = await createRoom({
+      data: {
+        propertyId: property3.id,
+        name: "Room 2",
+        description: "Description 2",
+        basePrice: 400000,
+        totalRooms: 4,
+        bedType: BedType.SINGLE,
+        bedCount: 2,
+        viewType: ViewType.GARDEN_VIEW,
+        bathroomType: BathroomType.PRIVATE,
+        capacity: 2,
+        isPublished: PublishStatus.PUBLISHED,
+      },
+      images: [
+        {
+          imageUrl: roomImageList[3]!.imageUrl,
+          isCover: true,
+          order: 1,
+        },
+        {
+          imageUrl: roomImageList[2]!.imageUrl,
+          isCover: false,
+          order: 2,
+        },
+        {
+          imageUrl: roomImageList[1]!.imageUrl,
+          isCover: false,
+          order: 3,
+        },
+      ],
+      amenities: [
+        roomAmenities[6]!.id,
+        roomAmenities[4]!.id,
+        roomAmenities[5]!.id,
+      ],
+    });
+
+    await ensurePrices({ roomTypeId: room1p3.id, daysAhead: 30 });
+    await ensurePrices({ roomTypeId: room2p3.id, daysAhead: 30 });
 
     // =============================
     // DONE
