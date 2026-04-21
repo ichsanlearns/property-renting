@@ -50,3 +50,11 @@ export const rejectPaymentController = catchAsync(async (req, res) => {
     data: result,
   });
 });
+
+export const midtransWebhookController = catchAsync(async (req, res) => {
+  await paymentService.handleMidtransNotification(req.body);
+
+  res.status(200).json({
+    message: "Webhook received",
+  });
+});
