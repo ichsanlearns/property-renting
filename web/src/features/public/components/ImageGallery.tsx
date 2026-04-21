@@ -2,15 +2,17 @@ import { useState } from "react";
 
 type ImageGalleryProps = {
   imageUrl: string;
-  isCover: boolean;
-  order: number;
 };
 
 function ImageGallery({
   images,
+  title,
+  location,
   setShowImageGallery,
 }: {
   images: ImageGalleryProps[];
+  title: string;
+  location: string;
   setShowImageGallery: (value: boolean) => void;
 }) {
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
@@ -30,7 +32,7 @@ function ImageGallery({
   };
 
   return (
-    <div className="fixed inset-0 p-20 z-50 bg-black text-white w-screen h-screen overflow-hidden font-body selection:bg-primary selection:text-white">
+    <div className="fixed inset-0 p-20 z-50 bg-black/40  text-white w-screen h-screen overflow-hidden font-body selection:bg-primary selection:text-white">
       <div className="absolute inset-0 w-full h-full z-0 p-2 md:p-4">
         <div className="w-full h-full rounded-2xl md:rounded-4xl overflow-hidden relative md:p-20 ">
           <img
@@ -44,16 +46,16 @@ function ImageGallery({
       <div className="absolute top-0 inset-x-0 h-40 gradient-top z-10 pointer-events-none rounded-t-2xl md:rounded-t-4xl mx-2 md:mx-4 mt-2 md:mt-4"></div>
       <header className="absolute top-8 md:top-10 inset-x-8 md:inset-x-12 z-20 flex justify-between items-center w-auto">
         <div className="text-white/90 text-xs md:text-sm font-medium tracking-widest drop-shadow-sm bg-black/20 backdrop-blur-lg px-4 py-2 rounded-full border border-white/10">
-          1 / 12
+          {currentImageIndex + 1} / {images.length}
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 ">
           <button
             aria-label="close gallery"
-            className="bg-black/20 backdrop-blur-lg border border-white/10 hover:bg-white/10 text-white/90 hover:text-white transition-all active:scale-95 duration-200 p-2.5 rounded-full shadow-lg"
+            className="bg-black/20 backdrop-blur-lg border border-white/10 hover:bg-white/10 text-white/90 hover:text-white transition-all active:scale-95 duration-200 p-2.5 rounded-full shadow-lg cursor-pointer"
           >
             <span
               onClick={() => setShowImageGallery(false)}
-              className="material-symbols-outlined text-[20px] cursor-pointer"
+              className="material-symbols-outlined text-[20px] "
               data-icon="close"
             >
               close
@@ -63,9 +65,9 @@ function ImageGallery({
       </header>
       <div className="absolute bottom-40 md:bottom-44 left-8 md:left-12 z-20 pointer-events-none drop-shadow-md">
         <h1 className="text-white/90 font-headline text-2xl md:text-3xl font-medium tracking-tight">
-          Master Suite
+          {title}
         </h1>
-        <p className="text-white/60 text-sm mt-1">Ocean Breeze Villa</p>
+        <p className="text-white/60 text-sm mt-1">{location}</p>
       </div>
       <button
         onClick={handlePrevImage}

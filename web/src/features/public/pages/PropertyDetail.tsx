@@ -51,7 +51,8 @@ function PropertyDetail() {
   const { data: property, isLoading } = usePropertyDetail({ propertyId });
 
   const [noRoomAvailable, setNoRoomAvailable] = useState(false);
-  const [showImageGallery, setShowImageGallery] = useState(false);
+  const [showPropertyGallery, setShowPropertyGallery] = useState(false);
+  const [showRoomGallery, setShowRoomGallery] = useState(false);
 
   const [dateRange, setDateRange] = useState<{
     checkInDate: Date | null;
@@ -219,6 +220,11 @@ function PropertyDetail() {
     }
   };
 
+  const handleRoomImageClick = (roomType: SelectedDateRoomAvailability) => {
+    setSelectedRoom(roomType);
+    setShowRoomGallery(true);
+  };
+
   if (isLoading) {
     return <LoaderFetching />;
   }
@@ -284,7 +290,7 @@ function PropertyDetail() {
         </section> */}
         <PropertyImageGallery
           images={property?.propertyImages}
-          handleImageClick={() => setShowImageGallery(true)}
+          handleImageClick={() => setShowPropertyGallery(true)}
         />
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
           <div className="lg:col-span-2 space-y-12">
@@ -391,10 +397,12 @@ function PropertyDetail() {
                   {roomAvailability?.map((roomType, index) => (
                     <div
                       key={index}
-                      onClick={() => handleSelectRoom(roomType)}
                       className={`flex  rounded-xl border overflow-hidden cursor-pointer hover:shadow-md transition-shadow ${selectedRoom?.id === roomType.id ? "border-primary bg-primary/2 border-2" : "border-primary/10 bg-white"}`}
                     >
-                      <div className="w-1/3 aspect-4/3 relative">
+                      <div
+                        onClick={() => handleRoomImageClick(roomType)}
+                        className="w-1/3 aspect-4/3 relative"
+                      >
                         <img
                           className="w-full h-full object-cover"
                           data-alt="Luxury master suite with ocean view"
@@ -405,7 +413,10 @@ function PropertyDetail() {
                             `+${roomType.roomTypeImages.length - 1} photos`}
                         </div>
                       </div>
-                      <div className="p-4 flex flex-col justify-between w-2/3">
+                      <div
+                        onClick={() => handleSelectRoom(roomType)}
+                        className="p-4 flex flex-col justify-between w-2/3"
+                      >
                         <div>
                           <div className="flex justify-between items-start">
                             <h3 className="font-bold text-lg">
@@ -568,10 +579,20 @@ function PropertyDetail() {
           </div>
         </div>
       </main>
-      {showImageGallery && (
+      {showRoomGallery && (
+        <ImageGallery
+          images={selectedRoom?.roomTypeImages!}
+          setShowImageGallery={setShowRoomGallery}
+          title={selectedRoom?.name || ""}
+          location={property?.name || ""}
+        />
+      )}
+      {showPropertyGallery && (
         <ImageGallery
           images={property?.propertyImages!}
-          setShowImageGallery={setShowImageGallery}
+          setShowImageGallery={setShowPropertyGallery}
+          title={property?.name || ""}
+          location={property?.city || ""}
         />
       )}
     </div>

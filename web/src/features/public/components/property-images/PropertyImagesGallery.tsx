@@ -42,7 +42,7 @@ export default function PropertyImageGallery({
   const Layout = layoutMap[count];
 
   return (
-    <div onClick={handleImageClick}>
+    <div onClick={handleImageClick} className="cursor-pointer">
       <Layout images={imgs} imgClass={imgClass} />
     </div>
   );
