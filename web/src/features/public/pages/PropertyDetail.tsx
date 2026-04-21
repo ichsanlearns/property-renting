@@ -15,6 +15,7 @@ import toast from "react-hot-toast";
 import { createReservationRequest } from "../../reservations/api/reservations.service";
 import { useAuthStore } from "../../auth/stores/auth.store";
 import LoaderFetching from "../../../shared/ui/LoaderFetching";
+import PropertyImageGallery from "../components/property-images/PropertyImagesGallery";
 
 type SelectedDateRoomAvailability = {
   id: string;
@@ -261,7 +262,7 @@ function PropertyDetail() {
             </div>
           </div>
         </header>
-        <section
+        {/* <section
           className={`grid grid-cols-1 md:grid-cols-4 grid-rows-2 gap-3 h-125 mb-12 rounded-2xl overflow-hidden group`}
         >
           {property?.propertyImages.map((image, index) => (
@@ -277,7 +278,8 @@ function PropertyDetail() {
               />
             </div>
           ))}
-        </section>
+        </section> */}
+        <PropertyImageGallery images={property?.propertyImages} />
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
           <div className="lg:col-span-2 space-y-12">
             <section>
