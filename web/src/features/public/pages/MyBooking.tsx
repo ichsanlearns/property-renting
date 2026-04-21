@@ -189,7 +189,7 @@ function MyBooking() {
                 <div className="flex flex-col gap-2">
                   {booking.status === "Waiting for Payment" ? (
                     <>
-                      <button onClick={() => navigate(`/payment/${booking.reservationCode}`)} className="w-full bg-primary text-white font-bold py-2.5 rounded-lg hover:bg-primary/90 transition-colors text-sm">
+                      <button onClick={() => navigate(`/reservations/${booking.reservationCode}`)} className="w-full bg-primary text-white font-bold py-2.5 rounded-lg hover:bg-primary/90 transition-colors text-sm">
                         Pay Now
                       </button>
                       <button className="w-full text-slate-500 hover:text-red-500 font-semibold py-2 transition-colors text-sm">Cancel Booking</button>

@@ -1,4 +1,5 @@
 export type ReservationData = {
+  id: any;
   reservationCode: string;
   propertyNameSnapshot: string;
   roomNameSnapshot: string;
