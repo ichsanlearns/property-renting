@@ -5,6 +5,7 @@ import { formatRupiah } from "../../../shared/utils/price.util";
 import LoaderFetching from "../../../shared/ui/LoaderFetching";
 import toast from "react-hot-toast";
 import { useReservationDetail } from "../hooks/useReservations";
+import api from "../../../api/client";
 
 function Reservation() {
   const { reservationCode } = useParams();
@@ -44,6 +45,51 @@ function Reservation() {
   const pricePerNight = Number(data?.averageRoomPerNightSnapshot || 0);
 
   const tax = useMemo(() => pricePerNight * nights * 0.1, [pricePerNight, nights]);
+
+  const handlePay = async () => {
+    try {
+      // manual transfer
+      if (selectedPayment === "MANUAL_TRANSFER") {
+        window.location.href = `/payment/${reservationCode}`;
+        return;
+      }
+
+      if (!data) {
+        toast.error("Reservation data not found");
+        return;
+      }
+
+      const res = await api.post("/payments/midtrans", {
+        reservationId: data.id,
+      });
+
+      const snapToken = res.data.data.token;
+
+      if (!window.snap) {
+        toast.error("Midtrans not loaded");
+        return;
+      }
+
+      window.snap.pay(snapToken, {
+        onSuccess: async () => {
+          toast.success("Payment Success!");
+          window.location.href = "/mybooking";
+        },
+        onPending: () => {
+          toast("Waiting for payment...");
+        },
+        onError: () => {
+          toast.error("Payment failed!");
+        },
+        onClose: () => {
+          toast("Payment cancelled");
+        },
+      });
+    } catch (err) {
+      console.error(err);
+      toast.error("Payment failed");
+    }
+  };
 
   if (isLoading) return <LoaderFetching />;
 
@@ -118,14 +164,6 @@ function Reservation() {
                 </div>
               ))}
             </div>
-
-            {/* Upload proof */}
-            {selectedPayment === "MANUAL_TRANSFER" && (
-              <div className="mt-4">
-                <label className="text-sm font-semibold">Upload Payment Proof</label>
-                <input type="file" className="mt-2 block w-full border border-primary/20 rounded-lg p-2" />
-              </div>
-            )}
           </div>
         </div>
 
@@ -155,7 +193,7 @@ function Reservation() {
               </div>
             </div>
 
-            <button onClick={() => toast.success("Proceed to payment")} className="w-full mt-6 bg-primary text-white py-3 rounded-xl font-bold hover:opacity-90">
+            <button onClick={handlePay} className="w-full mt-6 bg-primary text-white py-3 rounded-xl font-bold hover:opacity-90">
               Pay Now
             </button>
 

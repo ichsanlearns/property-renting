@@ -58,3 +58,14 @@ export const midtransWebhookController = catchAsync(async (req, res) => {
     message: "Webhook received",
   });
 });
+
+export const createMidtransController = catchAsync(async (req, res) => {
+  const { reservationId } = req.body;
+
+  const token = await paymentService.createMidtransTransaction(reservationId);
+
+  res.status(200).json({
+    message: "Midtrans transaction created",
+    data: { token },
+  });
+});

@@ -9,8 +9,8 @@ const snap = new midtransClient.Snap({
 export const createSnapTransaction = async (reservation: any) => {
   const parameter = {
     transaction_details: {
-      order_id: reservation.reservationCode,
-      gross_amount: reservation.totalAmount,
+      order_id: `${reservation.reservationCode}-${Date.now()}`,
+      gross_amount: Number(reservation.totalAmount),
     },
     customer_details: {
       first_name: reservation.customerName || "Guest",
