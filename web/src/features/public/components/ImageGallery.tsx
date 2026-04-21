@@ -1,11 +1,23 @@
-function ImageGallery() {
+type ImageGalleryProps = {
+  imageUrl: string;
+  isCover: boolean;
+  order: number;
+};
+
+function ImageGallery({
+  images,
+  setShowImageGallery,
+}: {
+  images: ImageGalleryProps[];
+  setShowImageGallery: (value: boolean) => void;
+}) {
   return (
-    <div className="bg-black text-white w-screen h-screen overflow-hidden relative font-body selection:bg-primary selection:text-white">
+    <div className="fixed inset-0 p-20 z-50 bg-black text-white w-screen h-screen overflow-hidden font-body selection:bg-primary selection:text-white">
       <div className="absolute inset-0 w-full h-full z-0 p-2 md:p-4">
-        <div className="w-full h-full rounded-2xl md:rounded-4xl overflow-hidden relative">
+        <div className="w-full h-full rounded-2xl md:rounded-4xl overflow-hidden relative md:p-20 ">
           <img
             alt="Luxurious oceanfront bedroom with panoramic floor-to-ceiling windows"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover md:rounded-4xl"
             data-alt="Wide shot of an ultra-modern luxury bedroom overlooking the ocean at sunset with warm glowing light"
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuCaH5Vs8_yavagEWkglVjg7YL4PesNJz6JvDKlZwewrVshaXuRgIr6mgXWOPpDZkbITGSJ9LxmOOxI-C_zsh4o5UqLwz0VMQF2aWNmMfcZ6k6cdfHID8OxA9TPtajOHr3Tre9OjP3E3krwbZGZywTt_86S19AneCzd1g_y_STgisB-aVvndAsyUKxpeFXf96Ysa79I0nX3jtmcQrfe8ljj5uMfQ3mQbM-BbU_skqfpTjmGx9Ltb2P2Vfqkz5FUsQg0llyiPcB6bPGSa"
           />
@@ -17,36 +29,13 @@ function ImageGallery() {
           1 / 12
         </div>
         <div className="flex items-center gap-3">
-          <div className="hidden md:flex gap-1 bg-black/20 backdrop-blur-lg rounded-full p-1 border border-white/10">
-            <button
-              aria-label="zoom in"
-              className="text-white/80 hover:text-white transition-colors active:scale-95 duration-200 p-2 rounded-full hover:bg-white/10"
-            >
-              <span
-                className="material-symbols-outlined text-[20px]"
-                data-icon="zoom_in"
-              >
-                zoom_in
-              </span>
-            </button>
-            <button
-              aria-label="zoom out"
-              className="text-white/80 hover:text-white transition-colors active:scale-95 duration-200 p-2 rounded-full hover:bg-white/10"
-            >
-              <span
-                className="material-symbols-outlined text-[20px]"
-                data-icon="zoom_out"
-              >
-                zoom_out
-              </span>
-            </button>
-          </div>
           <button
             aria-label="close gallery"
             className="bg-black/20 backdrop-blur-lg border border-white/10 hover:bg-white/10 text-white/90 hover:text-white transition-all active:scale-95 duration-200 p-2.5 rounded-full shadow-lg"
           >
             <span
-              className="material-symbols-outlined text-[20px]"
+              onClick={() => setShowImageGallery(false)}
+              className="material-symbols-outlined text-[20px] cursor-pointer"
               data-icon="close"
             >
               close

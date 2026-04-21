@@ -9,9 +9,13 @@ type PropertyImage = {
 
 type Props = {
   images?: PropertyImage[];
+  handleImageClick: () => void;
 };
 
-export default function PropertyImageGallery({ images = [] }: Props) {
+export default function PropertyImageGallery({
+  images = [],
+  handleImageClick,
+}: Props) {
   const imgs = images.slice(0, 5);
   const count = imgs.length;
 
@@ -37,5 +41,9 @@ export default function PropertyImageGallery({ images = [] }: Props) {
 
   const Layout = layoutMap[count];
 
-  return <Layout images={imgs} imgClass={imgClass} />;
+  return (
+    <div onClick={handleImageClick}>
+      <Layout images={imgs} imgClass={imgClass} />
+    </div>
+  );
 }

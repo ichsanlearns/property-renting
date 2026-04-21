@@ -16,6 +16,7 @@ import { createReservationRequest } from "../../reservations/api/reservations.se
 import { useAuthStore } from "../../auth/stores/auth.store";
 import LoaderFetching from "../../../shared/ui/LoaderFetching";
 import PropertyImageGallery from "../components/property-images/PropertyImagesGallery";
+import ImageGallery from "../components/ImageGallery";
 
 type SelectedDateRoomAvailability = {
   id: string;
@@ -50,6 +51,8 @@ function PropertyDetail() {
   const { data: property, isLoading } = usePropertyDetail({ propertyId });
 
   const [noRoomAvailable, setNoRoomAvailable] = useState(false);
+  const [showImageGallery, setShowImageGallery] = useState(false);
+
   const [dateRange, setDateRange] = useState<{
     checkInDate: Date | null;
     checkOutDate: Date | null;
@@ -279,7 +282,10 @@ function PropertyDetail() {
             </div>
           ))}
         </section> */}
-        <PropertyImageGallery images={property?.propertyImages} />
+        <PropertyImageGallery
+          images={property?.propertyImages}
+          handleImageClick={() => setShowImageGallery(true)}
+        />
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
           <div className="lg:col-span-2 space-y-12">
             <section>
@@ -562,6 +568,12 @@ function PropertyDetail() {
           </div>
         </div>
       </main>
+      {showImageGallery && (
+        <ImageGallery
+          images={property?.propertyImages!}
+          setShowImageGallery={setShowImageGallery}
+        />
+      )}
     </div>
   );
 }
