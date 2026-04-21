@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 type ImageGalleryProps = {
   imageUrl: string;
   isCover: boolean;
@@ -11,6 +13,22 @@ function ImageGallery({
   images: ImageGalleryProps[];
   setShowImageGallery: (value: boolean) => void;
 }) {
+  const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
+
+  const handleNextImage = () => {
+    if (currentImageIndex === images.length - 1) {
+      return;
+    }
+    setCurrentImageIndex((prev) => prev + 1);
+  };
+
+  const handlePrevImage = () => {
+    if (currentImageIndex === 0) {
+      return;
+    }
+    setCurrentImageIndex((prev) => prev - 1);
+  };
+
   return (
     <div className="fixed inset-0 p-20 z-50 bg-black text-white w-screen h-screen overflow-hidden font-body selection:bg-primary selection:text-white">
       <div className="absolute inset-0 w-full h-full z-0 p-2 md:p-4">
@@ -19,7 +37,7 @@ function ImageGallery({
             alt="Luxurious oceanfront bedroom with panoramic floor-to-ceiling windows"
             className="w-full h-full object-cover md:rounded-4xl"
             data-alt="Wide shot of an ultra-modern luxury bedroom overlooking the ocean at sunset with warm glowing light"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCaH5Vs8_yavagEWkglVjg7YL4PesNJz6JvDKlZwewrVshaXuRgIr6mgXWOPpDZkbITGSJ9LxmOOxI-C_zsh4o5UqLwz0VMQF2aWNmMfcZ6k6cdfHID8OxA9TPtajOHr3Tre9OjP3E3krwbZGZywTt_86S19AneCzd1g_y_STgisB-aVvndAsyUKxpeFXf96Ysa79I0nX3jtmcQrfe8ljj5uMfQ3mQbM-BbU_skqfpTjmGx9Ltb2P2Vfqkz5FUsQg0llyiPcB6bPGSa"
+            src={images[currentImageIndex].imageUrl}
           />
         </div>
       </div>
@@ -50,8 +68,10 @@ function ImageGallery({
         <p className="text-white/60 text-sm mt-1">Ocean Breeze Villa</p>
       </div>
       <button
+        onClick={handlePrevImage}
         aria-label="Previous image"
-        className="absolute left-6 md:left-8 top-1/2 -translate-y-1/2 z-20 w-12 h-12 md:w-14 md:h-14 flex items-center justify-center rounded-full bg-black/20 hover:bg-black/40 backdrop-blur-xl text-white/90 hover:text-white transition-all hover:scale-105 hover:brightness-110 shadow-lg border border-white/10 group mt-8 lg:mt-0"
+        className="absolute left-6 md:left-8 top-1/2 -translate-y-1/2 z-20 w-12 h-12 md:w-14 md:h-14 flex items-center justify-center rounded-full bg-black/20 hover:bg-black/40 backdrop-blur-xl text-white/90 hover:text-white transition-all hover:scale-105 hover:brightness-110 shadow-lg border border-white/10 group mt-8 lg:mt-0 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+        disabled={currentImageIndex === 0}
       >
         <span
           className="material-symbols-outlined text-3xl group-hover:-translate-x-0.5 transition-transform"
@@ -61,8 +81,10 @@ function ImageGallery({
         </span>
       </button>
       <button
+        onClick={handleNextImage}
         aria-label="Next image"
-        className="absolute right-6 md:right-8 top-1/2 -translate-y-1/2 z-20 w-12 h-12 md:w-14 md:h-14 flex items-center justify-center rounded-full bg-black/20 hover:bg-black/40 backdrop-blur-xl text-white/90 hover:text-white transition-all hover:scale-105 hover:brightness-110 shadow-lg border border-white/10 group mt-8 lg:mt-0"
+        className="absolute right-6 md:right-8 top-1/2 -translate-y-1/2 z-20 w-12 h-12 md:w-14 md:h-14 flex items-center justify-center rounded-full bg-black/20 hover:bg-black/40 backdrop-blur-xl text-white/90 hover:text-white transition-all hover:scale-105 hover:brightness-110 shadow-lg border border-white/10 group mt-8 lg:mt-0 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+        disabled={currentImageIndex === images.length - 1}
       >
         <span
           className="material-symbols-outlined text-3xl group-hover:translate-x-0.5 transition-transform"
