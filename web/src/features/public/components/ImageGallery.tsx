@@ -96,15 +96,28 @@ function ImageGallery({
       <div className="absolute bottom-0 inset-x-0 h-64 gradient-bottom z-10 pointer-events-none rounded-b-2xl md:rounded-b-4xl mx-2 md:mx-4 mb-2 md:mb-4"></div>
       <footer className="absolute bottom-8 md:bottom-10 w-full flex items-end justify-center px-4 z-30">
         <div className="bg-black/30 backdrop-blur-2xl p-3 md:p-4 rounded-3xl border border-white/10 shadow-2xl">
-          <div className="flex gap-4 overflow-x-auto snap-x hide-scrollbar max-w-[90vw] md:max-w-3xl items-center">
-            <button className="shrink-0 snap-center w-[100px] h-[70px] md:w-[120px] md:h-[80px] rounded-xl overflow-hidden border-2 border-white scale-105 shadow-xl relative transition-all z-10">
+          <div className="flex gap-4 overflow-x-auto no-scrollbar snap-x max-w-[90vw] md:max-w-3xl items-center">
+            {images.map((image, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentImageIndex(index)}
+                className="shrink-0 snap-center w-[100px] h-[70px] md:w-[120px] md:h-[80px] rounded-xl overflow-hidden border-2 border-white/10 scale-105 shadow-xl relative transition-all z-10 cursor-pointer hover:scale-105 hover:brightness-110 hover:shadow-lg hover:border-white hover:transition-all hover:duration-200 hover:ease-in-out"
+              >
+                <img
+                  className="w-full h-full object-cover"
+                  data-alt="Thumbnail of modern master bedroom with ocean view"
+                  src={image.imageUrl}
+                />
+              </button>
+            ))}
+            {/* <button className="shrink-0 snap-center w-[100px] h-[70px] md:w-[120px] md:h-[80px] rounded-xl overflow-hidden border-2 border-white scale-105 shadow-xl relative transition-all z-10">
               <img
                 className="w-full h-full object-cover"
                 data-alt="Thumbnail of modern master bedroom with ocean view"
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBUCGAdHW5urrNzh54OCwWF9jQLGYb8fSDftyTldyXLBVC-pWK_pEw2ZdvLB0ERuupoqPTt7HAJj6rxt-A5SM8uc_9hCQgtg254Cwe5P-E7FNG-3LYXBR6vlcVce1VObYZDtzUXsd1SEbkEGdQuRtLFbNfzebxew_uEUI_M0RSSCClZa3h9_XxKoeUJfPggBYtQibfto_Ja3zIPZaiAN_L6rpVWq9CvqEQzZtCyhdbyJcG-hcOwC9LvHp8mZkfPwnxViwWb29KVvtI"
               />
-            </button>
-            <button className="shrink-0 snap-center w-[100px] h-[70px] md:w-[120px] md:h-[80px] rounded-xl overflow-hidden border border-white/10 opacity-50 hover:opacity-100 transition-all hover:scale-105 active:scale-95">
+            </button> */}
+            {/* <button className="shrink-0 snap-center w-[100px] h-[70px] md:w-[120px] md:h-[80px] rounded-xl overflow-hidden border border-white/10 opacity-50 hover:opacity-100 transition-all hover:scale-105 active:scale-95">
               <img
                 className="w-full h-full object-cover"
                 data-alt="Thumbnail of secondary bedroom with light wood accents"
@@ -129,7 +142,7 @@ function ImageGallery({
                   +8 MORE
                 </span>
               </div>
-            </button>
+            </button> */}
           </div>
         </div>
       </footer>
