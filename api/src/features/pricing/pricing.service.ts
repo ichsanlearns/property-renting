@@ -134,3 +134,37 @@ export const createPricingRule = async (input: CreatePricingRuleInput) => {
 
   await prisma.$transaction(updates);
 };
+
+export const getByTenantId = async (tenantId: string) => {
+  const isExist = await prisma.user.findUnique({
+    where: {
+      id: tenantId,
+    },
+  });
+  if (!isExist) {
+    throw new Error("Tenant not found");
+  }
+  return await prisma.pricingRule.findMany({
+    where: {
+      OR: [{ tenantId }, { createdBy: "SYSTEM" }],
+    },
+    select: {
+      id: true,
+      name: true,
+      createdBy: true,
+
+      scopeType: true,
+
+      startDate: true,
+      endDate: true,
+
+      adjustmentType: true,
+      adjustmentDirection: true,
+      adjustmentValue: true,
+
+      priority: true,
+
+      isActive: true,
+    },
+  });
+};
