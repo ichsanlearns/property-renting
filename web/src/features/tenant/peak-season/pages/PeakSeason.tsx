@@ -1,4 +1,9 @@
+import { usePricing } from "../hooks/usePricing";
+import { format } from "date-fns";
+
 function PeakSeason() {
+  const { data: pricingRules } = usePricing();
+
   return (
     <main className="flex-1 overflow-hidden mt-16 flex flex-col p-6 bg-surface-dim">
       <div className="flex justify-between items-end mb-6">
@@ -21,7 +26,7 @@ function PeakSeason() {
             <table className="w-full text-left text-sm whitespace-nowrap">
               <thead className="bg-surface-container-low border-b border-outline text-on-surface-variant font-medium">
                 <tr>
-                  <th className="px-6 py-4">Status</th>
+                  <th className="pl-20 py-4">Status</th>
                   <th className="px-6 py-4">Scope &amp; Name</th>
                   <th className="px-6 py-4">Period</th>
                   <th className="px-6 py-4">
@@ -35,12 +40,89 @@ function PeakSeason() {
                       </div>
                     </div>
                   </th>
-                  <th className="px-6 py-4 text-right">Adjustment</th>
-                  <th className="px-6 py-4 text-center">Actions</th>
+                  <th className="pr-20 py-4 text-right">Adjustment</th>
+                  {/* <th className="px-6 py-4 text-center">Actions</th> */}
                 </tr>
               </thead>
               <tbody className="divide-y divide-outline">
-                <tr className="hover:bg-surface-variant transition-colors group border-l-4 border-l-primary relative">
+                {pricingRules?.map((pricingRule) => {
+                  return (
+                    <tr className="hover:bg-surface-variant transition-colors group border-l-4 border-l-primary relative">
+                      <td className="pl-16 py-4">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-tertiary-container text-on-tertiary-container border border-tertiary/20">
+                          <span className="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+                          Active
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center text-on-surface">
+                            <span
+                              className="material-symbols-outlined"
+                              style={{ fontVariationSettings: "'FILL' 1" }}
+                            >
+                              settings
+                            </span>
+                          </div>
+                          <div>
+                            <p className="font-bold text-on-surface text-base">
+                              {pricingRule.name}
+                            </p>
+                            <p className="text-sm text-on-surface-variant mt-0.5 font-medium">
+                              (Default: system)
+                            </p>
+                            <p className="text-[11px] text-on-surface-variant/80 mt-0.5">
+                              Overrides Property &amp; Global
+                            </p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <p className="text-on-surface font-medium">
+                          {format(pricingRule.startDate, "MMM dd, yyyy")} -{" "}
+                          {format(pricingRule.endDate, "MMM dd, yyyy")}
+                        </p>
+                        <p className="text-xs text-on-surface-variant mt-0.5">
+                          {new Date(pricingRule.endDate).getDate() -
+                            new Date(pricingRule.startDate).getDate()}{" "}
+                          days
+                        </p>
+                      </td>
+                      <td className="pl-12 py-4">
+                        <span className="inline-flex items-center justify-center w-6 h-6 rounded bg-surface-container-high text-on-surface text-xs font-bold border border-outline">
+                          {pricingRule.priority}
+                        </span>
+                      </td>
+                      <td className="pr-24 py-4 text-right">
+                        <span
+                          className={`font-bold ${
+                            pricingRule.adjustmentDirection === "DECREASE"
+                              ? "text-error"
+                              : "text-tertiary"
+                          } text-base`}
+                        >
+                          {pricingRule.adjustmentDirection === "DECREASE"
+                            ? "-"
+                            : "+"}
+                          {pricingRule.adjustmentValue}%
+                        </span>
+                      </td>
+                      {/* <td className="px-6 py-4 text-center">
+                        <button className="text-on-surface-variant hover:text-primary transition-colors p-1.5 rounded-full hover:bg-primary-container/10">
+                          <span className="material-symbols-outlined text-[20px]">
+                            edit
+                          </span>
+                        </button>
+                        <button className="text-on-surface-variant hover:text-error transition-colors p-1.5 rounded-full hover:bg-error-container/50 ml-1">
+                          <span className="material-symbols-outlined text-[20px]">
+                            delete
+                          </span>
+                        </button>
+                      </td> */}
+                    </tr>
+                  );
+                })}
+                {/* <tr className="hover:bg-surface-variant transition-colors group border-l-4 border-l-primary relative">
                   <td className="px-6 py-4 pl-5">
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-tertiary-container text-on-tertiary-container border border-tertiary/20">
                       <span className="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
@@ -217,7 +299,7 @@ function PeakSeason() {
                       </span>
                     </button>
                   </td>
-                </tr>
+                </tr> */}
               </tbody>
             </table>
           </div>

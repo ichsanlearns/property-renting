@@ -6,6 +6,10 @@ import { createPricingRuleValidator } from "../pricing/pricing.validator.js";
 export const updateMe = async (req: Request, res: Response) => {
   const userId = req.user?.userId;
 
+  if (!userId) {
+    throw new Error("User not found");
+  }
+
   const {
     firstName,
     lastName,
@@ -38,6 +42,10 @@ export const updateMe = async (req: Request, res: Response) => {
 export const createPricingRule = async (req: Request, res: Response) => {
   const tenantId = req.user?.userId;
   const scopeType = "TENANT";
+
+  if (!tenantId) {
+    throw new Error("Tenant not found");
+  }
 
   const input = createPricingRuleValidator.safeParse(req.body);
 
