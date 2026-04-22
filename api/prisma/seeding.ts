@@ -384,6 +384,22 @@ const seed = async () => {
         adjustmentDirection: PriceAdjustmentDirection.INCREASE,
         adjustmentValue: 10,
       },
+      {
+        id: "012e717a-2429-4757-945f-e24724bcd7ad",
+        name: "Global Thursday",
+        createdBy: "SYSTEM",
+
+        scopeType: ScopeType.SYSTEM,
+
+        startDate: new Date("2026-01-01"),
+        endDate: new Date("2026-12-31"),
+
+        daysOfWeek: [3],
+
+        adjustmentType: PriceAdjustmentType.NOMINAL,
+        adjustmentDirection: PriceAdjustmentDirection.DECREASE,
+        adjustmentValue: 25000,
+      },
     ];
 
     await prisma.pricingRule.createMany({
