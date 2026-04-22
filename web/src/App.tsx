@@ -32,7 +32,7 @@ import VerifyLayout from "./shared/layouts/VerifyLayout";
 import Password from "./features/auth/pages/Password";
 import type { User } from "./shared/types/user.type";
 import MyProfile from "./features/profile/pages/MyProfile";
-import PaymentProof from "./features/tenant/order-list/pages/PaymentProof";
+import PaymentProof from "./features/tenant/payment-proof/pages/PaymentProof";
 import ForgotPassword from "./features/auth/pages/ForgotPassword";
 import ResetPassword from "./features/auth/pages/ResetPassword";
 import PropertyDetail from "./features/public/pages/PropertyDetail";
