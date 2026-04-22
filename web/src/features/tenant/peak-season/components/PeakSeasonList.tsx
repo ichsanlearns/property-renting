@@ -52,7 +52,7 @@ function PeakSeasonList({
   pricingRules: GetByTenantIdResponse[];
 }) {
   return (
-    <div className="flex-1 flex gap-6 overflow-hidden">
+    <div className="flex-1 flex gap-6 overflow-hidden w-full">
       <div className="w-full lg:w-full bg-surface border border-outline rounded-xl shadow-sm overflow-hidden flex flex-col">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm whitespace-nowrap">
