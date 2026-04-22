@@ -3,6 +3,11 @@ import jwt from "jsonwebtoken";
 
 import { AppError } from "../utils/app-error.util.js";
 
+type DecodedToken = {
+  userId: string;
+  role: string;
+};
+
 export function authMiddleware(
   req: Request,
   res: Response,
@@ -21,7 +26,10 @@ export function authMiddleware(
   }
 
   try {
-    const payload = jwt.verify(token, process.env.JWT_ACCESS_TOKEN!) as any;
+    const payload = jwt.verify(
+      token,
+      process.env.JWT_ACCESS_TOKEN!,
+    ) as DecodedToken;
 
     req.user = payload;
 
