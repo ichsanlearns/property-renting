@@ -19,7 +19,7 @@ export const uploadPaymentProof = async ({ userId, reservationId, file }: { user
       throw new AppError("Unauthorized", 403);
     }
 
-    if (reservation.status !== ReservationStatus.WAITING_PAYMENT) {
+    if (reservation.status !== ReservationStatus.WAITING_PAYMENT && reservation.status !== ReservationStatus.REJECTED) {
       throw new AppError("Invalid reservation status", 400);
     }
 
@@ -91,23 +91,23 @@ export const rejectPayment = async ({ reservationId, tenantId, reason }: { reser
     if (!reservation) {
       throw new AppError("Reservation not found", 404);
     }
+
     if (reservation.roomType.property.tenantId !== tenantId) {
       throw new AppError("Unauthorized", 403);
     }
+
     if (reservation.status !== ReservationStatus.WAITING_CONFIRMATION) {
       throw new AppError("Invalid reservation status", 400);
     }
 
-    const updated = await tx.reservation.update({
+    return await tx.reservation.update({
       where: { id: reservationId },
       data: {
-        status: "WAITING_PAYMENT", // balik lagi
+        status: ReservationStatus.REJECTED,
         rejectionReason: reason || "Payment rejected",
-        paymentProof: null, // reset proof
+        paymentProof: null,
       },
     });
-
-    return updated;
   });
 };
 
