@@ -58,8 +58,17 @@ function PaymentProof() {
         reason: note,
       });
 
-      toast.error("Payment rejected!");
-      navigate("/tenant/orderlist");
+      setData((prev: any) => ({
+        ...prev,
+        status: "REJECTED",
+        rejectionReason: note,
+      }));
+
+      toast.success("Payment rejected!");
+
+      setTimeout(() => {
+        navigate("/tenant/orderlist");
+      }, 1000);
     } catch (err) {
       console.error(err);
       toast.error("Failed to reject payment");
@@ -92,10 +101,11 @@ function PaymentProof() {
         </div>
         <div
           className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border
-  ${data.status === "WAITING_CONFIRMATION" ? "bg-amber-50 text-amber-600 border-amber-200" : "bg-emerald-50 text-emerald-600 border-emerald-200"}`}
+  ${data.status === "PAID" ? "bg-emerald-50 text-emerald-600 border-emerald-200" : data.status === "REJECTED" ? "bg-red-50 text-red-600 border-red-200" : "bg-amber-50 text-amber-600 border-amber-200"}`}
         >
-          <span className="material-symbols-outlined">{data.status === "PAID" ? "check_circle" : "pending"}</span>
-          <span className="text-sm font-bold">{data.status === "PAID" ? "Confirmed" : "Waiting for Confirmation"}</span>
+          <span className="material-symbols-outlined">{data.status === "PAID" ? "check_circle" : data.status === "REJECTED" ? "cancel" : "pending"}</span>
+
+          <span className="text-sm font-bold">{data.status === "PAID" ? "Confirmed" : data.status === "REJECTED" ? "Rejected" : "Waiting for Confirmation"}</span>
         </div>
       </div>
 
@@ -140,10 +150,12 @@ function PaymentProof() {
           </div>
 
           {/* Rejection Notes Area */}
+          {/* Rejection Notes Area */}
           <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm p-6">
             <label className="block text-sm font-bold text-slate-900 dark:text-white mb-3" htmlFor="rejection-notes">
               Notes for Rejection (Optional)
             </label>
+
             <textarea
               value={note}
               onChange={(e) => setNote(e.target.value)}
@@ -152,6 +164,14 @@ function PaymentProof() {
               placeholder="e.g. Account name mismatch, amount incorrect..."
               rows={4}
             />
+
+            {data.status === "REJECTED" && (
+              <div className="mt-4 p-4 bg-red-50 rounded-xl border border-red-200">
+                <p className="text-sm font-bold text-red-700">Previous Rejection Reason</p>
+
+                <p className="text-sm text-red-600 mt-1">{data.rejectionReason}</p>
+              </div>
+            )}
           </div>
         </div>
 
@@ -180,6 +200,7 @@ function PaymentProof() {
             <div className="p-6 border-t border-slate-100 dark:border-slate-800 grid grid-cols-1 sm:grid-cols-2 gap-4">
               <button
                 onClick={handleReject}
+                disabled={data.status === "PAID"}
                 className="flex items-center justify-center gap-2 py-4 px-6 border-2 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 rounded-xl font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition-all active:scale-95"
               >
                 <span className="material-symbols-outlined">close</span>
