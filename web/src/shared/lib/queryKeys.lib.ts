@@ -14,4 +14,7 @@ export const queryKeys = {
       endDate: string | null,
     ) => ["property", propertyId, "availability", startDate, endDate] as const,
   },
+  pricing: {
+    myPricing: () => ["pricing", "myPricing"] as const,
+  },
 };

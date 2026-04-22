@@ -4,6 +4,6 @@ import { authMiddleware } from "../../shared/middleware/auth.middleware.js";
 
 const router = Router();
 
-router.get("/tenant/:tenantId", getByTenantIdController);
+router.get("/tenant", authMiddleware, getByTenantIdController);
 
 export default router;
