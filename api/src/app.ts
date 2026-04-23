@@ -1,8 +1,4 @@
-import express, {
-  type Application,
-  type Request,
-  type Response,
-} from "express";
+import express, { type Application, type Request, type Response } from "express";
 
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -16,6 +12,7 @@ import reservationRoutes from "./features/reservation/reservation.route.js";
 import paymentRoutes from "./features/payment/payment.route.js";
 import reviewRoutes from "./features/review/review.route.js";
 import pricingRoutes from "./features/pricing/pricing.route.js";
+import dashboardRoutes from "./features/dashboard/dashboard.route.js";
 
 import { notFound } from "./shared/middleware/not-found.middleware.js";
 import { error } from "./shared/middleware/error.middleware.js";
@@ -32,9 +29,7 @@ app.use(cookieParser());
 app.get("/favicon.ico", (req, res) => res.status(204).end());
 
 app.get("/api/status", (req: Request, res: Response) => {
-  res
-    .status(200)
-    .json({ message: "API is running!", uptime: process.uptime() });
+  res.status(200).json({ message: "API is running!", uptime: process.uptime() });
 });
 
 app.use("/api/auth", authRoutes);
@@ -46,6 +41,7 @@ app.use("/api/reservations", reservationRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/pricing", pricingRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
 app.use(notFound);
 app.use(error);
