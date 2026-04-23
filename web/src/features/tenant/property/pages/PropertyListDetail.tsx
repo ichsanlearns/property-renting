@@ -151,69 +151,77 @@ function PropertyListDetail() {
             </button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="bg-surface-container-lowest rounded-2xl shadow-xl shadow-primary/5 border border-primary/10 overflow-hidden flex flex-col group hover:shadow-2xl hover:shadow-primary/10 transition-all duration-300">
-              <div className="p-6 flex flex-col gap-4 flex-1">
-                <div className="flex justify-between items-start">
-                  <h4 className="text-[18px] font-bold text-on-surface leading-tight group-hover:text-primary transition-colors">
-                    Master Oceanfront Suite
-                  </h4>
-                  <span className="bg-tertiary-container/30 text-tertiary border border-tertiary/20 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">
-                    Published
-                  </span>
+            {property.roomTypes.map((roomType) => {
+              const bedType = roomType.bedType
+                .split("_")
+                .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(" ");
+              return (
+                <div className="bg-surface-container-lowest rounded-2xl shadow-xl shadow-primary/5 border border-primary/10 overflow-hidden flex flex-col group hover:shadow-2xl hover:shadow-primary/10 transition-all duration-300">
+                  <div className="p-6 flex flex-col gap-4 flex-1">
+                    <div className="flex justify-between items-start">
+                      <h4 className="text-[18px] font-bold text-on-surface leading-tight group-hover:text-primary transition-colors">
+                        {roomType.name}
+                      </h4>
+                      <span className="bg-tertiary-container/30 text-tertiary border border-tertiary/20 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">
+                        {roomType.isPublished ? "Published" : "Unpublished"}
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap gap-y-2 gap-x-4 text-xs font-medium text-on-surface-variant">
+                      <div className="flex items-center gap-1">
+                        <span
+                          className="material-symbols-outlined text-[16px]"
+                          data-icon="group"
+                        >
+                          group
+                        </span>
+                        {roomType.capacity} Guests
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <span
+                          className="material-symbols-outlined text-[16px]"
+                          data-icon="bed"
+                        >
+                          bed
+                        </span>
+                        {roomType.bedCount} {bedType} Bed
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <span
+                          className="material-symbols-outlined text-[16px]"
+                          data-icon="shower"
+                        >
+                          shower
+                        </span>
+                        {roomType.bathroomType} Bathroom
+                      </div>
+                    </div>
+                    <div className="mt-auto pt-4 border-t border-outline flex items-end justify-between">
+                      <div>
+                        <span className="text-lg font-extrabold text-on-surface">
+                          Rp. {roomType.basePrice}
+                        </span>
+                        <span className="text-xs text-on-surface-variant font-medium">
+                          /night
+                        </span>
+                      </div>
+                      <div className="text-xs font-bold text-primary bg-primary-container px-2.5 py-1 rounded-md">
+                        {roomType.availableRooms} Available
+                      </div>
+                    </div>
+                  </div>
+                  <div className="bg-surface-container px-6 py-3 border-t border-outline flex justify-end gap-3 text-sm">
+                    <button className="text-on-surface-variant hover:text-primary font-medium transition-colors">
+                      Edit
+                    </button>
+                    <button className="text-on-surface-variant hover:text-primary font-medium transition-colors">
+                      Delete
+                    </button>
+                  </div>
                 </div>
-                <div className="flex flex-wrap gap-y-2 gap-x-4 text-xs font-medium text-on-surface-variant">
-                  <div className="flex items-center gap-1">
-                    <span
-                      className="material-symbols-outlined text-[16px]"
-                      data-icon="group"
-                    >
-                      group
-                    </span>
-                    2 Guests
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <span
-                      className="material-symbols-outlined text-[16px]"
-                      data-icon="bed"
-                    >
-                      bed
-                    </span>
-                    1 King Bed
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <span
-                      className="material-symbols-outlined text-[16px]"
-                      data-icon="shower"
-                    >
-                      shower
-                    </span>
-                    Private Bathroom
-                  </div>
-                </div>
-                <div className="mt-auto pt-4 border-t border-outline flex items-end justify-between">
-                  <div>
-                    <span className="text-lg font-extrabold text-on-surface">
-                      $450
-                    </span>
-                    <span className="text-xs text-on-surface-variant font-medium">
-                      /night
-                    </span>
-                  </div>
-                  <div className="text-xs font-bold text-primary bg-primary-container px-2.5 py-1 rounded-md">
-                    2 Available
-                  </div>
-                </div>
-              </div>
-              <div className="bg-surface-container px-6 py-3 border-t border-outline flex justify-end gap-3 text-sm">
-                <button className="text-on-surface-variant hover:text-primary font-medium transition-colors">
-                  Edit
-                </button>
-                <button className="text-on-surface-variant hover:text-primary font-medium transition-colors">
-                  Manage Inventory
-                </button>
-              </div>
-            </div>
-            <div className="bg-surface-container-lowest rounded-2xl shadow-xl shadow-primary/5 border border-primary/10 overflow-hidden flex flex-col group hover:shadow-2xl hover:shadow-primary/10 transition-all duration-300">
+              );
+            })}
+            {/* <div className="bg-surface-container-lowest rounded-2xl shadow-xl shadow-primary/5 border border-primary/10 overflow-hidden flex flex-col group hover:shadow-2xl hover:shadow-primary/10 transition-all duration-300">
               <div className="p-6 flex flex-col gap-4 flex-1">
                 <div className="flex justify-between items-start">
                   <h4 className="text-[18px] font-bold text-on-surface leading-tight group-hover:text-primary transition-colors">
@@ -333,7 +341,7 @@ function PropertyListDetail() {
                   Continue Editing
                 </button>
               </div>
-            </div>
+            </div> */}
           </div>
         </section>
       </div>
