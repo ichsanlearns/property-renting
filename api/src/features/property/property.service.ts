@@ -293,6 +293,80 @@ export const getById = async ({ id }: { id: string }) => {
   };
 };
 
+export const getByTenantId = async (tenantId: string) => {
+  const properties = await prisma.property.findMany({
+    where: {
+      tenantId,
+    },
+    select: {
+      id: true,
+      name: true,
+
+      category: {
+        select: {
+          name: true,
+        },
+      },
+
+      city: true,
+      country: true,
+
+      averageRating: true,
+      reviewCount: true,
+
+      numberOfBathrooms: true,
+      updatedAt: true,
+
+      isPublished: true,
+
+      propertyImages: {
+        where: {
+          isCover: true,
+        },
+        select: {
+          imageUrl: true,
+        },
+        take: 1,
+      },
+
+      roomTypes: {
+        select: {
+          name: true,
+          basePrice: true,
+          capacity: true,
+        },
+        orderBy: {
+          basePrice: "asc",
+        },
+      },
+    },
+  });
+
+  return properties.map((property) => ({
+    id: property.id,
+    name: property.name,
+
+    category: property.category.name,
+
+    city: property.city,
+    country: property.country,
+
+    averageRating: property.averageRating,
+    reviewCount: property.reviewCount,
+
+    numberOfBathrooms: property.numberOfBathrooms,
+    updatedAt: property.updatedAt,
+
+    isPublished: property.isPublished,
+
+    coverImage: property.propertyImages[0]?.imageUrl,
+
+    roomTypes: property.roomTypes.map((roomType) => ({
+      ...roomType,
+    })),
+  }));
+};
+
 export const searchByParams = async (params: SearchPropertiesParams) => {
   const where = params.search
     ? {

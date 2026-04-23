@@ -11,7 +11,6 @@ import {
   getByIdBasicSchema,
   searchByParamsSchema,
 } from "./property.validator.js";
-import { transformRoomTypePrices } from "./property.transformer.js";
 
 export const create = catchAsync(async (req: Request, res: Response) => {
   if (!req.user) throw new AppError("Unauthorized", 401);
@@ -110,6 +109,19 @@ export const getById = catchAsync(async (req: Request, res: Response) => {
   res.status(200).json({
     message: "Property fetched successfully",
     data: property,
+  });
+});
+
+export const getByTenantId = catchAsync(async (req: Request, res: Response) => {
+  const tenantId = req.user?.userId;
+
+  if (!tenantId) throw new AppError("Unauthorized", 401);
+
+  const properties = await PropertyService.getByTenantId(tenantId);
+
+  res.status(200).json({
+    message: "Properties fetched successfully",
+    data: properties,
   });
 });
 
