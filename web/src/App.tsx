@@ -39,6 +39,8 @@ import PropertyDetail from "./features/public/pages/PropertyDetail";
 import Reservation from "./features/reservations/pages/Reservation";
 import SearchPage from "./features/public/pages/SearchPage";
 import PeakSeason from "./features/tenant/peak-season/pages/PeakSeason";
+import PropertyList from "./features/tenant/property/pages/PropertyList";
+import PropertyListDetail from "./features/tenant/property/pages/PropertyListDetail";
 
 function requireOnboarding(user: User | null) {
   if (!user?.fullName && user?.email) {
@@ -94,6 +96,14 @@ const router = createBrowserRouter([
         path: "/tenant/",
         element: <DashboardLayout />,
         children: [
+          {
+            path: "properties",
+            element: <PropertyList />,
+          },
+          {
+            path: "property/:propertyId",
+            element: <PropertyListDetail />,
+          },
           {
             path: "properties/create",
             element: <FormProperties />,

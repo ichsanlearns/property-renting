@@ -17,8 +17,12 @@ router.post(
 
 router.get("/", PropertyController.getAllBasic);
 router.get("/search", PropertyController.searchByParams);
+
+router.get("/tenant", authMiddleware, PropertyController.getByTenantId);
+
 router.get("/:propertyId/basic", PropertyController.getByIdBasic);
 router.get("/:propertyId", PropertyController.getById);
+
 router.get(
   "/:propertyId/availability",
   PropertyController.getPropertyRoomPricesDate,

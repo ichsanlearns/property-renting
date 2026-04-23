@@ -14,6 +14,7 @@ module.exports = {
         "tertiary-container": "#00a976",
         "surface-container-high": "#ebe7e7",
         "surface-container-highest": "#e5e1e1",
+        "surface-container-lowest": "#ffffff",
         "surface-variant": "#f1eeee",
         "surface-variant-light": "#f1f5f9",
         outline: "#e2e8f0",

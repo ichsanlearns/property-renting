@@ -1,6 +1,5 @@
 import { prisma } from "../../../shared/lib/prisma.lib.js";
 import { AppError } from "../../../shared/utils/app-error.util.js";
-import { isWeekend, toDateKey } from "../../../shared/utils/date.util.js";
 import type { CreateRoomPayload } from "./room.type.js";
 
 export const createRoom = async ({
@@ -24,6 +23,7 @@ export const createRoom = async ({
     const room = await tx.roomType.create({
       data: {
         ...data,
+        availableRooms: data.totalRooms,
         isVerified: "VERIFIED",
       },
       omit: {
