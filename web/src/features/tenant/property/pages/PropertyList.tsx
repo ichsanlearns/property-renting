@@ -1,4 +1,8 @@
+import { usePropertyByTenantId } from "../hooks/useProperty";
+
 function PropertyList() {
+  const { data: properties } = usePropertyByTenantId();
+
   return (
     <main className="pt-24 pb-12 px-6 md:px-12 md:pt-12 min-h-screen">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
@@ -32,101 +36,112 @@ function PropertyList() {
         </div>
       </div>
       <div className="flex flex-col gap-4">
-        <div className="flex flex-col md:flex-row bg-surface rounded-xl border border-outline-variant p-4 hover:shadow-xl hover:shadow-primary/5 transition-all group border-slate-200/60 shadow-sm hover:shadow-xl hover:-translate-y-0.5 hover:bg-slate-50/50 transition-all duration-300 md:gap-10">
-          <div className="relative w-full md:w-48 h-48 md:h-auto rounded-lg overflow-hidden shrink-0">
-            <img
-              alt="Villa Azul"
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-              data-alt="Luxurious coastal villa exterior with infinity pool overlooking the Aegean sea in Santorini at sunset"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2QwsQTq13wvMbedNE1KWfl_QNw_eLLDtCGTfs66lihpYR72r3Cu61E-sPYgqWnCroGIchs4xQsZFJUp9zraba2jyPz1YrkxtJRW95LQ5AYdhOduvXveF28ucCn-Mh4Pxjqo76KjvxO7KizN5Dnd_Rg8gaSaryM-oSudshTBR7-y829lb4QjG31NnASGsGTj9BEGpRPsg7hHL8I1cJi1c_8HVfnQtDQ0--kA45MWFDWrErHKHsMQgpDrS2sIFYdoMMXMMV6Rfs2qge"
-            />
-            <div className="absolute top-3 left-3 bg-surface/90 backdrop-blur-sm text-primary px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider shadow-sm border border-slate-200/10">
-              Published
-            </div>
-          </div>
-          <div className="flex flex-col justify-center flex-1 py-2">
-            <div className="flex items-center gap-2 mb-1">
-              <span className="px-2 py-0.5 bg-surface-container-highest text-secondary text-[10px] font-bold uppercase rounded-md tracking-wider text-slate-400 font-semibold">
-                Coastal Villa
-              </span>
-            </div>
-            <h2 className="text-[24px] text-slate-900 tracking-tight mb-1 font-extrabold text-[26px]">
-              Villa Azul
-            </h2>
-            <p className="text-[14px] font-medium mb-4 flex items-center gap-1 text-slate-500/80">
-              <span className="material-symbols-outlined text-[16px]">
-                location_on
-              </span>
-              Santorini, Greece
-            </p>
-            <div className="flex flex-wrap gap-2 mt-2">
-              <div className="flex items-center gap-2 px-2.5 py-1 bg-surface-container-highest rounded-lg text-[11px] font-medium text-secondary border border-outline-variant/30 bg-white border-slate-100 shadow-sm">
-                <span className="font-bold text-on-surface">Master Suite</span>
-                <span>•</span>
-                <span>2 Guests</span>
-                <span>•</span>
-                <span className="text-primary font-bold">$450</span>
-              </div>
-              <div className="flex items-center gap-2 px-2.5 py-1 bg-surface-container-highest rounded-lg text-[11px] font-medium text-secondary border border-outline-variant/30 bg-white border-slate-100 shadow-sm">
-                <span className="font-bold text-on-surface">Guest Wing</span>
-                <span>•</span>
-                <span>2 Guests</span>
-                <span>•</span>
-                <span className="text-primary font-bold">$380</span>
-              </div>
-              <div className="flex items-center px-2.5 py-1 bg-surface-container-low rounded-lg text-[11px] font-bold text-primary border border-primary/10">
-                +2 more
+        {properties?.map((property) => (
+          <div className="flex flex-col md:flex-row bg-surface rounded-xl border border-outline-variant p-4 hover:shadow-xl hover:shadow-primary/5 transition-all group border-slate-200/60 shadow-sm hover:shadow-xl hover:-translate-y-0.5 hover:bg-slate-50/50 transition-all duration-300 md:gap-10 cursor-pointer">
+            <div className="relative w-full md:w-48 h-48 md:h-auto rounded-lg overflow-hidden shrink-0">
+              <img
+                alt="Villa Azul"
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                data-alt="Luxurious coastal villa exterior with infinity pool overlooking the Aegean sea in Santorini at sunset"
+                src={property.coverImage}
+              />
+              <div className="absolute top-3 left-3 bg-surface/90 backdrop-blur-sm text-primary px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider shadow-sm border border-slate-200/10">
+                {property.isPublished ? "Published" : "Draft"}
               </div>
             </div>
-          </div>
-          <div className="flex flex-col justify-center md:items-end gap-3 md:w-64 shrink-0 py-2 md:border-l border-outline-variant md:pl-6">
-            <div className="flex flex-col md:items-end gap-4">
-              <div className="flex items-center gap-1 bg-primary/5 px-3 py-1.5 rounded-lg w-fit border border-primary/10">
-                <span
-                  className="material-symbols-outlined text-primary text-[18px]"
-                  style={{ fontVariationSettings: "'FILL' 1" }}
-                >
-                  star
-                </span>
-                <span className="font-extrabold text-primary text-[15px]">
-                  4.9
-                </span>
-                <span className="text-[12px] font-medium text-slate-500 ml-1">
-                  (128 Reviews)
+            <div className="flex flex-col justify-center flex-1 py-2">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="px-2 py-0.5 bg-surface-container-highest text-secondary text-[10px] font-bold uppercase rounded-md tracking-wider text-slate-400 font-semibold">
+                  {property.category}
                 </span>
               </div>
-              <div className="flex flex-col gap-0.5 md:items-end">
-                <span className="text-[14px] font-bold text-slate-900">
-                  4 Baths
+              <h2 className="text-[24px] text-slate-900 tracking-tight mb-1 font-extrabold text-[26px]">
+                {property.name}
+              </h2>
+              <p className="text-[14px] font-medium mb-4 flex items-center gap-1 text-slate-500/80">
+                <span className="material-symbols-outlined text-[16px]">
+                  location_on
                 </span>
-                <span className="text-[12px] font-medium text-slate-400">
-                  Last updated 2 days ago
-                </span>
+                {property.city}, {property.country}
+              </p>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {property.roomTypes.map((roomType) => (
+                  <div className="flex items-center gap-2 px-2.5 py-1 bg-surface-container-highest rounded-lg text-[11px] font-medium text-secondary border border-outline-variant/30 bg-white border-slate-100 shadow-sm">
+                    <span className="font-bold text-on-surface">
+                      {roomType.name}
+                    </span>
+                    <span>•</span>
+                    <span>{roomType.capacity} Guests</span>
+                    <span>•</span>
+                    <span className="text-primary font-bold">
+                      Rp. {roomType.basePrice}
+                    </span>
+                  </div>
+                ))}
+                {/* <div className="flex items-center gap-2 px-2.5 py-1 bg-surface-container-highest rounded-lg text-[11px] font-medium text-secondary border border-outline-variant/30 bg-white border-slate-100 shadow-sm">
+                  <span className="font-bold text-on-surface">Guest Wing</span>
+                  <span>•</span>
+                  <span>2 Guests</span>
+                  <span>•</span>
+                  <span className="text-primary font-bold">$380</span>
+                </div> */}
+                {property.roomTypes.length > 2 && (
+                  <div className="flex items-center px-2.5 py-1 bg-surface-container-low rounded-lg text-[11px] font-bold text-primary border border-primary/10">
+                    +{property.roomTypes.length - 2} more
+                  </div>
+                )}
               </div>
             </div>
+            <div className="flex flex-col justify-center md:items-end gap-3 md:w-64 shrink-0 py-2 md:border-l border-outline-variant md:pl-6">
+              <div className="flex flex-col md:items-end gap-4">
+                <div className="flex items-center gap-1 bg-primary/5 px-3 py-1.5 rounded-lg w-fit border border-primary/10">
+                  <span
+                    className="material-symbols-outlined text-primary text-[18px]"
+                    style={{ fontVariationSettings: "'FILL' 1" }}
+                  >
+                    star
+                  </span>
+                  <span className="font-extrabold text-primary text-[15px]">
+                    {property.averageRating ? property.averageRating : "-"}
+                  </span>
+                  <span className="text-[12px] font-medium text-slate-500 ml-1">
+                    ({property.reviewCount} Reviews)
+                  </span>
+                </div>
+                <div className="flex flex-col gap-0.5 md:items-end">
+                  <span className="text-[14px] font-bold text-slate-900">
+                    {property.numberOfBathrooms} Baths
+                  </span>
+                  <span className="text-[12px] font-medium text-slate-400">
+                    Last updated{" "}
+                    {new Date(property.updatedAt).toLocaleDateString()}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div className="flex md:flex-col items-center justify-end gap-2 md:w-16 shrink-0 border-t md:border-t-0 md:border-l border-outline-variant pt-4 md:pt-0 md:pl-4">
+              <button
+                className="p-2 text-secondary hover:text-primary hover:bg-primary-container/50 rounded-lg transition-colors"
+                title="Edit"
+              >
+                <span className="material-symbols-outlined">edit</span>
+              </button>
+              <button
+                className="p-2 text-secondary hover:text-primary hover:bg-primary-container/50 rounded-lg transition-colors"
+                title="View Details"
+              >
+                <span className="material-symbols-outlined">visibility</span>
+              </button>
+              <button
+                className="p-2 text-secondary hover:text-slate-900 hover:bg-surface-container-highest rounded-lg transition-colors ml-auto md:ml-0"
+                title="More"
+              >
+                <span className="material-symbols-outlined">more_vert</span>
+              </button>
+            </div>
           </div>
-          <div className="flex md:flex-col items-center justify-end gap-2 md:w-16 shrink-0 border-t md:border-t-0 md:border-l border-outline-variant pt-4 md:pt-0 md:pl-4">
-            <button
-              className="p-2 text-secondary hover:text-primary hover:bg-primary-container/50 rounded-lg transition-colors"
-              title="Edit"
-            >
-              <span className="material-symbols-outlined">edit</span>
-            </button>
-            <button
-              className="p-2 text-secondary hover:text-primary hover:bg-primary-container/50 rounded-lg transition-colors"
-              title="View Details"
-            >
-              <span className="material-symbols-outlined">visibility</span>
-            </button>
-            <button
-              className="p-2 text-secondary hover:text-slate-900 hover:bg-surface-container-highest rounded-lg transition-colors ml-auto md:ml-0"
-              title="More"
-            >
-              <span className="material-symbols-outlined">more_vert</span>
-            </button>
-          </div>
-        </div>
-        <div className="flex flex-col md:flex-row bg-surface rounded-xl border border-outline-variant p-4 hover:shadow-xl hover:shadow-primary/5 transition-all group border-slate-200/60 shadow-sm hover:shadow-xl hover:-translate-y-0.5 hover:bg-slate-50/50 transition-all duration-300 md:gap-10">
+        ))}
+        {/* <div className="flex flex-col md:flex-row bg-surface rounded-xl border border-outline-variant p-4 hover:shadow-xl hover:shadow-primary/5 transition-all group border-slate-200/60 shadow-sm hover:shadow-xl hover:-translate-y-0.5 hover:bg-slate-50/50 transition-all duration-300 md:gap-10">
           <div className="relative w-full md:w-48 h-48 md:h-auto rounded-lg overflow-hidden shrink-0">
             <img
               alt="The Glasshouse"
@@ -399,7 +414,7 @@ function PropertyList() {
               <span className="material-symbols-outlined">more_vert</span>
             </button>
           </div>
-        </div>
+        </div> */}
       </div>
     </main>
   );

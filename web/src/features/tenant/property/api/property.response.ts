@@ -134,7 +134,7 @@ export type GetPropertyByTenantIdResponse = {
     name: string;
     basePrice: number;
     capacity: number;
-  };
+  }[];
 }[];
 
 // export type GetPropertyRoomPricesDateResponse = {
