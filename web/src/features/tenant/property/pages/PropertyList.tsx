@@ -17,9 +17,9 @@ function PropertyList() {
         <div className="flex items-center justify-between md:justify-end gap-6 w-full md:w-auto">
           <div className="flex items-center gap-1 p-1 bg-surface-container-highest rounded-xl">
             <button className="px-4 py-2 text-[14px] font-semibold bg-surface text-primary rounded-lg shadow-sm">
-              All (12)
+              All ({properties?.length})
             </button>
-            <button className="px-4 py-2 text-[14px] font-semibold text-secondary hover:text-primary transition-colors">
+            {/* <button className="px-4 py-2 text-[14px] font-semibold text-secondary hover:text-primary transition-colors">
               Published (8)
             </button>
             <button className="px-4 py-2 text-[14px] font-semibold text-secondary hover:text-primary transition-colors">
@@ -27,7 +27,7 @@ function PropertyList() {
             </button>
             <button className="px-4 py-2 text-[14px] font-semibold text-secondary hover:text-primary transition-colors">
               Archived (1)
-            </button>
+            </button> */}
           </div>
           <button className="hidden md:flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-xl font-semibold shadow-md shadow-primary/20 hover:shadow-lg active:scale-[0.98] transition-all">
             <span className="material-symbols-outlined text-sm">add</span>
@@ -96,16 +96,21 @@ function PropertyList() {
               <div className="flex flex-col md:items-end gap-4">
                 <div className="flex items-center gap-1 bg-primary/5 px-3 py-1.5 rounded-lg w-fit border border-primary/10">
                   <span
-                    className="material-symbols-outlined text-primary text-[18px]"
+                    className={`material-symbols-outlined text-[18px] ${property.averageRating ? "text-primary" : "text-slate-400"}`}
                     style={{ fontVariationSettings: "'FILL' 1" }}
                   >
                     star
                   </span>
-                  <span className="font-extrabold text-primary text-[15px]">
+                  <span
+                    className={` text-[15px] ${property.averageRating ? "font-extrabold text-primary" : "font-bold text-slate-400"}`}
+                  >
                     {property.averageRating ? property.averageRating : "-"}
                   </span>
-                  <span className="text-[12px] font-medium text-slate-500 ml-1">
-                    ({property.reviewCount} Reviews)
+                  <span
+                    className={`text-[12px] font-medium ml-1 ${property.averageRating ? "text-slate-500" : "text-slate-400"}`}
+                  >
+                    ({property.reviewCount ? property.reviewCount : "No"}{" "}
+                    Reviews)
                   </span>
                 </div>
                 <div className="flex flex-col gap-0.5 md:items-end">
@@ -120,7 +125,7 @@ function PropertyList() {
               </div>
             </div>
             <div className="flex md:flex-col items-center justify-end gap-2 md:w-16 shrink-0 border-t md:border-t-0 md:border-l border-outline-variant pt-4 md:pt-0 md:pl-4">
-              <button
+              {/* <button
                 className="p-2 text-secondary hover:text-primary hover:bg-primary-container/50 rounded-lg transition-colors"
                 title="Edit"
               >
@@ -137,7 +142,7 @@ function PropertyList() {
                 title="More"
               >
                 <span className="material-symbols-outlined">more_vert</span>
-              </button>
+              </button> */}
             </div>
           </div>
         ))}
