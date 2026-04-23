@@ -550,7 +550,6 @@ const seed = async () => {
         description: "Description 1",
         basePrice: 100000,
         totalRooms: 10,
-
         bedType: BedType.DOUBLE_TWIN,
         bedCount: 1,
         viewType: ViewType.CITY_SKYLINE,

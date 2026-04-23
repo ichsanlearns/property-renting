@@ -131,9 +131,21 @@ export type GetPropertyByTenantIdResponse = {
 
   coverImage: string;
   roomTypes: {
+    id: string;
     name: string;
-    basePrice: number;
     capacity: number;
+
+    bedType: string;
+    bedCount: number;
+
+    bathroomType: string;
+
+    basePrice: number;
+
+    isPublished: string;
+
+    totalRooms: number;
+    availableRooms: number;
   }[];
 };
 
