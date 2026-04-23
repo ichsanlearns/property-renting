@@ -112,6 +112,31 @@ export type GetPropertyByIdResponse = {
   roomTypes: RoomTypeResponse[];
 };
 
+export type GetPropertyByTenantIdResponse = {
+  id: string;
+  name: string;
+
+  category: string;
+
+  city: string;
+  country: string;
+
+  averageRating: number;
+  reviewCount: number;
+
+  numberOfBathrooms: number;
+  updatedAt: string;
+
+  isPublished: string;
+
+  coverImage: string;
+  roomTypes: {
+    name: string;
+    basePrice: number;
+    capacity: number;
+  };
+}[];
+
 // export type GetPropertyRoomPricesDateResponse = {
 //   roomTypeId: string;
 //   date: string;

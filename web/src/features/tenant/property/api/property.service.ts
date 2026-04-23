@@ -37,6 +37,13 @@ export const getPropertyById = async (propertyId: string) => {
   return response.data;
 };
 
+export const getPropertyByTenantId = async () => {
+  const response = await api.get<
+    ApiResponse<PropertyResponse.GetPropertyByTenantIdResponse>
+  >(PROPERTY_ENDPOINTS.GET_BY_TENANT_ID);
+  return response.data;
+};
+
 export const searchProperties = async ({
   search,
   sortBy,
