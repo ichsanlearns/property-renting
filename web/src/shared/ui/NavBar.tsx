@@ -84,7 +84,7 @@ function NavBar() {
             {(!user || user.role === "TENANT") && (
               <>
                 <Link
-                  to="/tenant/orderlist"
+                  to="/tenant/properties"
                   className="text-sm hidden md:block font-semibold hover:text-primary transition-colors"
                 >
                   Become a Host
