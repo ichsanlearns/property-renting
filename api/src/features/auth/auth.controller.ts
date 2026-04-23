@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import * as authService from "./auth.service.js";
 import { catchAsync } from "../../shared/utils/catch-async.util.js";
 import * as uploadService from "../../shared/services/upload.service.js";
+import { AppError } from "../../shared/utils/app-error.util.js";
 
 export const login = catchAsync(async (req: Request, res: Response) => {
   const { email, password } = req.body;
@@ -89,6 +90,10 @@ export const updatePassword = catchAsync(
 
 export const updateProfile = catchAsync(async (req: Request, res: Response) => {
   const userId = req.user?.userId;
+
+  if (!userId) {
+    throw new AppError("Unauthorized", 401);
+  }
 
   const file = req.file as Express.Multer.File;
 

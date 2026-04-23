@@ -135,53 +135,204 @@ function PropertyListDetail() {
             </div>
           </div>
         </section>
-        <section className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 bg-surface-container-lowest rounded-2xl p-6 md:p-8 shadow-xl shadow-primary/5 border border-primary/10 flex flex-col gap-4">
-            <h3 className="text-[20px] font-bold text-on-surface">
-              Property Description
+        <section className="flex flex-col gap-6">
+          <div className="flex items-center justify-between">
+            <h3 className="text-[24px] font-bold text-on-surface">
+              Room Types
             </h3>
-            <p className="text-on-surface-variant leading-relaxed text-sm">
-              Experience unparalleled coastal luxury at Ocean Breeze Villa. This
-              architectural masterpiece offers sweeping panoramic views of the
-              Pacific Ocean, featuring floor-to-ceiling glass walls that
-              seamlessly blend indoor and outdoor living. Enjoy direct access to
-              a private stretch of pristine sandy beach, a zero-edge infinity
-              pool, and a fully equipped chef's kitchen. Perfect for discerning
-              travelers seeking tranquility and sophistication in the heart of
-              Malibu.
-            </p>
-            <div className="mt-4 pt-4 border-t border-outline flex items-start gap-3 text-sm">
+            <button className="text-primary font-bold text-sm hover:underline flex items-center gap-1">
               <span
-                className="material-symbols-outlined text-primary mt-0.5"
-                data-icon="signpost"
+                className="material-symbols-outlined text-[18px]"
+                data-icon="add"
               >
-                signpost
+                add
               </span>
-              <div>
-                <p className="font-bold text-on-surface">Full Address</p>
-                <p className="text-on-surface-variant">
-                  21400 Pacific Coast Highway, Malibu, CA 90265, United States
-                </p>
+              Add Room Type
+            </button>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="bg-surface-container-lowest rounded-2xl shadow-xl shadow-primary/5 border border-primary/10 overflow-hidden flex flex-col group hover:shadow-2xl hover:shadow-primary/10 transition-all duration-300">
+              <div className="p-6 flex flex-col gap-4 flex-1">
+                <div className="flex justify-between items-start">
+                  <h4 className="text-[18px] font-bold text-on-surface leading-tight group-hover:text-primary transition-colors">
+                    Master Oceanfront Suite
+                  </h4>
+                  <span className="bg-tertiary-container/30 text-tertiary border border-tertiary/20 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">
+                    Published
+                  </span>
+                </div>
+                <div className="flex flex-wrap gap-y-2 gap-x-4 text-xs font-medium text-on-surface-variant">
+                  <div className="flex items-center gap-1">
+                    <span
+                      className="material-symbols-outlined text-[16px]"
+                      data-icon="group"
+                    >
+                      group
+                    </span>
+                    2 Guests
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span
+                      className="material-symbols-outlined text-[16px]"
+                      data-icon="bed"
+                    >
+                      bed
+                    </span>
+                    1 King Bed
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span
+                      className="material-symbols-outlined text-[16px]"
+                      data-icon="shower"
+                    >
+                      shower
+                    </span>
+                    Private Bathroom
+                  </div>
+                </div>
+                <div className="mt-auto pt-4 border-t border-outline flex items-end justify-between">
+                  <div>
+                    <span className="text-lg font-extrabold text-on-surface">
+                      $450
+                    </span>
+                    <span className="text-xs text-on-surface-variant font-medium">
+                      /night
+                    </span>
+                  </div>
+                  <div className="text-xs font-bold text-primary bg-primary-container px-2.5 py-1 rounded-md">
+                    2 Available
+                  </div>
+                </div>
+              </div>
+              <div className="bg-surface-container px-6 py-3 border-t border-outline flex justify-end gap-3 text-sm">
+                <button className="text-on-surface-variant hover:text-primary font-medium transition-colors">
+                  Edit
+                </button>
+                <button className="text-on-surface-variant hover:text-primary font-medium transition-colors">
+                  Manage Inventory
+                </button>
               </div>
             </div>
-          </div>
-          <div className="bg-surface-container-lowest rounded-2xl p-4 shadow-xl shadow-primary/5 border border-primary/10 overflow-hidden relative aspect-square lg:aspect-auto h-full">
-            <img
-              alt="Map location"
-              className="absolute inset-0 w-full h-full object-cover"
-              data-alt="A stylized roadmap centered on coastal highway with a prominent red pin marker indicating a specific beachfront location"
-              data-location="Malibu, USA"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuC9Ble22Iq5BtcJohzqr-HCJw1O-k6M91e8IfOE2YlGua-WTHyMqDG2PCN2hi-WQqRRMC9G8hwirSmeGXrsYtvPgUfbtv-t7GuW9OVSft3_ayhAovGCuC700BEgvy9YYsWdodK0ijq9Mel_m_Z1Mc5qmTVl3sMapF0wvo1XuEg1tou_EhFbO8w8YE2ZXHbGfXHfGWByuwihnPTwgckght_VcRN6_QDK0ejn1T7w1ERqL8U2OurJEIrY620L8C72M3WwKA6rriR3t7WF"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-transparent to-transparent"></div>
-            <div className="absolute bottom-4 left-4 right-4 bg-surface-container-lowest/90 backdrop-blur-md rounded-xl p-3 shadow-md border border-primary/5 text-sm font-medium flex items-center justify-between">
-              <span className="text-on-surface truncate">View on Maps</span>
-              <span
-                className="material-symbols-outlined text-primary"
-                data-icon="open_in_new"
-              >
-                open_in_new
-              </span>
+            <div className="bg-surface-container-lowest rounded-2xl shadow-xl shadow-primary/5 border border-primary/10 overflow-hidden flex flex-col group hover:shadow-2xl hover:shadow-primary/10 transition-all duration-300">
+              <div className="p-6 flex flex-col gap-4 flex-1">
+                <div className="flex justify-between items-start">
+                  <h4 className="text-[18px] font-bold text-on-surface leading-tight group-hover:text-primary transition-colors">
+                    Guest Garden Room
+                  </h4>
+                  <span className="bg-tertiary-container/30 text-tertiary border border-tertiary/20 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">
+                    Published
+                  </span>
+                </div>
+                <div className="flex flex-wrap gap-y-2 gap-x-4 text-xs font-medium text-on-surface-variant">
+                  <div className="flex items-center gap-1">
+                    <span
+                      className="material-symbols-outlined text-[16px]"
+                      data-icon="group"
+                    >
+                      group
+                    </span>
+                    2 Guests
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span
+                      className="material-symbols-outlined text-[16px]"
+                      data-icon="bed"
+                    >
+                      bed
+                    </span>
+                    1 Queen Bed
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span
+                      className="material-symbols-outlined text-[16px]"
+                      data-icon="shower"
+                    >
+                      shower
+                    </span>
+                    Private Bathroom
+                  </div>
+                </div>
+                <div className="mt-auto pt-4 border-t border-outline flex items-end justify-between">
+                  <div>
+                    <span className="text-lg font-extrabold text-on-surface">
+                      $280
+                    </span>
+                    <span className="text-xs text-on-surface-variant font-medium">
+                      /night
+                    </span>
+                  </div>
+                  <div className="text-xs font-bold text-primary bg-primary-container px-2.5 py-1 rounded-md">
+                    4 Available
+                  </div>
+                </div>
+              </div>
+              <div className="bg-surface-container px-6 py-3 border-t border-outline flex justify-end gap-3 text-sm">
+                <button className="text-on-surface-variant hover:text-primary font-medium transition-colors">
+                  Edit
+                </button>
+                <button className="text-on-surface-variant hover:text-primary font-medium transition-colors">
+                  Manage Inventory
+                </button>
+              </div>
+            </div>
+            <div className="bg-surface-container-lowest rounded-2xl shadow-xl shadow-primary/5 border border-primary/10 overflow-hidden flex flex-col group hover:shadow-2xl hover:shadow-primary/10 transition-all duration-300 opacity-80 hover:opacity-100">
+              <div className="p-6 flex flex-col gap-4 flex-1">
+                <div className="flex justify-between items-start">
+                  <h4 className="text-[18px] font-bold text-on-surface leading-tight group-hover:text-primary transition-colors">
+                    Family Studio
+                  </h4>
+                  <span className="bg-surface-variant text-on-surface-variant border border-outline text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">
+                    Draft
+                  </span>
+                </div>
+                <div className="flex flex-wrap gap-y-2 gap-x-4 text-xs font-medium text-on-surface-variant">
+                  <div className="flex items-center gap-1">
+                    <span
+                      className="material-symbols-outlined text-[16px]"
+                      data-icon="group"
+                    >
+                      group
+                    </span>
+                    4 Guests
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span
+                      className="material-symbols-outlined text-[16px]"
+                      data-icon="bed"
+                    >
+                      bed
+                    </span>
+                    2 Queen Beds
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span
+                      className="material-symbols-outlined text-[16px]"
+                      data-icon="shower"
+                    >
+                      shower
+                    </span>
+                    Shared Bathroom
+                  </div>
+                </div>
+                <div className="mt-auto pt-4 border-t border-outline flex items-end justify-between">
+                  <div>
+                    <span className="text-lg font-extrabold text-on-surface">
+                      $380
+                    </span>
+                    <span className="text-xs text-on-surface-variant font-medium">
+                      /night
+                    </span>
+                  </div>
+                  <div className="text-xs font-bold text-on-surface-variant bg-surface-variant px-2.5 py-1 rounded-md border border-outline">
+                    1 Available
+                  </div>
+                </div>
+              </div>
+              <div className="bg-surface-container px-6 py-3 border-t border-outline flex justify-end gap-3 text-sm">
+                <button className="text-on-surface-variant hover:text-primary font-medium transition-colors">
+                  Continue Editing
+                </button>
+              </div>
             </div>
           </div>
         </section>

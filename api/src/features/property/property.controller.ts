@@ -13,9 +13,9 @@ import {
 } from "./property.validator.js";
 
 export const create = catchAsync(async (req: Request, res: Response) => {
-  if (!req.user) throw new AppError("Unauthorized", 401);
+  const tenantId = req.user?.userId;
 
-  const tenantId = req.user.userId;
+  if (!tenantId) throw new AppError("Unauthorized", 401);
 
   const files = req.files as Express.Multer.File[];
   const imagesMeta = JSON.parse(req.body.imagesMeta);
