@@ -5,6 +5,18 @@ function PropertyList() {
   const { data: properties } = usePropertyByTenantId();
   const navigate = useNavigate();
 
+  const handleNavigateToPropertyDetail = (propertyId: string) => {
+    const property = properties?.find((property) => property.id === propertyId);
+
+    if (!property) return;
+
+    navigate(`/tenant/property/${propertyId}`, {
+      state: {
+        property,
+      },
+    });
+  };
+
   return (
     <main className="pt-24 pb-12 px-6 md:px-12 md:pt-12 min-h-screen">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
@@ -41,7 +53,7 @@ function PropertyList() {
         {properties?.map((property) => (
           <div
             key={property.id}
-            onClick={() => navigate(`/tenant/property/${property.id}`)}
+            onClick={() => handleNavigateToPropertyDetail(property.id)}
             className="flex flex-col md:flex-row bg-surface rounded-xl border border-outline-variant p-4 hover:shadow-xl hover:shadow-primary/5 transition-all group border-slate-200/60 shadow-sm hover:shadow-xl hover:-translate-y-0.5 hover:bg-slate-50/50 transition-all duration-300 md:gap-10 cursor-pointer"
           >
             <div className="relative w-full md:w-48 h-48 md:h-auto rounded-lg overflow-hidden shrink-0">

@@ -1,4 +1,12 @@
+import type { GetPropertyByTenantIdResponse } from "../api/property.response";
+import { useLocation } from "react-router-dom";
+
 function PropertyListDetail() {
+  const location = useLocation();
+  const { property } = location.state as {
+    property: GetPropertyByTenantIdResponse;
+  };
+
   return (
     <main className="flex-1 flex flex-col min-w-0">
       <header className="md:hidden bg-surface-container-lowest/80 backdrop-blur-md flex justify-between items-center w-full px-4 py-4 sticky top-0 z-40 border-b border-primary/10">
@@ -14,7 +22,7 @@ function PropertyListDetail() {
       <div className="p-6 md:p-10 lg:px-12 xl:px-16 mx-auto w-full max-w-7xl flex flex-col gap-8">
         <nav className="flex items-center gap-2 text-sm text-on-surface-variant">
           <a className="hover:text-primary transition-colors" href="#">
-            Listings
+            Listings2
           </a>
           <span
             className="material-symbols-outlined text-xs"
@@ -22,9 +30,7 @@ function PropertyListDetail() {
           >
             chevron_right
           </span>
-          <span className="font-medium text-on-surface">
-            Ocean Breeze Villa
-          </span>
+          <span className="font-medium text-on-surface">{property.name}</span>
         </nav>
         <section className="bg-surface-container-lowest rounded-2xl p-6 md:p-8 flex flex-col xl:flex-row gap-8 shadow-xl shadow-primary/5 border border-primary/10">
           <div className="w-full xl:w-1/3 aspect-[4/3] rounded-xl overflow-hidden relative group">
@@ -32,7 +38,7 @@ function PropertyListDetail() {
               alt="Ocean Breeze Villa"
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               data-alt="A luxurious modern beachfront villa with large glass windows reflecting the sunset over the ocean, surrounded by palm trees"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCF1TJ6x3gyHZqpjH6HBrJ0P2v5gHQwiomTj9YQT6UBPfweUli6F3Ajq7GnmksITQZgwRWXRAvEx4LLugDNkVIPJ4vtdIAoNO77LUNDUEYpo7eBBPgSRrw5ArgX4hGsexzJyVK-RcmYeKA1NHE6VNWRt7To8IKh_RE94eGxjAPH84FVHax2-0nY5WI6P4iBDPfKdAvUUzQ8BslDeNHaPqAX4OvLPZYaiWi57kEkEvMD7uM6h-WeYSRmXcacy9nk8Q1TFSA0dzIkQOSz"
+              src={property.coverImage}
             />
             <div className="absolute top-4 left-4 bg-surface-container-lowest/90 backdrop-blur text-primary text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider flex items-center gap-1 shadow-sm">
               <span
@@ -41,7 +47,7 @@ function PropertyListDetail() {
               >
                 water
               </span>
-              Beachfront
+              {property.category}
             </div>
           </div>
           <div className="flex-1 flex flex-col justify-between">
@@ -49,7 +55,7 @@ function PropertyListDetail() {
               <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-4">
                 <div>
                   <h2 className="text-[30px] font-extrabold tracking-tight text-on-surface leading-tight mb-2">
-                    Ocean Breeze Villa
+                    {property.name}
                   </h2>
                   <div className="flex items-center gap-2 text-on-surface-variant font-medium">
                     <span
@@ -58,14 +64,14 @@ function PropertyListDetail() {
                     >
                       location_on
                     </span>
-                    Malibu, USA
+                    {property.city}, {property.country}
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
                   <span className="bg-tertiary-container/30 text-tertiary border border-tertiary/20 text-xs font-bold px-2.5 py-1 rounded-md uppercase">
-                    Published
+                    {property.isPublished ? "Published" : "Draft"}
                   </span>
-                  <span className="bg-surface-variant text-secondary border border-secondary/10 text-xs font-bold px-2.5 py-1 rounded-md uppercase flex items-center gap-1">
+                  {/* <span className="bg-surface-variant text-secondary border border-secondary/10 text-xs font-bold px-2.5 py-1 rounded-md uppercase flex items-center gap-1">
                     <span
                       className="material-symbols-outlined text-[14px]"
                       data-icon="verified"
@@ -73,7 +79,7 @@ function PropertyListDetail() {
                       verified
                     </span>
                     Verified
-                  </span>
+                  </span> */}
                 </div>
               </div>
               <div className="grid grid-cols-2 md:flex md:items-center gap-4 md:gap-8 mb-8">
@@ -86,9 +92,12 @@ function PropertyListDetail() {
                   >
                     star
                   </span>
-                  <span className="font-bold text-on-surface">4.8</span>
+                  <span className="font-bold text-on-surface">
+                    {property.averageRating || "-"}
+                  </span>
                   <span className="text-on-surface-variant text-sm underline decoration-outline">
-                    (124 reviews)
+                    ({property.reviewCount ? property.reviewCount : "No"}{" "}
+                    reviews)
                   </span>
                 </div>
                 <div className="hidden md:block w-px h-8 bg-outline"></div>
@@ -99,7 +108,7 @@ function PropertyListDetail() {
                   >
                     bathtub
                   </span>
-                  4 Bathrooms
+                  {property.numberOfBathrooms} Bathrooms
                 </div>
                 <div className="hidden md:block w-px h-8 bg-outline"></div>
                 <div className="flex items-center gap-2 text-on-surface-variant text-sm">
@@ -109,15 +118,15 @@ function PropertyListDetail() {
                   >
                     update
                   </span>
-                  Updated 2 days ago
+                  Updated {new Date(property.updatedAt).toLocaleDateString()}
                 </div>
               </div>
             </div>
             <div className="flex flex-col sm:flex-row items-center gap-4 mt-auto">
-              <button className="w-full sm:w-auto px-6 py-3 rounded-xl font-bold border border-primary/20 text-primary hover:bg-primary-container transition-colors active:scale-[0.98]">
+              <button className="w-full sm:w-auto px-6 py-3 rounded-xl font-bold border border-primary/20 text-primary hover:bg-primary-container transition-colors active:scale-[0.98] cursor-pointer">
                 Edit Property
               </button>
-              <button className="w-full sm:w-auto px-6 py-3 rounded-xl font-bold bg-primary text-on-primary hover:bg-on-primary-container shadow-md shadow-primary/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2">
+              <button className="w-full sm:w-auto px-6 py-3 rounded-xl font-bold bg-primary text-on-primary hover:bg-on-primary-container shadow-md shadow-primary/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer hover:bg-primary/80">
                 <span className="material-symbols-outlined" data-icon="add">
                   add
                 </span>
