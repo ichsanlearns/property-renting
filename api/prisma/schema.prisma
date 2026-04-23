@@ -295,6 +295,7 @@ model RoomType {
   description       String
   basePrice         Decimal    @map("base_price")            @db.Decimal(10,2) 
   totalRooms        Int        @map("total_rooms")
+  availableRooms    Int        @map("available_rooms")
 
   bedType           BedType    @map("bed_type")
   bedCount          Int        @map("bed_count")

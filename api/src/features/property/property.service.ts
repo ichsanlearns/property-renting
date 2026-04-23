@@ -331,9 +331,21 @@ export const getByTenantId = async (tenantId: string) => {
 
       roomTypes: {
         select: {
+          id: true,
           name: true,
-          basePrice: true,
           capacity: true,
+
+          bedType: true,
+          bedCount: true,
+
+          bathroomType: true,
+
+          basePrice: true,
+
+          isPublished: true,
+
+          totalRooms: true,
+          availableRooms: true,
         },
         orderBy: {
           basePrice: "asc",
