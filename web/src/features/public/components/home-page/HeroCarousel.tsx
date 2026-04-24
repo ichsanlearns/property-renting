@@ -63,7 +63,7 @@ function HeroCarousel(
   };
 
   return (
-    <section className="relative h-[870px] min-h-[600px] w-full flex flex-col items-center justify-center overflow-hidden">
+    <section className="relative h-[80vh] w-full flex flex-col items-center justify-center overflow-hidden">
       <div
         onMouseEnter={stopAutoSlide}
         onMouseLeave={startAutoSlide}
