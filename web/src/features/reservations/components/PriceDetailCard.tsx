@@ -10,7 +10,7 @@ type Props = {
 
 function PriceDetailCard({ nights, tax, pricePerNight, totalAmount, handlePay }: Props) {
   return (
-    <div className="sticky top-28 rounded-3xl p-[1px] bg-gradient-to-b from-primary to-indigo-500">
+    <div className="sticky top-28 rounded-3xl p-px bg-linear-to-b from-primary to-indigo-500">
       <div className="bg-white rounded-3xl p-6 shadow-xl">
         <h2 className="text-xl font-black text-slate-900 mb-6">Price Details</h2>
 
@@ -36,7 +36,7 @@ function PriceDetailCard({ nights, tax, pricePerNight, totalAmount, handlePay }:
           </div>
         </div>
 
-        <button onClick={handlePay} className="w-full mt-7 py-4 rounded-2xl bg-gradient-to-r from-primary to-indigo-600 text-white font-bold text-lg hover:opacity-95 transition-all shadow-lg">
+        <button onClick={handlePay} className="w-full mt-7 py-4 rounded-2xl bg-linear-to-r from-primary to-indigo-600 text-white font-bold text-lg hover:opacity-95 transition-all shadow-lg">
           Pay Now
         </button>
 

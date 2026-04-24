@@ -184,3 +184,27 @@ export const getReservationByCode = async ({ reservationCode, userId }: { reserv
 
   return reservation;
 };
+
+export const getReservationById = async ({ id, userId }: { id: string; userId: string }) => {
+  const reservation = await prisma.reservation.findUnique({
+    where: { id },
+    include: {
+      roomType: {
+        include: {
+          property: true,
+          roomTypeImages: true,
+        },
+      },
+    },
+  });
+
+  if (!reservation) {
+    throw new AppError("Reservation not found", 404);
+  }
+
+  if (reservation.customerId !== userId) {
+    throw new AppError("Unauthorized", 403);
+  }
+
+  return reservation;
+};
