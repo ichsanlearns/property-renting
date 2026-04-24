@@ -88,37 +88,7 @@ function HeroCarousel() {
       </div>
 
       <div className="relative z-20 w-full max-w-5xl px-6 mt-48">
-        {/* <div className="glass-search max-w-4xl mx-auto rounded-full p-2 shadow-2xl flex flex-col md:flex-row items-center gap-2 transition-all duration-500 hover:rounded-3xl">
-          <div className="flex-1 w-full flex items-center px-6 py-3 border-r border-slate-200/50">
-            <span className="material-symbols-outlined text-slate-400 mr-3">
-              search
-            </span>
-            <input
-              className="w-full bg-transparent border-none focus:ring-0 text-slate-800 placeholder-slate-400 font-medium text-base"
-              placeholder="Search city, country, or property"
-            />
-          </div>
-
-          <div className="hidden md:flex items-center gap-2 px-4">
-            <div className="px-4 py-2 hover:bg-slate-100 rounded-full cursor-pointer">
-              <p className="text-[10px] uppercase font-bold text-slate-500">
-                Dates
-              </p>
-              <p className="text-sm font-semibold text-slate-800">Add dates</p>
-            </div>
-
-            <div className="px-4 py-2 hover:bg-slate-100 rounded-full cursor-pointer">
-              <p className="text-[10px] uppercase font-bold text-slate-500">
-                Guests
-              </p>
-              <p className="text-sm font-semibold text-slate-800">Add guests</p>
-            </div>
-          </div>
-
-          <button className="w-full md:w-auto bg-[#ff5c61] text-white p-4 rounded-full flex items-center justify-center hover:bg-[#e64a50] transition-colors shadow-lg">
-            <span className="material-symbols-outlined">search</span>
-          </button>
-        </div> */}
+        <SearchBar />
       </div>
 
       <button
