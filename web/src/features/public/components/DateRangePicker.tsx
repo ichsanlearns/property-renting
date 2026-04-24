@@ -2,6 +2,9 @@ import { useState } from "react";
 import { DayPicker, type DateRange } from "react-day-picker";
 import "react-day-picker/dist/style.css";
 
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+
 export function DateRangePicker({
   handleDateRangeChange,
 }: {
@@ -36,6 +39,9 @@ export function DateRangePicker({
       mode="range"
       selected={range}
       onSelect={handleSelect}
+      disabled={{
+        before: today,
+      }}
       modifiersClassNames={{
         selected: "!bg-primary !border-none !text-white",
         today: " border border-black",

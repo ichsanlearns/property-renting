@@ -2,13 +2,15 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { searchSchema, type SearchSchema } from "../../schema/search.schema";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { DateRangePicker } from "../DateRangePicker";
 import type { DateRange } from "react-day-picker";
 import { format } from "date-fns";
 
 function SearchBar() {
   const navigate = useNavigate();
+  const calendarRef = useRef<HTMLDivElement>(null);
+
   const [openCalendar, setOpenCalendar] = useState(false);
   const [range, setRange] = useState<DateRange | undefined>(undefined);
 
@@ -17,12 +19,30 @@ function SearchBar() {
   });
 
   const handleSearch = (data: SearchSchema) => {
-    navigate(`/search?search=${data.param}`);
+    navigate(
+      `/search?search=${data.param}${range?.from && range?.to ? `&checkIn=${format(range.from, "yyyy-MM-dd")}&checkOut=${format(range.to, "yyyy-MM-dd")}` : ""}`,
+    );
   };
 
   const handleDateRangeChange = (range: DateRange) => {
     setRange(range);
   };
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (
+        calendarRef.current &&
+        !calendarRef.current.contains(e.target as Node)
+      ) {
+        setOpenCalendar(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <form
@@ -43,9 +63,11 @@ function SearchBar() {
           type="text"
         />
       </div>
-      <div
-        className="text-left px-4 py-2 hover:bg-slate-100 rounded-full cursor-pointer transition-colors"
-        onClick={() => setOpenCalendar(!openCalendar)}
+      <button
+        type="button"
+        disabled={openCalendar}
+        className="text-left px-4 py-2 hover:bg-slate-100 rounded-full cursor-pointer transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+        onClick={() => setOpenCalendar((prev) => !prev)}
       >
         <p className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">
           Dates
@@ -54,9 +76,12 @@ function SearchBar() {
           {range?.from ? format(range.from, "dd MMM") : "Add dates"}
           {range?.to ? `- ${format(range.to, "dd MMM")}` : ""}
         </p>
-      </div>
+      </button>
       {openCalendar && (
-        <div className="absolute top-full w-[680px] left-1/2 -translate-x-1/2 mt-2 z-50 bg-white rounded-xl shadow-xl p-4">
+        <div
+          ref={calendarRef}
+          className="absolute top-full w-[680px] left-1/2 -translate-x-1/2 mt-2 z-50 bg-white rounded-xl shadow-xl p-4"
+        >
           <DateRangePicker handleDateRangeChange={handleDateRangeChange} />
         </div>
       )}
