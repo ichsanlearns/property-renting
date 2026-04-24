@@ -267,23 +267,6 @@ function PropertyDetail() {
             </div>
           </div>
         </header>
-        {/* <section
-          className={`grid grid-cols-1 md:grid-cols-4 grid-rows-2 gap-3 h-125 mb-12 rounded-2xl overflow-hidden group`}
-        >
-          {property?.propertyImages.map((image, index) => (
-            <div
-              key={index}
-              className={`${image.isCover && "md:col-span-2 md:row-span-2"} overflow-hidden relative`}
-            >
-              <img
-                alt="Main villa view"
-                className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                data-alt="Modern white beachfront villa with palm trees"
-                src={image.imageUrl}
-              />
-            </div>
-          ))}
-        </section> */}
         <PropertyImageGallery
           images={property?.propertyImages}
           handleImageClick={() => setShowPropertyGallery(true)}

@@ -6,6 +6,8 @@ import LoaderFetching from "../../../shared/ui/LoaderFetching";
 import PropertyCard from "../components/PropertyCard";
 import HeroCarousel from "../components/home-page/HeroCarousel";
 
+import { heroData } from "../components/home-page/hero.data";
+
 function HomePage() {
   const navigate = useNavigate();
   const { data: properties, isLoading } = usePropertyAllBasic();
@@ -19,7 +21,7 @@ function HomePage() {
 
   return (
     <main>
-      <HeroCarousel />
+      <HeroCarousel heroData={heroData} />
       <section className="py-16 px-6 md:px-12 max-w-[1440px] mx-auto">
         <div className="flex justify-between items-end mb-10">
           <div>
@@ -64,9 +66,6 @@ function HomePage() {
           >
             Start Searching
           </button>
-          {/* <button className="w-full sm:w-auto bg-white border-2 border-slate-200 px-10 py-4 rounded-full text-lg font-bold hover:bg-slate-50 transition-colors">
-            Learn More
-          </button> */}
         </div>
       </section>
       <Footer />
