@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { usePropertyDetail } from "../../tenant/property/hooks/useProperty";
 import { toTitleCase } from "../../../shared/utils/string.util";
-import DatePicker from "../components/DatePicker";
+import DatePicker from "../components/property-detail/DatePicker";
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { formatRupiah } from "../../../shared/utils/price.util";

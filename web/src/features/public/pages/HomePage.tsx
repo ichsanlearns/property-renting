@@ -22,7 +22,7 @@ function HomePage() {
   return (
     <main>
       <HeroCarousel heroData={heroData} />
-      <section className="py-16 px-6 md:px-12 max-w-[1440px] mx-auto">
+      <section className="py-16 px-6 md:px-12 max-w-[1440px] mx-auto z-20">
         <div className="flex justify-between items-end mb-10">
           <div>
             <h2 className="text-3xl font-extrabold text-on-background tracking-tight">
