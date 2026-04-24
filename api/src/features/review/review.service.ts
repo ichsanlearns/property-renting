@@ -23,7 +23,6 @@ export const createReview = async ({ userId, reservationId, rating, comment }: {
       throw new AppError("You can only review paid reservations", 400);
     }
 
-    // cek apakah sudah pernah review atau belum
     const existingReview = await tx.review.findUnique({
       where: { reservationId },
     });
@@ -48,15 +47,16 @@ export const createReview = async ({ userId, reservationId, rating, comment }: {
 
     const avg = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
 
+    const roundedAvg = Number(avg.toFixed(1));
+
     await tx.property.update({
       where: { id: reservation.roomType.propertyId },
       data: {
-        averageRating: avg,
+        averageRating: roundedAvg,
         reviewCount: reviews.length,
       },
     });
 
-    // update reservation status (opsional)
     await tx.reservation.update({
       where: { id: reservationId },
       data: {
@@ -68,7 +68,6 @@ export const createReview = async ({ userId, reservationId, rating, comment }: {
   });
 };
 
-//get
 export const getPropertyReviews = async (propertyId: string) => {
   const reviews = await prisma.review.findMany({
     where: { propertyId },

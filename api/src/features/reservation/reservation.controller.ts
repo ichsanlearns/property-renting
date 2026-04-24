@@ -63,3 +63,23 @@ export const getReservationByCodeController = catchAsync(async (req: Request, re
     data: result,
   });
 });
+
+export const getReservationByIdController = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  if (typeof id !== "string") {
+    return res.status(400).json({
+      message: "Invalid reservation id",
+    });
+  }
+
+  const result = await reservationService.getReservationById({
+    id,
+    userId: req.user!.userId,
+  });
+
+  res.status(200).json({
+    message: "Success get reservation",
+    data: result,
+  });
+});

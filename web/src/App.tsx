@@ -74,7 +74,7 @@ const router = createBrowserRouter([
             element: <MyBooking />,
           },
           {
-            path: "review",
+            path: "review/:reservationId",
             element: <ReviewPage />,
           },
           {
@@ -138,7 +138,7 @@ const router = createBrowserRouter([
             element: <TenantReviewPage />,
           },
           {
-            path: "detail-review",
+            path: "detail-review/:propertyId",
             element: <DetailReviewPage />,
           },
         ],
