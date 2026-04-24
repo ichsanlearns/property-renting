@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { searchSchema, type SearchSchema } from "../schema/search.schema";
 import PropertyCard from "../components/PropertyCard";
+import HeroCarousel from "../components/HeroCarousel";
 
 function HomePage() {
   const navigate = useNavigate();
@@ -29,7 +30,7 @@ function HomePage() {
 
   return (
     <main>
-      <section className="relative h-[500px] min-h-[500px] w-full flex items-center justify-center overflow-hidden">
+      {/* <section className="relative h-[500px] min-h-[500px] w-full flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img
             alt="Luxury villa with pool at sunset"
@@ -82,8 +83,8 @@ function HomePage() {
             </button>
           </form>
         </div>
-      </section>
-
+      </section> */}
+      <HeroCarousel />
       <section className="py-16 px-6 md:px-12 max-w-[1440px] mx-auto">
         <div className="flex justify-between items-end mb-10">
           <div>

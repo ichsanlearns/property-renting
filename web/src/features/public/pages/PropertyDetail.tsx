@@ -92,7 +92,6 @@ function PropertyDetail() {
       averagePrice: number;
     }[];
   }) => {
-    console.log("selectedDateRoom: ", selectedDateRoom);
     if (selectedDateRoom.checkInDate && selectedDateRoom.checkOutDate) {
       if (selectedDateRoom.availableRooms.length > 0) {
         const availableMap = new Map(
@@ -163,9 +162,6 @@ function PropertyDetail() {
     selectedDateRoomAvailability[0]?.viewType !== "NO_DATA"
       ? selectedDateRoomAvailability
       : (property?.roomTypes ?? []);
-
-  console.log("roomAvailability: ", roomAvailability);
-  console.log("selectedDateRoomAvailability: ", selectedDateRoomAvailability);
 
   const handleSelectRoom = (roomType: SelectedDateRoomAvailability) => {
     if (selectedRoom?.id === roomType.id) {
