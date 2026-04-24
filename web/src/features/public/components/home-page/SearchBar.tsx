@@ -4,10 +4,13 @@ import { searchSchema, type SearchSchema } from "../../schema/search.schema";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { DateRangePicker } from "../DateRangePicker";
+import type { DateRange } from "react-day-picker";
+import { format } from "date-fns";
 
 function SearchBar() {
   const navigate = useNavigate();
   const [openCalendar, setOpenCalendar] = useState(false);
+  const [range, setRange] = useState<DateRange | undefined>(undefined);
 
   const { register, handleSubmit, watch } = useForm<SearchSchema>({
     resolver: zodResolver(searchSchema),
@@ -15,6 +18,10 @@ function SearchBar() {
 
   const handleSearch = (data: SearchSchema) => {
     navigate(`/search?search=${data.param}`);
+  };
+
+  const handleDateRangeChange = (range: DateRange) => {
+    setRange(range);
   };
 
   return (
@@ -43,14 +50,16 @@ function SearchBar() {
         <p className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">
           Dates
         </p>
-        <p className="text-sm font-semibold text-slate-800">Add dates</p>
-
-        {openCalendar && (
-          <div className="absolute top-full mt-2 z-50 bg-white rounded-xl shadow-xl p-4">
-            <DateRangePicker />
-          </div>
-        )}
+        <p className="text-sm font-semibold text-slate-800">
+          {range?.from ? format(range.from, "dd MMM") : "Add dates"}
+          {range?.to ? `- ${format(range.to, "dd MMM")}` : ""}
+        </p>
       </div>
+      {openCalendar && (
+        <div className="absolute top-full w-[680px] left-1/2 -translate-x-1/2 mt-2 z-50 bg-white rounded-xl shadow-xl p-4">
+          <DateRangePicker handleDateRangeChange={handleDateRangeChange} />
+        </div>
+      )}
 
       <button
         disabled={!watch("param")}
