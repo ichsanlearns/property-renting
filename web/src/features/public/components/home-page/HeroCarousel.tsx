@@ -12,7 +12,7 @@ interface HeroCarouselProps {
 
 function HeroCarousel(
   { heroData }: HeroCarouselProps,
-  interval: number = 5000,
+  interval: number = 1000,
 ) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -63,12 +63,12 @@ function HeroCarousel(
   };
 
   return (
-    <section
-      onMouseEnter={stopAutoSlide}
-      onMouseLeave={startAutoSlide}
-      className="relative h-[870px] min-h-[600px] w-full flex flex-col items-center justify-center overflow-hidden"
-    >
-      <div className="absolute inset-0 z-0">
+    <section className="relative h-[870px] min-h-[600px] w-full flex flex-col items-center justify-center overflow-hidden">
+      <div
+        onMouseEnter={stopAutoSlide}
+        onMouseLeave={startAutoSlide}
+        className="absolute inset-0 z-0"
+      >
         {heroData.map((item, index) => (
           <div
             key={index}

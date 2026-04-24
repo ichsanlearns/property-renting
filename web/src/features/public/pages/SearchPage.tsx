@@ -66,54 +66,6 @@ function SearchPage() {
               <span>Filters</span>
             </button>
           </div>
-          {/* <div className="flex items-center space-x-3 overflow-x-auto hide-scrollbar pb-2">
-            <button className="flex items-center space-x-2 border border-outline rounded-xl px-4 py-2.5 text-sm font-medium hover:border-black transition-colors whitespace-nowrap">
-              <span>Price</span>
-              <span
-                className="material-symbols-outlined text-sm"
-                data-icon="expand_more"
-              >
-                expand_more
-              </span>
-            </button>
-            <button className="flex items-center space-x-2 border border-outline rounded-xl px-4 py-2.5 text-sm font-medium hover:border-black transition-colors whitespace-nowrap">
-              <span>Property Type</span>
-              <span
-                className="material-symbols-outlined text-sm"
-                data-icon="expand_more"
-              >
-                expand_more
-              </span>
-            </button>
-            <button className="flex items-center space-x-2 border border-outline rounded-xl px-4 py-2.5 text-sm font-medium hover:border-black transition-colors whitespace-nowrap">
-              <span>Rating</span>
-              <span
-                className="material-symbols-outlined text-sm"
-                data-icon="expand_more"
-              >
-                expand_more
-              </span>
-            </button>
-            <button className="flex items-center space-x-2 border border-outline rounded-xl px-4 py-2.5 text-sm font-medium hover:border-black transition-colors whitespace-nowrap">
-              <span>Amenities</span>
-              <span
-                className="material-symbols-outlined text-sm"
-                data-icon="expand_more"
-              >
-                expand_more
-              </span>
-            </button>
-            <div className="h-8 w-px bg-outline mx-2"></div>
-            <button className="flex items-center space-x-2 border border-outline rounded-xl px-4 py-2.5 text-sm font-medium hover:border-black transition-colors whitespace-nowrap">
-              <span
-                className="material-symbols-outlined text-sm"
-                data-icon="tune"
-              >
-                tune
-              </span>
-              <span>Filters</span>
-            </button>
-          </div> */}
         </div>
       </div>
       <main className="pt-[170px] flex min-h-screen">
@@ -130,63 +82,7 @@ function SearchPage() {
             {properties && (
               <PropertyCard properties={properties} page="search" />
             )}
-            {/* {properties?.map((property) => (
-              <div
-                key={property.id}
-                className="group cursor-pointer"
-                data-location="Malibu Beach, California"
-              >
-                <div className="relative aspect-4/3 rounded-xl overflow-hidden mb-3">
-                  <img
-                    alt="Luxury villa with ocean view"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    data-alt="luxury beachfront villa with infinity pool overlooking the pacific ocean at sunset with warm orange lighting"
-                    src={property.coverImage}
-                  />
-                  <div className="absolute top-3 left-3 bg-white px-3 py-1 rounded-full text-xs font-bold shadow-sm">
-                    Rare Find
-                  </div>
-                  <button className="absolute top-3 right-3 text-white drop-shadow-md hover:scale-110 transition-transform">
-                    <span
-                      className="material-symbols-outlined"
-                      data-icon="favorite"
-                    >
-                      favorite
-                    </span>
-                  </button>
-                </div>
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="font-bold text-on-surface">
-                      {property.name}
-                    </h3>
-                    <p className="text-on-surface-variant text-sm">
-                      {property.city}, {property.country}
-                    </p>
-                    <p className="mt-1 font-semibold text-sm">
-                      <span className="font-bold">
-                        {formatRupiah(property.price)}
-                      </span>{" "}
-                      / night
-                    </p>
-                  </div>
-                  {property.averageRating && (
-                    <div className="flex items-center space-x-1">
-                      <span
-                        className="material-symbols-outlined text-sm"
-                        data-icon="star"
-                        style={{ fontVariationSettings: "'FILL' 1" }}
-                      >
-                        star
-                      </span>
-                      <span className="text-sm font-medium">
-                        {property.averageRating}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))} */}
+
             {/* <div
               className="group cursor-pointer"
               data-location="Topanga Canyon, Malibu"
