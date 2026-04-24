@@ -197,9 +197,10 @@ model Property {
 
   numberOfBathrooms Int        @map("number_of_bathrooms")
 
-  roomAvailable Int         @map("room_available") @default(0)
 
-  averageRating     Decimal?     @map("average_rating")      @db.Decimal(1,1)
+  roomAvailable Int         @map("room_available") @default(0)
+  averageRating     Decimal?     @map("average_rating")      @db.Decimal(2,1)
+
   reviewCount       Int        @map("review_count")          @default(0)
 
   isVerified        VerificationStatus    @map("is_verified")           @default(PENDING)
@@ -308,7 +309,7 @@ model RoomType {
   isVerified        VerificationStatus    @map("is_verified")           @default(PENDING)
   isPublished       PublishStatus    @map("is_published")          @default(DRAFT)
 
-  averageRating     Decimal?     @map("average_rating")      @db.Decimal(1,1)
+  averageRating     Decimal?     @map("average_rating")      @db.Decimal(2,1)
   reviewCount       Int        @map("review_count")          @default(0)
 
   createdAt         DateTime   @map("created_at")            @default(now()) 

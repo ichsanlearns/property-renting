@@ -1,6 +1,13 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { useParams } from "react-router";
+import { format } from "date-fns";
+import api from "../../../../api/client";
+import { useQuery } from "@tanstack/react-query";
+import LoaderFetching from "../../../../shared/ui/LoaderFetching";
 
-// --- Sub-Components ---
+const ReviewCard = ({ review }: { review: any }) => {
+  const [openReply, setOpenReply] = useState(false);
+  const [reply, setReply] = useState("");
 
 const ReviewCard = ({
   id,
@@ -49,9 +56,7 @@ const ReviewCard = ({
                 </span>
               ))}
             </div>
-            <span className="text-xs text-slate-400 font-medium">{date}</span>
           </div>
-        </div>
 
         <div className="mb-4">
           <p className="text-xs font-bold text-primary flex items-center gap-1 mb-3">
@@ -139,38 +144,47 @@ const ReviewCard = ({
                 </button>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
-  </div>
-);
-
-// --- Main Page Component ---
+  );
+};
 
 export default function DetailReviewPage() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [activeReplyId, setActiveReplyId] = useState<string | null>(null);
-  const [replyText, setReplyText] = useState("");
+  const { propertyId } = useParams();
+
+  const [search, setSearch] = useState("");
+  const [filterStar, setFilterStar] = useState("ALL");
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["reviews", propertyId],
+    queryFn: async () => {
+      const res = await api.get(`/reviews/property/${propertyId}`);
+      return res.data.data;
+    },
+    enabled: !!propertyId,
+  });
+
+  const reviews = data?.reviews || [];
+
+  const filteredReviews = useMemo(() => {
+    return reviews.filter((item: any) => {
+      const matchSearch = item.comment.toLowerCase().includes(search.toLowerCase()) || item.customer?.firstName?.toLowerCase().includes(search.toLowerCase());
+
+      const matchStar = filterStar === "ALL" ? true : item.rating === Number(filterStar);
+
+      return matchSearch && matchStar;
+    });
+  }, [reviews, search, filterStar]);
+
+  if (isLoading) return <LoaderFetching />;
 
   return (
     <div className="min-h-screen bg-[#f8f9fb] dark:bg-slate-950">
-      {/* Top Header */}
+      {/* HEADER */}
       <header className="sticky top-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md flex justify-between items-center w-full px-8 py-4 border-b border-slate-100 dark:border-slate-800">
-        <div className="flex items-center gap-6">
-          <div className="relative">
-            <span className="absolute inset-y-0 left-3 flex items-center text-slate-400">
-              <span className="material-symbols-outlined text-lg">search</span>
-            </span>
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-800 border-none rounded-xl text-sm focus:ring-2 focus:ring-primary/20 w-64"
-              placeholder="Search reviews..."
-            />
-          </div>
-        </div>
+        <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search reviews..." className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-sm w-72" />
       </header>
 
       <section className="p-8 max-w-7xl mx-auto">
@@ -211,7 +225,8 @@ export default function DetailReviewPage() {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-slate-900 rounded-xl p-6 border border-slate-100 dark:border-slate-800">
+        {/* SUMMARY */}
+        <div className="bg-white dark:bg-slate-900 rounded-xl p-6 border border-slate-100 dark:border-slate-800 mb-8">
           <p className="text-sm text-slate-500 mb-2">Overall Rating</p>
 
           <div className="flex items-center gap-3 mb-4">
@@ -222,8 +237,6 @@ export default function DetailReviewPage() {
               star
             </span>
           </div>
-
-          <p className="text-sm text-slate-500 mb-4">Based on all reviews</p>
 
           <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2">
             <div
@@ -255,7 +268,7 @@ export default function DetailReviewPage() {
           </div>
         </div>
 
-        {/* Reviews List */}
+        {/* LIST */}
         <div className="space-y-6">
           <ReviewCard
             id="1"
