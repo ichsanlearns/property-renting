@@ -80,7 +80,7 @@ function SearchBar() {
       {openCalendar && (
         <div
           ref={calendarRef}
-          className="absolute top-full w-[680px] left-1/2 -translate-x-1/2 mt-2 z-50 bg-white rounded-xl shadow-xl p-4"
+          className="absolute top-full md:w-[720px] left-1/2 -translate-x-1/2 mt-2 z-50 bg-white rounded-xl shadow-xl p-4"
         >
           <DateRangePicker handleDateRangeChange={handleDateRangeChange} />
         </div>
