@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import SearchBar from "./SearchBar";
 
 interface HeroCarouselProps {
@@ -10,16 +10,12 @@ interface HeroCarouselProps {
   }[];
 }
 
-function HeroCarousel({ heroData }: HeroCarouselProps) {
+function HeroCarousel(
+  { heroData }: HeroCarouselProps,
+  interval: number = 5000,
+) {
   const [currentIndex, setCurrentIndex] = useState(0);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % heroData.length);
-    }, 5000);
-
-    return () => clearInterval(timer);
-  }, []);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const nextSlide = () =>
     setCurrentIndex((prev) => (prev + 1) % heroData.length);
@@ -29,8 +25,49 @@ function HeroCarousel({ heroData }: HeroCarouselProps) {
 
   const changeSlide = (index: number) => setCurrentIndex(index);
 
+  const startAutoSlide = () => {
+    stopAutoSlide();
+    intervalRef.current = setInterval(nextSlide, interval);
+  };
+
+  const stopAutoSlide = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+  };
+
+  const resetAutoSlide = () => {
+    stopAutoSlide();
+    startAutoSlide();
+  };
+
+  useEffect(() => {
+    startAutoSlide();
+    return stopAutoSlide;
+  }, []);
+
+  const handleNext = () => {
+    nextSlide();
+    resetAutoSlide();
+  };
+
+  const handlePrev = () => {
+    prevSlide();
+    resetAutoSlide();
+  };
+
+  const handleDotClick = (index: number) => {
+    changeSlide(index);
+    resetAutoSlide();
+  };
+
   return (
-    <section className="relative h-[870px] min-h-[600px] w-full flex flex-col items-center justify-center overflow-hidden">
+    <section
+      onMouseEnter={stopAutoSlide}
+      onMouseLeave={startAutoSlide}
+      className="relative h-[870px] min-h-[600px] w-full flex flex-col items-center justify-center overflow-hidden"
+    >
       <div className="absolute inset-0 z-0">
         {heroData.map((item, index) => (
           <div
@@ -75,15 +112,15 @@ function HeroCarousel({ heroData }: HeroCarouselProps) {
       </div>
 
       <button
-        onClick={prevSlide}
-        className="absolute left-6 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-white/10 hover:bg-white/30 backdrop-blur text-white"
+        onClick={handlePrev}
+        className="absolute left-6 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-white/10 hover:bg-white/30 backdrop-blur text-white cursor-pointer hover:scale-110 transition-all duration-300 ease-in-out"
       >
         ‹
       </button>
 
       <button
-        onClick={nextSlide}
-        className="absolute right-6 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-white/10 hover:bg-white/30 backdrop-blur text-white"
+        onClick={handleNext}
+        className="absolute right-6 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-white/10 hover:bg-white/30 backdrop-blur text-white cursor-pointer hover:scale-110 transition-all duration-300 ease-in-out"
       >
         ›
       </button>
@@ -92,8 +129,8 @@ function HeroCarousel({ heroData }: HeroCarouselProps) {
         {heroData.map((_, index) => (
           <button
             key={index}
-            onClick={() => changeSlide(index)}
-            className={`w-3 h-3 rounded-full transition-all ${
+            onClick={() => handleDotClick(index)}
+            className={`w-3 h-3 rounded-full transition-all cursor-pointer hover:scale-130 transition-duration-300 ${
               index === currentIndex
                 ? "bg-white scale-110"
                 : "bg-white/50 hover:bg-white/80"
