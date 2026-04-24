@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import SearchBar from "./SearchBar";
 
 const data = [
   {
@@ -87,7 +88,7 @@ function HeroCarousel() {
       </div>
 
       <div className="relative z-20 w-full max-w-5xl px-6 mt-48">
-        <div className="glass-search max-w-4xl mx-auto rounded-full p-2 shadow-2xl flex flex-col md:flex-row items-center gap-2 transition-all duration-500 hover:rounded-3xl">
+        {/* <div className="glass-search max-w-4xl mx-auto rounded-full p-2 shadow-2xl flex flex-col md:flex-row items-center gap-2 transition-all duration-500 hover:rounded-3xl">
           <div className="flex-1 w-full flex items-center px-6 py-3 border-r border-slate-200/50">
             <span className="material-symbols-outlined text-slate-400 mr-3">
               search
@@ -117,7 +118,7 @@ function HeroCarousel() {
           <button className="w-full md:w-auto bg-[#ff5c61] text-white p-4 rounded-full flex items-center justify-center hover:bg-[#e64a50] transition-colors shadow-lg">
             <span className="material-symbols-outlined">search</span>
           </button>
-        </div>
+        </div> */}
       </div>
 
       <button

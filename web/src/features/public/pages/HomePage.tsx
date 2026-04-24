@@ -3,23 +3,12 @@ import { usePropertyAllBasic } from "../../tenant/property/hooks/useProperty";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import LoaderFetching from "../../../shared/ui/LoaderFetching";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { searchSchema, type SearchSchema } from "../schema/search.schema";
 import PropertyCard from "../components/PropertyCard";
-import HeroCarousel from "../components/HeroCarousel";
+import HeroCarousel from "../components/home-page/HeroCarousel";
 
 function HomePage() {
   const navigate = useNavigate();
   const { data: properties, isLoading } = usePropertyAllBasic();
-
-  const { register, handleSubmit, watch } = useForm<SearchSchema>({
-    resolver: zodResolver(searchSchema),
-  });
-
-  const handleSearch = (data: SearchSchema) => {
-    navigate(`/search?search=${data.param}`);
-  };
 
   useEffect(() => {
     window.scrollTo({
