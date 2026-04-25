@@ -133,9 +133,11 @@ export const searchByParams = catchAsync(
       throw new AppError("Invalid search parameters", 400);
     }
 
-    const { search, sortBy, order } = parsed.data;
+    const { search, checkIn, checkOut, sortBy, order } = parsed.data;
 
     const finalSearch = typeof search === "string" ? search : undefined;
+    const finalCheckIn = typeof checkIn === "string" ? checkIn : undefined;
+    const finalCheckOut = typeof checkOut === "string" ? checkOut : undefined;
 
     const finalSortBy =
       sortBy === "name" || sortBy === "price" || sortBy === "createdAt"
@@ -147,6 +149,8 @@ export const searchByParams = catchAsync(
     const properties = await PropertyService.searchByParams({
       sortBy: finalSortBy,
       order: finalOrder,
+      ...(finalCheckIn && { checkIn: finalCheckIn }),
+      ...(finalCheckOut && { checkOut: finalCheckOut }),
       ...(finalSearch && { search: finalSearch }),
     });
 
