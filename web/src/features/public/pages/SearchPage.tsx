@@ -2,12 +2,13 @@ import { usePropertySearch } from "../../tenant/property/hooks/useProperty";
 import { useSearchParams } from "react-router-dom";
 import PropertyCard from "../components/PropertyCard";
 import SearchBar from "../components/home-page/SearchBar";
+import LoaderPropertyCard from "../components/LoaderPropertyCard";
 
 function SearchPage() {
   const [searchParams] = useSearchParams();
   const search = searchParams.get("search");
 
-  const { data: properties } = usePropertySearch({
+  const { data: properties, isLoading } = usePropertySearch({
     search: search || "",
   });
 
@@ -64,8 +65,14 @@ function SearchPage() {
             </h1>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-10">
-            {properties && (
-              <PropertyCard properties={properties} page="search" />
+            {isLoading ? (
+              <LoaderPropertyCard />
+            ) : (
+              <>
+                {properties && (
+                  <PropertyCard properties={properties} page="search" />
+                )}
+              </>
             )}
           </div>
         </div>
