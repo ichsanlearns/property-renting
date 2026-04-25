@@ -5,13 +5,17 @@ import type { CreatePropertyDto } from "./property.type.js";
 import {
   buildDateKey,
   getDatesInRangeExclusive,
+  getDatesInRangeInclusive,
   toDateKey,
   toLocalFromDb,
 } from "../../shared/utils/date.util.js";
 import { transformRoomTypePrices } from "./property.transformer.js";
+import type { Prisma } from "../../generated/prisma/client.js";
 
 type SearchPropertiesParams = {
   search?: string;
+  checkIn?: string;
+  checkOut?: string;
   sortBy?: "name" | "price" | "createdAt";
   order?: "asc" | "desc";
 };
@@ -379,18 +383,123 @@ export const getByTenantId = async (tenantId: string) => {
   }));
 };
 
+// export const searchByParams = async (params: SearchPropertiesParams) => {
+//   const where: Prisma.PropertyWhereInput = params.search
+//     ? {
+//         OR: [
+//           { name: { contains: params.search, mode: "insensitive" as const } },
+//           { city: { contains: params.search, mode: "insensitive" as const } },
+//           {
+//             country: { contains: params.search, mode: "insensitive" as const },
+//           },
+//         ],
+//       }
+//     : {};
+
+//   let dates: Date[] = [];
+//   if (params.checkIn && params.checkOut) {
+//     dates = getDatesInRangeExclusive(params.checkIn, params.checkOut);
+//     where.roomTypes = {
+//       some: {
+//         roomTypePrices: {
+//           some: {
+//             date: {
+//               gte: new Date(params.checkIn),
+//               lt: new Date(params.checkOut),
+//             },
+//             availableRooms: {
+//               gt: 0,
+//             },
+//             isClosed: false,
+//           },
+//         },
+//       },
+//     };
+//   }
+
+//   const properties = await prisma.property.findMany({
+//     where,
+//     orderBy: {
+//       [params.sortBy as string]: params.order,
+//     },
+//     select: {
+//       id: true,
+//       name: true,
+//       city: true,
+//       province: true,
+//       country: true,
+
+//       latitude: true,
+//       longitude: true,
+
+//       averageRating: true,
+//       reviewCount: true,
+
+//       propertyImages: {
+//         where: {
+//           isCover: true,
+//         },
+//         select: {
+//           imageUrl: true,
+//         },
+//       },
+
+//       roomTypes: {
+//         select: {
+//           basePrice: true,
+//         },
+//         orderBy: {
+//           basePrice: "asc",
+//         },
+//         take: 1,
+//       },
+//     },
+//   });
+
+//   return properties.map((property) => ({
+//     id: property.id,
+//     name: property.name,
+//     city: property.city,
+//     province: property.province,
+//     latitude: property.latitude,
+//     longitude: property.longitude,
+//     country: property.country,
+//     price: property.roomTypes[0]?.basePrice,
+//     averageRating: property.averageRating,
+//     reviewCount: property.reviewCount,
+//     coverImage: property.propertyImages[0]?.imageUrl,
+//   }));
+// };
+
 export const searchByParams = async (params: SearchPropertiesParams) => {
-  const where = params.search
+  const where: Prisma.PropertyWhereInput = params.search
     ? {
         OR: [
-          { name: { contains: params.search, mode: "insensitive" as const } },
-          { city: { contains: params.search, mode: "insensitive" as const } },
-          {
-            country: { contains: params.search, mode: "insensitive" as const },
-          },
+          { name: { contains: params.search, mode: "insensitive" } },
+          { city: { contains: params.search, mode: "insensitive" } },
+          { country: { contains: params.search, mode: "insensitive" } },
         ],
       }
     : {};
+  let dates: Date[] = [];
+
+  if (params.checkIn && params.checkOut) {
+    dates = getDatesInRangeExclusive(params.checkIn, params.checkOut);
+    where.roomTypes = {
+      some: {
+        roomTypePrices: {
+          some: {
+            date: {
+              gte: new Date(params.checkIn),
+              lt: new Date(params.checkOut),
+            },
+            availableRooms: { gt: 0 },
+            isClosed: false,
+          },
+        },
+      },
+    };
+  }
 
   const properties = await prisma.property.findMany({
     where,
@@ -411,27 +520,45 @@ export const searchByParams = async (params: SearchPropertiesParams) => {
       reviewCount: true,
 
       propertyImages: {
-        where: {
-          isCover: true,
-        },
-        select: {
-          imageUrl: true,
-        },
+        where: { isCover: true },
+        select: { imageUrl: true },
       },
 
       roomTypes: {
         select: {
           basePrice: true,
+          roomTypePrices:
+            params.checkIn && params.checkOut
+              ? {
+                  where: {
+                    date: {
+                      gte: new Date(params.checkIn),
+                      lt: new Date(params.checkOut),
+                    },
+                  },
+                }
+              : false,
         },
-        orderBy: {
-          basePrice: "asc",
-        },
-        take: 1,
+        orderBy: { basePrice: "asc" },
       },
     },
   });
 
-  return properties.map((property) => ({
+  const filtered = properties.filter((property) => {
+    if (!dates.length) return true;
+
+    return property.roomTypes.some((roomType) => {
+      if (!roomType.roomTypePrices) return false;
+
+      const validDates = roomType.roomTypePrices.filter(
+        (p) => p.availableRooms > 0 && !p.isClosed,
+      );
+
+      return validDates.length === dates.length;
+    });
+  });
+
+  return filtered.map((property) => ({
     id: property.id,
     name: property.name,
     city: property.city,
@@ -502,7 +629,7 @@ export const getPropertyRoomPricesDate = async ({
     ]),
   );
 
-  const allDates = getDatesInRangeExclusive(startDate, endDate);
+  const allDates = getDatesInRangeInclusive(startDate, endDate);
 
   const raw = roomTypeIds.flatMap((roomTypeId) =>
     allDates.map((date) => {

@@ -7,21 +7,45 @@ import { DateRangePicker } from "../DateRangePicker";
 import type { DateRange } from "react-day-picker";
 import { format } from "date-fns";
 
-function SearchBar() {
+function SearchBar({
+  search,
+  checkIn,
+  checkOut,
+}: {
+  search?: string;
+  checkIn?: string;
+  checkOut?: string;
+}) {
   const navigate = useNavigate();
   const calendarRef = useRef<HTMLDivElement>(null);
 
   const [openCalendar, setOpenCalendar] = useState(false);
-  const [range, setRange] = useState<DateRange | undefined>(undefined);
+  const [range, setRange] = useState<DateRange | undefined>(
+    checkIn && checkOut
+      ? {
+          from: new Date(checkIn),
+          to: new Date(checkOut),
+        }
+      : undefined,
+  );
 
   const { register, handleSubmit, watch } = useForm<SearchSchema>({
     resolver: zodResolver(searchSchema),
   });
 
   const handleSearch = (data: SearchSchema) => {
-    navigate(
-      `/search?search=${data.param}${range?.from && range?.to ? `&checkIn=${format(range.from, "yyyy-MM-dd")}&checkOut=${format(range.to, "yyyy-MM-dd")}` : ""}`,
-    );
+    const params = new URLSearchParams();
+
+    if (data.param) {
+      params.set("search", data.param);
+    }
+
+    if (range?.from && range?.to) {
+      params.set("checkIn", format(range.from, "yyyy-MM-dd"));
+      params.set("checkOut", format(range.to, "yyyy-MM-dd"));
+    }
+
+    navigate(`/search?${params.toString()}`);
   };
 
   const handleDateRangeChange = (range: DateRange) => {
@@ -47,7 +71,7 @@ function SearchBar() {
   return (
     <form
       onSubmit={handleSubmit(handleSearch, (errors) => console.error(errors))}
-      className="glass-search hover:-translate-y-2 w-[50%] max-w-3xl mx-auto rounded-full shadow-2xl flex flex-col md:flex-row items-center gap-2 group transition-all duration-500 hover:h-20  h-16 p-2"
+      className="glass-search hover:-translate-y-2 w-[50%] max-w-3xl rounded-full shadow-2xl flex flex-col md:flex-row items-center gap-2 group transition-all duration-500 hover:h-20 border-2 border-gray-200 h-16 p-2"
     >
       <div className="flex-1 w-full flex items-center px-6 py-3 border-r border-slate-200/50">
         <span
@@ -58,7 +82,9 @@ function SearchBar() {
         </span>
         <input
           {...register("param")}
+          defaultValue={search}
           className="w-full bg-transparent border-none outline-none focus:ring-0 text-slate-800 placeholder-slate-400 font-medium text-base"
+          autoComplete="off"
           placeholder="Search city, country, or property"
           type="text"
         />
@@ -80,14 +106,17 @@ function SearchBar() {
       {openCalendar && (
         <div
           ref={calendarRef}
-          className="absolute top-full w-[680px] left-1/2 -translate-x-1/2 mt-2 z-50 bg-white rounded-xl shadow-xl p-4"
+          className="absolute top-full md:w-[720px] left-1/2 -translate-x-1/2 mt-2 z-50 bg-white rounded-xl shadow-xl p-4"
         >
-          <DateRangePicker handleDateRangeChange={handleDateRangeChange} />
+          <DateRangePicker
+            handleDateRangeChange={handleDateRangeChange}
+            initialRange={range}
+          />
         </div>
       )}
 
       <button
-        disabled={!watch("param")}
+        disabled={!watch("param") && !range}
         type="submit"
         className="w-full md:w-auto bg-[#ff5c61] text-white p-3 rounded-full flex items-center justify-center hover:bg-[#e64a50] transition-colors shadow-lg shadow-[#ff5c61]/30 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
       >

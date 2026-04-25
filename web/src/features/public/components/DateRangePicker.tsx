@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DayPicker, type DateRange } from "react-day-picker";
 import "react-day-picker/dist/style.css";
 
@@ -7,10 +7,13 @@ today.setHours(0, 0, 0, 0);
 
 export function DateRangePicker({
   handleDateRangeChange,
+  initialRange,
 }: {
   handleDateRangeChange: (range: DateRange) => void;
+  initialRange?: DateRange;
 }) {
-  const [range, setRange] = useState<DateRange | undefined>();
+  const [range, setRange] = useState<DateRange | undefined>(initialRange);
+  const [months, setMonths] = useState(1);
 
   const handleSelect = (_: DateRange | undefined, selectedDay: Date) => {
     if (!selectedDay) return;
@@ -33,6 +36,19 @@ export function DateRangePicker({
     handleDateRangeChange({ from: range.from, to: selectedDay });
   };
 
+  useEffect(() => {
+    const media = window.matchMedia("(min-width: 768px)");
+
+    const handleResize = () => {
+      setMonths(media.matches ? 2 : 1);
+    };
+
+    handleResize();
+    media.addEventListener("change", handleResize);
+
+    return () => media.removeEventListener("change", handleResize);
+  }, []);
+
   return (
     <DayPicker
       captionLayout="dropdown"
@@ -54,7 +70,7 @@ export function DateRangePicker({
         chevron: "!text-primary",
         button: "hover:!bg-primary/10 rounded-md",
       }}
-      numberOfMonths={2}
+      numberOfMonths={months}
     />
   );
 }

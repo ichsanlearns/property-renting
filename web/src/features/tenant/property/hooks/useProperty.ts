@@ -47,18 +47,35 @@ export const usePropertyByTenantId = () => {
 
 export const usePropertySearch = ({
   search,
+  checkIn,
+  checkOut,
   sortBy,
   order,
 }: {
-  search: string;
+  search?: string;
+  checkIn?: string;
+  checkOut?: string;
   sortBy?: "name" | "price" | "createdAt";
   order?: "asc" | "desc";
 }) => {
   return useQuery({
-    queryKey: queryKeys.property.search(search, sortBy, order),
-    queryFn: () => PropertyService.searchProperties({ search, sortBy, order }),
+    queryKey: queryKeys.property.search(
+      search,
+      checkIn,
+      checkOut,
+      sortBy,
+      order,
+    ),
+    queryFn: () =>
+      PropertyService.searchProperties({
+        search,
+        checkIn,
+        checkOut,
+        sortBy,
+        order,
+      }),
     select: (res) => res.data,
-    enabled: !!search || !!sortBy || !!order,
+    enabled: !!search || !!checkIn || !!checkOut || !!sortBy || !!order,
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
   });

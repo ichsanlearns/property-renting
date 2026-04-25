@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const searchSchema = z.object({
-  param: z.string().min(1, "Search is required"),
+  param: z.string().optional(),
 });
 
 export type SearchSchema = z.infer<typeof searchSchema>;
