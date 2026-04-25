@@ -7,9 +7,13 @@ import LoaderPropertyCard from "../components/LoaderPropertyCard";
 function SearchPage() {
   const [searchParams] = useSearchParams();
   const search = searchParams.get("search");
+  const checkIn = searchParams.get("checkIn");
+  const checkOut = searchParams.get("checkOut");
 
   const { data: properties, isLoading } = usePropertySearch({
     search: search || "",
+    checkIn: checkIn || "",
+    checkOut: checkOut || "",
   });
 
   return (
@@ -18,8 +22,9 @@ function SearchPage() {
         <div className="max-w-screen-2xl mx-auto px-6 md:px-12 py-4 mt-2">
           <div className="flex items-center justify-center gap-4">
             <SearchBar
-              checkIn={searchParams.get("checkIn") || undefined}
-              checkOut={searchParams.get("checkOut") || undefined}
+              search={search || undefined}
+              checkIn={checkIn || undefined}
+              checkOut={checkOut || undefined}
             />
             <button className="flex items-center space-x-2 border border-outline rounded-full px-4 py-2.5 text-sm font-medium  hover:shadow-md transition-all cursor-pointer  hover:scale-105">
               <span

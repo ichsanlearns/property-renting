@@ -5,10 +5,13 @@ export const queryKeys = {
     detail: (propertyId: string) => ["property", propertyId, "detail"] as const,
     byTenantId: () => ["property", "byTenantId"] as const,
     search: (
-      search: string,
+      search?: string,
+      checkIn?: string,
+      checkOut?: string,
       sortBy?: "name" | "price" | "createdAt",
       order?: "asc" | "desc",
-    ) => ["property", "search", search, sortBy, order] as const,
+    ) =>
+      ["property", "search", search, checkIn, checkOut, sortBy, order] as const,
     roomPricesDate: (
       propertyId: string,
       startDate: string | null,

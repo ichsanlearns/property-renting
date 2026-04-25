@@ -8,9 +8,11 @@ import type { DateRange } from "react-day-picker";
 import { format } from "date-fns";
 
 function SearchBar({
+  search,
   checkIn,
   checkOut,
 }: {
+  search?: string;
   checkIn?: string;
   checkOut?: string;
 }) {
@@ -80,7 +82,9 @@ function SearchBar({
         </span>
         <input
           {...register("param")}
+          defaultValue={search}
           className="w-full bg-transparent border-none outline-none focus:ring-0 text-slate-800 placeholder-slate-400 font-medium text-base"
+          autoComplete="off"
           placeholder="Search city, country, or property"
           type="text"
         />
