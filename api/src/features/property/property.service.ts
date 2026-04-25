@@ -5,13 +5,17 @@ import type { CreatePropertyDto } from "./property.type.js";
 import {
   buildDateKey,
   getDatesInRangeExclusive,
+  getDatesInRangeInclusive,
   toDateKey,
   toLocalFromDb,
 } from "../../shared/utils/date.util.js";
 import { transformRoomTypePrices } from "./property.transformer.js";
+import type { Prisma } from "../../generated/prisma/client.js";
 
 type SearchPropertiesParams = {
   search?: string;
+  checkIn?: string;
+  checkOut?: string;
   sortBy?: "name" | "price" | "createdAt";
   order?: "asc" | "desc";
 };
@@ -380,7 +384,7 @@ export const getByTenantId = async (tenantId: string) => {
 };
 
 export const searchByParams = async (params: SearchPropertiesParams) => {
-  const where = params.search
+  const where: Prisma.PropertyWhereInput = params.search
     ? {
         OR: [
           { name: { contains: params.search, mode: "insensitive" as const } },
@@ -502,7 +506,7 @@ export const getPropertyRoomPricesDate = async ({
     ]),
   );
 
-  const allDates = getDatesInRangeExclusive(startDate, endDate);
+  const allDates = getDatesInRangeInclusive(startDate, endDate);
 
   const raw = roomTypeIds.flatMap((roomTypeId) =>
     allDates.map((date) => {

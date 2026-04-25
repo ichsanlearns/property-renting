@@ -1,4 +1,4 @@
-import { eachDayOfInterval, addDays, format } from "date-fns";
+import { eachDayOfInterval, addDays, format, subDays } from "date-fns";
 
 export const isWeekend = ({ date }: { date: Date }): boolean => {
   const day = date.getUTCDay();
@@ -18,7 +18,7 @@ export function toDateKey(date: Date): string {
   return format(date, "yyyy-MM-dd");
 }
 
-export function getDatesInRangeExclusive(
+export function getDatesInRangeInclusive(
   startStr: string,
   endStr: string,
 ): Date[] {
@@ -28,6 +28,19 @@ export function getDatesInRangeExclusive(
   return eachDayOfInterval({
     start,
     end,
+  });
+}
+
+export function getDatesInRangeExclusive(
+  startStr: string,
+  endStr: string,
+): Date[] {
+  const start = parseLocalDate(startStr);
+  const end = parseLocalDate(endStr);
+
+  return eachDayOfInterval({
+    start,
+    end: subDays(end, 1),
   });
 }
 

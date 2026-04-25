@@ -117,24 +117,6 @@ function DatePicker({
             new Date(selectedDate.checkInDate).getTime()) /
           (1000 * 60 * 60 * 24),
       });
-
-      // const availableRooms = getAvailableRoomTypesForRange({
-      //   checkInDate: selectedDate.checkInDate,
-      //   checkOutDate: date,
-      //   data: roomPricesDateRange!,
-      // });
-
-      // const availableRoomsDate = {
-      //   checkInDate: selectedDate.checkInDate,
-      //   checkOutDate: date,
-      //   numberOfNights:
-      //     (new Date(date).getTime() -
-      //       new Date(selectedDate.checkInDate).getTime()) /
-      //     (1000 * 60 * 60 * 24),
-      //   availableRooms,
-      // };
-
-      // handleSelectDateRoom(availableRoomsDate);
     }
   }
 
