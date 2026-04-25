@@ -14,10 +14,13 @@ function SearchPage() {
 
   return (
     <>
-      <div className="fixed top-[73px] w-full z-40 bg-white shadow-sm">
+      <div className="fixed top-[73px] w-full z-40 bg-white">
         <div className="max-w-screen-2xl mx-auto px-6 md:px-12 py-4 mt-2">
           <div className="flex items-center justify-center gap-4">
-            <SearchBar />
+            <SearchBar
+              checkIn={searchParams.get("checkIn") || undefined}
+              checkOut={searchParams.get("checkOut") || undefined}
+            />
             <button className="flex items-center space-x-2 border border-outline rounded-full px-4 py-2.5 text-sm font-medium  hover:shadow-md transition-all cursor-pointer  hover:scale-105">
               <span
                 className="material-symbols-outlined text-sm"

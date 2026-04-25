@@ -7,10 +7,12 @@ today.setHours(0, 0, 0, 0);
 
 export function DateRangePicker({
   handleDateRangeChange,
+  initialRange,
 }: {
   handleDateRangeChange: (range: DateRange) => void;
+  initialRange?: DateRange;
 }) {
-  const [range, setRange] = useState<DateRange | undefined>();
+  const [range, setRange] = useState<DateRange | undefined>(initialRange);
   const [months, setMonths] = useState(1);
 
   const handleSelect = (_: DateRange | undefined, selectedDay: Date) => {
