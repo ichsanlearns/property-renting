@@ -2,7 +2,7 @@ import api from "../../../api/client";
 import type { ApiResponse } from "../../../shared/types/api-response";
 
 import { PROFILE_ENDPOINTS } from "./profile.endpoint";
-import type { UpdateProfileResponse } from "./profile.response";
+import type { FillProfileResponse } from "./profile.response";
 
 type UpdateProfilePayload = {
   firstName?: string;
@@ -13,7 +13,7 @@ type UpdateProfilePayload = {
 };
 
 export const updateMeRequest = async (data: UpdateProfilePayload) => {
-  const response = await api.patch<ApiResponse<UpdateProfileResponse>>(
+  const response = await api.patch<ApiResponse<FillProfileResponse>>(
     PROFILE_ENDPOINTS.UPDATE_PROFILE,
     data,
   );
