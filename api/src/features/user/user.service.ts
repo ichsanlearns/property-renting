@@ -63,3 +63,24 @@ export const updateProfilePhoto = async ({
     profileImage: updatedUser.profileImage,
   };
 };
+
+export const deleteProfilePhoto = async ({ userId }: { userId: string }) => {
+  const updatedUser = await prisma.user.update({
+    where: { id: userId },
+    data: { profileImage: null },
+  });
+
+  const fullName = [updatedUser.firstName, updatedUser.lastName]
+    .filter(Boolean)
+    .join(" ");
+
+  return {
+    id: updatedUser.id,
+    fullName,
+    email: updatedUser.email,
+    phoneNumber: updatedUser.phoneNumber,
+    role: updatedUser.role,
+    isVerified: updatedUser.isVerified,
+    profileImage: updatedUser.profileImage,
+  };
+};

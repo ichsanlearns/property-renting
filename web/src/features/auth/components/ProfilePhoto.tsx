@@ -58,21 +58,22 @@ function ProfilePhoto({
           </span>
         )}
       </div>
-      {image?.preview ? (
-        <button
-          type="button"
-          onClick={handleDelete}
-          className="absolute top-0 right-0 bg-primary text-white p-1.5 rounded-full shadow-md hover:scale-110 transition cursor-pointer w-7 h-7 flex items-center justify-center"
-        >
-          <span className="material-symbols-outlined text-xs">delete</span>
-        </button>
-      ) : (
-        <div className="absolute bottom-0 right-0 bg-primary text-white p-1.5 rounded-full shadow-md w-7 h-7 flex items-center justify-center">
-          <span className="material-symbols-outlined text-xs text-white">
-            add_photo_alternate
-          </span>
-        </div>
-      )}
+      {image?.id !== "existing" &&
+        (image?.preview ? (
+          <button
+            type="button"
+            onClick={handleDelete}
+            className="absolute top-0 right-0 bg-primary text-white p-1.5 rounded-full shadow-md hover:scale-110 transition cursor-pointer w-7 h-7 flex items-center justify-center"
+          >
+            <span className="material-symbols-outlined text-xs">delete</span>
+          </button>
+        ) : (
+          <div className="absolute bottom-0 right-0 bg-primary text-white p-1.5 rounded-full shadow-md w-7 h-7 flex items-center justify-center">
+            <span className="material-symbols-outlined text-xs text-white">
+              add_photo_alternate
+            </span>
+          </div>
+        ))}
     </label>
   );
 }

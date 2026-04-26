@@ -72,6 +72,8 @@ function MyProfile() {
     }
   }, [user]);
 
+  console.log(image);
+
   return (
     <div className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
       <div className="layout-container flex h-full grow flex-col">
