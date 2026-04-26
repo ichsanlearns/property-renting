@@ -371,6 +371,7 @@ export const fillProfile = async ({
   role,
   phoneNumber,
   profileImage,
+  profileImagePublicId,
 }: {
   userId: string;
   firstName: string;
@@ -378,6 +379,7 @@ export const fillProfile = async ({
   role: Role;
   phoneNumber: string | null;
   profileImage: string | null;
+  profileImagePublicId: string | null;
 }) => {
   if (!userId) throw new AppError("Unauthorized", 401);
 
@@ -389,7 +391,14 @@ export const fillProfile = async ({
 
   const updatedUser = await prisma.user.update({
     where: { id: userId },
-    data: { firstName, lastName, role, phoneNumber, profileImage },
+    data: {
+      firstName,
+      lastName,
+      role,
+      phoneNumber,
+      profileImage,
+      profileImagePublicId,
+    },
   });
 
   const fullName = [updatedUser.firstName, updatedUser.lastName]

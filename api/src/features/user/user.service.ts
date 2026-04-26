@@ -41,13 +41,15 @@ export const updateMe = async ({
 export const updateProfilePhoto = async ({
   userId,
   profileImage,
+  profileImagePublicId,
 }: {
   userId: string;
   profileImage: string;
+  profileImagePublicId: string;
 }) => {
   const updatedUser = await prisma.user.update({
     where: { id: userId },
-    data: { profileImage },
+    data: { profileImage, profileImagePublicId },
   });
 
   const fullName = [updatedUser.firstName, updatedUser.lastName]

@@ -45,6 +45,7 @@ export const createRoomController = catchAsync(
     const images = uploadedImagesUrl.map((item, index) => {
       return {
         imageUrl: item.url,
+        publicId: item.publicId,
         isCover: imagesMeta[index].isCover,
         order: imagesMeta[index].order,
       };

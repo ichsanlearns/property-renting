@@ -92,6 +92,7 @@ export const updateProfilePhoto = catchAsync(
     const result = await UserService.updateProfilePhoto({
       userId,
       profileImage: profileImageLink.url,
+      profileImagePublicId: profileImageLink.publicId,
     });
 
     res.status(200).json({

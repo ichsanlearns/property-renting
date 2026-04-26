@@ -8,7 +8,12 @@ export const createRoom = async ({
   amenities,
 }: {
   data: CreateRoomPayload;
-  images: { imageUrl: string; isCover: boolean; order: number }[];
+  images: {
+    imageUrl: string;
+    publicId?: string;
+    isCover: boolean;
+    order: number;
+  }[];
   amenities: string[];
 }) => {
   const property = await prisma.property.findUnique({
@@ -37,6 +42,7 @@ export const createRoom = async ({
       data: images.map((image) => ({
         ...image,
         roomTypeId: room.id,
+        imagePublicId: image.publicId ?? null,
       })),
     });
 

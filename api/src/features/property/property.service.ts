@@ -28,7 +28,12 @@ export const create = async ({
 }: {
   data: CreatePropertyDto;
   tenantId: string;
-  images: { imageUrl: string; isCover: boolean; order: number }[];
+  images: {
+    imageUrl: string;
+    publicId?: string;
+    isCover: boolean;
+    order: number;
+  }[];
   amenities: string[];
 }) => {
   return await prisma.$transaction(async (tx) => {
@@ -51,6 +56,7 @@ export const create = async ({
         data: {
           propertyId: property.id,
           imageUrl: image.imageUrl,
+          imagePublicId: image.publicId ?? null,
           isCover: image.isCover,
           order: image.order,
         },

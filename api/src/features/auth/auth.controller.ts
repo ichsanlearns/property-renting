@@ -132,6 +132,7 @@ export const fillProfile = catchAsync(async (req: Request, res: Response) => {
     role,
     phoneNumber: phoneNumber ?? null,
     profileImage: profileImageLink?.url ?? null,
+    profileImagePublicId: profileImageLink?.publicId ?? null,
   });
 
   res.status(200).json({
