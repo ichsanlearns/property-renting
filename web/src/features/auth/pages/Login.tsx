@@ -7,8 +7,8 @@ import { googleLoginRequest, loginRequest } from "../api/auth.service";
 
 import { useAuthStore } from "../stores/auth.store";
 import { Link, useNavigate } from "react-router";
-import { useState } from "react";
-import { GoogleLogin } from "@react-oauth/google";
+import { useCallback, useState } from "react";
+import GoogleButton from "../components/GoogleButton";
 
 type CredentialResponse = {
   credential?: string;
@@ -74,44 +74,34 @@ function Login() {
     }
   };
 
-  const handleGoogleLogin = async (credentialResponse: CredentialResponse) => {
-    try {
-      if (!credentialResponse.credential) {
-        toast.error("Failed to login");
-        return;
+  const handleGoogleLogin = useCallback(
+    async (credentialResponse: CredentialResponse) => {
+      try {
+        if (!credentialResponse.credential) {
+          toast.error("Failed to login");
+          return;
+        }
+
+        toast.loading("Logging in...");
+        const res = await googleLoginRequest({
+          token: credentialResponse.credential,
+        });
+
+        const { accessToken, user } = res.data;
+
+        login({ token: accessToken, user });
+
+        toast.dismiss();
+        toast.success("Succesfully login");
+
+        navigate("/");
+      } catch (error: any) {
+        toast.dismiss();
+        toast.error(error.response?.data?.message || "Failed to login");
       }
-
-      toast.loading("Logging in...");
-      const res = await googleLoginRequest({
-        token: credentialResponse.credential,
-      });
-
-      const { accessToken, user } = res.data;
-
-      login({ token: accessToken, user });
-
-      toast.dismiss();
-      toast.success("Succesfully login");
-
-      navigate("/");
-    } catch (error: any) {
-      toast.dismiss();
-      toast.error(error.response?.data?.message || "Failed to login");
-    }
-  };
-
-  const GoogleButton = () => {
-    return (
-      <GoogleLogin
-        onSuccess={handleGoogleLogin}
-        onError={() => console.error("Login Failed")}
-        useOneTap={false}
-        containerProps={{
-          className: "absolute inset-0 opacity-0 w-full h-full",
-        }}
-      />
-    );
-  };
+    },
+    [],
+  );
 
   return (
     <main className=" bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen flex flex-col relative overflow-x-hidden">
@@ -274,7 +264,9 @@ function Login() {
 
           <div className="grid grid-cols-1 sm:grid-cols-1 gap-4">
             <div className="relative w-full">
-              {import.meta.env.VITE_GOOGLE_CLIENT_ID && <GoogleButton />}
+              {import.meta.env.VITE_GOOGLE_CLIENT_ID && (
+                <GoogleButton onSuccess={handleGoogleLogin} />
+              )}
 
               <button
                 type="button"
