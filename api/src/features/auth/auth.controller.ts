@@ -65,6 +65,23 @@ export const resendToken = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+export const verifyPasswordToken = catchAsync(
+  async (req: Request, res: Response) => {
+    const token = req.params.token as string | undefined;
+
+    if (!token) {
+      throw new AppError("Token not found", 400);
+    }
+
+    const email = await authService.verifyPasswordToken({ token });
+
+    res.status(200).json({
+      message: "Token verified successfully",
+      data: { email },
+    });
+  },
+);
+
 export const updatePassword = catchAsync(
   async (req: Request, res: Response) => {
     const { password, token } = req.body;
