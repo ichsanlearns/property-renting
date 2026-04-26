@@ -69,7 +69,7 @@ function ProfilePhoto({
       ) : (
         <div className="absolute bottom-0 right-0 bg-primary text-white p-1.5 rounded-full shadow-md w-7 h-7 flex items-center justify-center">
           <span className="material-symbols-outlined text-xs text-white">
-            edit
+            add_photo_alternate
           </span>
         </div>
       )}

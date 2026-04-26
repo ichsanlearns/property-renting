@@ -1,15 +1,19 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuthStore } from "../../auth/stores/auth.store";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useForm } from "react-hook-form";
 import { profileSchema, type ProfileFormData } from "../schema/profile.schema";
 import toast from "react-hot-toast";
 import { updateMeRequest } from "../api/profile.service";
+import ProfilePhoto from "../../auth/components/ProfilePhoto";
+import type { ImageType } from "../../tenant/property/types/image.type";
 
 function MyProfile() {
   const { user, setUser } = useAuthStore();
   const [isEdit, setIsEdit] = useState<null | "PERSONAL" | "PASSWORD">(null);
+
+  const [image, setImage] = useState<ImageType | null>(null);
 
   const { register, handleSubmit } = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
@@ -35,6 +39,15 @@ function MyProfile() {
     }
   };
 
+  useEffect(() => {
+    if (user?.profileImage) {
+      setImage({
+        id: "existing",
+        preview: user.profileImage,
+      });
+    }
+  }, [user]);
+
   return (
     <div className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
       <div className="layout-container flex h-full grow flex-col">
@@ -43,23 +56,16 @@ function MyProfile() {
             <div className="flex-1 space-y-8">
               <section className="bg-white rounded-xl shadow-sm border border-primary/5 p-6 md:p-8">
                 <div className="flex flex-col md:flex-row items-center gap-6">
-                  <div className="relative group">
-                    <div className="size-32 rounded-full overflow-hidden border-4 border-background-light shadow-md">
-                      <img
-                        alt="User Image Profile"
-                        className="w-full h-full object-cover"
-                        data-alt="Large profile picture of John Doe"
-                        src={
-                          user?.profileImage ||
-                          `https://ui-avatars.com/api/?name=${user?.fullName}`
-                        }
-                      />
-                    </div>
-                    <button className="absolute bottom-1 right-1 bg-primary text-white p-2 rounded-full shadow-lg hover:scale-105 transition-transform">
-                      <span className="material-symbols-outlined text-sm">
-                        photo_camera
-                      </span>
-                    </button>
+                  <div className="flex flex-col items-center gap-2">
+                    <ProfilePhoto image={image} onChange={setImage} />
+                    {image?.file && (
+                      <button
+                        type="button"
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium shadow-sm hover:bg-primary/90 active:scale-[0.98] transition cursor-pointer"
+                      >
+                        Upload photo
+                      </button>
+                    )}
                   </div>
                   <div className="text-center md:text-left space-y-2">
                     <div className="flex items-center justify-center md:justify-start gap-2">
