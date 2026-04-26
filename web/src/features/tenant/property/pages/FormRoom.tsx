@@ -10,7 +10,7 @@ import {
   createRoomSchema,
   type CreateRoomPayload,
 } from "../schemas/room.schema";
-import type { ImageType } from "../types/image.type";
+import type { ImagesType } from "../types/image.type";
 import toast from "react-hot-toast";
 import { createRoom } from "../api/room.service";
 import { useParams } from "react-router";
@@ -46,7 +46,7 @@ function FormRoom() {
   const { propertyId } = useParams();
   const { data: property, isLoading, error } = usePropertyBasic(propertyId!);
 
-  const [images, setImages] = useState<ImageType[]>([]);
+  const [images, setImages] = useState<ImagesType[]>([]);
 
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
 

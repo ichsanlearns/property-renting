@@ -3,15 +3,15 @@ import { v4 as uuidv4 } from "uuid";
 
 function ProfilePhoto({
   image,
-  setImage,
+  onChange,
 }: {
-  image: ImageType | undefined;
-  setImage: (image: ImageType | undefined) => void;
+  image: ImageType | null;
+  onChange: (image: ImageType | null) => void;
 }) {
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setImage({
+      onChange({
         id: uuidv4(),
         preview: URL.createObjectURL(file),
         file,
@@ -29,7 +29,7 @@ function ProfilePhoto({
       URL.revokeObjectURL(image.preview);
     }
 
-    setImage(undefined);
+    onChange(null);
   };
 
   return (
