@@ -11,6 +11,10 @@ type AuthResponse = {
   };
 };
 
+export type VerifyPasswordResponse = {
+  email: string;
+};
+
 export type ResendTokenResponse = {
   createdAt: string;
 };

@@ -7,11 +7,14 @@ import { updatePasswordRequest } from "../api/auth.service";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { usePasswordToken } from "../hooks/useAuth";
 
 function Password() {
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token") || "";
   const navigate = useNavigate();
+
+  const { data, isLoading, isError } = usePasswordToken({ token });
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -43,6 +46,19 @@ function Password() {
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center">
+        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    toast.error("Invalid or expired token");
+    navigate("/login");
+  }
+
   return (
     <main className="w-full z-10 max-w-md">
       <div className="bg-surface rounded-xl shadow-2xl p-8 md:p-10 border border-outline-variant relative overflow-hidden">
@@ -51,6 +67,7 @@ function Password() {
             StayHub
           </span>
         </div>
+
         <div className="text-center mb-10">
           <h1 className="text-on-surface text-2xl md:text-3xl font-extrabold tracking-tight mb-2">
             Set your password
@@ -58,6 +75,9 @@ function Password() {
           <p className="text-on-surface-variant text-sm font-medium">
             Create a secure password to protect your account and trips.
           </p>
+          <br />
+          <p className="text-on-surface-variant text-sm font-medium">Email:</p>
+          <p className="text-sm text-primary font-medium">{data?.email}</p>
         </div>
         <form
           onSubmit={handleSubmit(onSubmit, (errors) => {

@@ -7,6 +7,7 @@ import type {
   LoginResponse,
   RefreshSessionResponse,
   ResendTokenResponse,
+  VerifyPasswordResponse,
 } from "./auth.response";
 import type { UpdateProfileResponse } from "../../profile/api/profile.response";
 
@@ -76,6 +77,19 @@ export const resendTokenRequest = async (data: RegisterPayload) => {
   const response = await apiAuth.post<ApiResponse<ResendTokenResponse>>(
     AUTH_ENDPOINTS.RESEND_TOKEN,
     data,
+  );
+
+  return response.data;
+};
+
+export const verifyPasswordTokenRequest = async (token: string) => {
+  const response = await apiAuth.get<ApiResponse<VerifyPasswordResponse>>(
+    AUTH_ENDPOINTS.VERIFY_PASSWORD_TOKEN,
+    {
+      params: {
+        token,
+      },
+    },
   );
 
   return response.data;

@@ -67,7 +67,7 @@ export const resendToken = catchAsync(async (req: Request, res: Response) => {
 
 export const verifyPasswordToken = catchAsync(
   async (req: Request, res: Response) => {
-    const token = req.params.token as string | undefined;
+    const token = req.query.token as string | undefined;
 
     if (!token) {
       throw new AppError("Token not found", 400);

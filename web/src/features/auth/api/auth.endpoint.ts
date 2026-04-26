@@ -3,6 +3,7 @@ export const AUTH_ENDPOINTS = {
   GOOGLE_LOGIN: "/auth/login/google",
   REGISTER: "/auth/register",
   RESEND_TOKEN: "/auth/resend-token",
+  VERIFY_PASSWORD_TOKEN: "/auth/verify-password-token",
   UPDATE_PASSWORD: "/auth/update-password",
   UPDATE_PROFILE: "/auth/update-profile",
   FORGOT_PASSWORD: "/auth/forgot-password",

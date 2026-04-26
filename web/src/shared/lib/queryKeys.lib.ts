@@ -21,4 +21,7 @@ export const queryKeys = {
   pricing: {
     myPricing: () => ["pricing", "myPricing"] as const,
   },
+  auth: {
+    token: (token: string) => ["auth", token, "token"] as const,
+  },
 };
