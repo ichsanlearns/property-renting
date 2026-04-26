@@ -2,6 +2,8 @@ import type { Request, Response } from "express";
 import * as UserService from "./user.service.js";
 import * as PricingService from "../pricing/pricing.service.js";
 import { createPricingRuleValidator } from "../pricing/pricing.validator.js";
+import { catchAsync } from "../../shared/utils/catch-async.util.js";
+import * as uploadService from "../../shared/services/upload.service.js";
 
 export const updateMe = async (req: Request, res: Response) => {
   const userId = req.user?.userId;
@@ -71,3 +73,30 @@ export const createPricingRule = async (req: Request, res: Response) => {
     data: { pricingRule: result },
   });
 };
+
+export const updateProfilePhoto = catchAsync(
+  async (req: Request, res: Response) => {
+    const userId = req.user?.userId!;
+
+    const profileImage = req.file;
+
+    if (!profileImage) {
+      throw new Error("Profile image not uploaded");
+    }
+
+    const profileImageLink = await uploadService.uploadToCloudinary(
+      profileImage.buffer,
+      "profileImages",
+    );
+
+    const result = await UserService.updateProfilePhoto({
+      userId,
+      profileImage: profileImageLink,
+    });
+
+    res.status(200).json({
+      message: "Profile photo updated successfully",
+      data: { user: result },
+    });
+  },
+);
