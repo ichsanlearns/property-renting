@@ -8,7 +8,6 @@ import type {
 export type CreateRoomPayload = {
   propertyId: string;
   name: string;
-  description: string;
   basePrice: number;
   totalRooms: number;
   bedType: BedType;

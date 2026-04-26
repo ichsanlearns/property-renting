@@ -251,20 +251,6 @@ function PropertyDetail() {
                 {property?.city}, {property?.province}, {property?.country}
               </span>
             </div>
-            <div className="flex items-center gap-2">
-              <button className="flex items-center gap-2 px-3 py-2 hover:bg-surface-container rounded-lg transition-colors">
-                <span className="material-symbols-outlined text-lg">
-                  ios_share
-                </span>
-                <span className="text-sm font-bold">Share</span>
-              </button>
-              <button className="flex items-center gap-2 px-3 py-2 hover:bg-surface-container rounded-lg transition-colors">
-                <span className="material-symbols-outlined text-lg">
-                  favorite
-                </span>
-                <span className="text-sm font-bold">Save</span>
-              </button>
-            </div>
           </div>
         </header>
         <PropertyImageGallery
