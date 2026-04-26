@@ -18,7 +18,7 @@ function SearchPage() {
 
   return (
     <>
-      <div className="fixed top-[73px] w-full z-40 bg-white">
+      <div className="absolute w-full z-40 bg-white">
         <div className="max-w-screen-2xl mx-auto px-6 md:px-12 py-4 mt-2">
           <div className="flex items-center justify-center gap-4">
             <SearchBar
@@ -35,30 +35,6 @@ function SearchPage() {
               </span>
               <span>Filters</span>
             </button>
-
-            {/* <div className="relative w-full max-w-lg">
-              <form onSubmit={handleSubmit(handleSearch)}>
-                <input
-                  {...register("param")}
-                  className="w-full h-12 pl-6 pr-14 bg-white border border-outline rounded-full shadow-sm hover:shadow-md focus:ring-2 focus:ring-primary focus:border-primary transition-shadow cursor-text text-sm font-medium text-on-surface"
-                  id="search-input"
-                  placeholder="Search city, country, or property"
-                  type="text"
-                />
-              </form>
-              <button
-                type="submit"
-                disabled={!watch("param") || isLoading}
-                className="absolute right-2 top-1/2 -translate-y-1/2 bg-primary p-2 rounded-full flex items-center justify-center cursor-pointer hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <span
-                  className="material-symbols-outlined text-white text-sm"
-                  data-icon="search"
-                >
-                  search
-                </span>
-              </button>
-            </div> */}
           </div>
         </div>
       </div>

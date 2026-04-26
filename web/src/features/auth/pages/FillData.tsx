@@ -8,7 +8,9 @@ import {
   type UpdateProfileFormData,
 } from "../schemas/update-profile.schema";
 import toast from "react-hot-toast";
-import { updateProfileRequest } from "../api/auth.service";
+import { fillProfileRequest } from "../api/auth.service";
+import ProfilePhoto from "../components/ProfilePhoto";
+import type { ImageType } from "../../tenant/property/types/image.type";
 
 function FillData() {
   const [role, setRole] = useState<"CUSTOMER" | "TENANT">("CUSTOMER");
@@ -18,7 +20,16 @@ function FillData() {
 
   const { login, setUser } = useAuthStore();
 
-  const { register, handleSubmit } = useForm<UpdateProfileFormData>({
+  const [image, setImage] = useState<ImageType | null>(null);
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm<UpdateProfileFormData>({
     resolver: zodResolver(updateProfileSchema),
   });
 
@@ -29,15 +40,38 @@ function FillData() {
   const onSubmit = async (data: UpdateProfileFormData) => {
     try {
       toast.loading("Updating profile...");
-      const response = await updateProfileRequest({ ...data, role });
+      setIsSubmitting(true);
+
+      const formData = new FormData();
+      formData.append("role", role);
+      formData.append("firstName", data.firstName);
+      formData.append("lastName", data.lastName);
+
+      if (data.phoneNumber) {
+        formData.append("phoneNumber", data.phoneNumber);
+      }
+
+      if (image?.file) {
+        formData.append("profileImage", image?.file);
+      }
+
+      const response = await fillProfileRequest(formData);
+
       toast.dismiss();
-      toast.success("Profile updated successfully");
+      toast.success("Profile filled successfully");
       setUser({ ...response.data?.user });
       navigate("/");
     } catch (error: any) {
       toast.dismiss();
       toast.error(error.message);
+    } finally {
+      setIsSubmitting(false);
     }
+  };
+
+  const handleChangeImage = (image: ImageType | null) => {
+    setImage(image);
+    setValue("profileImage", image?.file);
   };
 
   return (
@@ -69,13 +103,13 @@ function FillData() {
             <div className="bg-surface-container p-1 rounded-full flex gap-1 items-center">
               <button
                 onClick={() => setRole("CUSTOMER")}
-                className={`flex-1 py-3 px-4 rounded-full text-sm font-bold ${role === "CUSTOMER" ? "bg-white text-primary shadow-sm" : "text-on-surface-variant hover:bg-white/50"} transition-all`}
+                className={`flex-1 py-3 px-4 rounded-full text-sm font-bold ${role === "CUSTOMER" ? "bg-white text-primary shadow-sm" : "text-on-surface-variant hover:bg-white/50 cursor-pointer"} transition-all`}
               >
                 Customer
               </button>
               <button
                 onClick={() => setRole("TENANT")}
-                className={`flex-1 py-3 px-4 rounded-full text-sm font-bold ${role === "TENANT" ? "bg-white text-primary shadow-sm" : "text-on-surface-variant hover:bg-white/50"} transition-all`}
+                className={`flex-1 py-3 px-4 rounded-full text-sm font-bold ${role === "TENANT" ? "bg-white text-primary shadow-sm" : "text-on-surface-variant hover:bg-white/50 cursor-pointer"} transition-all`}
               >
                 <span
                   className="material-symbols-outlined text-lg"
@@ -87,43 +121,27 @@ function FillData() {
                 Tenant
               </button>
             </div>
-            {role === "TENANT" && (
-              <div className="flex items-center gap-2 mt-3 px-4">
-                <span
-                  className="material-symbols-outlined text-primary text-sm"
-                  data-icon="info"
-                >
-                  info
-                </span>
-                <p className="text-xs font-medium text-on-surface-variant">
-                  List and manage your properties
-                </p>
-              </div>
-            )}
+
+            <div className="flex items-center gap-2 mt-3 px-4">
+              <span
+                className="material-symbols-outlined text-primary text-sm"
+                data-icon={role === "CUSTOMER" ? "info" : "business"}
+              >
+                {role === "CUSTOMER" ? "info" : "business"}
+              </span>
+              <p className="text-xs font-medium text-on-surface-variant">
+                {role === "CUSTOMER"
+                  ? "Find your dream home"
+                  : "List and manage your properties"}
+              </p>
+            </div>
           </div>
           <form
             onSubmit={handleSubmit(onSubmit, (errors) => console.error(errors))}
             className="space-y-6"
           >
             <div className="flex flex-col items-center mb-8">
-              <div className="relative group cursor-pointer">
-                <div className="w-24 h-24 rounded-full bg-surface-container-highest flex items-center justify-center border-4 border-white shadow-lg overflow-hidden transition-transform group-hover:scale-105">
-                  <span
-                    className="material-symbols-outlined text-4xl text-slate-400"
-                    data-icon="add_a_photo"
-                  >
-                    add_a_photo
-                  </span>
-                </div>
-                <div className="absolute bottom-0 right-0 bg-primary text-white p-1.5 rounded-full shadow-md">
-                  <span
-                    className="material-symbols-outlined text-xs"
-                    data-icon="edit"
-                  >
-                    edit
-                  </span>
-                </div>
-              </div>
+              <ProfilePhoto image={image} onChange={handleChangeImage} />
               <label className="text-[10px] uppercase tracking-widest font-bold text-slate-400 mt-3">
                 Profile Photo
               </label>
@@ -139,6 +157,11 @@ function FillData() {
                   placeholder="e.g. Julian"
                   type="text"
                 />
+                {errors.firstName && (
+                  <span className="text-sm text-red-500">
+                    {errors.firstName.message}
+                  </span>
+                )}
               </div>
               <div className="space-y-1.5">
                 <label className="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant ml-1">
@@ -150,6 +173,11 @@ function FillData() {
                   placeholder="e.g. Sterling"
                   type="text"
                 />
+                {errors.lastName && (
+                  <span className="text-sm text-red-500">
+                    {errors.lastName.message}
+                  </span>
+                )}
               </div>
             </div>
             <div className="space-y-1.5">
@@ -162,19 +190,30 @@ function FillData() {
                 placeholder="087812345678"
                 type="tel"
               />
+              {errors.phoneNumber && (
+                <span className="text-sm text-red-500">
+                  {errors.phoneNumber.message}
+                </span>
+              )}
             </div>
             <div className="pt-6">
               <button
-                className="w-full py-4 bg-primary text-white rounded-full font-bold text-base shadow-primary/25 shadow-xl hover:opacity-90 active:scale-95 transition-all flex items-center justify-center gap-2"
+                disabled={isSubmitting}
+                className="w-full py-4 bg-primary text-white rounded-full font-bold text-base shadow-primary/25 shadow-xl hover:opacity-90 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 type="submit"
               >
-                Continue
-                <span
-                  className="material-symbols-outlined"
-                  data-icon="arrow_forward"
-                >
-                  arrow_forward
-                </span>
+                {isSubmitting ? "Submitting..." : "Continue"}
+                {!isSubmitting && (
+                  <span
+                    className="material-symbols-outlined"
+                    data-icon="arrow_forward"
+                  >
+                    arrow_forward
+                  </span>
+                )}
+                {isSubmitting && (
+                  <div className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full"></div>
+                )}
               </button>
             </div>
           </form>

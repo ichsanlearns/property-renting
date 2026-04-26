@@ -309,6 +309,21 @@ export const resendToken = async ({ email }: { email: string }) => {
   return newToken.createdAt;
 };
 
+export const verifyPasswordToken = async ({ token }: { token: string }) => {
+  const hashedToken = await hashToken({ token });
+
+  const registerToken = await prisma.registerToken.findUnique({
+    where: { token: hashedToken },
+    select: { email: true, expiresAt: true },
+  });
+
+  if (!registerToken || registerToken.expiresAt < new Date()) {
+    throw new AppError("Invalid or expired token", 400);
+  }
+
+  return registerToken.email;
+};
+
 export const updatePassword = async ({
   password,
   token,
@@ -349,7 +364,7 @@ export const updatePassword = async ({
   return registerToken.email;
 };
 
-export const updateProfile = async ({
+export const fillProfile = async ({
   userId,
   firstName,
   lastName,

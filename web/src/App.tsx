@@ -54,7 +54,8 @@ const router = createBrowserRouter([
     loader: () => requireOnboarding(useAuthStore.getState().user),
     children: [
       {
-        path: "",
+        path: "/",
+
         element: <RootLayout />,
         children: [
           {
@@ -62,11 +63,11 @@ const router = createBrowserRouter([
             element: <HomePage />,
           },
           {
-            path: "/search",
+            path: "search",
             element: <SearchPage />,
           },
           {
-            path: "/property/:propertyId",
+            path: "property/:propertyId",
             element: <PropertyDetail />,
           },
           {
@@ -82,11 +83,11 @@ const router = createBrowserRouter([
             element: <MyProfile />,
           },
           {
-            path: "/reservations/:reservationCode",
+            path: "reservations/:reservationCode",
             element: <Reservation />,
           },
           {
-            path: "/payment/:reservationCode",
+            path: "payment/:reservationCode",
             element: <PaymentPage />,
           },
         ],

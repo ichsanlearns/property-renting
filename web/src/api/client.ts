@@ -7,9 +7,6 @@ let refreshPromise: Promise<string> | null = null;
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL ?? "http://localhost:8000/api",
-  headers: {
-    "Content-Type": "application/json",
-  },
 });
 
 const apiAuth = axios.create({
@@ -21,10 +18,22 @@ const apiAuth = axios.create({
 });
 
 api.interceptors.request.use((config) => {
+  if (config.data instanceof FormData) {
+    if (config.headers) {
+      delete config.headers["Content-Type"];
+      delete config.headers["content-type"];
+    }
+  } else {
+    if (config.headers) {
+      config.headers["Content-Type"] = "application/json";
+    }
+  }
+
   const { token } = useAuthStore.getState();
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+
   return config;
 });
 

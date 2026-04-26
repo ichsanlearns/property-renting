@@ -10,7 +10,7 @@ import {
   createRoomSchema,
   type CreateRoomPayload,
 } from "../schemas/room.schema";
-import type { ImageType } from "../types/image.type";
+import type { ImagesType } from "../types/image.type";
 import toast from "react-hot-toast";
 import { createRoom } from "../api/room.service";
 import { useParams } from "react-router";
@@ -46,7 +46,7 @@ function FormRoom() {
   const { propertyId } = useParams();
   const { data: property, isLoading, error } = usePropertyBasic(propertyId!);
 
-  const [images, setImages] = useState<ImageType[]>([]);
+  const [images, setImages] = useState<ImagesType[]>([]);
 
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
 
@@ -68,7 +68,6 @@ function FormRoom() {
   const onSubmit = async (data: CreateRoomPayload) => {
     const payload = {
       name: data.name,
-      description: data.description,
       basePrice: data.basePrice,
       totalRooms: data.totalRooms,
       bedType: data.bedType,
@@ -201,23 +200,6 @@ function FormRoom() {
                   {errors.name && (
                     <p className="text-red-500 text-sm -mt-1">
                       {errors.name.message}
-                    </p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
-                    Description
-                  </label>
-                  <textarea
-                    {...register("description")}
-                    className="w-full p-4 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-slate-400 resize-none bg-slate-50 hover:bg-white focus:bg-white border-slate-200 border"
-                    placeholder="Describe the room's unique features, view, and layout to help guests choose their perfect stay..."
-                    rows={4}
-                  ></textarea>
-                  {errors.description && (
-                    <p className="text-red-500 text-sm -mt-2">
-                      {errors.description.message}
                     </p>
                   )}
                 </div>

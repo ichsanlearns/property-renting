@@ -65,6 +65,23 @@ export const resendToken = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+export const verifyPasswordToken = catchAsync(
+  async (req: Request, res: Response) => {
+    const token = req.query.token as string | undefined;
+
+    if (!token) {
+      throw new AppError("Token not found", 400);
+    }
+
+    const email = await authService.verifyPasswordToken({ token });
+
+    res.status(200).json({
+      message: "Token verified successfully",
+      data: { email },
+    });
+  },
+);
+
 export const updatePassword = catchAsync(
   async (req: Request, res: Response) => {
     const { password, token } = req.body;
@@ -88,14 +105,14 @@ export const updatePassword = catchAsync(
   },
 );
 
-export const updateProfile = catchAsync(async (req: Request, res: Response) => {
+export const fillProfile = catchAsync(async (req: Request, res: Response) => {
   const userId = req.user?.userId;
 
   if (!userId) {
     throw new AppError("Unauthorized", 401);
   }
 
-  const file = req.file as Express.Multer.File;
+  const file = req.file;
 
   let profileImageLink = null;
 
@@ -108,7 +125,7 @@ export const updateProfile = catchAsync(async (req: Request, res: Response) => {
 
   const { firstName, lastName, role, phoneNumber } = req.body;
 
-  const result = await authService.updateProfile({
+  const result = await authService.fillProfile({
     userId,
     firstName,
     lastName,
@@ -118,7 +135,7 @@ export const updateProfile = catchAsync(async (req: Request, res: Response) => {
   });
 
   res.status(200).json({
-    message: "Profile updated successfully",
+    message: "Profile filled successfully",
     data: { user: result },
   });
 });

@@ -10,14 +10,15 @@ router.post("/login/google", authController.loginWithGoogle);
 router.post("/register", authController.register);
 router.post("/resend-token", authController.resendToken);
 router.post("/forgot-password", authController.resetPassword);
+router.get("/verify-password-token", authController.verifyPasswordToken);
 router.patch("/reset-password", authController.updateResetPassword);
 router.patch("/update-password", authController.updatePassword);
 
 router.patch(
-  "/update-profile",
+  "/fill-profile",
   authMiddleware,
   uploadCloud.single("profileImage"),
-  authController.updateProfile,
+  authController.fillProfile,
 );
 
 router.post("/refresh", authController.authRefreshToken);

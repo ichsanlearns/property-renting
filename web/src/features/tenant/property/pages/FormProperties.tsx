@@ -14,7 +14,7 @@ import toast from "react-hot-toast";
 import Map from "../components/Map";
 import { useReverseGeoCode } from "../hooks/useReverseGeocode";
 import ImageUpload from "../components/ImageUpload";
-import type { ImageType } from "../types/image.type";
+import type { ImagesType } from "../types/image.type";
 import AmenityList from "../components/AmenityList";
 import { useCategories } from "../hooks/useCategories";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -33,7 +33,7 @@ function Properties() {
 
   const { reverseGeoCode, isFetching } = useReverseGeoCode();
 
-  const [images, setImages] = useState<ImageType[]>([]);
+  const [images, setImages] = useState<ImagesType[]>([]);
 
   const {
     register,

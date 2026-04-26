@@ -12,7 +12,6 @@ export const createRoomController = catchAsync(
 
     const {
       name,
-      description,
       basePrice,
       totalRooms,
       bedType,
@@ -27,7 +26,6 @@ export const createRoomController = catchAsync(
     const data = {
       propertyId,
       name,
-      description,
       basePrice: Number(basePrice),
       totalRooms: Number(totalRooms),
       bedType: bedType.toUpperCase(),

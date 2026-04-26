@@ -2,7 +2,6 @@ import { z } from "zod";
 
 export const createRoomSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  description: z.string().min(1, "Description is required"),
   basePrice: z
     .number({ error: "Base price is required" })
     .min(1, "Base price is required"),

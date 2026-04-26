@@ -547,7 +547,6 @@ const seed = async () => {
       data: {
         propertyId: property1.id,
         name: "Room 1",
-        description: "Description 1",
         basePrice: 100000,
         totalRooms: 10,
         bedType: BedType.DOUBLE_TWIN,
@@ -585,7 +584,6 @@ const seed = async () => {
       data: {
         propertyId: property1.id,
         name: "Room 2",
-        description: "Description 2",
         basePrice: 200000,
         totalRooms: 10,
         bedType: BedType.DOUBLE_TWIN,
@@ -621,7 +619,6 @@ const seed = async () => {
       data: {
         propertyId: property2.id,
         name: "Room 1",
-        description: "Description 1",
         basePrice: 150000,
         totalRooms: 4,
         bedType: BedType.KING_SIZE,
@@ -649,7 +646,6 @@ const seed = async () => {
       data: {
         propertyId: property2.id,
         name: "Room 2",
-        description: "Description 2",
         basePrice: 200000,
         totalRooms: 4,
         bedType: BedType.QUEEN_SIZE,
@@ -690,7 +686,6 @@ const seed = async () => {
       data: {
         propertyId: property3.id,
         name: "Room 1",
-        description: "Description 1",
         basePrice: 300000,
         totalRooms: 4,
         bedType: BedType.KING_SIZE,
@@ -728,7 +723,6 @@ const seed = async () => {
       data: {
         propertyId: property3.id,
         name: "Room 2",
-        description: "Description 2",
         basePrice: 400000,
         totalRooms: 4,
         bedType: BedType.SINGLE,
