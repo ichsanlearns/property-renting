@@ -20,3 +20,12 @@ export const updateMeRequest = async (data: UpdateProfilePayload) => {
 
   return response.data;
 };
+
+export const updateProfilePhotoRequest = async (data: FormData) => {
+  const response = await api.patch<ApiResponse<FillProfileResponse>>(
+    PROFILE_ENDPOINTS.UPDATE_PROFILE_PHOTO,
+    data,
+  );
+
+  return response.data;
+};

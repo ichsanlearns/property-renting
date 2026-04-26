@@ -10,7 +10,7 @@ const router = Router();
 router.patch("/me", authMiddleware, UserController.updateMe);
 
 router.patch(
-  "/me/profile-photo",
+  "/me/profile-image",
   authMiddleware,
   uploadCloud.single("profileImage"),
   UserController.updateProfilePhoto,

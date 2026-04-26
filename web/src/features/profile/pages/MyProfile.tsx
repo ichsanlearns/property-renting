@@ -8,10 +8,13 @@ import toast from "react-hot-toast";
 import { updateMeRequest } from "../api/profile.service";
 import ProfilePhoto from "../../auth/components/ProfilePhoto";
 import type { ImageType } from "../../tenant/property/types/image.type";
+import { useUpdateProfileImage } from "../hooks/profile.mutation";
 
 function MyProfile() {
   const { user, setUser } = useAuthStore();
   const [isEdit, setIsEdit] = useState<null | "PERSONAL" | "PASSWORD">(null);
+
+  const mutation = useUpdateProfileImage();
 
   const [image, setImage] = useState<ImageType | null>(null);
 
@@ -39,6 +42,27 @@ function MyProfile() {
     }
   };
 
+  const onSubmitProfilePhoto = () => {
+    if (!image?.file) {
+      toast.error("Please select an image first");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("profileImage", image.file);
+
+    const toastId = toast.loading("Uploading photo...");
+
+    mutation.mutate(formData, {
+      onSuccess: () => {
+        toast.success("Profile photo updated", { id: toastId });
+      },
+      onError: () => {
+        toast.error("Upload failed", { id: toastId });
+      },
+    });
+  };
+
   useEffect(() => {
     if (user?.profileImage) {
       setImage({
@@ -60,10 +84,23 @@ function MyProfile() {
                     <ProfilePhoto image={image} onChange={setImage} />
                     {image?.file && (
                       <button
+                        onClick={onSubmitProfilePhoto}
+                        disabled={mutation.isPending}
                         type="button"
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium shadow-sm hover:bg-primary/90 active:scale-[0.98] transition cursor-pointer"
+                        className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium shadow-sm hover:bg-primary/90 active:scale-[0.98] transition  ${
+                          mutation.isPending
+                            ? "opacity-50 cursor-not-allowed"
+                            : "cursor-pointer"
+                        }`}
                       >
-                        Upload photo
+                        {mutation.isPending ? (
+                          <>
+                            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                            Uploading...
+                          </>
+                        ) : (
+                          "Upload photo"
+                        )}
                       </button>
                     )}
                   </div>
