@@ -6,19 +6,28 @@ import { updatePasswordSchema } from "../schemas/update-password.schema";
 import { updatePasswordRequest } from "../api/auth.service";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 function Password() {
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token") || "";
   const navigate = useNavigate();
 
-  const { register, handleSubmit } = useForm<UpdatePasswordFormData>({
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { isSubmitting, errors },
+  } = useForm<UpdatePasswordFormData>({
     resolver: zodResolver(updatePasswordSchema),
   });
 
   const onSubmit = async (data: UpdatePasswordFormData) => {
     try {
       toast.loading("Updating password...");
+
       const res = await updatePasswordRequest({
         ...data,
         token,
@@ -63,44 +72,88 @@ function Password() {
             <div className="relative group">
               <input
                 className="w-full px-5 py-4 bg-surface-container-low border-0 rounded-xl text-on-surface focus:ring-2 focus:ring-primary/20 transition-all duration-200 placeholder:text-slate-300"
-                placeholder="••••••••"
-                type="password"
+                placeholder={showPassword ? "abcdefghi" : "••••••••"}
+                type={showPassword ? "text" : "password"}
                 {...register("password")}
               />
               <button
                 tabIndex={-1}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                title={showPassword ? "Hide password" : "Show password"}
+                onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-primary transition-colors"
                 type="button"
               >
                 <span
-                  className="material-symbols-outlined"
-                  data-icon="visibility"
+                  className={`material-symbols-outlined ${
+                    showPassword ? "text-primary" : ""
+                  }`}
                 >
-                  visibility
+                  {showPassword ? "visibility" : "visibility_off"}
                 </span>
               </button>
             </div>
+            {errors.password?.message && (
+              <p className="text-xs text-error font-medium">
+                {errors.password.message}
+              </p>
+            )}
           </div>
 
           <div className="space-y-1.5 pt-2">
             <label className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant block ml-1">
               Confirm Password
             </label>
-            <div className="relative">
+            <div className="relative group">
               <input
                 className="w-full px-5 py-4 bg-surface-container-low border-0 rounded-xl text-on-surface focus:ring-2 focus:ring-primary/20 transition-all duration-200 placeholder:text-slate-300"
-                placeholder="••••••••"
-                type="password"
+                placeholder={showConfirmPassword ? "abcdefghi" : "••••••••"}
+                type={showConfirmPassword ? "text" : "password"}
                 {...register("confirmPassword")}
               />
+              <button
+                tabIndex={-1}
+                aria-label={
+                  showConfirmPassword ? "Hide password" : "Show password"
+                }
+                title={showConfirmPassword ? "Hide password" : "Show password"}
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-primary transition-colors"
+                type="button"
+              >
+                <span
+                  className={`material-symbols-outlined ${
+                    showConfirmPassword ? "text-primary" : ""
+                  }`}
+                >
+                  {showConfirmPassword ? "visibility" : "visibility_off"}
+                </span>
+              </button>
             </div>
+            {errors.confirmPassword?.message && (
+              <p className="text-xs text-error font-medium">
+                {errors.confirmPassword.message}
+              </p>
+            )}
           </div>
           <div className="pt-4">
             <button
-              className="w-full bg-primary text-on-primary font-bold py-4 rounded-full shadow-lg shadow-primary/25 hover:shadow-xl hover:scale-[1.02] active:scale-95 transition-all duration-200 text-base"
+              className={`w-full bg-primary text-on-primary font-bold py-4 rounded-full shadow-lg shadow-primary/25 hover:shadow-xl hover:scale-[1.02] active:scale-95 transition-all duration-200 text-base ${
+                isSubmitting
+                  ? "opacity-50 cursor-not-allowed"
+                  : "cursor-pointer hover:opacity-90"
+              }`}
               type="submit"
+              disabled={isSubmitting}
             >
-              Confirm
+              {isSubmitting ? (
+                <div className="flex items-center gap-2">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  Confirming...
+                </div>
+              ) : (
+                "Confirm"
+              )}
             </button>
           </div>
         </form>
