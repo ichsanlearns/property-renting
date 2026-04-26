@@ -105,14 +105,14 @@ export const updatePassword = catchAsync(
   },
 );
 
-export const updateProfile = catchAsync(async (req: Request, res: Response) => {
+export const fillProfile = catchAsync(async (req: Request, res: Response) => {
   const userId = req.user?.userId;
 
   if (!userId) {
     throw new AppError("Unauthorized", 401);
   }
 
-  const file = req.file as Express.Multer.File;
+  const file = req.file;
 
   let profileImageLink = null;
 
@@ -125,7 +125,7 @@ export const updateProfile = catchAsync(async (req: Request, res: Response) => {
 
   const { firstName, lastName, role, phoneNumber } = req.body;
 
-  const result = await authService.updateProfile({
+  const result = await authService.fillProfile({
     userId,
     firstName,
     lastName,
@@ -135,7 +135,7 @@ export const updateProfile = catchAsync(async (req: Request, res: Response) => {
   });
 
   res.status(200).json({
-    message: "Profile updated successfully",
+    message: "Profile filled successfully",
     data: { user: result },
   });
 });

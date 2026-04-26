@@ -9,7 +9,7 @@ import type {
   ResendTokenResponse,
   VerifyPasswordResponse,
 } from "./auth.response";
-import type { UpdateProfileResponse } from "../../profile/api/profile.response";
+import type { FillProfileResponse } from "../../profile/api/profile.response";
 
 type LoginPayload = {
   email: string;
@@ -23,14 +23,6 @@ type RegisterPayload = {
 type UpdatePasswordPayload = {
   password: string;
   token: string;
-};
-
-type UpdateProfilePayload = {
-  firstName: string;
-  lastName: string;
-  phoneNumber?: string;
-  profileImage?: File;
-  role: "CUSTOMER" | "TENANT";
 };
 
 type GoogleLoginPayload = {
@@ -104,9 +96,9 @@ export const updatePasswordRequest = async (data: UpdatePasswordPayload) => {
   return response.data;
 };
 
-export const updateProfileRequest = async (data: UpdateProfilePayload) => {
-  const response = await api.patch<ApiResponse<UpdateProfileResponse>>(
-    AUTH_ENDPOINTS.UPDATE_PROFILE,
+export const fillProfileRequest = async (data: FormData) => {
+  const response = await api.patch<ApiResponse<FillProfileResponse>>(
+    AUTH_ENDPOINTS.FILL_PROFILE,
     data,
   );
 

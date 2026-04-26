@@ -5,7 +5,7 @@ export const AUTH_ENDPOINTS = {
   RESEND_TOKEN: "/auth/resend-token",
   VERIFY_PASSWORD_TOKEN: "/auth/verify-password-token",
   UPDATE_PASSWORD: "/auth/update-password",
-  UPDATE_PROFILE: "/auth/update-profile",
+  FILL_PROFILE: "/auth/fill-profile",
   FORGOT_PASSWORD: "/auth/forgot-password",
   RESET_PASSWORD: "/auth/reset-password",
   LOGOUT: "/auth/logout",

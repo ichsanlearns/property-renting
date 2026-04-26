@@ -1,4 +1,4 @@
-export type UpdateProfileResponse = {
+export type FillProfileResponse = {
   user: {
     id: string;
     fullName: string;

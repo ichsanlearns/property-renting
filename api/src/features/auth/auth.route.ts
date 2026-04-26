@@ -15,10 +15,10 @@ router.patch("/reset-password", authController.updateResetPassword);
 router.patch("/update-password", authController.updatePassword);
 
 router.patch(
-  "/update-profile",
+  "/fill-profile",
   authMiddleware,
   uploadCloud.single("profileImage"),
-  authController.updateProfile,
+  authController.fillProfile,
 );
 
 router.post("/refresh", authController.authRefreshToken);

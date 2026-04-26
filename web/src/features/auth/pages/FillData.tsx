@@ -8,7 +8,7 @@ import {
   type UpdateProfileFormData,
 } from "../schemas/update-profile.schema";
 import toast from "react-hot-toast";
-import { updateProfileRequest } from "../api/auth.service";
+import { fillProfileRequest } from "../api/auth.service";
 import ProfilePhoto from "../components/ProfilePhoto";
 import type { ImageType } from "../../tenant/property/types/image.type";
 
@@ -41,9 +41,24 @@ function FillData() {
     try {
       toast.loading("Updating profile...");
       setIsSubmitting(true);
-      const response = await updateProfileRequest({ ...data, role });
+
+      const formData = new FormData();
+      formData.append("role", role);
+      formData.append("firstName", data.firstName);
+      formData.append("lastName", data.lastName);
+
+      if (data.phoneNumber) {
+        formData.append("phoneNumber", data.phoneNumber);
+      }
+
+      if (image?.file) {
+        formData.append("profileImage", image?.file);
+      }
+
+      const response = await fillProfileRequest(formData);
+
       toast.dismiss();
-      toast.success("Profile updated successfully");
+      toast.success("Profile filled successfully");
       setUser({ ...response.data?.user });
       navigate("/");
     } catch (error: any) {

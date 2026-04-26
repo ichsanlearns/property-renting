@@ -364,7 +364,7 @@ export const updatePassword = async ({
   return registerToken.email;
 };
 
-export const updateProfile = async ({
+export const fillProfile = async ({
   userId,
   firstName,
   lastName,
