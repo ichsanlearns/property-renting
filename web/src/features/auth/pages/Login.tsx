@@ -100,6 +100,19 @@ function Login() {
     }
   };
 
+  const GoogleButton = () => {
+    return (
+      <GoogleLogin
+        onSuccess={handleGoogleLogin}
+        onError={() => console.error("Login Failed")}
+        useOneTap={false}
+        containerProps={{
+          className: "absolute inset-0 opacity-0 w-full h-full",
+        }}
+      />
+    );
+  };
+
   return (
     <main className=" bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen flex flex-col relative overflow-x-hidden">
       <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
@@ -259,22 +272,9 @@ function Login() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-1 gap-4">
             <div className="relative w-full">
-              {import.meta.env.VITE_GOOGLE_CLIENT_ID && (
-                <GoogleLogin
-                  onSuccess={(credentialResponse) =>
-                    handleGoogleLogin(credentialResponse)
-                  }
-                  onError={() => {
-                    console.error("Login Failed");
-                  }}
-                  useOneTap={false}
-                  containerProps={{
-                    className: "absolute inset-0 opacity-0 w-full h-full",
-                  }}
-                />
-              )}
+              {import.meta.env.VITE_GOOGLE_CLIENT_ID && <GoogleButton />}
 
               <button
                 type="button"
@@ -305,17 +305,6 @@ function Login() {
                 Google
               </button>
             </div>
-
-            <button className="flex items-center justify-center gap-3 py-3.5 px-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-300 transition-all font-bold text-slate-700 dark:text-slate-300">
-              <svg
-                className="w-5 h-5 fill-[#1877F2]"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"></path>
-              </svg>
-              Facebook
-            </button>
           </div>
           <div className="mt-10 pt-8 border-t border-slate-100 dark:border-slate-800 text-center">
             <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">
