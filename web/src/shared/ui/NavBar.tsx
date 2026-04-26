@@ -62,9 +62,10 @@ function NavBar() {
     <header className="sticky top-0 z-50 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-primary/10 px-4 md:px-20 py-1">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2 text-primary">
-          <span className="material-symbols-outlined text-3xl font-bold">
+          {/* <span className="material-symbols-outlined text-3xl font-bold">
             houseboat
-          </span>
+          </span> */}
+          <img src="/favicon.ico" alt="logo" className="w-8 h-8" />
           <h2 className="text-slate-900 dark:text-slate-100 text-xl font-extrabold tracking-tight">
             StayHub
           </h2>

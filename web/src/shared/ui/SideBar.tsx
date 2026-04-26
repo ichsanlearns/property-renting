@@ -53,8 +53,8 @@ function SideBar() {
   return (
     <aside className="w-64 shrink-0 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hidden lg:flex flex-col sticky top-0 h-screen">
       <Link to={"/"} className="p-6 flex items-center gap-3">
-        <div className="size-10 bg-primary rounded-lg flex items-center justify-center text-white">
-          <span className="material-symbols-outlined text-2xl">apartment</span>
+        <div className="size-10 bg-primary rounded-md flex items-center justify-center text-white">
+          <img src="/favicon.ico" alt="logo" className="w-8 h-8" />
         </div>
         <div>
           <h1 className="text-xl font-bold tracking-tight">StayHub</h1>
