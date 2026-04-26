@@ -100,3 +100,16 @@ export const updateProfilePhoto = catchAsync(
     });
   },
 );
+
+export const deleteProfilePhoto = catchAsync(
+  async (req: Request, res: Response) => {
+    const userId = req.user?.userId!;
+
+    const result = await UserService.deleteProfilePhoto({ userId });
+
+    res.status(200).json({
+      message: "Profile photo deleted successfully",
+      data: { user: result },
+    });
+  },
+);

@@ -15,6 +15,11 @@ router.patch(
   uploadCloud.single("profileImage"),
   UserController.updateProfilePhoto,
 );
+router.delete(
+  "/me/profile-image",
+  authMiddleware,
+  UserController.deleteProfilePhoto,
+);
 
 router.post("/pricing-rule", authMiddleware, UserController.createPricingRule);
 

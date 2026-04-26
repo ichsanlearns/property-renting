@@ -1,3 +1,4 @@
+import { cloudinary } from "../../shared/lib/cloudinary.lib.js";
 import { prisma } from "../../shared/lib/prisma.lib.js";
 import type { UpdateMe } from "../../shared/types/user.type.js";
 import { AppError } from "../../shared/utils/app-error.util.js";
@@ -65,9 +66,39 @@ export const updateProfilePhoto = async ({
 };
 
 export const deleteProfilePhoto = async ({ userId }: { userId: string }) => {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+  });
+
+  if (!user) {
+    throw new AppError("User not found", 404);
+  }
+
+  if (!user.profileImagePublicId && !user.profileImage) {
+    const fullName = [user.firstName, user.lastName].filter(Boolean).join(" ");
+
+    return {
+      id: user.id,
+      fullName,
+      email: user.email,
+      phoneNumber: user.phoneNumber,
+      role: user.role,
+      isVerified: user.isVerified,
+      profileImage: user.profileImage,
+    };
+  }
+
+  if (user.profileImagePublicId) {
+    try {
+      await cloudinary.uploader.destroy(user.profileImagePublicId);
+    } catch (error) {
+      console.error("cloudinary delete failed:", error);
+    }
+  }
+
   const updatedUser = await prisma.user.update({
     where: { id: userId },
-    data: { profileImage: null },
+    data: { profileImage: null, profileImagePublicId: null },
   });
 
   const fullName = [updatedUser.firstName, updatedUser.lastName]
