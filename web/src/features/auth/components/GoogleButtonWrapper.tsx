@@ -11,7 +11,13 @@ type CredentialResponse = {
   select_by?: string;
 };
 
-function GoogleButtonWrapper() {
+function GoogleButtonWrapper({
+  isLoggingIn,
+  setIsLoggingIn,
+}: {
+  isLoggingIn?: boolean;
+  setIsLoggingIn?: (isLoggingIn: boolean) => void;
+}) {
   const navigate = useNavigate();
   const { login } = useAuthStore();
 
@@ -21,6 +27,12 @@ function GoogleButtonWrapper() {
         if (!credentialResponse.credential) {
           toast.error("Failed to login");
           return;
+        }
+
+        if (isLoggingIn) return;
+
+        if (setIsLoggingIn) {
+          setIsLoggingIn(true);
         }
 
         toast.loading("Logging in...");
@@ -39,6 +51,8 @@ function GoogleButtonWrapper() {
       } catch (error: any) {
         toast.dismiss();
         toast.error(error.response?.data?.message || "Failed to login");
+      } finally {
+        // setIsLoggingIn?.(false);
       }
     },
     [],
@@ -51,6 +65,7 @@ function GoogleButtonWrapper() {
       )}
 
       <button
+        disabled={isLoggingIn}
         type="button"
         className="w-full flex items-center justify-center gap-3 py-3.5 px-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-300 transition-all font-bold text-slate-700 dark:text-slate-300"
       >
