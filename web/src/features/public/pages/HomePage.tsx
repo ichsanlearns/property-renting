@@ -57,7 +57,7 @@ function HomePage() {
         </h2>
         <p className="text-lg text-on-surface-variant mb-10 font-medium">
           Join over 10 million travelers discovering the world's most unique
-          stays with StayHub.
+          stays with SewaHunian.
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <button

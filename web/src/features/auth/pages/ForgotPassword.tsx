@@ -34,7 +34,7 @@ function ForgotPassword() {
       <main className="w-full max-w-md">
         <div className="flex justify-center mb-8">
           <span className="text-2xl font-extrabold text-primary tracking-tight">
-            StayHub
+            SewaHunian
           </span>
         </div>
         <div className="bg-surface p-8 md:p-10 rounded-2xl shadow-2xl shadow-slate-200/50 flex flex-col items-center">

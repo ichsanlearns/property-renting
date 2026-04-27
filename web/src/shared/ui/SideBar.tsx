@@ -57,7 +57,7 @@ function SideBar() {
           <img src="/favicon.ico" alt="logo" className="w-8 h-8" />
         </div>
         <div>
-          <h1 className="text-xl font-bold tracking-tight">StayHub</h1>
+          <h1 className="text-xl font-bold tracking-tight">SewaHunian</h1>
           <p className="text-xs text-slate-500 font-medium">Property Admin</p>
         </div>
       </Link>

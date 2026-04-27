@@ -52,7 +52,7 @@ function ResetPassword() {
         <div className="w-full max-w-md z-10">
           <div className="flex justify-center mb-8">
             <span className="text-2xl font-extrabold text-primary tracking-tight">
-              StayHub
+              SewaHunian
             </span>
           </div>
           <div className="bg-surface rounded-xl shadow-2xl p-8 md:p-10 border border-outline/30 backdrop-blur-sm">

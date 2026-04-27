@@ -64,7 +64,7 @@ function Password() {
       <div className="bg-surface rounded-xl shadow-2xl p-8 md:p-10 border border-outline-variant relative overflow-hidden">
         <div className="flex justify-center mb-8">
           <span className="text-2xl font-extrabold tracking-tight text-primary">
-            StayHub
+            SewaHunian
           </span>
         </div>
 

@@ -83,7 +83,7 @@ function FillData() {
       <div className="absolute inset-0 bg-linear-to-tr from-primary/20 via-transparent to-[#0f172a]/40 z-1"></div>
       <header className="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-6 py-6 max-w-7xl mx-auto">
         <div className="  font-headline text-2xl font-extrabold tracking-tight text-white">
-          StayHub
+          SewaHunian
         </div>
       </header>
       <div className="flex-1 flex items-center justify-center p-6 md:p-12 lg:p-24 bg-linear-to-b from-slate-100/50 to-transparent">
@@ -220,7 +220,7 @@ function FillData() {
         </div>
       </div>
       <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-10 text-white/50 text-[10px] font-bold uppercase tracking-widest pointer-events-none">
-        © 2024 StayHub Hospitality Group
+        © 2026 SewaHunian Hospitality Group
       </div>
     </div>
   );
