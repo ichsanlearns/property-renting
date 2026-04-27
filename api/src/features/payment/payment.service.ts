@@ -125,13 +125,7 @@ export const createMidtransTransaction = async (reservationId: string) => {
 };
 
 export const handleMidtransNotification = async (payload: any) => {
-  console.log("MIDTRANS WEBHOOK:", payload);
-
   const { order_id, transaction_status, gross_amount, signature_key } = payload;
-
-  if (!order_id) {
-    return true;
-  }
 
   const hash = crypto
     .createHash("sha512")
