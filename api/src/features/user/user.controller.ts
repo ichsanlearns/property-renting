@@ -59,7 +59,7 @@ export const createPricingRule = async (req: Request, res: Response) => {
     throw new Error("Invalid input");
   }
 
-  const result = await PricingService.createPricingRule({
+  await PricingService.createPricingRule({
     ...input.data,
     createdBy: tenantId,
 
@@ -74,7 +74,6 @@ export const createPricingRule = async (req: Request, res: Response) => {
 
   res.status(200).json({
     message: "Pricing rule created successfully",
-    data: { pricingRule: result },
   });
 };
 
