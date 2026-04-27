@@ -129,3 +129,13 @@ export const usePropertyRoomPricesDate = ({
     gcTime: 10 * 60 * 1000,
   });
 };
+
+export const useCities = () => {
+  return useQuery({
+    queryKey: queryKeys.property.cities(),
+    queryFn: () => PropertyService.getCities(),
+    select: (res) => res.data,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+  });
+};

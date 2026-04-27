@@ -1,5 +1,6 @@
 export const queryKeys = {
   property: {
+    cities: () => ["property", "cities"] as const,
     allBasic: () => ["property", "all", "basic"] as const,
     basic: (propertyId: string) => ["property", propertyId, "basic"] as const,
     detail: (propertyId: string) => ["property", propertyId, "detail"] as const,
