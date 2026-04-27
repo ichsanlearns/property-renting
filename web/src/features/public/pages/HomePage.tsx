@@ -22,7 +22,17 @@ function HomePage() {
   return (
     <main>
       <HeroCarousel heroData={heroData} />
-      <section className="py-16 px-6 md:px-12 max-w-[1440px] mx-auto z-20">
+      <section className="relative py-16 px-6 md:px-12 max-w-[1440px] mx-auto z-20">
+        <button className="absolute -left-4 top-[50%] z-10 bg-white/80 backdrop-blur-md shadow-lg border border-primary/50 w-12 h-12 rounded-full hidden md:flex items-center justify-center hover:bg-white hover:scale-105 hover:shadow-xl transition-all duration-300 cursor-pointer">
+          <span className="material-symbols-outlined text-primary ">
+            chevron_left
+          </span>
+        </button>
+        <button className="absolute -right-4 top-[50%] z-10 bg-white/80 backdrop-blur-md shadow-lg border border-primary/50 w-12 h-12 rounded-full hidden md:flex items-center justify-center hover:bg-white hover:scale-105 hover:shadow-xl transition-all duration-300 cursor-pointer">
+          <span className="material-symbols-outlined text-primary ">
+            chevron_right
+          </span>
+        </button>
         <div className="flex justify-between items-end mb-10">
           <div>
             <h2 className="text-3xl font-extrabold text-on-background tracking-tight">
@@ -45,8 +55,9 @@ function HomePage() {
             </span>
           </a>
         </div>
+
         {isLoading && <LoaderFetching />}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {properties && <PropertyCard properties={properties} />}
         </div>
       </section>
