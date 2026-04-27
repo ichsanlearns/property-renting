@@ -12,4 +12,22 @@ export const profileSchema = z.object({
     }),
 });
 
+export const passwordSchema = z
+  .object({
+    currentPassword: z
+      .string()
+      .min(3, "Current password must be at least 3 characters"),
+    newPassword: z
+      .string()
+      .min(3, "New password must be at least 3 characters"),
+    confirmPassword: z
+      .string()
+      .min(3, "Confirm password must be at least 3 characters"),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
 export type ProfileFormData = z.infer<typeof profileSchema>;
+export type PasswordFormData = z.infer<typeof passwordSchema>;

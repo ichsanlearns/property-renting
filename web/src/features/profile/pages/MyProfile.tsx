@@ -3,13 +3,19 @@ import { useAuthStore } from "../../auth/stores/auth.store";
 import { useEffect, useState } from "react";
 
 import { useForm } from "react-hook-form";
-import { profileSchema, type ProfileFormData } from "../schema/profile.schema";
+import {
+  passwordSchema,
+  profileSchema,
+  type PasswordFormData,
+  type ProfileFormData,
+} from "../schema/profile.schema";
 import toast from "react-hot-toast";
 import { updateMeRequest } from "../api/profile.service";
 import ProfilePhoto from "../../auth/components/ProfilePhoto";
 import type { ImageType } from "../../tenant/property/types/image.type";
 import {
   useDeleteProfilePhoto,
+  useUpdatePassword,
   useUpdateProfileImage,
 } from "../hooks/profile.mutation";
 import ConfirmModal from "../../../shared/ui/ConfirmModal";
@@ -18,12 +24,15 @@ function MyProfile() {
   const { user, setUser } = useAuthStore();
   const [isEdit, setIsEdit] = useState<null | "PERSONAL" | "PASSWORD">(null);
   const [changingProfilePhoto, setChangingProfilePhoto] = useState(false);
+  const [personalLoading, setPersonalLoading] = useState(false);
 
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [personalModalOpen, setPersonalModalOpen] = useState(false);
+  const [passwordModalOpen, setPasswordModalOpen] = useState(false);
 
   const mutation = useUpdateProfileImage();
   const deleteMutation = useDeleteProfilePhoto();
+  const changePasswordMutation = useUpdatePassword();
 
   const [image, setImage] = useState<ImageType | null>(null);
 
@@ -35,6 +44,14 @@ function MyProfile() {
       email: user?.email,
       phoneNumber: user?.phoneNumber,
     },
+  });
+
+  const {
+    register: registerPassword,
+    handleSubmit: handleSubmitPassword,
+    reset: resetPasswordForm,
+  } = useForm<PasswordFormData>({
+    resolver: zodResolver(passwordSchema),
   });
 
   const handleUpdateProfile = () => {
@@ -54,7 +71,9 @@ function MyProfile() {
   const onSubmitProfile = async (data: ProfileFormData) => {
     try {
       toast.loading("Updating profile...");
+      setPersonalLoading(true);
       const response = await updateMeRequest(data);
+
       setUser(response.data.user);
       toast.dismiss();
       toast.success("Profile updated successfully");
@@ -63,6 +82,8 @@ function MyProfile() {
     } catch (error: any) {
       toast.dismiss();
       toast.error(error.message);
+    } finally {
+      setPersonalLoading(false);
     }
   };
 
@@ -121,6 +142,24 @@ function MyProfile() {
     } else {
       setImage(null);
     }
+  };
+
+  const onSubmitPassword = async (data: PasswordFormData) => {
+    const toastId = toast.loading("Updating password...");
+
+    changePasswordMutation.mutate(data, {
+      onSuccess: (data) => {
+        toast.success(data.message || "Password updated successfully", {
+          id: toastId,
+        });
+      },
+      onError: (error: any) => {
+        toast.error(error.response?.data?.message || "Password update failed", {
+          id: toastId,
+        });
+        setPasswordModalOpen(false);
+      },
+    });
   };
 
   useEffect(() => {
@@ -308,24 +347,30 @@ function MyProfile() {
                   onCancel={() => setPersonalModalOpen(false)}
                   title="Update Profile"
                   description="Are you sure you want to update your profile?"
-                  isLoading={false}
+                  isLoading={personalLoading}
                   buttonTitle="Update"
                 />
               </section>
               <section className="bg-white rounded-xl shadow-sm border border-primary/5 overflow-hidden">
                 <div className="px-6 py-4 border-b border-primary/5 flex justify-between items-center">
-                  <h2 className="text-lg font-bold text-slate-900">
+                  <h2 className="text-lg font-bold text-slate-900 h-12">
                     Change Password
                   </h2>
                   {isEdit === "PASSWORD" ? (
                     <div className="flex gap-8">
-                      <button className="bg-primary text-white px-6 py-2.5 rounded-lg font-bold hover:bg-primary/90 transition-all shadow-md active:scale-95">
+                      <button
+                        type="button"
+                        onClick={handleSubmitPassword(() => {
+                          setPasswordModalOpen(true);
+                        })}
+                        className="bg-primary text-white px-6 py-2.5 rounded-lg font-bold hover:bg-primary/90 transition-all shadow-md active:scale-95 cursor-pointer hover:scale-105"
+                      >
                         Update
                       </button>
                       <button
                         type="button"
                         onClick={() => setIsEdit(null)}
-                        className="text-primary font-semibold text-sm hover:underline"
+                        className="text-primary font-semibold text-sm hover:underline cursor-pointer"
                       >
                         Cancel
                       </button>
@@ -334,12 +379,26 @@ function MyProfile() {
                     <button
                       type="button"
                       onClick={() => setIsEdit("PASSWORD")}
-                      className="text-primary font-semibold text-sm hover:underline"
+                      className="text-primary font-semibold text-sm hover:underline cursor-pointer"
                     >
                       Edit
                     </button>
                   )}
                 </div>
+                <ConfirmModal
+                  isOpen={passwordModalOpen}
+                  onConfirm={handleSubmitPassword(
+                    onSubmitPassword,
+                    (errors) => {
+                      console.log(errors);
+                    },
+                  )}
+                  onCancel={() => setPasswordModalOpen(false)}
+                  title="Update Password"
+                  description="Are you sure you want to update your password?"
+                  isLoading={changePasswordMutation.isPending}
+                  buttonTitle="Update"
+                />
                 <div className="p-6 space-y-4">
                   <div className="space-y-1">
                     <label className="text-sm font-semibold text-slate-500">
@@ -347,6 +406,7 @@ function MyProfile() {
                     </label>
                     <input
                       disabled={isEdit !== "PASSWORD"}
+                      {...registerPassword("currentPassword")}
                       className={`w-full rounded-lg p-3.5 border border-primary/10 focus:border-primary focus:ring-primary  ${isEdit === "PASSWORD" ? "cursor-text bg-background-light/30" : "cursor-not-allowed bg-background-light"}`}
                       placeholder="••••••••"
                       type="password"
@@ -359,6 +419,7 @@ function MyProfile() {
                       </label>
                       <input
                         disabled={isEdit !== "PASSWORD"}
+                        {...registerPassword("newPassword")}
                         className={`w-full rounded-lg p-3.5 border border-primary/10 focus:border-primary focus:ring-primary  ${isEdit === "PASSWORD" ? "cursor-text bg-background-light/30" : "cursor-not-allowed bg-background-light"}`}
                         placeholder="Min. 8 characters"
                         type="password"
@@ -370,6 +431,7 @@ function MyProfile() {
                       </label>
                       <input
                         disabled={isEdit !== "PASSWORD"}
+                        {...registerPassword("confirmPassword")}
                         className={`w-full rounded-lg p-3.5 border border-primary/10 focus:border-primary focus:ring-primary  ${isEdit === "PASSWORD" ? "cursor-text bg-background-light/30" : "cursor-not-allowed bg-background-light"}`}
                         placeholder="Re-type password"
                         type="password"

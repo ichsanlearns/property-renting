@@ -83,13 +83,6 @@ export const updatePassword = async ({
     where: { id: userId },
   });
 
-  if (currentPassword === newPassword) {
-    throw new AppError(
-      "New password cannot be the same as current password",
-      400,
-    );
-  }
-
   if (!user) {
     throw new AppError("User not found", 404);
   }
@@ -98,6 +91,13 @@ export const updatePassword = async ({
 
   if (!isPasswordValid) {
     throw new AppError("Invalid credentials", 400);
+  }
+
+  if (currentPassword === newPassword) {
+    throw new AppError(
+      "New password cannot be the same as current password",
+      400,
+    );
   }
 
   const hashedPassword = await bcrypt.hash(newPassword, 10);
