@@ -783,8 +783,6 @@ export const deleteProperty = async (propertyId: string, tenantId: string) => {
   }
 
   await prisma.property.delete({
-    where: {
-      id: propertyId,
-    },
+    where: { id: propertyId },
   });
 };

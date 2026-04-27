@@ -7,13 +7,17 @@ import ConfirmModal from "../../../../shared/ui/ConfirmModal";
 
 function PropertyList() {
   const { data: properties, isLoading } = usePropertyByTenantId();
-  const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
 
   const deleteMutation = useDeleteProperty();
   const navigate = useNavigate();
 
   const handleDeleteProperty = (propertyId: string) => {
-    deleteMutation.mutate(propertyId);
+    deleteMutation.mutate(propertyId, {
+      onSuccess: () => {
+        setConfirmDelete(null);
+      },
+    });
   };
 
   const handleNavigateToPropertyDetail = (propertyId: string) => {
@@ -149,7 +153,7 @@ function PropertyList() {
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  setConfirmDelete(true);
+                  setConfirmDelete(property.id);
                 }}
                 className="p-3 cursor-pointer w-full text-error hover:text-white hover:bg-error rounded-xl transition-all flex items-center justify-center"
                 title="Delete"
@@ -159,20 +163,18 @@ function PropertyList() {
                 </span>
               </button>
             </div>
-            {confirmDelete && (
-              <ConfirmModal
-                isOpen={confirmDelete}
-                onCancel={() => setConfirmDelete(false)}
-                onConfirm={() => handleDeleteProperty(property.id)}
-                buttonTitle="Delete"
-                title="Delete Property"
-                description="Are you sure you want to delete this property?"
-                isLoading={deleteMutation.isPending}
-              />
-            )}
           </div>
         ))}
       </div>
+      <ConfirmModal
+        isOpen={confirmDelete !== null}
+        onCancel={() => setConfirmDelete(null)}
+        onConfirm={() => handleDeleteProperty(confirmDelete!)}
+        buttonTitle="Delete"
+        title="Delete Property"
+        description="Are you sure you want to delete this property?"
+        isLoading={deleteMutation.isPending}
+      />
     </main>
   );
 }

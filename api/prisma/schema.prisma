@@ -50,7 +50,7 @@ model Account {
   createdAt         DateTime  @default(now()) @map("created_at")
   updatedAt         DateTime  @updatedAt @map("updated_at")
   deletedAt         DateTime? @map("deleted_at")
-  user              User      @relation(fields: [userId], references: [id])
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
   @@map("accounts")
@@ -76,7 +76,7 @@ model RefreshToken {
   createdAt   DateTime  @default(now()) @map("created_at")
   deletedAt   DateTime? @map("deleted_at")
   hashedToken String    @unique @map("hashed_token")
-  user        User      @relation(fields: [userId], references: [id])
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("refresh_tokens")
 }
@@ -102,9 +102,11 @@ model Property {
   longitude         Float
   name              String
   roomAvailable     Int                @default(0) @map("room_available")
+
+  category          PropertyCategory   @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  tenant            User               @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
   pricingRules      PricingRule[]
-  category          PropertyCategory   @relation(fields: [categoryId], references: [id])
-  tenant            User               @relation(fields: [tenantId], references: [id])
   propertyAmenities PropertyAmenity[]
   propertyImages    PropertyImage[]
   reviews           Review[]
@@ -149,8 +151,8 @@ model PropertyAmenity {
   createdAt  DateTime  @default(now()) @map("created_at")
   updatedAt  DateTime  @updatedAt @map("updated_at")
   deletedAt  DateTime? @map("deleted_at")
-  amenity    Amenity   @relation(fields: [amenityId], references: [id])
-  property   Property  @relation(fields: [propertyId], references: [id])
+  amenity    Amenity   @relation(fields: [amenityId], references: [id], onDelete: Cascade)
+  property   Property  @relation(fields: [propertyId], references: [id], onDelete: Cascade)
 
   @@unique([propertyId, amenityId])
   @@map("property_amenities")
@@ -170,7 +172,7 @@ model PropertyImage {
   updatedAt         DateTime   @map("updated_at")            @updatedAt
   deletedAt         DateTime?  @map("deleted_at")
 
-  property Property @relation(fields: [propertyId], references: [id])
+  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
 
 
   @@map("property_images")
@@ -201,7 +203,7 @@ model RoomType {
   roomAmenities  RoomTypeAmenity[]
   roomTypeImages RoomTypeImage[]
   roomTypePrices RoomTypePrice[]
-  property       Property           @relation(fields: [propertyId], references: [id])
+  property       Property           @relation(fields: [propertyId], references: [id], onDelete: Cascade)
 
   @@map("room_types")
 }
@@ -213,8 +215,8 @@ model RoomTypeAmenity {
   createdAt  DateTime  @default(now()) @map("created_at")
   updatedAt  DateTime  @updatedAt @map("updated_at")
   deletedAt  DateTime? @map("deleted_at")
-  amenity    Amenity   @relation(fields: [amenityId], references: [id])
-  roomType   RoomType  @relation(fields: [roomTypeId], references: [id])
+  amenity    Amenity   @relation(fields: [amenityId], references: [id], onDelete: Cascade)
+  roomType   RoomType  @relation(fields: [roomTypeId], references: [id], onDelete: Cascade)
 
   @@unique([roomTypeId, amenityId])
   @@map("room_type_amenities")
@@ -234,7 +236,7 @@ model RoomTypeImage {
   updatedAt         DateTime   @map("updated_at")            @updatedAt
   deletedAt         DateTime?  @map("deleted_at")
 
-  roomType RoomType @relation(fields: [roomTypeId], references: [id])
+  roomType RoomType @relation(fields: [roomTypeId], references: [id], onDelete: Cascade)
 
 
   @@map("room_type_images")
@@ -251,8 +253,8 @@ model RoomTypePrice {
   updatedAt            DateTime     @updatedAt @map("updated_at")
   deletedAt            DateTime?    @map("deleted_at")
   appliedPricingRuleId String?      @map("applied_pricing_rule_id")
-  appliedPricingRule   PricingRule? @relation(fields: [appliedPricingRuleId], references: [id])
-  roomType             RoomType     @relation(fields: [roomTypeId], references: [id])
+  appliedPricingRule   PricingRule? @relation(fields: [appliedPricingRuleId], references: [id], onDelete: Cascade)
+  roomType             RoomType     @relation(fields: [roomTypeId], references: [id], onDelete: Cascade)
 
   @@unique([roomTypeId, date])
   @@index([roomTypeId, date])
@@ -266,7 +268,8 @@ model PriceOverride {
   price      Decimal  @db.Decimal(10, 2)
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")
-  roomType   RoomType @relation(fields: [roomTypeId], references: [id])
+
+  roomType   RoomType @relation(fields: [roomTypeId], references: [id], onDelete: Cascade)
 
   @@unique([roomTypeId, date])
   @@map("price_overrides")
@@ -290,9 +293,9 @@ model PricingRule {
   startDate           DateTime                 @map("start_date") @db.Date
   tenantId            String?                  @map("tenant_id")
   daysOfWeek          Int[]                    @map("days_of_week")
-  property            Property?                @relation(fields: [propertyId], references: [id])
-  roomType            RoomType?                @relation(fields: [roomTypeId], references: [id])
-  tenant              User?                    @relation(fields: [tenantId], references: [id])
+  property            Property?                @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  roomType            RoomType?                @relation(fields: [roomTypeId], references: [id], onDelete: Cascade)
+  tenant              User?                    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   roomTypePrices      RoomTypePrice[]
 
   @@index([tenantId])
@@ -329,9 +332,9 @@ model Reservation {
   roomNameSnapshot            String            @map("room_name_snapshot")
   rejectionReason             String?           @map("rejection_reason")
   payments                    Payment[]
-  customer                    User              @relation(fields: [customerId], references: [id])
-  roomType                    RoomType          @relation(fields: [roomTypeId], references: [id])
-  voucher                     Voucher?          @relation(fields: [voucherId], references: [id])
+  customer                    User              @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  roomType                    RoomType          @relation(fields: [roomTypeId], references: [id], onDelete: Cascade)
+  voucher                     Voucher?          @relation(fields: [voucherId], references: [id], onDelete: Cascade)
   reviews                     Review?
 
   @@index([customerId])
@@ -352,7 +355,7 @@ model Payment {
   createdAt     DateTime      @default(now()) @map("created_at")
   updatedAt     DateTime      @updatedAt @map("updated_at")
   deletedAt     DateTime?     @map("deleted_at")
-  reservation   Reservation   @relation(fields: [reservationId], references: [id])
+  reservation   Reservation   @relation(fields: [reservationId], references: [id], onDelete: Cascade)
 
   @@map("payments")
 }
@@ -370,9 +373,9 @@ model Review {
   createdAt     DateTime    @default(now()) @map("created_at")
   updatedAt     DateTime    @updatedAt @map("updated_at")
   deletedAt     DateTime?   @map("deleted_at")
-  customer      User        @relation(fields: [customerId], references: [id])
-  property      Property    @relation(fields: [propertyId], references: [id])
-  reservation   Reservation @relation(fields: [reservationId], references: [id])
+  customer      User        @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  property      Property    @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  reservation   Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
 
   @@map("reviews")
 }
@@ -385,7 +388,7 @@ model Point {
   createdAt DateTime  @default(now()) @map("created_at")
   deletedAt DateTime? @map("deleted_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
-  User      User      @relation(fields: [userId], references: [id])
+  User      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("points")
 }
@@ -402,7 +405,7 @@ model Voucher {
   updatedAt           DateTime      @updatedAt @map("updated_at")
   deletedAt           DateTime?     @map("deleted_at")
   PropertyReservation Reservation[]
-  Properties          Property      @relation(fields: [propertyId], references: [id])
+  Properties          Property      @relation(fields: [propertyId], references: [id], onDelete: Cascade)
 
   @@map("vouchers")
 }
@@ -416,7 +419,7 @@ model Coupon {
   createdAt      DateTime  @default(now()) @map("created_at")
   updatedAt      DateTime  @updatedAt @map("updated_at")
   deletedAt      DateTime? @map("deleted_at")
-  customer       User      @relation(fields: [customerId], references: [id])
+  customer       User      @relation(fields: [customerId], references: [id], onDelete: Cascade)
 
   @@map("coupons")
 }
