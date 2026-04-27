@@ -4,9 +4,15 @@ import { v4 as uuidv4 } from "uuid";
 function ProfilePhoto({
   image,
   onChange,
+  page,
+  changingProfilePhoto = true,
+  setChangingProfilePhoto,
 }: {
   image: ImageType | null;
   onChange: (image: ImageType | null) => void;
+  page?: string;
+  changingProfilePhoto?: boolean;
+  setChangingProfilePhoto?: (changingProfile: boolean) => void;
 }) {
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -33,9 +39,12 @@ function ProfilePhoto({
   };
 
   return (
-    <label className="relative hover:scale-105 transition-transform duration-300 cursor-pointer">
+    <label
+      className={`relative transition-transform duration-300 ${changingProfilePhoto ? "cursor-pointer hover:scale-105" : ""}`}
+    >
       <input
         onChange={handleFile}
+        disabled={!changingProfilePhoto}
         type="file"
         accept="image/*"
         className="hidden"
@@ -58,7 +67,8 @@ function ProfilePhoto({
           </span>
         )}
       </div>
-      {image?.id !== "existing" &&
+
+      {changingProfilePhoto &&
         (image?.preview ? (
           <button
             type="button"

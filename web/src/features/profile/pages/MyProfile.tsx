@@ -13,6 +13,7 @@ import { useUpdateProfileImage } from "../hooks/profile.mutation";
 function MyProfile() {
   const { user, setUser } = useAuthStore();
   const [isEdit, setIsEdit] = useState<null | "PERSONAL" | "PASSWORD">(null);
+  const [changingProfilePhoto, setChangingProfilePhoto] = useState(false);
 
   const mutation = useUpdateProfileImage();
 
@@ -42,25 +43,37 @@ function MyProfile() {
     }
   };
 
-  const onSubmitProfilePhoto = () => {
-    if (!image?.file) {
-      toast.error("Please select an image first");
-      return;
+  // const handleSaveProfilePhoto = () => {
+  //   if (!image?.file) {
+  //     toast.error("Please select an image first");
+  //     return;
+  //   }
+
+  //   const formData = new FormData();
+  //   formData.append("profileImage", image.file);
+
+  //   const toastId = toast.loading("Uploading photo...");
+
+  //   mutation.mutate(formData, {
+  //     onSuccess: () => {
+  //       toast.success("Profile photo updated", { id: toastId });
+  //     },
+  //     onError: () => {
+  //       toast.error("Upload failed", { id: toastId });
+  //     },
+  //   });
+  // };
+
+  const handleCancelProfilePhoto = () => {
+    setChangingProfilePhoto(false);
+    if (user?.profileImage) {
+      setImage({
+        id: "existing",
+        preview: user.profileImage,
+      });
+    } else {
+      setImage(null);
     }
-
-    const formData = new FormData();
-    formData.append("profileImage", image.file);
-
-    const toastId = toast.loading("Uploading photo...");
-
-    mutation.mutate(formData, {
-      onSuccess: () => {
-        toast.success("Profile photo updated", { id: toastId });
-      },
-      onError: () => {
-        toast.error("Upload failed", { id: toastId });
-      },
-    });
   };
 
   useEffect(() => {
@@ -72,8 +85,6 @@ function MyProfile() {
     }
   }, [user]);
 
-  console.log(image);
-
   return (
     <div className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
       <div className="layout-container flex h-full grow flex-col">
@@ -83,8 +94,45 @@ function MyProfile() {
               <section className="bg-white rounded-xl shadow-sm border border-primary/5 p-6 md:p-8">
                 <div className="flex flex-col md:flex-row items-center gap-6">
                   <div className="flex flex-col items-center gap-2">
-                    <ProfilePhoto image={image} onChange={setImage} />
-                    {image?.file && (
+                    <ProfilePhoto
+                      image={image}
+                      onChange={setImage}
+                      changingProfilePhoto={changingProfilePhoto}
+                      setChangingProfilePhoto={setChangingProfilePhoto}
+                      page="my-profile"
+                    />
+                    {changingProfilePhoto ? (
+                      <>
+                        <button
+                          // onClick={handleSaveProfilePhoto}
+                          type="button"
+                          className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium shadow-sm hover:bg-primary/90 active:scale-[0.98] transition cursor-pointer`}
+                        >
+                          {" "}
+                          Save Changes
+                        </button>
+                        <button
+                          onClick={handleCancelProfilePhoto}
+                          type="button"
+                          className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium shadow-sm hover:bg-primary/90 active:scale-[0.98] transition cursor-pointer`}
+                        >
+                          {" "}
+                          Cancel
+                        </button>
+                      </>
+                    ) : (
+                      <button
+                        onClick={() =>
+                          setChangingProfilePhoto(!changingProfilePhoto)
+                        }
+                        type="button"
+                        className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium shadow-sm hover:bg-primary/90 active:scale-[0.98] transition cursor-pointer`}
+                      >
+                        {" "}
+                        Edit Profile Photo
+                      </button>
+                    )}
+                    {/* {image?.file && (
                       <button
                         onClick={onSubmitProfilePhoto}
                         disabled={mutation.isPending}
@@ -104,7 +152,7 @@ function MyProfile() {
                           "Upload photo"
                         )}
                       </button>
-                    )}
+                    )} */}
                   </div>
                   <div className="text-center md:text-left space-y-2">
                     <div className="flex items-center justify-center md:justify-start gap-2">
