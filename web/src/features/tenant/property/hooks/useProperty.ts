@@ -67,6 +67,7 @@ export const usePropertySearch = ({
   city,
   sortBy,
   order,
+  page,
 }: {
   search?: string;
   checkIn?: string;
@@ -74,6 +75,7 @@ export const usePropertySearch = ({
   sortBy?: "name" | "price" | "createdAt";
   order?: "asc" | "desc";
   city?: string;
+  page?: number;
 }) => {
   return useQuery({
     queryKey: queryKeys.property.search(
@@ -83,6 +85,7 @@ export const usePropertySearch = ({
       city,
       sortBy,
       order,
+      page,
     ),
     queryFn: () =>
       PropertyService.searchProperties({
@@ -92,6 +95,7 @@ export const usePropertySearch = ({
         city,
         sortBy,
         order,
+        page,
       }),
     select: (res) => res.data,
 

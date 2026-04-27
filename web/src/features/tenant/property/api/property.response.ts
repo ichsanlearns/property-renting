@@ -51,20 +51,28 @@ export type GetPropertyAllBasicResponse = {
 };
 
 export type GetPropertySearchResponse = {
-  id: string;
-  name: string;
-  city: string;
-  province: string;
-  country: string;
+  data: {
+    id: string;
+    name: string;
+    city: string;
+    province: string;
+    country: string;
 
-  latitude: number;
-  longitude: number;
+    latitude: number;
+    longitude: number;
 
-  price: number;
-  averageRating: number;
-  reviewCount: number;
-  coverImage: string;
-}[];
+    price: number;
+    averageRating: number;
+    reviewCount: number;
+    coverImage: string;
+  }[];
+  pagination: {
+    page: number;
+    pageSize: number;
+    total: number;
+    totalPages: number;
+  };
+};
 
 type TenantResponse = {
   id: string;

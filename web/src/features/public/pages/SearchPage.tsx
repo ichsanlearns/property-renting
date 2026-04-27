@@ -5,17 +5,28 @@ import SearchBar from "../components/home-page/SearchBar";
 import LoaderPropertyCard from "../components/LoaderPropertyCard";
 
 function SearchPage() {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const search = searchParams.get("search");
   const checkIn = searchParams.get("checkIn");
   const checkOut = searchParams.get("checkOut");
   const city = searchParams.get("city");
+  const page = Number(searchParams.get("page")) || 1;
+
+  const handlePageClick = (newPage: number) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("page", newPage.toString());
+
+    setSearchParams(params);
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const { data: properties, isLoading } = usePropertySearch({
     search: search || "",
     checkIn: checkIn || "",
     checkOut: checkOut || "",
     city: city || "",
+    page,
   });
 
   return (
@@ -47,7 +58,7 @@ function SearchPage() {
               className="text-sm font-medium text-on-surface-variant"
               id="results-heading"
             >
-              {properties?.length} stays found
+              {properties?.data.length} stays found
             </h1>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-10">
@@ -57,8 +68,12 @@ function SearchPage() {
               <>
                 {properties && (
                   <>
-                    {properties.map((property) => (
-                      <PropertyCard property={property} page="search" />
+                    {properties.data.map((property) => (
+                      <PropertyCard
+                        key={property.id}
+                        property={property}
+                        page="search"
+                      />
                     ))}
                   </>
                 )}
@@ -107,33 +122,49 @@ function SearchPage() {
       </main>
       <div className="my-16 flex justify-center items-center space-x-2">
         <button
-          className="flex items-center justify-center w-10 h-10 rounded-full border border-outline text-on-surface-variant opacity-40 cursor-not-allowed"
-          disabled={true}
+          onClick={() => {
+            handlePageClick((properties?.pagination.page || 1) - 1);
+          }}
+          className={`flex items-center justify-center w-10 h-10 rounded-full border border-outline   transition-colors shadow-sm ${
+            properties?.pagination.page === 1
+              ? "opacity-40 text-on-surface-variant cursor-not-allowed"
+              : "bg-surface-container-low cursor-pointer text-on-surface hover:bg-surface-container-high"
+          }`}
+          disabled={properties?.pagination.page === 1}
         >
           <span className="material-symbols-outlined text-xl">
             chevron_left
           </span>
         </button>
-        <button className="w-10 h-10 flex items-center justify-center rounded-full bg-primary text-white font-semibold shadow-sm transition-all">
-          1
-        </button>
-        <button className="w-10 h-10 flex items-center justify-center rounded-full border border-outline bg-surface-container-low text-on-surface hover:bg-surface-container-high transition-colors font-medium">
-          2
-        </button>
-        <button className="w-10 h-10 flex items-center justify-center rounded-full border border-outline bg-surface-container-low text-on-surface hover:bg-surface-container-high transition-colors font-medium">
-          3
-        </button>
-        <button className="w-10 h-10 flex items-center justify-center rounded-full border border-outline bg-surface-container-low text-on-surface hover:bg-surface-container-high transition-colors font-medium">
-          4
-        </button>
-        <button className="w-10 h-10 flex items-center justify-center rounded-full border border-outline bg-surface-container-low text-on-surface hover:bg-surface-container-high transition-colors font-medium">
-          5
-        </button>
-        <span className="px-2 text-on-surface-variant">...</span>
-        <button className="w-10 h-10 flex items-center justify-center rounded-full border border-outline bg-surface-container-low text-on-surface hover:bg-surface-container-high transition-colors font-medium">
-          10
-        </button>
-        <button className="flex items-center justify-center w-10 h-10 rounded-full border border-outline bg-surface-container-low text-on-surface hover:bg-surface-container-high transition-colors shadow-sm">
+        {properties?.pagination?.totalPages &&
+          properties.pagination.totalPages > 0 &&
+          Array.from({ length: properties.pagination.totalPages }).map(
+            (_, index) => (
+              <button
+                onClick={() => {
+                  handlePageClick(index + 1);
+                }}
+                key={index}
+                disabled={properties?.pagination.page === index + 1}
+                className={`w-10 h-10 flex items-center justify-center rounded-full ${properties?.pagination.page === index + 1 ? "bg-primary text-white" : "bg-surface-container-low text-on-surface hover:bg-surface-container-high cursor-pointer"} font-semibold shadow-sm transition-all`}
+              >
+                {index + 1}
+              </button>
+            ),
+          )}
+        <button
+          onClick={() => {
+            handlePageClick((properties?.pagination.page || 1) + 1);
+          }}
+          className={`flex items-center justify-center w-10 h-10 rounded-full border border-outline   transition-colors shadow-sm ${
+            properties?.pagination.page === properties?.pagination.totalPages
+              ? "opacity-40 text-on-surface-variant cursor-not-allowed"
+              : "bg-surface-container-low cursor-pointer text-on-surface hover:bg-surface-container-high"
+          }`}
+          disabled={
+            properties?.pagination.page === properties?.pagination.totalPages
+          }
+        >
           <span className="material-symbols-outlined text-xl">
             chevron_right
           </span>
