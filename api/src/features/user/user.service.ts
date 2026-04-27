@@ -1,7 +1,10 @@
 import { cloudinary } from "../../shared/lib/cloudinary.lib.js";
 import { prisma } from "../../shared/lib/prisma.lib.js";
+
 import type { UpdateMe } from "../../shared/types/user.type.js";
 import { AppError } from "../../shared/utils/app-error.util.js";
+
+import bcrypt from "bcrypt";
 
 export const updateMe = async ({
   userId,
@@ -65,6 +68,44 @@ export const updateProfilePhoto = async ({
     isVerified: updatedUser.isVerified,
     profileImage: updatedUser.profileImage,
   };
+};
+
+export const updatePassword = async ({
+  userId,
+  currentPassword,
+  newPassword,
+}: {
+  userId: string;
+  currentPassword: string;
+  newPassword: string;
+}) => {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+  });
+
+  if (currentPassword === newPassword) {
+    throw new AppError(
+      "New password cannot be the same as current password",
+      400,
+    );
+  }
+
+  if (!user) {
+    throw new AppError("User not found", 404);
+  }
+
+  const isPasswordValid = await bcrypt.compare(currentPassword, user.password!);
+
+  if (!isPasswordValid) {
+    throw new AppError("Invalid credentials", 400);
+  }
+
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: { password: hashedPassword },
+  });
 };
 
 export const deleteProfilePhoto = async ({ userId }: { userId: string }) => {

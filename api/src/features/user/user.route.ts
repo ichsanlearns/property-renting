@@ -21,6 +21,8 @@ router.delete(
   UserController.deleteProfilePhoto,
 );
 
+router.patch("/me/password", authMiddleware, UserController.updatePassword);
+
 router.post("/pricing-rule", authMiddleware, UserController.createPricingRule);
 
 export default router;

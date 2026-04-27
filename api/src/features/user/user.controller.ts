@@ -4,6 +4,8 @@ import * as PricingService from "../pricing/pricing.service.js";
 import { createPricingRuleValidator } from "../pricing/pricing.validator.js";
 import { catchAsync } from "../../shared/utils/catch-async.util.js";
 import * as uploadService from "../../shared/services/upload.service.js";
+import { updatePasswordSchema } from "./user.validator.js";
+import { AppError } from "../../shared/utils/app-error.util.js";
 
 export const updateMe = async (req: Request, res: Response) => {
   const userId = req.user?.userId;
@@ -98,6 +100,28 @@ export const updateProfilePhoto = catchAsync(
     res.status(200).json({
       message: "Profile photo updated successfully",
       data: { user: result },
+    });
+  },
+);
+
+export const updatePassword = catchAsync(
+  async (req: Request, res: Response) => {
+    const userId = req.user?.userId!;
+
+    const input = updatePasswordSchema.safeParse(req.body);
+
+    if (!input.success) {
+      throw new AppError("Invalid input", 400);
+    }
+
+    await UserService.updatePassword({
+      userId,
+      currentPassword: input.data.currentPassword,
+      newPassword: input.data.newPassword,
+    });
+
+    res.status(200).json({
+      message: "Password updated successfully",
     });
   },
 );
