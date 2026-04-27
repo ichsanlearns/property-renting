@@ -8,28 +8,36 @@ datasource db {
 }
 
 model User {
-  id                      String         @id @default(uuid())
-  firstName               String?        @map("first_name")
-  lastName                String?        @map("last_name")
-  email                   String         @unique
-  phoneNumber             String?        @map("phone_number")
-  password                String?
-  role                    Role?
-  referralCode            String?        @unique @map("referral_code")
-  createdAt               DateTime       @default(now()) @map("created_at")
-  updatedAt               DateTime       @updatedAt @map("updated_at")
-  deletedAt               DateTime?      @map("deleted_at")
-  profileImage            String?        @map("profile_image")
-  isVerified              Boolean        @default(false) @map("is_verified")
-  profile_image_public_id String?
-  accounts                Account[]
-  coupons                 Coupon[]
-  points                  Point?
-  pricingRules            PricingRule[]
-  properties              Property[]
-  refreshTokens           RefreshToken[]
-  reservations            Reservation[]
-  reviews                 Review[]
+  id                String                                 @id @default(uuid())
+  email             String                                 @unique 
+  phoneNumber       String?       @map("phone_number")
+
+  firstName         String?       @map("first_name")
+  lastName          String?      @map("last_name")
+  
+  password          String?   
+  profileImage      String?      @map("profile_image")
+  profileImagePublicId     String?      @map("profile_image_public_id")    
+
+  role              Role?   
+
+  isVerified        Boolean      @map("is_verified")       @default(false) 
+  referralCode      String?       @map("referral_code")     @unique 
+
+  createdAt         DateTime     @map("created_at")        @default(now())         
+  updatedAt         DateTime     @map("updated_at")        @updatedAt
+  deletedAt         DateTime?    @map("deleted_at")
+
+  refreshTokens RefreshToken[] 
+  properties     Property[]
+  reviews        Review[]
+  reservations   Reservation[]
+  
+  points Point[]
+  coupons Coupon[]
+  accounts Account[]
+  pricingRules PricingRule[]
+
 
   @@map("users")
 }
@@ -149,16 +157,21 @@ model PropertyAmenity {
 }
 
 model PropertyImage {
-  id              String    @id @default(uuid())
-  propertyId      String    @map("property_id")
-  imageUrl        String?   @map("image_url")
-  createdAt       DateTime  @default(now()) @map("created_at")
-  updatedAt       DateTime  @updatedAt @map("updated_at")
-  deletedAt       DateTime? @map("deleted_at")
-  isCover         Boolean   @default(false) @map("is_cover")
-  order           Int       @default(0)
-  image_public_id String?
-  property        Property  @relation(fields: [propertyId], references: [id])
+  id                String                                   @id @default(uuid())
+  propertyId        String     @map("property_id")
+
+  imageUrl          String?     @map("image_url")
+  imagePublicId     String?     @map("image_public_id")
+  
+  isCover           Boolean    @map("is_cover")            @default(false)
+  order             Int        @default(0)
+
+  createdAt         DateTime   @map("created_at")            @default(now()) 
+  updatedAt         DateTime   @map("updated_at")            @updatedAt
+  deletedAt         DateTime?  @map("deleted_at")
+
+  property Property @relation(fields: [propertyId], references: [id])
+
 
   @@map("property_images")
 }
@@ -208,16 +221,21 @@ model RoomTypeAmenity {
 }
 
 model RoomTypeImage {
-  id              String    @id @default(uuid())
-  roomTypeId      String    @map("room_type_id")
-  imageUrl        String?   @map("image_url")
-  createdAt       DateTime  @default(now()) @map("created_at")
-  updatedAt       DateTime  @updatedAt @map("updated_at")
-  deletedAt       DateTime? @map("deleted_at")
-  isCover         Boolean   @default(false) @map("is_cover")
-  order           Int       @default(0)
-  image_public_id String?
-  roomType        RoomType  @relation(fields: [roomTypeId], references: [id])
+  id                String                                   @id @default(uuid())
+  roomTypeId        String     @map("room_type_id")
+
+  imageUrl          String?     @map("image_url")
+  imagePublicId     String?     @map("image_public_id")
+  
+  isCover           Boolean    @map("is_cover")            @default(false)
+  order             Int        @default(0)
+
+  createdAt         DateTime   @map("created_at")            @default(now()) 
+  updatedAt         DateTime   @map("updated_at")            @updatedAt
+  deletedAt         DateTime?  @map("deleted_at")
+
+  roomType RoomType @relation(fields: [roomTypeId], references: [id])
+
 
   @@map("room_type_images")
 }
@@ -338,6 +356,7 @@ model Payment {
 
   @@map("payments")
 }
+
 
 model Review {
   id            String      @id @default(uuid())

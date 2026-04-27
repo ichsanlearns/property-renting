@@ -5,7 +5,15 @@ import { ReservationStatus } from "../../generated/prisma/client.js";
 import { createSnapTransaction } from "./midtrans.service.js";
 import crypto from "crypto";
 
-export const uploadPaymentProof = async ({ userId, reservationId, file }: { userId: string; reservationId: string; file: Express.Multer.File }) => {
+export const uploadPaymentProof = async ({
+  userId,
+  reservationId,
+  file,
+}: {
+  userId: string;
+  reservationId: string;
+  file: Express.Multer.File;
+}) => {
   return await prisma.$transaction(async (tx) => {
     const reservation = await tx.reservation.findUnique({
       where: { id: reservationId },
@@ -19,7 +27,10 @@ export const uploadPaymentProof = async ({ userId, reservationId, file }: { user
       throw new AppError("Unauthorized", 403);
     }
 
-    if (reservation.status !== ReservationStatus.WAITING_PAYMENT && reservation.status !== ReservationStatus.REJECTED) {
+    if (
+      reservation.status !== ReservationStatus.WAITING_PAYMENT &&
+      reservation.status !== ReservationStatus.REJECTED
+    ) {
       throw new AppError("Invalid reservation status", 400);
     }
 
@@ -31,7 +42,7 @@ export const uploadPaymentProof = async ({ userId, reservationId, file }: { user
       where: { id: reservationId },
       data: {
         status: ReservationStatus.WAITING_CONFIRMATION,
-        paymentProof: uploadResult,
+        paymentProof: uploadResult.url,
       },
     });
 
@@ -39,7 +50,13 @@ export const uploadPaymentProof = async ({ userId, reservationId, file }: { user
   });
 };
 
-export const confirmPayment = async ({ reservationId, tenantId }: { reservationId: string; tenantId: string }) => {
+export const confirmPayment = async ({
+  reservationId,
+  tenantId,
+}: {
+  reservationId: string;
+  tenantId: string;
+}) => {
   return await prisma.$transaction(async (tx) => {
     const reservation = await tx.reservation.findUnique({
       where: { id: reservationId },
@@ -75,7 +92,15 @@ export const confirmPayment = async ({ reservationId, tenantId }: { reservationI
   });
 };
 
-export const rejectPayment = async ({ reservationId, tenantId, reason }: { reservationId: string; tenantId: string; reason?: string }) => {
+export const rejectPayment = async ({
+  reservationId,
+  tenantId,
+  reason,
+}: {
+  reservationId: string;
+  tenantId: string;
+  reason?: string;
+}) => {
   return await prisma.$transaction(async (tx) => {
     const reservation = await tx.reservation.findUnique({
       where: { id: reservationId },
@@ -125,11 +150,22 @@ export const createMidtransTransaction = async (reservationId: string) => {
 };
 
 export const handleMidtransNotification = async (payload: any) => {
-  const { order_id, transaction_status, fraud_status, gross_amount, signature_key } = payload;
+  const {
+    order_id,
+    transaction_status,
+    fraud_status,
+    gross_amount,
+    signature_key,
+  } = payload;
 
   const hash = crypto
     .createHash("sha512")
-    .update(order_id + payload.status_code + gross_amount + process.env.MIDTRANS_SERVER_KEY)
+    .update(
+      order_id +
+        payload.status_code +
+        gross_amount +
+        process.env.MIDTRANS_SERVER_KEY,
+    )
     .digest("hex");
 
   if (hash !== signature_key) {

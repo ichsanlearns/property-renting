@@ -8,6 +8,6 @@ export type ImagesType = {
 
 export type ImageType = {
   id: string;
-  file: File;
+  file?: File;
   preview: string;
 };

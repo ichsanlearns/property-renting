@@ -1,22 +1,41 @@
+import toast from "react-hot-toast";
 import type { ImageType } from "../../tenant/property/types/image.type";
 import { v4 as uuidv4 } from "uuid";
 
 function ProfilePhoto({
   image,
   onChange,
+  changingProfilePhoto = true,
 }: {
   image: ImageType | null;
   onChange: (image: ImageType | null) => void;
+  changingProfilePhoto?: boolean;
 }) {
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      onChange({
-        id: uuidv4(),
-        preview: URL.createObjectURL(file),
-        file,
-      });
+
+    if (!file) return;
+
+    const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
+    const maxSize = 1 * 1024 * 1024;
+
+    if (!allowedTypes.includes(file.type)) {
+      toast.error("Only JPG, PNG, and GIF files are allowed");
+      e.target.value = "";
+      return;
     }
+
+    if (file.size > maxSize) {
+      toast.error("File size must be less than 1MB");
+      e.target.value = "";
+      return;
+    }
+
+    onChange({
+      id: uuidv4(),
+      preview: URL.createObjectURL(file),
+      file,
+    });
 
     e.target.value = "";
   };
@@ -33,9 +52,12 @@ function ProfilePhoto({
   };
 
   return (
-    <label className="relative hover:scale-105 transition-transform duration-300 cursor-pointer">
+    <label
+      className={`relative transition-transform duration-300 ${changingProfilePhoto ? "cursor-pointer hover:scale-105" : ""}`}
+    >
       <input
         onChange={handleFile}
+        disabled={!changingProfilePhoto}
         type="file"
         accept="image/*"
         className="hidden"
@@ -58,21 +80,23 @@ function ProfilePhoto({
           </span>
         )}
       </div>
-      {image?.preview ? (
-        <button
-          type="button"
-          onClick={handleDelete}
-          className="absolute top-0 right-0 bg-primary text-white p-1.5 rounded-full shadow-md hover:scale-110 transition cursor-pointer w-7 h-7 flex items-center justify-center"
-        >
-          <span className="material-symbols-outlined text-xs">delete</span>
-        </button>
-      ) : (
-        <div className="absolute bottom-0 right-0 bg-primary text-white p-1.5 rounded-full shadow-md w-7 h-7 flex items-center justify-center">
-          <span className="material-symbols-outlined text-xs text-white">
-            edit
-          </span>
-        </div>
-      )}
+
+      {changingProfilePhoto &&
+        (image?.preview ? (
+          <button
+            type="button"
+            onClick={handleDelete}
+            className="absolute top-0 right-0 bg-primary text-white p-1.5 rounded-full shadow-md hover:scale-110 transition cursor-pointer w-7 h-7 flex items-center justify-center"
+          >
+            <span className="material-symbols-outlined text-xs">delete</span>
+          </button>
+        ) : (
+          <div className="absolute bottom-0 right-0 bg-primary text-white p-1.5 rounded-full shadow-md w-7 h-7 flex items-center justify-center">
+            <span className="material-symbols-outlined text-xs text-white">
+              add_photo_alternate
+            </span>
+          </div>
+        ))}
     </label>
   );
 }

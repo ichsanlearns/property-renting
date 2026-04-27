@@ -1,10 +1,15 @@
 import { cloudinary } from "../lib/cloudinary.lib.js";
 
+type UploadResult = {
+  url: string;
+  publicId: string;
+};
+
 export const uploadToCloudinary = (
   buffer: Buffer,
   folder = "profile",
-): Promise<string> => {
-  return new Promise((resolve, reject) => {
+): Promise<UploadResult> => {
+  return new Promise<UploadResult>((resolve, reject) => {
     cloudinary.uploader
       .upload_stream(
         {
@@ -16,7 +21,7 @@ export const uploadToCloudinary = (
         },
         (error: any, result: any) => {
           if (error || !result) return reject(error);
-          resolve(result.secure_url);
+          resolve({ url: result.secure_url, publicId: result.public_id });
         },
       )
       .end(buffer);

@@ -6,8 +6,28 @@ export const profileSchema = z.object({
   email: z.email("Invalid email").optional(),
   phoneNumber: z
     .string()
-    .min(10, "Phone number must be at least 10 characters")
-    .optional(),
+    .optional()
+    .refine((val) => !val || /^\+?[0-9]{8,15}$/.test(val), {
+      message: "Invalid phone number",
+    }),
 });
 
+export const passwordSchema = z
+  .object({
+    currentPassword: z
+      .string()
+      .min(8, "Current password must be at least 8 characters"),
+    newPassword: z
+      .string()
+      .min(8, "New password must be at least 8 characters"),
+    confirmPassword: z
+      .string()
+      .min(8, "Confirm password must be at least 8 characters"),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
 export type ProfileFormData = z.infer<typeof profileSchema>;
+export type PasswordFormData = z.infer<typeof passwordSchema>;
