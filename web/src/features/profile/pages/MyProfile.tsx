@@ -12,11 +12,13 @@ import {
   useDeleteProfilePhoto,
   useUpdateProfileImage,
 } from "../hooks/profile.mutation";
+import ConfirmModal from "../../../shared/ui/ConfirmModal";
 
 function MyProfile() {
   const { user, setUser } = useAuthStore();
   const [isEdit, setIsEdit] = useState<null | "PERSONAL" | "PASSWORD">(null);
   const [changingProfilePhoto, setChangingProfilePhoto] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(true);
 
   const mutation = useUpdateProfileImage();
   const deleteMutation = useDeleteProfilePhoto();
@@ -49,7 +51,7 @@ function MyProfile() {
 
   const handleSaveProfilePhoto = () => {
     if (!image && user?.profileImage) {
-      handleDeleteProfilePhoto();
+      setDeleteModalOpen(true);
     } else {
       handleChangeProfilePhoto();
     }
@@ -83,9 +85,11 @@ function MyProfile() {
       onSuccess: () => {
         toast.success("Profile photo deleted", { id: toastId });
         setChangingProfilePhoto(false);
+        setDeleteModalOpen(false);
       },
       onError: () => {
         toast.error("Delete failed", { id: toastId });
+        setDeleteModalOpen(false);
       },
     });
   };
@@ -171,27 +175,14 @@ function MyProfile() {
                         Edit Profile Photo
                       </button>
                     )}
-                    {/* {image?.file && (
-                      <button
-                        onClick={onSubmitProfilePhoto}
-                        disabled={mutation.isPending}
-                        type="button"
-                        className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium shadow-sm hover:bg-primary/90 active:scale-[0.98] transition  ${
-                          mutation.isPending
-                            ? "opacity-50 cursor-not-allowed"
-                            : "cursor-pointer"
-                        }`}
-                      >
-                        {mutation.isPending ? (
-                          <>
-                            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                            Uploading...
-                          </>
-                        ) : (
-                          "Upload photo"
-                        )}
-                      </button>
-                    )} */}
+                    <ConfirmModal
+                      isLoading={deleteMutation.isPending}
+                      isOpen={deleteModalOpen}
+                      onConfirm={handleDeleteProfilePhoto}
+                      onCancel={() => setDeleteModalOpen(false)}
+                      title="Remove profile photo?"
+                      description="This will remove your current profile image."
+                    />
                   </div>
                   <div className="text-center md:text-left space-y-2">
                     <div className="flex items-center justify-center md:justify-start gap-2">
