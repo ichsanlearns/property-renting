@@ -15,7 +15,7 @@ export const createSnapTransaction = async (reservation: any) => {
 
   const parameter = {
     transaction_details: {
-      order_id: reservation.reservationCode,
+      order_id: `${reservation.reservationCode}-${Date.now()}`,
       gross_amount: Math.round(grandTotal),
     },
 
