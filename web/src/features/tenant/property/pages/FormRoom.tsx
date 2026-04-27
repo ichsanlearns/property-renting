@@ -13,8 +13,9 @@ import {
 import type { ImagesType } from "../types/image.type";
 import toast from "react-hot-toast";
 import { createRoom } from "../api/room.service";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { usePropertyBasic } from "../hooks/useProperty";
+import LoaderFetching from "../../../../shared/ui/LoaderFetching";
 
 const viewTypes = [
   { value: "ocean_front", label: "Ocean Front" },
@@ -43,6 +44,7 @@ const publishStatuses = [
 ];
 
 function FormRoom() {
+  const navigate = useNavigate();
   const { propertyId } = useParams();
   const { data: property, isLoading, error } = usePropertyBasic(propertyId!);
 
@@ -84,19 +86,23 @@ function FormRoom() {
       formData.append(key, String(value));
     });
 
-    images.forEach((image) => {
-      formData.append("images", image.file);
-    });
+    if (images.length > 0) {
+      images.forEach((image) => {
+        if (image.file) {
+          formData.append("images", image.file);
+        }
+      });
 
-    formData.append(
-      "imagesMeta",
-      JSON.stringify(
-        images.map((image) => ({
-          isCover: image.isCover,
-          order: image.order,
-        })),
-      ),
-    );
+      formData.append(
+        "imagesMeta",
+        JSON.stringify(
+          images.map((image) => ({
+            isCover: image.isCover,
+            order: image.order,
+          })),
+        ),
+      );
+    }
 
     selectedAmenities.forEach((amenity) => {
       formData.append("amenities", amenity);
@@ -116,7 +122,7 @@ function FormRoom() {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <LoaderFetching />;
   }
 
   if (error) {
@@ -159,20 +165,6 @@ function FormRoom() {
                 {property?.averageRating} ({property?.reviewCount} reviews)
               </span>
             </div>
-          </div>
-          <div className="flex gap-3">
-            <button
-              type="button"
-              className="px-6 py-3 rounded-xl bg-slate-50  hover:bg-slate-200 text-on-surface font-bold text-sm transition-all active:scale-95"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-8 py-3 rounded-xl bg-primary text-white font-bold text-sm shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all active:scale-95"
-            >
-              Save Room
-            </button>
           </div>
         </header>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -426,30 +418,18 @@ function FormRoom() {
                       ))}
                     </select>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-bold text-slate-700 dark:text-slate-300">
-                      Accept Inquiries
-                    </span>
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input
-                        className="sr-only peer"
-                        type="checkbox"
-                        value=""
-                      />
-                      <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-                    </label>
-                  </div>
                 </div>
                 <div className="mt-8 space-y-3">
                   <button
                     type="submit"
-                    className="w-full bg-primary text-white py-3.5 rounded-xl font-bold hover:opacity-90 transition-all shadow-sm"
+                    className="w-full bg-primary text-white py-3.5 rounded-xl font-bold hover:opacity-90 transition-all shadow-sm cursor-pointer"
                   >
-                    Save Property
+                    Save Room
                   </button>
                   <button
                     type="button"
-                    className="w-full bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 py-3.5 rounded-xl font-bold hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+                    className="w-full bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 py-3.5 rounded-xl font-bold hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors cursor-pointer"
+                    onClick={() => navigate(`/tenant/properties`)}
                   >
                     Cancel
                   </button>
@@ -465,8 +445,8 @@ function FormRoom() {
                       Quick Tip
                     </p>
                     <p className="text-slate-600 dark:text-slate-400 text-xs mt-1 leading-relaxed">
-                      Listing with at least 3 high-quality photos receive 60%
-                      more tenant inquiries on average.
+                      Publishing this room will make both this room and the
+                      property visible to public.
                     </p>
                   </div>
                 </div>

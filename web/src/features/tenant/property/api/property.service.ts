@@ -16,6 +16,19 @@ export const createProperty = async (data: FormData) => {
   return response.data;
 };
 
+export const updateProperty = async (data: FormData, propertyId: string) => {
+  const response = await api.patch<ApiResponse<void>>(
+    PROPERTY_ENDPOINTS.UPDATE(propertyId),
+    data,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    },
+  );
+  return response.data;
+};
+
 export const getPropertyAllBasic = async () => {
   const response = await api.get<
     ApiResponse<PropertyResponse.GetPropertyAllBasicResponse>
@@ -34,6 +47,13 @@ export const getPropertyById = async (propertyId: string) => {
   const response = await api.get<
     ApiResponse<PropertyResponse.GetPropertyByIdResponse>
   >(PROPERTY_ENDPOINTS.GET_BY_ID(propertyId));
+  return response.data;
+};
+
+export const getPropertyByIdFullInfo = async (propertyId: string) => {
+  const response = await api.get<
+    ApiResponse<PropertyResponse.GetPropertyByIdFullInfoResponse>
+  >(PROPERTY_ENDPOINTS.GET_BY_ID_FULL_INFO(propertyId));
   return response.data;
 };
 
@@ -91,5 +111,12 @@ export const getPropertyRoomPricesDate = async ({
     },
     signal,
   });
+  return response.data;
+};
+
+export const deleteProperty = async (propertyId: string) => {
+  const response = await api.delete<ApiResponse<void>>(
+    PROPERTY_ENDPOINTS.DELETE(propertyId),
+  );
   return response.data;
 };

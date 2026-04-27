@@ -41,6 +41,7 @@ import SearchPage from "./features/public/pages/SearchPage";
 import PeakSeason from "./features/tenant/peak-season/pages/PeakSeason";
 import PropertyList from "./features/tenant/property/pages/PropertyList";
 import PropertyListDetail from "./features/tenant/property/pages/PropertyListDetail";
+import FormEditProperties from "./features/tenant/property/pages/FormEditProperties";
 
 function requireOnboarding(user: User | null) {
   if (!user?.fullName && user?.email) {
@@ -112,6 +113,10 @@ const router = createBrowserRouter([
           {
             path: "properties/:propertyId/rooms/create",
             element: <FormRoom />,
+          },
+          {
+            path: "property/:propertyId/edit",
+            element: <FormEditProperties />,
           },
           {
             path: "peak-season",

@@ -87,12 +87,6 @@ function NavBar() {
                 >
                   Become a Host
                 </Link>
-                {/* <Link
-                  to="/experiences"
-                  className="text-sm hidden md:block font-semibold hover:text-primary transition-colors"
-                >
-                  Experiences
-                </Link> */}
               </>
             )}
             {user ? (

@@ -1,7 +1,10 @@
 import { prisma } from "../../shared/lib/prisma.lib.js";
 
 import { AppError } from "../../shared/utils/app-error.util.js";
-import type { CreatePropertyDto } from "./property.type.js";
+import type {
+  CreatePropertyDto,
+  updatePropertPayload,
+} from "./property.type.js";
 import {
   buildDateKey,
   getDatesInRangeExclusive,
@@ -42,7 +45,7 @@ export const create = async ({
         ...data,
         tenantId,
         isVerified: "VERIFIED",
-        isPublished: "PUBLISHED",
+        isPublished: "DRAFT",
       },
       omit: {
         deletedAt: true,
@@ -96,6 +99,105 @@ export const create = async ({
   });
 };
 
+export const update = async ({
+  propertyId,
+  tenantId,
+  data,
+  categoryId,
+  images,
+  amenities,
+}: {
+  propertyId: string;
+  tenantId: string;
+  data: updatePropertPayload;
+  categoryId: string;
+  images?: {
+    imageUrl: string;
+    publicId?: string;
+    isCover: boolean;
+    order: number;
+  }[];
+  amenities: string[];
+}) => {
+  const property = await prisma.property.findUnique({
+    where: {
+      id: propertyId,
+    },
+  });
+
+  if (!property) {
+    throw new AppError("Property not found", 404);
+  }
+
+  if (property.tenantId !== tenantId) {
+    throw new AppError("You are not authorized to update this property", 403);
+  }
+
+  return await prisma.$transaction(async (tx) => {
+    const property = await tx.property.update({
+      where: {
+        id: propertyId,
+      },
+      data: {
+        ...data,
+        category: {
+          connect: { id: categoryId },
+        },
+      },
+      omit: {
+        deletedAt: true,
+        updatedAt: true,
+        createdAt: true,
+      },
+    });
+
+    if (images) {
+      for (const image of images) {
+        await tx.propertyImage.create({
+          data: {
+            propertyId: property.id,
+            imageUrl: image.imageUrl,
+            imagePublicId: image.publicId ?? null,
+            isCover: image.isCover,
+            order: image.order,
+          },
+          omit: {
+            deletedAt: true,
+            updatedAt: true,
+            createdAt: true,
+          },
+        });
+      }
+    }
+
+    const existingAmenities = await tx.propertyAmenity.findMany({
+      where: {
+        propertyId,
+      },
+    });
+
+    const existingIds = new Set(existingAmenities.map((a) => a.amenityId));
+    const newIds = new Set(amenities);
+
+    const toDelete = existingAmenities.filter((a) => !newIds.has(a.amenityId));
+
+    const toAdd = amenities.filter((id) => !existingIds.has(id));
+
+    await tx.propertyAmenity.deleteMany({
+      where: {
+        id: { in: toDelete.map((a) => a.id) },
+      },
+    });
+
+    await tx.propertyAmenity.createMany({
+      data: toAdd.map((id) => ({
+        propertyId,
+        amenityId: id,
+      })),
+    });
+  });
+};
+
 export const getAllBasic = async () => {
   const properties = await prisma.property.findMany({
     select: {
@@ -126,6 +228,9 @@ export const getAllBasic = async () => {
         },
         take: 1,
       },
+    },
+    where: {
+      isPublished: "PUBLISHED",
     },
   });
 
@@ -303,6 +408,72 @@ export const getById = async ({ id }: { id: string }) => {
   };
 };
 
+export const getByPropertyIdFullInfo = async ({
+  propertyId,
+}: {
+  propertyId: string;
+}) => {
+  const property = await prisma.property.findUnique({
+    where: {
+      id: propertyId,
+    },
+    select: {
+      id: true,
+      name: true,
+      description: true,
+      country: true,
+      city: true,
+      province: true,
+      fullAddress: true,
+
+      latitude: true,
+      longitude: true,
+
+      numberOfBathrooms: true,
+
+      categoryId: true,
+
+      propertyImages: {
+        select: {
+          id: true,
+          imageUrl: true,
+          isCover: true,
+          order: true,
+        },
+      },
+
+      propertyAmenities: {
+        select: {
+          amenityId: true,
+        },
+      },
+    },
+  });
+
+  if (!property) {
+    throw new AppError("Property not found", 404);
+  }
+
+  return {
+    id: property.id,
+    name: property.name,
+    description: property.description,
+    country: property.country,
+    city: property.city,
+    province: property.province,
+    fullAddress: property.fullAddress,
+
+    latitude: property.latitude,
+    longitude: property.longitude,
+
+    numberOfBathrooms: property.numberOfBathrooms,
+
+    categoryId: property.categoryId,
+    propertyImages: property.propertyImages,
+    propertyAmenities: property.propertyAmenities,
+  };
+};
+
 export const getByTenantId = async (tenantId: string) => {
   const properties = await prisma.property.findMany({
     where: {
@@ -389,97 +560,10 @@ export const getByTenantId = async (tenantId: string) => {
   }));
 };
 
-// export const searchByParams = async (params: SearchPropertiesParams) => {
-//   const where: Prisma.PropertyWhereInput = params.search
-//     ? {
-//         OR: [
-//           { name: { contains: params.search, mode: "insensitive" as const } },
-//           { city: { contains: params.search, mode: "insensitive" as const } },
-//           {
-//             country: { contains: params.search, mode: "insensitive" as const },
-//           },
-//         ],
-//       }
-//     : {};
-
-//   let dates: Date[] = [];
-//   if (params.checkIn && params.checkOut) {
-//     dates = getDatesInRangeExclusive(params.checkIn, params.checkOut);
-//     where.roomTypes = {
-//       some: {
-//         roomTypePrices: {
-//           some: {
-//             date: {
-//               gte: new Date(params.checkIn),
-//               lt: new Date(params.checkOut),
-//             },
-//             availableRooms: {
-//               gt: 0,
-//             },
-//             isClosed: false,
-//           },
-//         },
-//       },
-//     };
-//   }
-
-//   const properties = await prisma.property.findMany({
-//     where,
-//     orderBy: {
-//       [params.sortBy as string]: params.order,
-//     },
-//     select: {
-//       id: true,
-//       name: true,
-//       city: true,
-//       province: true,
-//       country: true,
-
-//       latitude: true,
-//       longitude: true,
-
-//       averageRating: true,
-//       reviewCount: true,
-
-//       propertyImages: {
-//         where: {
-//           isCover: true,
-//         },
-//         select: {
-//           imageUrl: true,
-//         },
-//       },
-
-//       roomTypes: {
-//         select: {
-//           basePrice: true,
-//         },
-//         orderBy: {
-//           basePrice: "asc",
-//         },
-//         take: 1,
-//       },
-//     },
-//   });
-
-//   return properties.map((property) => ({
-//     id: property.id,
-//     name: property.name,
-//     city: property.city,
-//     province: property.province,
-//     latitude: property.latitude,
-//     longitude: property.longitude,
-//     country: property.country,
-//     price: property.roomTypes[0]?.basePrice,
-//     averageRating: property.averageRating,
-//     reviewCount: property.reviewCount,
-//     coverImage: property.propertyImages[0]?.imageUrl,
-//   }));
-// };
-
 export const searchByParams = async (params: SearchPropertiesParams) => {
   const where: Prisma.PropertyWhereInput = params.search
     ? {
+        isPublished: "PUBLISHED",
         OR: [
           { name: { contains: params.search, mode: "insensitive" } },
           { city: { contains: params.search, mode: "insensitive" } },
@@ -676,4 +760,29 @@ export const getPropertyRoomPricesDate = async ({
   // });
 
   return result;
+};
+
+export const deleteProperty = async (propertyId: string, tenantId: string) => {
+  const property = await prisma.property.findUnique({
+    where: {
+      id: propertyId,
+    },
+    select: {
+      id: true,
+      name: true,
+      tenantId: true,
+    },
+  });
+
+  if (!property) {
+    throw new AppError("Property not found", 404);
+  }
+
+  if (property.tenantId !== tenantId) {
+    throw new AppError("Unauthorized", 401);
+  }
+
+  await prisma.property.delete({
+    where: { id: propertyId },
+  });
 };

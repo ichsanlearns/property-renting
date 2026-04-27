@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,27 +8,30 @@ import {
   type CreatePropertyPayload,
 } from "../schemas/property.schema";
 
-import { createProperty } from "../api/property.service";
-import toast from "react-hot-toast";
-
 import Map from "../components/Map";
 import { useReverseGeoCode } from "../hooks/useReverseGeocode";
 import ImageUpload from "../components/ImageUpload";
 import type { ImagesType } from "../types/image.type";
 import AmenityList from "../components/AmenityList";
 import { useCategories } from "../hooks/useCategories";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { queryKeys } from "../../../../shared/lib/queryKeys.lib";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import LoaderFetching from "../../../../shared/ui/LoaderFetching";
+import { usePropertyDetailFullInfo } from "../hooks/useProperty";
+import { useUpdateProperty } from "../hooks/property.mutation";
 
 type Category = {
   id: string;
   name: string;
 };
 
-function Properties() {
+function FormEditProperties() {
+  const { propertyId } = useParams();
   const { data: categories = [], isLoading, error } = useCategories();
+
+  const { data: property, isLoading: isLoadingProperty } =
+    usePropertyDetailFullInfo({
+      propertyId: propertyId || "",
+    });
 
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
 
@@ -49,28 +52,9 @@ function Properties() {
     },
   });
 
-  const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  const mutation = useMutation({
-    mutationFn: createProperty,
-    onMutate: () => {
-      toast.loading("Creating property...");
-    },
-    onSuccess: (property) => {
-      toast.dismiss();
-      toast.success("Property created successfully");
-
-      queryClient.setQueryData(queryKeys.property.basic(property.data.id), {
-        data: property.data,
-      });
-      navigate(`/tenant/properties/${property.data.id}/rooms/create`);
-    },
-    onError: (error: any) => {
-      toast.dismiss();
-      toast.error(error.response?.data?.message || "Failed to create property");
-    },
-  });
+  const updateMutation = useUpdateProperty(propertyId!);
 
   const onSubmit = async (data: CreatePropertyPayload) => {
     const payload = {
@@ -88,29 +72,29 @@ function Properties() {
       formData.append(key, String(value));
     });
 
-    if (images.length > 0) {
-      images.forEach((image) => {
-        if (image.file) {
-          formData.append("images", image.file);
-        }
-      });
+    images.forEach((image) => {
+      if (image.file !== undefined) {
+        formData.append("images", image.file);
+      }
+    });
 
-      formData.append(
-        "imagesMeta",
-        JSON.stringify(
-          images.map((image) => ({
+    formData.append(
+      "imagesMeta",
+      JSON.stringify(
+        images
+          .filter((image) => image.file !== undefined)
+          .map((image) => ({
             isCover: image.isCover,
             order: image.order,
           })),
-        ),
-      );
-    }
+      ),
+    );
 
     selectedAmenities.forEach((amenity) => {
       formData.append("amenities", amenity);
     });
 
-    mutation.mutate(formData);
+    updateMutation.mutate(formData);
   };
 
   const handleMapSelect = async (location: { lat: number; lng: number }) => {
@@ -125,7 +109,35 @@ function Properties() {
     });
   };
 
-  if (isLoading) {
+  useEffect(() => {
+    if (property) {
+      setValue("categoryId", property.categoryId);
+      setValue("name", property.name);
+      setValue("description", property.description);
+      setValue("fullAddress", property.fullAddress);
+      setValue("city", property.city);
+      setValue("province", property.province);
+      setValue("country", property.country);
+      setValue("latitude", property.latitude);
+      setValue("longitude", property.longitude);
+
+      setValue("numberOfBathrooms", property.numberOfBathrooms);
+      setSelectedAmenities(
+        property.propertyAmenities.map((amenity) => amenity.amenityId),
+      );
+      setImages(
+        property.propertyImages.map((image) => ({
+          id: image.id,
+          file: undefined,
+          preview: image.imageUrl,
+          isCover: image.isCover,
+          order: image.order,
+        })),
+      );
+    }
+  }, [property]);
+
+  if (isLoading || isLoadingProperty) {
     return <LoaderFetching />;
   }
 
@@ -286,7 +298,15 @@ function Properties() {
                 </div>
 
                 <div className="relative">
-                  <Map onSelect={handleMapSelect} />
+                  {property?.latitude && property?.longitude && (
+                    <Map
+                      onSelect={handleMapSelect}
+                      initialLocation={{
+                        lat: property?.latitude!,
+                        lng: property?.longitude!,
+                      }}
+                    />
+                  )}
                   {errors.latitude && (
                     <p className="text-red-500 text-sm mt-1">
                       {errors.latitude.message}
@@ -392,4 +412,4 @@ function Properties() {
   );
 }
 
-export default Properties;
+export default FormEditProperties;

@@ -20,6 +20,24 @@ router.get("/search", PropertyController.searchByParams);
 
 router.get("/tenant", authMiddleware, PropertyController.getByTenantId);
 
+router.patch(
+  "/:propertyId",
+  authMiddleware,
+  uploadCloud.array("images", 5),
+  PropertyController.update,
+);
+
+router.delete(
+  "/:propertyId",
+  authMiddleware,
+  PropertyController.deleteProperty,
+);
+
+router.get(
+  "/:propertyId/full-info",
+  PropertyController.getByPropertyIdFullInfo,
+);
+
 router.get("/:propertyId/basic", PropertyController.getByIdBasic);
 router.get("/:propertyId", PropertyController.getById);
 
