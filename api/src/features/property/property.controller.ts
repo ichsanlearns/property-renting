@@ -265,6 +265,15 @@ export const getPropertyRoomPricesDate = catchAsync(
   },
 );
 
+export const getCities = catchAsync(async (req: Request, res: Response) => {
+  const cities = await PropertyService.getCities();
+
+  res.status(200).json({
+    message: "Cities fetched successfully",
+    data: cities,
+  });
+});
+
 export const deleteProperty = catchAsync(
   async (req: Request, res: Response) => {
     const tenantId = req.user?.userId!;

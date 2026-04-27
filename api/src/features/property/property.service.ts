@@ -762,6 +762,18 @@ export const getPropertyRoomPricesDate = async ({
   return result;
 };
 
+export const getCities = async () => {
+  const cities = await prisma.property.groupBy({
+    by: ["city"],
+    where: {
+      isPublished: "PUBLISHED",
+    },
+  });
+
+  // return cities.map((city) => city.city);
+  return cities;
+};
+
 export const deleteProperty = async (propertyId: string, tenantId: string) => {
   const property = await prisma.property.findUnique({
     where: {
