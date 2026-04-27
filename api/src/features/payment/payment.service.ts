@@ -125,18 +125,18 @@ export const createMidtransTransaction = async (reservationId: string) => {
 };
 
 export const handleMidtransNotification = async (payload: any) => {
-  const { order_id, transaction_status, fraud_status, gross_amount, signature_key, status_code } = payload;
+  const { order_id, transaction_status, gross_amount, signature_key } = payload;
 
   const hash = crypto
     .createHash("sha512")
-    .update(order_id + status_code + gross_amount + process.env.MIDTRANS_SERVER_KEY)
+    .update(order_id + payload.status_code + gross_amount + process.env.MIDTRANS_SERVER_KEY)
     .digest("hex");
 
   if (hash !== signature_key) {
     throw new AppError("Invalid signature", 403);
   }
 
-  const reservationCode = order_id;
+  const reservationCode = order_id.split("-").slice(0, 3).join("-");
 
   const reservation = await prisma.reservation.findUnique({
     where: { reservationCode },
@@ -146,21 +146,17 @@ export const handleMidtransNotification = async (payload: any) => {
     throw new AppError("Reservation not found", 404);
   }
 
-  if (transaction_status === "settlement" || (transaction_status === "capture" && fraud_status === "accept")) {
+  if (transaction_status === "settlement" || (transaction_status === "capture" && payload.fraud_status === "accept")) {
     await prisma.reservation.update({
       where: { reservationCode },
-      data: {
-        status: ReservationStatus.PAID,
-      },
+      data: { status: ReservationStatus.PAID },
     });
   }
 
   if (["expire", "cancel", "deny"].includes(transaction_status)) {
     await prisma.reservation.update({
       where: { reservationCode },
-      data: {
-        status: ReservationStatus.CANCELED,
-      },
+      data: { status: ReservationStatus.CANCELED },
     });
   }
 
