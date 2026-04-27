@@ -7,11 +7,15 @@ type Location = {
 };
 
 export default function MapPicker({
+  initialLocation,
   onSelect,
 }: {
+  initialLocation?: Location | null;
   onSelect: (loc: Location) => void;
 }) {
-  const [position, setPosition] = useState<Location | null>(null);
+  const [position, setPosition] = useState<Location | null>(
+    initialLocation || null,
+  );
 
   function MapClickHandler() {
     useMapEvents({
@@ -29,7 +33,11 @@ export default function MapPicker({
   return (
     <MapContainer
       // @ts-ignore
-      center={[-6.9, 107.6]}
+      center={
+        initialLocation
+          ? [initialLocation.lat, initialLocation.lng]
+          : [-6.9, 107.6]
+      }
       zoom={13}
       className="h-[300px] w-full rounded-xl"
     >

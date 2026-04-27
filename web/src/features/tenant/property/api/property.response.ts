@@ -13,13 +13,17 @@ export type GetPropertyByIdFullInfoResponse = {
   id: string;
   name: string;
   description: string;
+  fullAddress: string;
+  city: string;
+  province: string;
+  country: string;
 
   latitude: number;
   longitude: number;
 
   numberOfBathrooms: number;
 
-  category: CategoryResponse;
+  categoryId: string;
 
   propertyImages: {
     id: string;
@@ -29,7 +33,7 @@ export type GetPropertyByIdFullInfoResponse = {
   }[];
 
   propertyAmenities: {
-    name: string;
+    amenityId: string;
   }[];
 };
 

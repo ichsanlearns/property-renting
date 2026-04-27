@@ -73,6 +73,7 @@ function ImageUpload({ value, onChange, max = 5 }: ImageUploadProps) {
           type="file"
           multiple
           accept="image/*"
+          disabled={value.length === max}
           onChange={(e) => handleSelectFile(e.target.files)}
           className="hidden"
           id="image-upload"
@@ -96,11 +97,11 @@ function ImageUpload({ value, onChange, max = 5 }: ImageUploadProps) {
         {value.map((img) => (
           <div
             key={img.id}
-            className="aspect-square rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 relative group overflow-hidden cursor-move"
+            className="aspect-square rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 relative group overflow-hidden"
           >
             <img
               alt="Kitchen"
-              className="w-full h-full object-cover"
+              className={`w-full h-full object-cover ${img.file === undefined ? "opacity-50" : ""}`}
               src={img.preview}
             />
             {img.isCover && (
@@ -108,15 +109,17 @@ function ImageUpload({ value, onChange, max = 5 }: ImageUploadProps) {
                 Cover
               </div>
             )}
-            <button
-              type="button"
-              onClick={() => handleRemoveImage(img.id)}
-              className="absolute top-2 right-2 bg-white/90 rounded-full p-1.5 text-red-500 opacity-0 group-hover:opacity-100 transition-opacity shadow-sm"
-            >
-              <span className="material-symbols-outlined text-[18px]">
-                delete
-              </span>
-            </button>
+            {img.file !== undefined && (
+              <button
+                type="button"
+                onClick={() => handleRemoveImage(img.id!)}
+                className="absolute top-2 right-2 bg-white/90 rounded-full p-1.5 text-red-500 opacity-0 group-hover:opacity-100 transition-opacity shadow-sm"
+              >
+                <span className="material-symbols-outlined text-[18px]">
+                  delete
+                </span>
+              </button>
+            )}
           </div>
         ))}
 

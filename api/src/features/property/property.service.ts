@@ -319,17 +319,17 @@ export const getByPropertyIdFullInfo = async ({
       id: true,
       name: true,
       description: true,
+      country: true,
+      city: true,
+      province: true,
+      fullAddress: true,
 
       latitude: true,
       longitude: true,
 
       numberOfBathrooms: true,
 
-      category: {
-        select: {
-          name: true,
-        },
-      },
+      categoryId: true,
 
       propertyImages: {
         select: {
@@ -342,11 +342,7 @@ export const getByPropertyIdFullInfo = async ({
 
       propertyAmenities: {
         select: {
-          amenity: {
-            select: {
-              name: true,
-            },
-          },
+          amenityId: true,
         },
       },
     },
@@ -360,13 +356,17 @@ export const getByPropertyIdFullInfo = async ({
     id: property.id,
     name: property.name,
     description: property.description,
+    country: property.country,
+    city: property.city,
+    province: property.province,
+    fullAddress: property.fullAddress,
 
     latitude: property.latitude,
     longitude: property.longitude,
 
     numberOfBathrooms: property.numberOfBathrooms,
 
-    category: property.category,
+    categoryId: property.categoryId,
     propertyImages: property.propertyImages,
     propertyAmenities: property.propertyAmenities,
   };

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -19,16 +19,23 @@ import AmenityList from "../components/AmenityList";
 import { useCategories } from "../hooks/useCategories";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "../../../../shared/lib/queryKeys.lib";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import LoaderFetching from "../../../../shared/ui/LoaderFetching";
+import { usePropertyDetailFullInfo } from "../hooks/useProperty";
 
 type Category = {
   id: string;
   name: string;
 };
 
-function Properties() {
+function FormEditProperties() {
+  const { propertyId } = useParams();
   const { data: categories = [], isLoading, error } = useCategories();
+
+  const { data: property, isLoading: isLoadingProperty } =
+    usePropertyDetailFullInfo({
+      propertyId: propertyId || "",
+    });
 
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
 
@@ -89,16 +96,22 @@ function Properties() {
     });
 
     images.forEach((image) => {
-      formData.append("images", image.file);
+      if (image.file !== undefined) {
+        formData.append("images", image.file);
+      }
     });
 
     formData.append(
       "imagesMeta",
       JSON.stringify(
-        images.map((image) => ({
-          isCover: image.isCover,
-          order: image.order,
-        })),
+        images.map((image) => {
+          if (image.file !== undefined) {
+            return {
+              isCover: image.isCover,
+              order: image.order,
+            };
+          }
+        }),
       ),
     );
 
@@ -121,7 +134,35 @@ function Properties() {
     });
   };
 
-  if (isLoading) {
+  useEffect(() => {
+    if (property) {
+      setValue("categoryId", property.categoryId);
+      setValue("name", property.name);
+      setValue("description", property.description);
+      setValue("fullAddress", property.fullAddress);
+      setValue("city", property.city);
+      setValue("province", property.province);
+      setValue("country", property.country);
+      setValue("latitude", property.latitude);
+      setValue("longitude", property.longitude);
+
+      setValue("numberOfBathrooms", property.numberOfBathrooms);
+      setSelectedAmenities(
+        property.propertyAmenities.map((amenity) => amenity.amenityId),
+      );
+      setImages(
+        property.propertyImages.map((image) => ({
+          id: image.id,
+          file: undefined,
+          preview: image.imageUrl,
+          isCover: image.isCover,
+          order: image.order,
+        })),
+      );
+    }
+  }, [property]);
+
+  if (isLoading || isLoadingProperty) {
     return <LoaderFetching />;
   }
 
@@ -282,7 +323,15 @@ function Properties() {
                 </div>
 
                 <div className="relative">
-                  <Map onSelect={handleMapSelect} />
+                  {property?.latitude && property?.longitude && (
+                    <Map
+                      onSelect={handleMapSelect}
+                      initialLocation={{
+                        lat: property?.latitude!,
+                        lng: property?.longitude!,
+                      }}
+                    />
+                  )}
                   {errors.latitude && (
                     <p className="text-red-500 text-sm mt-1">
                       {errors.latitude.message}
@@ -388,4 +437,4 @@ function Properties() {
   );
 }
 
-export default Properties;
+export default FormEditProperties;
