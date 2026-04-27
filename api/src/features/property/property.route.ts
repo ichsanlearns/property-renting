@@ -27,6 +27,12 @@ router.patch(
   PropertyController.update,
 );
 
+router.delete(
+  "/:propertyId",
+  authMiddleware,
+  PropertyController.deleteProperty,
+);
+
 router.get(
   "/:propertyId/full-info",
   PropertyController.getByPropertyIdFullInfo,

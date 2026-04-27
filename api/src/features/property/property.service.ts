@@ -761,3 +761,30 @@ export const getPropertyRoomPricesDate = async ({
 
   return result;
 };
+
+export const deleteProperty = async (propertyId: string, tenantId: string) => {
+  const property = await prisma.property.findUnique({
+    where: {
+      id: propertyId,
+    },
+    select: {
+      id: true,
+      name: true,
+      tenantId: true,
+    },
+  });
+
+  if (!property) {
+    throw new AppError("Property not found", 404);
+  }
+
+  if (property.tenantId !== tenantId) {
+    throw new AppError("Unauthorized", 401);
+  }
+
+  await prisma.property.delete({
+    where: {
+      id: propertyId,
+    },
+  });
+};

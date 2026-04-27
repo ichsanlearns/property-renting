@@ -264,3 +264,16 @@ export const getPropertyRoomPricesDate = catchAsync(
     });
   },
 );
+
+export const deleteProperty = catchAsync(
+  async (req: Request, res: Response) => {
+    const tenantId = req.user?.userId!;
+    const { propertyId } = req.params as { propertyId: string };
+
+    await PropertyService.deleteProperty(propertyId, tenantId);
+
+    res.status(200).json({
+      message: "Property deleted successfully",
+    });
+  },
+);
