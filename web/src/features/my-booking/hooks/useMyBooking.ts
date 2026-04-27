@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
-import { format } from "date-fns";
+import { format, differenceInCalendarDays } from "date-fns";
+import toast from "react-hot-toast";
 
-import { getMyReservationsRequest } from "../../reservations/api/reservations.service";
+import { getMyReservationsRequest, cancelReservationRequest } from "../../reservations/api/reservations.service";
+
 import { formatRupiah } from "../../../shared/utils/price.util";
 
 export default function useMyBooking() {
@@ -16,43 +18,74 @@ export default function useMyBooking() {
       try {
         const res = await getMyReservationsRequest();
 
+        const today = new Date();
+
         const mapped = res.data.map((item: any) => {
           let status = "";
           let statusColor = "";
           let dotColor = "";
+          let helperText = "";
 
-          const today = new Date();
-          const checkOutDate = new Date(item.checkOutDate);
+          const checkIn = new Date(item.checkInDate);
+          checkIn.setHours(0, 0, 0, 0);
 
-          const stayFinished = checkOutDate < today;
+          const checkOut = new Date(item.checkOutDate);
+          checkOut.setHours(0, 0, 0, 0);
+
+          const stayFinished = today > checkOut;
+
+          const beforeCheckin = today < checkIn;
+
+          const ongoing = today >= checkIn && today <= checkOut;
 
           switch (item.status) {
             case "WAITING_PAYMENT":
-              status = "Waiting for Payment";
+              status = "Waiting Payment";
               statusColor = "bg-amber-100 text-amber-700";
               dotColor = "bg-amber-500";
+              helperText = "Complete payment to secure your stay";
               break;
 
             case "WAITING_CONFIRMATION":
-              status = "Waiting for Confirmation";
+              status = "Waiting Confirmation";
               statusColor = "bg-blue-100 text-blue-700";
               dotColor = "bg-blue-500";
+              helperText = "Host is reviewing your payment";
               break;
 
             case "PAID":
-              status = stayFinished ? "Ready to Review" : "Confirmed";
-              statusColor = stayFinished ? "bg-violet-100 text-violet-700" : "bg-emerald-100 text-emerald-700";
-              dotColor = stayFinished ? "bg-violet-500" : "bg-emerald-500";
+              if (beforeCheckin) {
+                const days = differenceInCalendarDays(checkIn, today);
+
+                status = "Upcoming";
+                statusColor = "bg-sky-100 text-sky-700";
+                dotColor = "bg-sky-500";
+                helperText = days === 0 ? "Check-in today" : `Check-in in ${days} day${days > 1 ? "s" : ""}`;
+              } else if (ongoing) {
+                const daysLeft = differenceInCalendarDays(checkOut, today);
+
+                status = "Ongoing Stay";
+                statusColor = "bg-emerald-100 text-emerald-700";
+                dotColor = "bg-emerald-500";
+                helperText = daysLeft === 0 ? "Checkout today" : `${daysLeft} day${daysLeft > 1 ? "s" : ""} left`;
+              } else {
+                status = "Ready to Review";
+                statusColor = "bg-violet-100 text-violet-700";
+                dotColor = "bg-violet-500";
+                helperText = "Tell others about your stay";
+              }
               break;
 
             case "REVIEWED":
               status = "Completed";
               statusColor = "bg-slate-100 text-slate-600";
+              helperText = "Thanks for your review";
               break;
 
             case "CANCELED":
               status = "Cancelled";
               statusColor = "bg-red-100 text-red-700";
+              helperText = "Reservation cancelled";
               break;
 
             default:
@@ -69,13 +102,14 @@ export default function useMyBooking() {
 
             price: formatRupiah(Number(item.totalAmount)),
 
-            date: `${format(new Date(item.checkInDate), "MMM dd")} - ${format(new Date(item.checkOutDate), "MMM dd, yyyy")}`,
+            date: `${format(checkIn, "MMM dd")} - ${format(checkOut, "MMM dd, yyyy")}`,
 
             guests: item.guestCount || 2,
 
             status,
             statusColor,
             dotColor,
+            helperText,
 
             img: item.roomType.roomTypeImages?.[0]?.imageUrl || "https://via.placeholder.com/300",
 
@@ -97,6 +131,36 @@ export default function useMyBooking() {
     fetchData();
   }, []);
 
+  const handleCancelBooking = async (id: string) => {
+    try {
+      toast.loading("Canceling booking...", { id: "cancel-booking" });
+
+      await cancelReservationRequest(id);
+
+      setBookings((prev) =>
+        prev.map((booking) =>
+          booking.id === id
+            ? {
+                ...booking,
+                status: "Cancelled",
+                statusColor: "bg-red-100 text-red-700",
+                dotColor: "",
+                helperText: "Reservation cancelled",
+                isCancelled: true,
+                canReview: false,
+              }
+            : booking,
+        ),
+      );
+
+      toast.success("Booking canceled successfully", {
+        id: "cancel-booking",
+      });
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || "Failed to cancel booking", { id: "cancel-booking" });
+    }
+  };
+
   const filteredBookings = useMemo(() => {
     return bookings.filter((booking) => {
       const matchSearch = booking.name.toLowerCase().includes(search.toLowerCase()) || booking.reservationCode.toLowerCase().includes(search.toLowerCase());
@@ -114,5 +178,6 @@ export default function useMyBooking() {
     statusFilter,
     setStatusFilter,
     filteredBookings,
+    handleCancelBooking,
   };
 }

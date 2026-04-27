@@ -83,3 +83,23 @@ export const getReservationByIdController = catchAsync(async (req: Request, res:
     data: result,
   });
 });
+
+export const cancelReservationController = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  if (typeof id !== "string") {
+    return res.status(400).json({
+      message: "Invalid reservation id",
+    });
+  }
+
+  const result = await reservationService.cancelReservation({
+    reservationId: id,
+    userId: req.user!.userId,
+  });
+
+  res.status(200).json({
+    message: "Reservation canceled successfully",
+    data: result,
+  });
+});

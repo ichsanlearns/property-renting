@@ -208,3 +208,28 @@ export const getReservationById = async ({ id, userId }: { id: string; userId: s
 
   return reservation;
 };
+
+export const cancelReservation = async ({ reservationId, userId }: { reservationId: string; userId: string }) => {
+  const reservation = await prisma.reservation.findUnique({
+    where: { id: reservationId },
+  });
+
+  if (!reservation) {
+    throw new AppError("Reservation not found", 404);
+  }
+
+  if (reservation.customerId !== userId) {
+    throw new AppError("Unauthorized", 403);
+  }
+
+  if (reservation.status !== ReservationStatus.WAITING_PAYMENT) {
+    throw new AppError("Only unpaid reservations can be canceled", 400);
+  }
+
+  return await prisma.reservation.update({
+    where: { id: reservationId },
+    data: {
+      status: ReservationStatus.CANCELED,
+    },
+  });
+};
