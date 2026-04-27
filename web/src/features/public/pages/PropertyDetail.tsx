@@ -7,16 +7,14 @@ import { format } from "date-fns";
 import { formatRupiah } from "../../../shared/utils/price.util";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  createReservationSchema,
-  type CreateReservationInput,
-} from "../../reservations/schema/reservations.schema";
+import { createReservationSchema, type CreateReservationInput } from "../../reservations/schema/reservations.schema";
 import toast from "react-hot-toast";
 import { createReservationRequest } from "../../reservations/api/reservations.service";
 import { useAuthStore } from "../../auth/stores/auth.store";
 import LoaderFetching from "../../../shared/ui/LoaderFetching";
 import PropertyImageGallery from "../components/property-images/PropertyImagesGallery";
 import ImageGallery from "../components/ImageGallery";
+import PropertyReviewSection from "../components/PropertyReviewSection";
 
 type SelectedDateRoomAvailability = {
   id: string;
@@ -63,10 +61,8 @@ function PropertyDetail() {
     checkOutDate: null,
     numberOfNights: 0,
   });
-  const [selectedRoom, setSelectedRoom] =
-    useState<SelectedDateRoomAvailability | null>(null);
-  const [selectedDateRoomAvailability, setSelectedDateRoomAvailability] =
-    useState<SelectedDateRoomAvailability[]>([]);
+  const [selectedRoom, setSelectedRoom] = useState<SelectedDateRoomAvailability | null>(null);
+  const [selectedDateRoomAvailability, setSelectedDateRoomAvailability] = useState<SelectedDateRoomAvailability[]>([]);
 
   const {
     setValue,
@@ -94,12 +90,7 @@ function PropertyDetail() {
   }) => {
     if (selectedDateRoom.checkInDate && selectedDateRoom.checkOutDate) {
       if (selectedDateRoom.availableRooms.length > 0) {
-        const availableMap = new Map(
-          selectedDateRoom.availableRooms.map((room) => [
-            room.roomTypeId,
-            room,
-          ]),
-        );
+        const availableMap = new Map(selectedDateRoom.availableRooms.map((room) => [room.roomTypeId, room]));
 
         const roomTypeAvailability = property?.roomTypes
           .filter((roomType) => availableMap.has(roomType.id))
@@ -142,26 +133,14 @@ function PropertyDetail() {
       numberOfNights: selectedDateRoom.numberOfNights,
     });
 
-    setValue(
-      "checkInDate",
-      format(selectedDateRoom.checkInDate!, "yyyy-MM-dd"),
-      { shouldValidate: true },
-    );
-    setValue(
-      "checkOutDate",
-      format(selectedDateRoom.checkOutDate!, "yyyy-MM-dd"),
-      { shouldValidate: true },
-    );
+    setValue("checkInDate", format(selectedDateRoom.checkInDate!, "yyyy-MM-dd"), { shouldValidate: true });
+    setValue("checkOutDate", format(selectedDateRoom.checkOutDate!, "yyyy-MM-dd"), { shouldValidate: true });
     setValue("numberOfNights", selectedDateRoom.numberOfNights, {
       shouldValidate: selectedDateRoom.numberOfNights > 0,
     });
   };
 
-  const roomAvailability =
-    selectedDateRoomAvailability.length > 0 &&
-    selectedDateRoomAvailability[0]?.viewType !== "NO_DATA"
-      ? selectedDateRoomAvailability
-      : (property?.roomTypes ?? []);
+  const roomAvailability = selectedDateRoomAvailability.length > 0 && selectedDateRoomAvailability[0]?.viewType !== "NO_DATA" ? selectedDateRoomAvailability : (property?.roomTypes ?? []);
 
   const handleSelectRoom = (roomType: SelectedDateRoomAvailability) => {
     if (selectedRoom?.id === roomType.id) {
@@ -210,9 +189,7 @@ function PropertyDetail() {
       navigate(`/reservations/${response.data.reservationCode}`);
     } catch (error: any) {
       toast.dismiss();
-      toast.error(
-        error.response?.data.message || "Failed to create reservation",
-      );
+      toast.error(error.response?.data.message || "Failed to create reservation");
     }
   };
 
@@ -229,22 +206,14 @@ function PropertyDetail() {
     <div className="bg-background text-on-surface antialiased">
       <main className="max-w-7xl mx-auto px-6 pt-16 pb-24">
         <header className="mb-8">
-          <h1 className="text-3xl font-extrabold tracking-tight text-on-surface mb-2">
-            {property?.name}
-          </h1>
+          <h1 className="text-3xl font-extrabold tracking-tight text-on-surface mb-2">{property?.name}</h1>
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-4 text-sm font-semibold">
               <span className="flex items-center gap-1">
-                <span
-                  className="material-symbols-outlined text-primary text-lg"
-                  style={{ fontVariationSettings: "'FILL' 1" }}
-                >
+                <span className="material-symbols-outlined text-primary text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>
                   star
                 </span>
-                {property?.averageRating ?? 0} ·{" "}
-                <span className="underline cursor-pointer">
-                  {property?.reviewCount ?? 0} reviews
-                </span>
+                {property?.averageRating ?? 0} · <span className="underline cursor-pointer">{property?.reviewCount ?? 0} reviews</span>
               </span>
               <span className="text-on-surface-variant">·</span>
               <span className="underline cursor-pointer">
@@ -253,38 +222,25 @@ function PropertyDetail() {
             </div>
           </div>
         </header>
-        <PropertyImageGallery
-          images={property?.propertyImages}
-          handleImageClick={() => setShowPropertyGallery(true)}
-        />
+        <PropertyImageGallery images={property?.propertyImages} handleImageClick={() => setShowPropertyGallery(true)} />
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
           <div className="lg:col-span-2 space-y-12">
             <section>
               <div className="flex justify-between items-start border-b border-primary/10 pb-8 mb-8">
                 <div>
                   <h2 className="text-2xl font-bold">
-                    Entire {property?.category.name} hosted by{" "}
-                    {property?.tenant.firstName}
+                    Entire {property?.category.name} hosted by {property?.tenant.firstName}
                   </h2>
-                  <p className="text-on-surface-variant font-medium mt-1">
-                    10 guests · 5 bedrooms · 6 beds ·{" "}
-                    {property?.numberOfBathrooms} baths
-                  </p>
+                  <p className="text-on-surface-variant font-medium mt-1">10 guests · 5 bedrooms · 6 beds · {property?.numberOfBathrooms} baths</p>
                 </div>
                 <div className="relative">
                   <img
                     className="w-14 h-14 rounded-full object-cover border border-primary/10"
                     data-alt="Friendly female host portrait Sarah"
-                    src={
-                      property?.tenant.profileImage ||
-                      `https://ui-avatars.com/api/?name=${property?.tenant.firstName}`
-                    }
+                    src={property?.tenant.profileImage || `https://ui-avatars.com/api/?name=${property?.tenant.firstName}`}
                   />
                   <div className="absolute -bottom-1 -right-1 bg-primary text-white rounded-full p-1 border-2 border-white">
-                    <span
-                      className="material-symbols-outlined text-[12px]"
-                      style={{ fontVariationSettings: "'FILL' 1" }}
-                    >
+                    <span className="material-symbols-outlined text-[12px]" style={{ fontVariationSettings: "'FILL' 1" }}>
                       verified
                     </span>
                   </div>
@@ -293,68 +249,43 @@ function PropertyDetail() {
               <div className="space-y-6">
                 {property?.propertyAmenities.map((amenity, index) => (
                   <div key={index} className="flex gap-6">
-                    <span className="material-symbols-outlined text-2xl text-on-surface">
-                      {amenity.amenity.icon}
-                    </span>
+                    <span className="material-symbols-outlined text-2xl text-on-surface">{amenity.amenity.icon}</span>
                     <div>
                       <h3 className="font-bold">{amenity.amenity.name}</h3>
-                      <p className="text-on-surface-variant text-sm mt-0.5">
-                        {amenity.amenity.description}
-                      </p>
+                      <p className="text-on-surface-variant text-sm mt-0.5">{amenity.amenity.description}</p>
                     </div>
                   </div>
                 ))}
               </div>
             </section>
             <section className="border-b border-primary/10 pb-8 mb-8">
-              <p className="text-slate-700 leading-relaxed">
-                {property?.description}
-              </p>
+              <p className="text-slate-700 leading-relaxed">{property?.description}</p>
             </section>
+            <PropertyReviewSection propertyId={propertyId} />
             {errors.numberOfNights?.message && (
               <div className="bg-primary-container border border-primary/20 px-4 py-3 rounded-lg flex items-center gap-3 mb-6">
-                <span
-                  className="material-symbols-outlined text-primary"
-                  style={{ fontVariationSettings: "'FILL' 1" }}
-                >
+                <span className="material-symbols-outlined text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>
                   error
                 </span>
-                <p className="text-primary text-sm font-bold uppercase tracking-wide">
-                  Please select check in and check out dates to continue
-                </p>
+                <p className="text-primary text-sm font-bold uppercase tracking-wide">Please select check in and check out dates to continue</p>
               </div>
             )}
-            <DatePicker
-              propertyId={propertyId}
-              propertyName={property?.name}
-              handleSelectDateRoom={handleSelectDateRoom}
-              selectedRoomTypeId={selectedRoom?.id ?? null}
-            />
-            <section
-              className={`${noRoomAvailable ? "text-center" : ""} border-b border-primary/10 pb-8 mb-8`}
-            >
+            <DatePicker propertyId={propertyId} propertyName={property?.name} handleSelectDateRoom={handleSelectDateRoom} selectedRoomTypeId={selectedRoom?.id ?? null} />
+            <section className={`${noRoomAvailable ? "text-center" : ""} border-b border-primary/10 pb-8 mb-8`}>
               <h2 className="text-2xl font-bold ">{`${selectedDateRoomAvailability.length > 0 ? (noRoomAvailable ? "No rooms available for " : "Available rooms for ") : "Where you'll stay"}`}</h2>
               {selectedDateRoomAvailability.length > 0 ? (
                 <p className="text-primary text-sm mt-0.5 mb-6 font-bold">
-                  {format(dateRange.checkInDate!, "dd MMMM yyyy")} -{" "}
-                  {format(dateRange.checkOutDate!, "dd MMMM yyyy")}
+                  {format(dateRange.checkInDate!, "dd MMMM yyyy")} - {format(dateRange.checkOutDate!, "dd MMMM yyyy")}
                 </p>
               ) : (
-                <p className="text-red-500 italic text-sm mt-0.5 mb-6 font-bold">
-                  (* Select dates to see available rooms )
-                </p>
+                <p className="text-red-500 italic text-sm mt-0.5 mb-6 font-bold">(* Select dates to see available rooms )</p>
               )}
               {errors.roomTypeId?.message && (
                 <div className="bg-primary-container border border-primary/20 px-4 py-3 rounded-lg flex items-center gap-3 mb-6">
-                  <span
-                    className="material-symbols-outlined text-primary"
-                    style={{ fontVariationSettings: "'FILL' 1" }}
-                  >
+                  <span className="material-symbols-outlined text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>
                     error
                   </span>
-                  <p className="text-primary text-sm font-bold uppercase tracking-wide">
-                    Please select a room to continue
-                  </p>
+                  <p className="text-primary text-sm font-bold uppercase tracking-wide">Please select a room to continue</p>
                 </div>
               )}
               {!noRoomAvailable && (
@@ -364,53 +295,29 @@ function PropertyDetail() {
                       key={index}
                       className={`flex  rounded-xl border overflow-hidden cursor-pointer hover:shadow-md transition-shadow ${selectedRoom?.id === roomType.id ? "border-primary bg-primary/2 border-2" : "border-primary/10 bg-white"}`}
                     >
-                      <div
-                        onClick={() => handleRoomImageClick(roomType)}
-                        className="w-1/3 aspect-4/3 relative"
-                      >
-                        <img
-                          className="w-full h-full object-cover"
-                          data-alt="Luxury master suite with ocean view"
-                          src={roomType.roomTypeImages[0].imageUrl}
-                        />
+                      <div onClick={() => handleRoomImageClick(roomType)} className="w-1/3 aspect-4/3 relative">
+                        <img className="w-full h-full object-cover" data-alt="Luxury master suite with ocean view" src={roomType.roomTypeImages[0].imageUrl} />
                         <div className="absolute bottom-2 right-2 bg-black/60 text-white text-[10px] font-bold px-1.5 py-0.5 rounded backdrop-blur-sm">
-                          {roomType.roomTypeImages.length > 1 &&
-                            `+${roomType.roomTypeImages.length - 1} photos`}
+                          {roomType.roomTypeImages.length > 1 && `+${roomType.roomTypeImages.length - 1} photos`}
                         </div>
                       </div>
-                      <div
-                        onClick={() => handleSelectRoom(roomType)}
-                        className="p-4 flex flex-col justify-between w-2/3"
-                      >
+                      <div onClick={() => handleSelectRoom(roomType)} className="p-4 flex flex-col justify-between w-2/3">
                         <div>
                           <div className="flex justify-between items-start">
-                            <h3 className="font-bold text-lg">
-                              {roomType.name}
-                            </h3>
-                            <span className="text-primary font-bold text-sm">
-                              {formatRupiah(roomType.price)}/night
-                            </span>
+                            <h3 className="font-bold text-lg">{roomType.name}</h3>
+                            <span className="text-primary font-bold text-sm">{formatRupiah(roomType.price)}/night</span>
                           </div>
                           <p className="text-on-surface-variant text-sm mt-1">
-                            {toTitleCase(roomType.bedType)} bed ·{" "}
-                            {toTitleCase(roomType.viewType)} view ·{" "}
-                            {toTitleCase(roomType.bathroomType)} bathroom
+                            {toTitleCase(roomType.bedType)} bed · {toTitleCase(roomType.viewType)} view · {toTitleCase(roomType.bathroomType)} bathroom
                           </p>
                         </div>
                         <div className="flex items-center gap-2">
                           {roomType.roomAmenities.map((amenity, index) => (
-                            <span
-                              key={index}
-                              className="material-symbols-outlined text-on-surface-variant text-lg"
-                            >
+                            <span key={index} className="material-symbols-outlined text-on-surface-variant text-lg">
                               {amenity.amenity.icon}
                             </span>
                           ))}
-                          {selectedRoom?.id === roomType.id && (
-                            <span className="bg-primary text-white px-2.5 py-1 rounded-lg text-[11px] font-extrabold uppercase tracking-wide ml-auto">
-                              Selected
-                            </span>
-                          )}
+                          {selectedRoom?.id === roomType.id && <span className="bg-primary text-white px-2.5 py-1 rounded-lg text-[11px] font-extrabold uppercase tracking-wide ml-auto">Selected</span>}
                         </div>
                       </div>
                     </div>
@@ -424,26 +331,17 @@ function PropertyDetail() {
               <div className="flex justify-between items-baseline mb-6">
                 {selectedRoom ? (
                   <div className="flex items-baseline gap-1">
-                    <span className="text-2xl font-extrabold text-on-surface">
-                      {formatRupiah(selectedRoom?.price)}
-                    </span>
-                    <span className="text-on-surface-variant text-sm font-medium">
-                      /night
-                    </span>
+                    <span className="text-2xl font-extrabold text-on-surface">{formatRupiah(selectedRoom?.price)}</span>
+                    <span className="text-on-surface-variant text-sm font-medium">/night</span>
                   </div>
                 ) : (
                   <div className="flex items-baseline gap-1">
-                    <span className="text-2xl font-extrabold text-on-surface">
-                      Select room
-                    </span>
+                    <span className="text-2xl font-extrabold text-on-surface">Select room</span>
                   </div>
                 )}
                 {selectedRoom && selectedRoom?.reviewCount > 0 ? (
                   <div className="flex items-center gap-1 text-sm font-bold">
-                    <span
-                      className="material-symbols-outlined text-primary text-sm"
-                      style={{ fontVariationSettings: "'FILL' 1" }}
-                    >
+                    <span className="material-symbols-outlined text-primary text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>
                       star
                     </span>
                     {selectedRoom?.averageRating || 0}
@@ -456,33 +354,17 @@ function PropertyDetail() {
               <div className="border border-slate-300 rounded-xl mb-6 overflow-hidden">
                 <div className="grid grid-cols-2 border-b border-slate-300">
                   <div className="p-3 border-r border-slate-300 hover:bg-slate-50 cursor-pointer">
-                    <label className="block text-[10px] font-extrabold text-on-surface uppercase tracking-wider">
-                      Check-in
-                    </label>
-                    <span className="text-sm font-medium">
-                      {dateRange.checkInDate
-                        ? format(dateRange.checkInDate, "MMM dd, yyyy")
-                        : "Select date"}
-                    </span>
+                    <label className="block text-[10px] font-extrabold text-on-surface uppercase tracking-wider">Check-in</label>
+                    <span className="text-sm font-medium">{dateRange.checkInDate ? format(dateRange.checkInDate, "MMM dd, yyyy") : "Select date"}</span>
                   </div>
                   <div className="p-3 hover:bg-slate-50 cursor-pointer">
-                    <label className="block text-[10px] font-extrabold text-on-surface uppercase tracking-wider">
-                      Check-out
-                    </label>
-                    <span className="text-sm font-medium">
-                      {dateRange.checkOutDate
-                        ? format(dateRange.checkOutDate, "MMM dd, yyyy")
-                        : "Select date"}
-                    </span>
+                    <label className="block text-[10px] font-extrabold text-on-surface uppercase tracking-wider">Check-out</label>
+                    <span className="text-sm font-medium">{dateRange.checkOutDate ? format(dateRange.checkOutDate, "MMM dd, yyyy") : "Select date"}</span>
                   </div>
                 </div>
                 <div className="p-3 hover:bg-slate-50 cursor-pointer">
-                  <label className="block text-[10px] font-extrabold text-on-surface uppercase tracking-wider">
-                    Selected Room
-                  </label>
-                  <span className="text-sm font-bold text-primary">
-                    {selectedRoom?.name || "Select room"}
-                  </span>
+                  <label className="block text-[10px] font-extrabold text-on-surface uppercase tracking-wider">Selected Room</label>
+                  <span className="text-sm font-bold text-primary">{selectedRoom?.name || "Select room"}</span>
                 </div>
               </div>
               <button
@@ -501,42 +383,24 @@ function PropertyDetail() {
                   "Reserve Room"
                 )}
               </button>
-              <p className="text-center text-on-surface-variant text-sm mb-6">
-                You won't be charged yet
-              </p>
+              <p className="text-center text-on-surface-variant text-sm mb-6">You won't be charged yet</p>
               {selectedRoom?.price && dateRange.numberOfNights > 0 && (
                 <div className="space-y-4">
                   <div className="flex justify-between text-sm">
                     <span className="underline text-on-surface-variant font-medium">
-                      {formatRupiah(selectedRoom?.price)} x{" "}
-                      {dateRange.numberOfNights} nights
+                      {formatRupiah(selectedRoom?.price)} x {dateRange.numberOfNights} nights
                     </span>
-                    <span className="font-medium">
-                      {formatRupiah(
-                        selectedRoom?.price * dateRange.numberOfNights,
-                      )}
-                    </span>
+                    <span className="font-medium">{formatRupiah(selectedRoom?.price * dateRange.numberOfNights)}</span>
                   </div>
 
                   <div className="flex justify-between text-sm">
-                    <span className="underline text-on-surface-variant font-medium">
-                      Occupancy taxes &amp; fees
-                    </span>
-                    <span className="font-medium">
-                      {formatRupiah(
-                        selectedRoom?.price * dateRange.numberOfNights * 0.1,
-                      )}
-                    </span>
+                    <span className="underline text-on-surface-variant font-medium">Occupancy taxes &amp; fees</span>
+                    <span className="font-medium">{formatRupiah(selectedRoom?.price * dateRange.numberOfNights * 0.1)}</span>
                   </div>
                   <hr className="border-primary/10" />
                   <div className="flex justify-between text-lg font-extrabold">
                     <span>Total</span>
-                    <span>
-                      {formatRupiah(
-                        selectedRoom?.price * dateRange.numberOfNights +
-                          selectedRoom?.price * dateRange.numberOfNights * 0.1,
-                      )}
-                    </span>
+                    <span>{formatRupiah(selectedRoom?.price * dateRange.numberOfNights + selectedRoom?.price * dateRange.numberOfNights * 0.1)}</span>
                   </div>
                 </div>
               )}
@@ -544,22 +408,8 @@ function PropertyDetail() {
           </div>
         </div>
       </main>
-      {showRoomGallery && (
-        <ImageGallery
-          images={selectedRoom?.roomTypeImages!}
-          setShowImageGallery={setShowRoomGallery}
-          title={selectedRoom?.name || ""}
-          location={property?.name || ""}
-        />
-      )}
-      {showPropertyGallery && (
-        <ImageGallery
-          images={property?.propertyImages!}
-          setShowImageGallery={setShowPropertyGallery}
-          title={property?.name || ""}
-          location={property?.city || ""}
-        />
-      )}
+      {showRoomGallery && <ImageGallery images={selectedRoom?.roomTypeImages!} setShowImageGallery={setShowRoomGallery} title={selectedRoom?.name || ""} location={property?.name || ""} />}
+      {showPropertyGallery && <ImageGallery images={property?.propertyImages!} setShowImageGallery={setShowPropertyGallery} title={property?.name || ""} location={property?.city || ""} />}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { catchAsync } from "../../shared/utils/catch-async.util.js";
 import * as reviewService from "./review.service.js";
-import { createReviewSchema } from "./review.validator.js";
+import { createReviewSchema, replyReviewSchema } from "./review.validator.js";
 
 export const createReviewController = catchAsync(async (req, res) => {
   const parsed = createReviewSchema.parse(req.body);
@@ -25,6 +25,22 @@ export const getPropertyReviewsController = catchAsync(async (req, res) => {
 
   res.status(200).json({
     message: "Property Reviews Retrieved Successfully",
+    data: result,
+  });
+});
+
+export const replyReviewController = catchAsync(async (req, res) => {
+  const { reviewId } = req.params as { reviewId: string };
+  const parsed = replyReviewSchema.parse(req.body);
+
+  const result = await reviewService.replyReview({
+    reviewId,
+    tenantId: req.user!.userId,
+    reply: parsed.reply,
+  });
+
+  res.status(200).json({
+    message: "Reply submitted successfully",
     data: result,
   });
 });
