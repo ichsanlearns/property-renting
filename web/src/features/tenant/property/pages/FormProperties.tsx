@@ -20,6 +20,7 @@ import { useCategories } from "../hooks/useCategories";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "../../../../shared/lib/queryKeys.lib";
 import { useNavigate } from "react-router-dom";
+import LoaderFetching from "../../../../shared/ui/LoaderFetching";
 
 type Category = {
   id: string;
@@ -121,7 +122,7 @@ function Properties() {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <LoaderFetching />;
   }
 
   if (error) {

@@ -27,9 +27,13 @@ function PropertyListDetail() {
       </header>
       <div className="p-6 md:p-10 lg:px-12 xl:px-16 mx-auto w-full max-w-7xl flex flex-col gap-8">
         <nav className="flex items-center gap-2 text-sm text-on-surface-variant">
-          <a className="hover:text-primary transition-colors" href="#">
-            Listings2
-          </a>
+          <button
+            type="button"
+            onClick={() => navigate("/tenant/properties")}
+            className="hover:text-primary transition-colors cursor-pointer"
+          >
+            Listings
+          </button>
           <span
             className="material-symbols-outlined text-xs"
             data-icon="chevron_right"

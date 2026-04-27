@@ -1,8 +1,9 @@
+import LoaderFetching from "../../../../shared/ui/LoaderFetching";
 import { usePropertyByTenantId } from "../hooks/useProperty";
 import { useNavigate } from "react-router-dom";
 
 function PropertyList() {
-  const { data: properties } = usePropertyByTenantId();
+  const { data: properties, isLoading } = usePropertyByTenantId();
   const navigate = useNavigate();
 
   const handleNavigateToPropertyDetail = (propertyId: string) => {
@@ -16,6 +17,10 @@ function PropertyList() {
       },
     });
   };
+
+  if (isLoading) {
+    return <LoaderFetching />;
+  }
 
   return (
     <main className="pt-24 pb-12 px-6 md:px-12 md:pt-12 min-h-screen">
@@ -33,17 +38,12 @@ function PropertyList() {
             <button className="px-4 py-2 text-[14px] font-semibold bg-surface text-primary rounded-lg shadow-sm">
               All ({properties?.length})
             </button>
-            {/* <button className="px-4 py-2 text-[14px] font-semibold text-secondary hover:text-primary transition-colors">
-              Published (8)
-            </button>
-            <button className="px-4 py-2 text-[14px] font-semibold text-secondary hover:text-primary transition-colors">
-              Draft (3)
-            </button>
-            <button className="px-4 py-2 text-[14px] font-semibold text-secondary hover:text-primary transition-colors">
-              Archived (1)
-            </button> */}
           </div>
-          <button className="hidden md:flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-xl font-semibold shadow-md shadow-primary/20 hover:shadow-lg active:scale-[0.98] transition-all">
+          <button
+            type="button"
+            onClick={() => navigate(`/tenant/properties/create`)}
+            className="hidden md:flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-xl font-semibold shadow-md shadow-primary/20 hover:shadow-lg active:scale-[0.98] transition-all cursor-pointer"
+          >
             <span className="material-symbols-outlined text-sm">add</span>
             Add Property
           </button>
@@ -54,7 +54,7 @@ function PropertyList() {
           <div
             key={property.id}
             onClick={() => handleNavigateToPropertyDetail(property.id)}
-            className="flex flex-col md:flex-row bg-surface rounded-xl border border-outline-variant p-4 hover:shadow-xl hover:shadow-primary/5 transition-all group border-slate-200/60 shadow-sm hover:shadow-xl hover:-translate-y-0.5 hover:bg-slate-50/50 transition-all duration-300 md:gap-10 cursor-pointer"
+            className="flex flex-col md:flex-row bg-surface rounded-xl border border-outline-variant p-4 hover:shadow-xl hover:shadow-primary/5 transition-all group shadow-sm hover:-translate-y-0.5 hover:bg-slate-50/50 duration-300 md:gap-10 cursor-pointer"
           >
             <div className="relative w-full md:w-48 h-48 md:h-auto rounded-lg overflow-hidden shrink-0">
               <img
@@ -69,11 +69,11 @@ function PropertyList() {
             </div>
             <div className="flex flex-col justify-center flex-1 py-2">
               <div className="flex items-center gap-2 mb-1">
-                <span className="px-2 py-0.5 bg-surface-container-highest text-secondary text-[10px] font-bold uppercase rounded-md tracking-wider text-slate-400 font-semibold">
+                <span className="px-2 py-0.5 bg-surface-container-highest text-secondary text-[10px] font-bold uppercase rounded-md tracking-wider">
                   {property.category}
                 </span>
               </div>
-              <h2 className="text-[24px] text-slate-900 tracking-tight mb-1 font-extrabold text-[26px]">
+              <h2 className="text-[24px] text-slate-900 tracking-tight mb-1 font-extrabold">
                 {property.name}
               </h2>
               <p className="text-[14px] font-medium mb-4 flex items-center gap-1 text-slate-500/80">
@@ -84,7 +84,7 @@ function PropertyList() {
               </p>
               <div className="flex flex-wrap gap-2 mt-2">
                 {property.roomTypes.map((roomType) => (
-                  <div className="flex items-center gap-2 px-2.5 py-1 bg-surface-container-highest rounded-lg text-[11px] font-medium text-secondary border border-outline-variant/30 bg-white border-slate-100 shadow-sm">
+                  <div className="flex items-center gap-2 px-2.5 py-1 bg-surface-container-highest rounded-lg text-[11px] font-medium text-secondary border border-outline-variant/30 shadow-sm">
                     <span className="font-bold text-on-surface">
                       {roomType.name}
                     </span>
@@ -96,13 +96,6 @@ function PropertyList() {
                     </span>
                   </div>
                 ))}
-                {/* <div className="flex items-center gap-2 px-2.5 py-1 bg-surface-container-highest rounded-lg text-[11px] font-medium text-secondary border border-outline-variant/30 bg-white border-slate-100 shadow-sm">
-                  <span className="font-bold text-on-surface">Guest Wing</span>
-                  <span>•</span>
-                  <span>2 Guests</span>
-                  <span>•</span>
-                  <span className="text-primary font-bold">$380</span>
-                </div> */}
                 {property.roomTypes.length > 2 && (
                   <div className="flex items-center px-2.5 py-1 bg-surface-container-low rounded-lg text-[11px] font-bold text-primary border border-primary/10">
                     +{property.roomTypes.length - 2} more
@@ -142,26 +135,7 @@ function PropertyList() {
                 </div>
               </div>
             </div>
-            <div className="flex md:flex-col items-center justify-end gap-2 md:w-16 shrink-0 border-t md:border-t-0 md:border-l border-outline-variant pt-4 md:pt-0 md:pl-4">
-              {/* <button
-                className="p-2 text-secondary hover:text-primary hover:bg-primary-container/50 rounded-lg transition-colors"
-                title="Edit"
-              >
-                <span className="material-symbols-outlined">edit</span>
-              </button>
-              <button
-                className="p-2 text-secondary hover:text-primary hover:bg-primary-container/50 rounded-lg transition-colors"
-                title="View Details"
-              >
-                <span className="material-symbols-outlined">visibility</span>
-              </button>
-              <button
-                className="p-2 text-secondary hover:text-slate-900 hover:bg-surface-container-highest rounded-lg transition-colors ml-auto md:ml-0"
-                title="More"
-              >
-                <span className="material-symbols-outlined">more_vert</span>
-              </button> */}
-            </div>
+            <div className="flex md:flex-col items-center justify-end gap-2 md:w-16 shrink-0 border-t md:border-t-0 md:border-l border-outline-variant pt-4 md:pt-0 md:pl-4"></div>
           </div>
         ))}
         {/* <div className="flex flex-col md:flex-row bg-surface rounded-xl border border-outline-variant p-4 hover:shadow-xl hover:shadow-primary/5 transition-all group border-slate-200/60 shadow-sm hover:shadow-xl hover:-translate-y-0.5 hover:bg-slate-50/50 transition-all duration-300 md:gap-10">
