@@ -1,7 +1,7 @@
 import Footer from "../../../shared/ui/Footer";
 import { usePropertyAllBasic } from "../../tenant/property/hooks/useProperty";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import LoaderFetching from "../../../shared/ui/LoaderFetching";
 import PropertyCard from "../components/PropertyCard";
 import HeroCarousel from "../components/home-page/HeroCarousel";
@@ -11,6 +11,22 @@ import { heroData } from "../components/home-page/hero.data";
 function HomePage() {
   const navigate = useNavigate();
   const { data: properties, isLoading } = usePropertyAllBasic();
+
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const scrollLeft = () => {
+    scrollRef.current?.scrollBy({
+      left: -320,
+      behavior: "smooth",
+    });
+  };
+
+  const scrollRight = () => {
+    scrollRef.current?.scrollBy({
+      left: 320,
+      behavior: "smooth",
+    });
+  };
 
   useEffect(() => {
     window.scrollTo({
@@ -22,7 +38,23 @@ function HomePage() {
   return (
     <main>
       <HeroCarousel heroData={heroData} />
-      <section className="py-16 px-6 md:px-12 max-w-[1440px] mx-auto z-20">
+      <section className="relative py-16 px-6 md:px-12 max-w-[1440px] mx-auto z-20">
+        <button
+          onClick={scrollLeft}
+          className="absolute -left-4 top-[50%] z-10 bg-white/80 backdrop-blur-md shadow-lg border border-primary/50 w-12 h-12 rounded-full hidden md:flex items-center justify-center hover:bg-white hover:scale-105 hover:shadow-xl transition-all duration-300 cursor-pointer"
+        >
+          <span className="material-symbols-outlined text-primary ">
+            chevron_left
+          </span>
+        </button>
+        <button
+          onClick={scrollRight}
+          className="absolute -right-4 top-[50%] z-10 bg-white/80 backdrop-blur-md shadow-lg border border-primary/50 w-12 h-12 rounded-full hidden md:flex items-center justify-center hover:bg-white hover:scale-105 hover:shadow-xl transition-all duration-300 cursor-pointer"
+        >
+          <span className="material-symbols-outlined text-primary ">
+            chevron_right
+          </span>
+        </button>
         <div className="flex justify-between items-end mb-10">
           <div>
             <h2 className="text-3xl font-extrabold text-on-background tracking-tight">
@@ -32,9 +64,9 @@ function HomePage() {
               Hand-picked homes for every traveler.
             </p>
           </div>
-          <a
-            className="text-[#ff5c61] font-bold flex items-center hover:underline"
-            href="#"
+          <button
+            onClick={() => navigate("/search")}
+            className="text-[#ff5c61] font-bold flex items-center hover:underline cursor-pointer"
           >
             View all
             <span
@@ -43,11 +75,16 @@ function HomePage() {
             >
               arrow_forward
             </span>
-          </a>
+          </button>
         </div>
+
         {isLoading && <LoaderFetching />}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {properties && <PropertyCard properties={properties} />}
+        <div ref={scrollRef} className="flex gap-8 overflow-x-auto">
+          {properties?.map((p) => (
+            <div key={p.id} className="min-w-[300px] shrink-0">
+              <PropertyCard property={p} />
+            </div>
+          ))}
         </div>
       </section>
 

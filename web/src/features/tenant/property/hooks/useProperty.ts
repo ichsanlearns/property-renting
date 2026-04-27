@@ -64,33 +64,41 @@ export const usePropertySearch = ({
   search,
   checkIn,
   checkOut,
+  city,
   sortBy,
   order,
+  page,
 }: {
   search?: string;
   checkIn?: string;
   checkOut?: string;
   sortBy?: "name" | "price" | "createdAt";
   order?: "asc" | "desc";
+  city?: string;
+  page?: number;
 }) => {
   return useQuery({
     queryKey: queryKeys.property.search(
       search,
       checkIn,
       checkOut,
+      city,
       sortBy,
       order,
+      page,
     ),
     queryFn: () =>
       PropertyService.searchProperties({
         search,
         checkIn,
         checkOut,
+        city,
         sortBy,
         order,
+        page,
       }),
     select: (res) => res.data,
-    enabled: !!search || !!checkIn || !!checkOut || !!sortBy || !!order,
+
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
   });
@@ -125,6 +133,16 @@ export const usePropertyRoomPricesDate = ({
     },
     select: (res) => res.data,
     enabled: !!propertyId && !!startDate && !!endDate,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+  });
+};
+
+export const useCities = () => {
+  return useQuery({
+    queryKey: queryKeys.property.cities(),
+    queryFn: () => PropertyService.getCities(),
+    select: (res) => res.data,
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
   });

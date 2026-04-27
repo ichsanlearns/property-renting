@@ -19,8 +19,10 @@ type SearchPropertiesParams = {
   search?: string;
   checkIn?: string;
   checkOut?: string;
+  city?: string;
   sortBy?: "name" | "price" | "createdAt";
   order?: "asc" | "desc";
+  page?: number;
 };
 
 export const create = async ({
@@ -232,6 +234,7 @@ export const getAllBasic = async () => {
     where: {
       isPublished: "PUBLISHED",
     },
+    take: 8,
   });
 
   return properties.map((property) => ({
@@ -561,18 +564,28 @@ export const getByTenantId = async (tenantId: string) => {
 };
 
 export const searchByParams = async (params: SearchPropertiesParams) => {
-  const where: Prisma.PropertyWhereInput = params.search
-    ? {
-        isPublished: "PUBLISHED",
-        OR: [
-          { name: { contains: params.search, mode: "insensitive" } },
-          { city: { contains: params.search, mode: "insensitive" } },
-          { country: { contains: params.search, mode: "insensitive" } },
-        ],
-      }
-    : {};
-  let dates: Date[] = [];
+  const page = Number(params.page) || 1;
+  const limit = 6;
 
+  const where: Prisma.PropertyWhereInput = {
+    isPublished: "PUBLISHED",
+  };
+
+  if (params.search) {
+    where.name = {
+      contains: params.search,
+      mode: "insensitive",
+    };
+  }
+
+  if (params.city) {
+    where.city = {
+      contains: params.city,
+      mode: "insensitive",
+    };
+  }
+
+  let dates: Date[] = [];
   if (params.checkIn && params.checkOut) {
     dates = getDatesInRangeExclusive(params.checkIn, params.checkOut);
     where.roomTypes = {
@@ -629,9 +642,14 @@ export const searchByParams = async (params: SearchPropertiesParams) => {
                 }
               : false,
         },
-        orderBy: { basePrice: "asc" },
       },
     },
+    skip: (page - 1) * limit,
+    take: limit,
+  });
+
+  const totalProperties = await prisma.property.count({
+    where,
   });
 
   const filtered = properties.filter((property) => {
@@ -648,19 +666,27 @@ export const searchByParams = async (params: SearchPropertiesParams) => {
     });
   });
 
-  return filtered.map((property) => ({
-    id: property.id,
-    name: property.name,
-    city: property.city,
-    province: property.province,
-    latitude: property.latitude,
-    longitude: property.longitude,
-    country: property.country,
-    price: property.roomTypes[0]?.basePrice,
-    averageRating: property.averageRating,
-    reviewCount: property.reviewCount,
-    coverImage: property.propertyImages[0]?.imageUrl,
-  }));
+  return {
+    data: filtered.map((property) => ({
+      id: property.id,
+      name: property.name,
+      city: property.city,
+      province: property.province,
+      latitude: property.latitude,
+      longitude: property.longitude,
+      country: property.country,
+      price: property.roomTypes[0]?.basePrice,
+      averageRating: property.averageRating,
+      reviewCount: property.reviewCount,
+      coverImage: property.propertyImages[0]?.imageUrl,
+    })),
+    pagination: {
+      total: totalProperties,
+      page,
+      limit,
+      totalPages: Math.ceil(totalProperties / limit),
+    },
+  };
 };
 
 export const getPropertyRoomPricesDate = async ({
@@ -760,6 +786,21 @@ export const getPropertyRoomPricesDate = async ({
   // });
 
   return result;
+};
+
+export const getCities = async () => {
+  const cities = await prisma.property.groupBy({
+    by: ["city"],
+    where: {
+      isPublished: "PUBLISHED",
+    },
+    _count: {
+      city: true,
+    },
+  });
+
+  // return cities.map((city) => city.city);
+  return cities.map((city) => ({ name: city.city, count: city._count.city }));
 };
 
 export const deleteProperty = async (propertyId: string, tenantId: string) => {

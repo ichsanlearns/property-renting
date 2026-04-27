@@ -17,6 +17,7 @@ router.post(
 
 router.get("/", PropertyController.getAllBasic);
 router.get("/search", PropertyController.searchByParams);
+router.get("/cities", PropertyController.getCities);
 
 router.get("/tenant", authMiddleware, PropertyController.getByTenantId);
 

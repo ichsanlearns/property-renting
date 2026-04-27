@@ -216,16 +216,17 @@ export const searchByParams = catchAsync(
       throw new AppError("Invalid search parameters", 400);
     }
 
-    const { search, checkIn, checkOut, sortBy, order } = parsed.data;
+    const { search, checkIn, checkOut, city, sortBy, order, page } =
+      parsed.data;
 
     const finalSearch = typeof search === "string" ? search : undefined;
     const finalCheckIn = typeof checkIn === "string" ? checkIn : undefined;
     const finalCheckOut = typeof checkOut === "string" ? checkOut : undefined;
+    const finalCity = typeof city === "string" ? city : undefined;
+    const finalPage = typeof page === "number" ? page : undefined;
 
     const finalSortBy =
-      sortBy === "name" || sortBy === "price" || sortBy === "createdAt"
-        ? sortBy
-        : "createdAt";
+      sortBy === "name" || sortBy === "createdAt" ? sortBy : "createdAt";
 
     const finalOrder = order === "asc" || order === "desc" ? order : "desc";
 
@@ -235,11 +236,14 @@ export const searchByParams = catchAsync(
       ...(finalCheckIn && { checkIn: finalCheckIn }),
       ...(finalCheckOut && { checkOut: finalCheckOut }),
       ...(finalSearch && { search: finalSearch }),
+      ...(finalCity && { city: finalCity }),
+      ...(finalPage && { page: finalPage }),
     });
 
     res.status(200).json({
       message: "Properties search fetched successfully",
       data: properties,
+      pagination: {},
     });
   },
 );
@@ -264,6 +268,15 @@ export const getPropertyRoomPricesDate = catchAsync(
     });
   },
 );
+
+export const getCities = catchAsync(async (req: Request, res: Response) => {
+  const cities = await PropertyService.getCities();
+
+  res.status(200).json({
+    message: "Cities fetched successfully",
+    data: cities,
+  });
+});
 
 export const deleteProperty = catchAsync(
   async (req: Request, res: Response) => {

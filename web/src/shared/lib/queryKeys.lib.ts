@@ -1,5 +1,6 @@
 export const queryKeys = {
   property: {
+    cities: () => ["property", "cities"] as const,
     allBasic: () => ["property", "all", "basic"] as const,
     basic: (propertyId: string) => ["property", propertyId, "basic"] as const,
     detail: (propertyId: string) => ["property", propertyId, "detail"] as const,
@@ -10,10 +11,22 @@ export const queryKeys = {
       search?: string,
       checkIn?: string,
       checkOut?: string,
+      city?: string,
       sortBy?: "name" | "price" | "createdAt",
       order?: "asc" | "desc",
+      page?: number,
     ) =>
-      ["property", "search", search, checkIn, checkOut, sortBy, order] as const,
+      [
+        "property",
+        "search",
+        search,
+        checkIn,
+        checkOut,
+        city,
+        sortBy,
+        order,
+        page,
+      ] as const,
     roomPricesDate: (
       propertyId: string,
       startDate: string | null,

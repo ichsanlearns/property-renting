@@ -10,8 +10,10 @@ export const searchByParamsSchema = z.object({
   search: z.string().optional(),
   checkIn: z.string().optional(),
   checkOut: z.string().optional(),
+  city: z.string().optional(),
   sortBy: z.enum(["name", "price", "createdAt"]).optional(),
   order: z.enum(["asc", "desc"]).optional(),
+  page: z.coerce.number().optional(),
 });
 
 export type SearchByParamsInput = z.infer<typeof searchByParamsSchema>;

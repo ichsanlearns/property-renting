@@ -31,7 +31,7 @@ export const updateProperty = async (data: FormData, propertyId: string) => {
 
 export const getPropertyAllBasic = async () => {
   const response = await api.get<
-    ApiResponse<PropertyResponse.GetPropertyAllBasicResponse>
+    ApiResponse<PropertyResponse.GetPropertyAllBasicResponse[]>
   >(PROPERTY_ENDPOINTS.GET_ALL_BASIC);
   return response.data;
 };
@@ -70,12 +70,16 @@ export const searchProperties = async ({
   order,
   checkIn,
   checkOut,
+  city,
+  page,
 }: {
   search?: string;
   checkIn?: string;
   checkOut?: string;
+  city?: string;
   sortBy?: "name" | "price" | "createdAt";
   order?: "asc" | "desc";
+  page?: number;
 }) => {
   const response = await api.get<
     ApiResponse<PropertyResponse.GetPropertySearchResponse>
@@ -84,8 +88,10 @@ export const searchProperties = async ({
       search,
       checkIn,
       checkOut,
+      city,
       sortBy,
       order,
+      page,
     },
   });
   return response.data;
@@ -111,6 +117,13 @@ export const getPropertyRoomPricesDate = async ({
     },
     signal,
   });
+  return response.data;
+};
+
+export const getCities = async () => {
+  const response = await api.get<
+    ApiResponse<{ name: string; count: number }[]>
+  >(PROPERTY_ENDPOINTS.GET_CITIES);
   return response.data;
 };
 
