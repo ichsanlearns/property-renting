@@ -15,10 +15,17 @@ type CityOption = {
 };
 
 function SearchBar({
+  sentParams,
   search,
   checkIn,
   checkOut,
 }: {
+  sentParams?: (
+    search: string,
+    checkIn: string,
+    checkOut: string,
+    city: string,
+  ) => void;
   search?: string;
   checkIn?: string;
   checkOut?: string;
@@ -46,6 +53,15 @@ function SearchBar({
   });
 
   const handleSearch = (data: SearchSchema) => {
+    if (sentParams) {
+      sentParams(
+        data.param ?? "",
+        range?.from ? format(range.from, "yyyy-MM-dd") : "",
+        range?.to ? format(range.to, "yyyy-MM-dd") : "",
+        cityName ?? "",
+      );
+      return;
+    }
     const params = new URLSearchParams();
 
     if (data.param) {

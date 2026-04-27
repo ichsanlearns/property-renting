@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import PropertyCard from "../components/PropertyCard";
 import SearchBar from "../components/home-page/SearchBar";
 import LoaderPropertyCard from "../components/LoaderPropertyCard";
+import { useState } from "react";
 
 function SearchPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -11,6 +12,89 @@ function SearchPage() {
   const checkOut = searchParams.get("checkOut");
   const city = searchParams.get("city");
   const page = Number(searchParams.get("page")) || 1;
+
+  const [sortBy, setSortBy] = useState<string | null>(null);
+  const [order, setOrder] = useState<"Ascending" | "Descending" | null>(null);
+
+  const handleSearchClick = (
+    search: string,
+    checkIn: string,
+    checkOut: string,
+    city: string,
+  ) => {
+    const params = new URLSearchParams(searchParams);
+
+    params.set("search", search);
+    params.set("checkIn", checkIn);
+    params.set("checkOut", checkOut);
+    params.set("city", city);
+
+    setSearchParams(params);
+  };
+
+  const handlePriceClick = () => {
+    let nextOrder: "Ascending" | "Descending" | null;
+
+    if (sortBy === "price") {
+      if (order === "Ascending") nextOrder = "Descending";
+      else if (order === "Descending") nextOrder = null;
+      else nextOrder = "Ascending";
+    } else {
+      nextOrder = "Ascending";
+    }
+
+    const params = new URLSearchParams(searchParams);
+
+    if (nextOrder) {
+      params.set("sortBy", "price");
+      params.set("order", nextOrder);
+
+      setSortBy("price");
+      setOrder(nextOrder);
+    } else {
+      params.delete("sortBy");
+      params.delete("order");
+
+      setSortBy(null);
+      setOrder(null);
+    }
+
+    params.set("page", "1");
+
+    setSearchParams(params);
+  };
+
+  const handleNameClick = () => {
+    let nextOrder: "Ascending" | "Descending" | null;
+
+    if (sortBy === "name") {
+      if (order === "Ascending") nextOrder = "Descending";
+      else if (order === "Descending") nextOrder = null;
+      else nextOrder = "Ascending";
+    } else {
+      nextOrder = "Ascending";
+    }
+
+    const params = new URLSearchParams(searchParams);
+
+    if (nextOrder) {
+      params.set("sortBy", "name");
+      params.set("order", nextOrder);
+
+      setSortBy("name");
+      setOrder(nextOrder);
+    } else {
+      params.delete("sortBy");
+      params.delete("order");
+
+      setSortBy(null);
+      setOrder(null);
+    }
+
+    params.set("page", "1");
+
+    setSearchParams(params);
+  };
 
   const handlePageClick = (newPage: number) => {
     const params = new URLSearchParams(searchParams);
@@ -33,21 +117,55 @@ function SearchPage() {
     <>
       <div className="absolute w-full z-40 bg-white">
         <div className="max-w-screen-2xl mx-auto px-6 md:px-12 py-4 mt-2">
-          <div className="flex items-center justify-center gap-4">
+          <div className="flex flex-col items-center justify-center gap-8">
             <SearchBar
+              sentParams={handleSearchClick}
               search={search || undefined}
               checkIn={checkIn || undefined}
               checkOut={checkOut || undefined}
             />
-            <button className="flex items-center space-x-2 border border-outline rounded-full px-4 py-2.5 text-sm font-medium  hover:shadow-md transition-all cursor-pointer  hover:scale-105">
-              <span
-                className="material-symbols-outlined text-sm"
-                data-icon="tune"
+            <div className="flex items-center space-x-3 overflow-x-auto hide-scrollbar pb-2">
+              <button
+                type="button"
+                onClick={() => handlePriceClick()}
+                className={`flex items-center space-x-2 border  rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors whitespace-nowrap justify-center h-12 w-30 cursor-pointer ${
+                  sortBy !== "price"
+                    ? " text-on-surface"
+                    : "bg-primary/10 text-primary border-primary"
+                }`}
               >
-                tune
-              </span>
-              <span>Filters</span>
-            </button>
+                <span>Price</span>
+                <span
+                  className="material-symbols-outlined text-sm font-bold"
+                  data-icon="keyboard_arrow_up"
+                >
+                  {sortBy === "price" &&
+                    (order === "Ascending"
+                      ? "keyboard_arrow_up"
+                      : "keyboard_arrow_down")}
+                </span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleNameClick()}
+                className={`flex items-center space-x-2 border  rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors whitespace-nowrap justify-center h-12 w-30 cursor-pointer ${
+                  sortBy !== "name"
+                    ? " text-on-surface"
+                    : "bg-primary/10 text-primary border-primary"
+                }`}
+              >
+                <span>Name</span>
+                <span
+                  className="material-symbols-outlined text-sm font-bold"
+                  data-icon="keyboard_arrow_down"
+                >
+                  {sortBy === "name" &&
+                    (order === "Ascending"
+                      ? "keyboard_arrow_up"
+                      : "keyboard_arrow_down")}
+                </span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
