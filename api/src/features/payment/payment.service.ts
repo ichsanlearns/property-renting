@@ -3,6 +3,7 @@ import { AppError } from "../../shared/utils/app-error.util.js";
 import { uploadToCloudinary } from "../../shared/services/upload.service.js";
 import { ReservationStatus } from "../../generated/prisma/client.js";
 import { createSnapTransaction } from "./midtrans.service.js";
+import { sendBookingConfirmedEmail } from "../../shared/services/reminder-email.service.js";
 import crypto from "crypto";
 
 export const uploadPaymentProof = async ({ userId, reservationId, file }: { userId: string; reservationId: string; file: Express.Multer.File }) => {
@@ -140,6 +141,14 @@ export const handleMidtransNotification = async (payload: any) => {
 
   const reservation = await prisma.reservation.findUnique({
     where: { reservationCode },
+    include: {
+      customer: true,
+      roomType: {
+        include: {
+          property: true,
+        },
+      },
+    },
   });
 
   if (!reservation) {
@@ -150,6 +159,14 @@ export const handleMidtransNotification = async (payload: any) => {
     await prisma.reservation.update({
       where: { reservationCode },
       data: { status: ReservationStatus.PAID },
+    });
+
+    await sendBookingConfirmedEmail({
+      to: reservation.customer.email,
+      name: reservation.customer.firstName || "Guest",
+      property: reservation.roomType.property.name,
+      checkIn: reservation.checkInDate,
+      checkOut: reservation.checkOutDate,
     });
   }
 
