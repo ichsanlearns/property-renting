@@ -124,7 +124,10 @@ function PropertyListDetail() {
               </div>
             </div>
             <div className="flex flex-col sm:flex-row items-center gap-4 mt-auto">
-              <button className="w-full sm:w-auto px-6 py-3 rounded-xl font-bold border border-primary/20 text-primary hover:bg-primary-container transition-colors active:scale-[0.98] cursor-pointer">
+              <button
+                onClick={() => navigate(`/tenant/property/${property.id}/edit`)}
+                className="w-full sm:w-auto px-6 py-3 rounded-xl font-bold border border-primary/20 text-primary hover:bg-primary-container transition-colors active:scale-[0.98] cursor-pointer"
+              >
                 Edit Property
               </button>
               <button

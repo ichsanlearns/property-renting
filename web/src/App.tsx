@@ -114,6 +114,10 @@ const router = createBrowserRouter([
             element: <FormRoom />,
           },
           {
+            path: "property/:propertyId/edit",
+            element: <FormProperties />,
+          },
+          {
             path: "peak-season",
             element: <PeakSeason />,
           },
