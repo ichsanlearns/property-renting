@@ -4,13 +4,53 @@ import { usePricing } from "../hooks/usePricing";
 import { useCreatePricingRule } from "../hooks/pricing.mutation";
 
 import { useForm } from "react-hook-form";
+import {
+  createPricingSchema,
+  type CreatePricingPayload,
+} from "../schemas/peakseason.schema";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 function PeakSeason() {
   const { data: pricingRules } = usePricing();
 
   const createRule = useCreatePricingRule();
 
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm<CreatePricingPayload>({
+    resolver: zodResolver(createPricingSchema),
+  });
+
+  const [adjustmentType, setAdjustmentType] = useState<
+    "NOMINAL" | "PERCENTAGE" | null
+  >(null);
+  const [adjustmentDirection, setAdjustmentDirection] = useState<
+    "DECREASE" | "INCREASE" | null
+  >(null);
   const [openForm, setOpenForm] = useState(false);
+
+  const onSubmit = (data: CreatePricingPayload) => {
+    createRule.mutate(data, {
+      onSuccess: () => {
+        setOpenForm(false);
+      },
+    });
+  };
+
+  const handleAdjustmentTypeChange = (type: "NOMINAL" | "PERCENTAGE") => {
+    setAdjustmentType(type);
+    setValue("adjustmentType", type);
+  };
+
+  const handleAdjustmentDirectionChange = (
+    direction: "DECREASE" | "INCREASE",
+  ) => {
+    setAdjustmentDirection(direction);
+    setValue("adjustmentDirection", direction);
+  };
 
   return (
     <main className="flex-1 overflow-hidden mt-16 flex flex-col p-6 bg-surface-dim">
@@ -55,16 +95,27 @@ function PeakSeason() {
                 <button onClick={() => setOpenForm(false)}>✕</button>
               </div>
 
-              <form className="p-5 flex flex-col gap-6">
+              <form
+                onSubmit={handleSubmit(onSubmit, (err) => {
+                  console.log(err);
+                })}
+                className="p-5 flex flex-col gap-6"
+              >
                 <div>
                   <label className="block text-sm font-semibold text-on-surface mb-1.5">
                     Rule Name
                   </label>
                   <input
+                    {...register("name")}
                     className="w-full border border-outline rounded-md px-3 py-2 text-sm focus:ring-primary focus:border-primary outline-none transition-shadow bg-surface-bright"
                     placeholder="e.g., Holiday Surge"
                     type="text"
                   />
+                  {errors.name && (
+                    <span className="text-red-500 text-sm">
+                      {errors.name.message}
+                    </span>
+                  )}
                   <label className="block text-sm font-semibold text-on-surface mt-4 mb-1.5">
                     Scope
                   </label>
@@ -88,15 +139,24 @@ function PeakSeason() {
                   </label>
                   <div className="flex items-center gap-3">
                     <input
+                      {...register("priority", {
+                        valueAsNumber: true,
+                      })}
                       className="w-20 border border-outline rounded-md px-3 py-2 text-sm focus:ring-primary focus:border-primary outline-none bg-surface-bright text-center font-medium"
                       min="1"
                       type="number"
-                      value="1"
+                      defaultValue={1}
                     />
+
                     <p className="text-xs text-on-surface-variant flex-1">
                       Lower numbers apply first within the same scope.
                     </p>
                   </div>
+                  {errors.priority && (
+                    <span className="text-red-500 text-sm">
+                      {errors.priority.message}
+                    </span>
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-on-surface mb-1.5">
@@ -108,9 +168,15 @@ function PeakSeason() {
                         calendar_month
                       </span>
                       <input
+                        {...register("startDate")}
                         className="w-full border border-outline rounded-md pl-9 pr-3 py-2 text-sm focus:ring-primary focus:border-primary outline-none bg-surface-bright text-on-surface"
                         type="date"
                       />
+                      {errors.startDate && (
+                        <span className="text-red-500 text-sm">
+                          {errors.startDate.message}
+                        </span>
+                      )}
                     </div>
                     <span className="text-on-surface-variant self-center font-medium">
                       to
@@ -120,9 +186,15 @@ function PeakSeason() {
                         calendar_month
                       </span>
                       <input
+                        {...register("endDate")}
                         className="w-full border border-outline rounded-md pl-9 pr-3 py-2 text-sm focus:ring-primary focus:border-primary outline-none bg-surface-bright text-on-surface"
                         type="date"
                       />
+                      {errors.endDate && (
+                        <span className="text-red-500 text-sm">
+                          {errors.endDate.message}
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -133,7 +205,14 @@ function PeakSeason() {
                   <div className="flex gap-2 mb-3">
                     <div className="flex bg-surface-container rounded-md p-1 border border-outline-variant w-1/2">
                       <button
-                        className="flex-1 flex justify-center items-center py-1.5 text-xs font-medium rounded-md bg-surface shadow-sm text-tertiary"
+                        onClick={() =>
+                          handleAdjustmentDirectionChange("INCREASE")
+                        }
+                        className={`flex-1 flex justify-center items-center py-1.5 text-xs font-medium rounded-md ${
+                          adjustmentDirection === "INCREASE"
+                            ? "bg-surface shadow-sm text-tertiary"
+                            : "text-on-surface-variant hover:text-error"
+                        }`}
                         type="button"
                       >
                         <span className="material-symbols-outlined text-[16px] mr-1">
@@ -142,7 +221,14 @@ function PeakSeason() {
                         Inc
                       </button>
                       <button
-                        className="flex-1 flex justify-center items-center py-1.5 text-xs font-medium rounded-md text-on-surface-variant hover:text-error"
+                        onClick={() =>
+                          handleAdjustmentDirectionChange("DECREASE")
+                        }
+                        className={`flex-1 flex justify-center items-center py-1.5 text-xs font-medium rounded-md ${
+                          adjustmentDirection === "DECREASE"
+                            ? "bg-surface shadow-sm text-error"
+                            : "text-on-surface-variant hover:text-error"
+                        }`}
                         type="button"
                       >
                         <span className="material-symbols-outlined text-[16px] mr-1">
@@ -153,13 +239,23 @@ function PeakSeason() {
                     </div>
                     <div className="flex bg-surface-container rounded-md p-1 border border-outline-variant w-1/2">
                       <button
-                        className="flex-1 py-1.5 text-xs font-medium rounded-md bg-surface shadow-sm text-on-surface"
+                        onClick={() => handleAdjustmentTypeChange("PERCENTAGE")}
+                        className={`flex-1 py-1.5 text-xs font-medium rounded-md ${
+                          adjustmentType === "PERCENTAGE"
+                            ? "bg-surface shadow-sm text-tertiary"
+                            : "text-on-surface-variant hover:text-on-surface"
+                        }`}
                         type="button"
                       >
                         %
                       </button>
                       <button
-                        className="flex-1 py-1.5 text-xs font-medium rounded-md text-on-surface-variant hover:text-on-surface"
+                        onClick={() => handleAdjustmentTypeChange("NOMINAL")}
+                        className={`flex-1 py-1.5 text-xs font-medium rounded-md ${
+                          adjustmentType === "NOMINAL"
+                            ? "bg-surface shadow-sm text-tertiary"
+                            : "text-on-surface-variant hover:text-on-surface"
+                        }`}
                         type="button"
                       >
                         $
@@ -168,19 +264,27 @@ function PeakSeason() {
                   </div>
                   <div className="relative">
                     <input
+                      {...register("adjustmentValue", {
+                        valueAsNumber: true,
+                      })}
                       className="w-full border border-outline rounded-md px-3 py-2 text-lg font-bold focus:ring-primary focus:border-primary outline-none bg-surface-bright text-on-surface text-right pr-8"
                       placeholder="0"
                       type="number"
                     />
+                    {errors.adjustmentValue && (
+                      <span className="text-red-500 text-sm">
+                        {errors.adjustmentValue.message}
+                      </span>
+                    )}
                     <span className="absolute right-3 top-2.5 text-on-surface-variant font-bold">
-                      %
+                      {adjustmentType === "PERCENTAGE" ? "%" : "IDR"}
                     </span>
                   </div>
                 </div>
                 <div className="pt-4 mt-2 border-t border-outline">
                   <button
-                    className="w-full bg-primary hover:bg-primary/90 text-on-primary font-bold py-2.5 rounded-md shadow-sm transition-colors flex justify-center items-center gap-2"
-                    type="button"
+                    className="w-full cursor-pointer bg-primary hover:bg-primary/90 text-on-primary font-bold py-2.5 rounded-md shadow-sm transition-colors flex justify-center items-center gap-2"
+                    type="submit"
                   >
                     Save Pricing Rule
                   </button>

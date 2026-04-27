@@ -41,6 +41,8 @@ export const createPricingRule = async (input: CreatePricingRuleInput) => {
   const pricingRule = await prisma.pricingRule.create({
     data: {
       ...input,
+      startDate: new Date(input.startDate),
+      endDate: new Date(input.endDate),
       daysOfWeek: input.daysOfWeek?.map((day) => Number(day)) ?? [],
     },
   });

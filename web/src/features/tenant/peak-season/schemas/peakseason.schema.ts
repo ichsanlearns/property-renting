@@ -8,9 +8,18 @@ export const createPricingSchema = z.object({
 
   daysOfWeek: z.array(z.string()).optional(),
 
-  adjustmentType: z.string().min(1, "Adjustment type is required"),
-  adjustmentDirection: z.string().min(1, "Adjustment direction is required"),
-  adjustmentValue: z.number().min(1, "Adjustment value is required"),
+  adjustmentType: z.enum(["NOMINAL", "PERCENTAGE"], {
+    error: () => ({ message: "Adjustment type is required" }),
+  }),
+  adjustmentDirection: z.enum(["DECREASE", "INCREASE"], {
+    error: () => ({ message: "Adjustment direction is required" }),
+  }),
+  adjustmentValue: z
+    .number()
+    .min(1, "Adjustment value is required")
+    .refine((v) => v > 0, {
+      message: "Adjustment value must be greater than 0",
+    }),
 
   priority: z.number().optional(),
   isActive: z.boolean().optional(),
