@@ -135,7 +135,19 @@ function PropertyList() {
                 </div>
               </div>
             </div>
-            <div className="flex md:flex-col items-center justify-end gap-2 md:w-16 shrink-0 border-t md:border-t-0 md:border-l border-outline-variant pt-4 md:pt-0 md:pl-4"></div>
+            <div className="flex md:flex-col items-center justify-center gap-2 md:w-16 shrink-0 border-t md:border-t-0 md:border-l border-outline-variant pt-4 md:pt-0 md:pl-4">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+                className="p-3 cursor-pointer w-full text-error hover:text-white hover:bg-error rounded-xl transition-all flex items-center justify-center"
+                title="Delete"
+              >
+                <span className="material-symbols-outlined text-xl">
+                  delete
+                </span>
+              </button>
+            </div>
           </div>
         ))}
       </div>
