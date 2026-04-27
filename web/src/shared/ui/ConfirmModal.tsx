@@ -5,6 +5,7 @@ type ConfirmModalProps = {
   title: string;
   description: string;
   isLoading: boolean;
+  buttonTitle: string;
 };
 
 function ConfirmModal({
@@ -14,6 +15,7 @@ function ConfirmModal({
   title,
   description,
   isLoading,
+  buttonTitle,
 }: ConfirmModalProps) {
   if (!isOpen) return null;
 
@@ -39,10 +41,10 @@ function ConfirmModal({
             {isLoading ? (
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                Deleting
+                Loading
               </div>
             ) : (
-              "Delete"
+              buttonTitle
             )}
           </button>
         </div>

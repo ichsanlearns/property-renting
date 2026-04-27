@@ -6,8 +6,10 @@ export const profileSchema = z.object({
   email: z.email("Invalid email").optional(),
   phoneNumber: z
     .string()
-    .min(10, "Phone number must be at least 10 characters")
-    .optional(),
+    .optional()
+    .refine((val) => !val || /^\+?[0-9]{8,15}$/.test(val), {
+      message: "Invalid phone number",
+    }),
 });
 
 export type ProfileFormData = z.infer<typeof profileSchema>;

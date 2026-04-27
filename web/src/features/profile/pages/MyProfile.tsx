@@ -18,14 +18,16 @@ function MyProfile() {
   const { user, setUser } = useAuthStore();
   const [isEdit, setIsEdit] = useState<null | "PERSONAL" | "PASSWORD">(null);
   const [changingProfilePhoto, setChangingProfilePhoto] = useState(false);
-  const [deleteModalOpen, setDeleteModalOpen] = useState(true);
+
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [personalModalOpen, setPersonalModalOpen] = useState(false);
 
   const mutation = useUpdateProfileImage();
   const deleteMutation = useDeleteProfilePhoto();
 
   const [image, setImage] = useState<ImageType | null>(null);
 
-  const { register, handleSubmit } = useForm<ProfileFormData>({
+  const { register, handleSubmit, watch } = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
       firstName: user?.fullName.split(" ")[0],
@@ -35,6 +37,20 @@ function MyProfile() {
     },
   });
 
+  const handleUpdateProfile = () => {
+    if (
+      watch("firstName") === user?.fullName.split(" ")[0] &&
+      watch("lastName") === user?.fullName.split(" ")[1] &&
+      watch("email") === user?.email &&
+      watch("phoneNumber") === user?.phoneNumber
+    ) {
+      toast.error("No changes to update");
+      setIsEdit(null);
+      return;
+    }
+    setPersonalModalOpen(true);
+  };
+
   const onSubmitProfile = async (data: ProfileFormData) => {
     try {
       toast.loading("Updating profile...");
@@ -43,6 +59,7 @@ function MyProfile() {
       toast.dismiss();
       toast.success("Profile updated successfully");
       setIsEdit(null);
+      setPersonalModalOpen(false);
     } catch (error: any) {
       toast.dismiss();
       toast.error(error.message);
@@ -182,6 +199,7 @@ function MyProfile() {
                       onCancel={() => setDeleteModalOpen(false)}
                       title="Remove profile photo?"
                       description="This will remove your current profile image."
+                      buttonTitle="Remove"
                     />
                   </div>
                   <div className="text-center md:text-left space-y-2">
@@ -205,21 +223,21 @@ function MyProfile() {
               </section>
               <section className="bg-white rounded-xl shadow-sm border border-primary/5 overflow-hidden">
                 <div className="px-6 py-4 border-b border-primary/5 flex justify-between items-center">
-                  <h2 className="text-lg font-bold text-slate-900">
+                  <h2 className="text-lg font-bold text-slate-900 pt-3 h-12">
                     Personal Information
                   </h2>
                   {isEdit === "PERSONAL" ? (
                     <div className="flex gap-8">
                       <button
-                        onClick={handleSubmit(onSubmitProfile)}
-                        className="bg-primary text-white px-6 py-2.5 rounded-lg font-bold hover:bg-primary/90 transition-all shadow-md active:scale-95"
+                        onClick={handleUpdateProfile}
+                        className="bg-primary text-white px-6 py-2.5 rounded-lg font-bold hover:bg-primary/90 transition-all shadow-md active:scale-95 cursor-pointer"
                       >
                         Update
                       </button>
                       <button
                         type="button"
                         onClick={() => setIsEdit(null)}
-                        className="text-primary font-semibold text-sm hover:underline"
+                        className="text-primary font-semibold text-sm hover:underline cursor-pointer"
                       >
                         Cancel
                       </button>
@@ -228,7 +246,7 @@ function MyProfile() {
                     <button
                       type="button"
                       onClick={() => setIsEdit("PERSONAL")}
-                      className="text-primary font-semibold text-sm hover:underline"
+                      className="text-primary font-semibold text-sm hover:underline cursor-pointer"
                     >
                       Edit
                     </button>
@@ -282,6 +300,17 @@ function MyProfile() {
                     />
                   </div>
                 </div>
+                <ConfirmModal
+                  isOpen={personalModalOpen}
+                  onConfirm={handleSubmit(onSubmitProfile, (errors) => {
+                    console.log(errors);
+                  })}
+                  onCancel={() => setPersonalModalOpen(false)}
+                  title="Update Profile"
+                  description="Are you sure you want to update your profile?"
+                  isLoading={false}
+                  buttonTitle="Update"
+                />
               </section>
               <section className="bg-white rounded-xl shadow-sm border border-primary/5 overflow-hidden">
                 <div className="px-6 py-4 border-b border-primary/5 flex justify-between items-center">
