@@ -46,3 +46,41 @@ export const useUpdateProperty = (propertyId: string) => {
     },
   });
 };
+
+export const useDeleteProperty = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (propertyId: string) => PropertyApi.deleteProperty(propertyId),
+
+    onMutate: () => {
+      return toast.loading("Deleting property...");
+    },
+
+    onSuccess: (res, propertyId, toastId) => {
+      toast.dismiss(toastId);
+      toast.success(res.message || "Property deleted successfully!");
+
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.property.byTenantId(),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.property.basic(propertyId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.property.detail(propertyId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.property.detailFullInfo(propertyId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.property.allBasic(),
+      });
+    },
+
+    onError: (error: any, _, toastId) => {
+      toast.dismiss(toastId);
+      toast.error(error.response?.data?.message || "Failed to delete property");
+    },
+  });
+};

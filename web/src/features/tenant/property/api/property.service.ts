@@ -113,3 +113,10 @@ export const getPropertyRoomPricesDate = async ({
   });
   return response.data;
 };
+
+export const deleteProperty = async (propertyId: string) => {
+  const response = await api.delete<ApiResponse<void>>(
+    PROPERTY_ENDPOINTS.DELETE(propertyId),
+  );
+  return response.data;
+};

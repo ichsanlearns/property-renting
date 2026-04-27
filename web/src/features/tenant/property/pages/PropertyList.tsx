@@ -1,10 +1,20 @@
 import LoaderFetching from "../../../../shared/ui/LoaderFetching";
+import { useDeleteProperty } from "../hooks/property.mutation";
 import { usePropertyByTenantId } from "../hooks/useProperty";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import ConfirmModal from "../../../../shared/ui/ConfirmModal";
 
 function PropertyList() {
   const { data: properties, isLoading } = usePropertyByTenantId();
+  const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
+
+  const deleteMutation = useDeleteProperty();
   const navigate = useNavigate();
+
+  const handleDeleteProperty = (propertyId: string) => {
+    deleteMutation.mutate(propertyId);
+  };
 
   const handleNavigateToPropertyDetail = (propertyId: string) => {
     const property = properties?.find((property) => property.id === propertyId);
@@ -139,6 +149,7 @@ function PropertyList() {
               <button
                 onClick={(e) => {
                   e.stopPropagation();
+                  setConfirmDelete(true);
                 }}
                 className="p-3 cursor-pointer w-full text-error hover:text-white hover:bg-error rounded-xl transition-all flex items-center justify-center"
                 title="Delete"
@@ -148,6 +159,17 @@ function PropertyList() {
                 </span>
               </button>
             </div>
+            {confirmDelete && (
+              <ConfirmModal
+                isOpen={confirmDelete}
+                onCancel={() => setConfirmDelete(false)}
+                onConfirm={() => handleDeleteProperty(property.id)}
+                buttonTitle="Delete"
+                title="Delete Property"
+                description="Are you sure you want to delete this property?"
+                isLoading={deleteMutation.isPending}
+              />
+            )}
           </div>
         ))}
       </div>

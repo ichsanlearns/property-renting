@@ -16,4 +16,5 @@ export const PROPERTY_ENDPOINTS = {
   AMENITIES: {
     GET_ALL: "/property-amenities",
   },
+  DELETE: (propertyId: string) => `/properties/${propertyId}`,
 };
