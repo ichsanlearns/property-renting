@@ -86,19 +86,23 @@ function FormRoom() {
       formData.append(key, String(value));
     });
 
-    images.forEach((image) => {
-      formData.append("images", image.file);
-    });
+    if (images.length > 0) {
+      images.forEach((image) => {
+        if (image.file) {
+          formData.append("images", image.file);
+        }
+      });
 
-    formData.append(
-      "imagesMeta",
-      JSON.stringify(
-        images.map((image) => ({
-          isCover: image.isCover,
-          order: image.order,
-        })),
-      ),
-    );
+      formData.append(
+        "imagesMeta",
+        JSON.stringify(
+          images.map((image) => ({
+            isCover: image.isCover,
+            order: image.order,
+          })),
+        ),
+      );
+    }
 
     selectedAmenities.forEach((amenity) => {
       formData.append("amenities", amenity);

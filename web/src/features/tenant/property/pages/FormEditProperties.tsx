@@ -8,17 +8,12 @@ import {
   type CreatePropertyPayload,
 } from "../schemas/property.schema";
 
-import { createProperty } from "../api/property.service";
-import toast from "react-hot-toast";
-
 import Map from "../components/Map";
 import { useReverseGeoCode } from "../hooks/useReverseGeocode";
 import ImageUpload from "../components/ImageUpload";
 import type { ImagesType } from "../types/image.type";
 import AmenityList from "../components/AmenityList";
 import { useCategories } from "../hooks/useCategories";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { queryKeys } from "../../../../shared/lib/queryKeys.lib";
 import { useNavigate, useParams } from "react-router-dom";
 import LoaderFetching from "../../../../shared/ui/LoaderFetching";
 import { usePropertyDetailFullInfo } from "../hooks/useProperty";
