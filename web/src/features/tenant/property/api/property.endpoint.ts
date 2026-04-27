@@ -1,5 +1,6 @@
 export const PROPERTY_ENDPOINTS = {
   CREATE: "/properties",
+  UPDATE: (propertyId: string) => `/properties/${propertyId}`,
   GET_ALL_BASIC: "/properties",
   GET_BY_TENANT_ID: "/properties/tenant",
   SEARCH: "/properties/search",
