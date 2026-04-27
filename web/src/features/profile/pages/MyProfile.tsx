@@ -55,6 +55,7 @@ function MyProfile() {
     register: registerPassword,
     handleSubmit: handleSubmitPassword,
     formState: { errors },
+    reset: resetPassword,
   } = useForm<PasswordFormData>({
     resolver: zodResolver(passwordSchema),
   });
@@ -114,9 +115,11 @@ function MyProfile() {
     mutation.mutate(formData, {
       onSuccess: () => {
         toast.success("Profile photo updated", { id: toastId });
+        setChangingProfilePhoto(false);
       },
       onError: () => {
         toast.error("Upload failed", { id: toastId });
+        setChangingProfilePhoto(false);
       },
     });
   };
@@ -173,6 +176,18 @@ function MyProfile() {
     });
   };
 
+  const handleCancelPasswordEdit = () => {
+    resetPassword({
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    });
+    setShowPassword(false);
+    setShowNewPassword(false);
+    setShowConfirmPassword(false);
+    setIsEdit(null);
+  };
+
   useEffect(() => {
     if (user?.profileImage) {
       setImage({
@@ -190,7 +205,7 @@ function MyProfile() {
             <div className="flex-1 space-y-8">
               <section className="bg-white rounded-xl shadow-sm border border-primary/5 p-6 md:p-8">
                 <div className="flex flex-col md:flex-row items-center gap-6">
-                  <div className="flex flex-col items-center gap-2">
+                  <div className="flex flex-col items-center gap-2 h-40">
                     <ProfilePhoto
                       image={image}
                       onChange={setImage}
@@ -206,7 +221,7 @@ function MyProfile() {
                             mutation.isPending || deleteMutation.isPending
                           }
                           type="button"
-                          className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium shadow-sm hover:bg-primary/90 active:scale-[0.98] transition  ${
+                          className={`inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium shadow-sm hover:bg-primary/90 active:scale-[0.98] transition w-38  ${
                             mutation.isPending || deleteMutation.isPending
                               ? "opacity-50 cursor-not-allowed"
                               : "cursor-pointer"
@@ -215,10 +230,13 @@ function MyProfile() {
                           {mutation.isPending ? (
                             <>
                               <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                              Saving changes...
+                              Saving...
                             </>
                           ) : (
-                            "Save changes"
+                            <>
+                              <span className="material-symbols-outlined"></span>
+                              Save changes
+                            </>
                           )}
                         </button>
                         <button
@@ -236,7 +254,7 @@ function MyProfile() {
                           setChangingProfilePhoto(!changingProfilePhoto)
                         }
                         type="button"
-                        className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium shadow-sm hover:bg-primary/90 active:scale-[0.98] transition cursor-pointer`}
+                        className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium shadow-sm hover:bg-primary/90 active:scale-[0.98] transition cursor-pointer w-38`}
                       >
                         {" "}
                         Edit Profile Photo
@@ -378,7 +396,7 @@ function MyProfile() {
                       </button>
                       <button
                         type="button"
-                        onClick={() => setIsEdit(null)}
+                        onClick={handleCancelPasswordEdit}
                         className="text-primary font-semibold text-sm hover:underline cursor-pointer"
                       >
                         Cancel
@@ -485,60 +503,6 @@ function MyProfile() {
                       )}
                     </div>
                   </div>
-                </div>
-              </section>
-              <section className="bg-white rounded-xl shadow-sm border border-primary/5 p-6 flex flex-col md:flex-row items-center justify-between gap-6">
-                <div className="flex items-start gap-4">
-                  <div
-                    className={` p-3 rounded-full ${user?.isVerified ? "text-green-600" : "bg-primary/10 text-red-500"}`}
-                  >
-                    <span className="material-symbols-outlined text-3xl">
-                      {user?.isVerified ? "verified_user" : "verified_off"}
-                    </span>
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-slate-900">
-                      Account Verification
-                    </h3>
-                    {!user?.isVerified && (
-                      <p className="text-sm text-slate-500 max-w-sm mt-1">
-                        Your email is{" "}
-                        <span className="text-red-600">not verified</span>. To
-                        be able to book a property, please complete your email
-                        verification."
-                      </p>
-                    )}
-
-                    <div
-                      className={`mt-3 flex items-center gap-2 text-sm font-medium ${user?.isVerified ? "text-green-600" : "text-red-500"}`}
-                    >
-                      <span className="material-symbols-outlined text-sm">
-                        mail
-                      </span>
-                      Email {user?.isVerified ? "verified" : "not verified"}
-                    </div>
-                  </div>
-                </div>
-                {!user?.isVerified && (
-                  <div className="w-full md:w-auto flex flex-col gap-2">
-                    <button className="w-full md:w-auto px-6 py-2.5 rounded-lg border border-primary text-primary font-bold hover:bg-primary/5 transition-all">
-                      Resend Verification
-                    </button>
-                  </div>
-                )}
-              </section>
-              <section className="p-6 border-2 border-red-50 rounded-xl bg-red-50/20">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                  <div>
-                    <h3 className="font-bold text-red-600">Delete Account</h3>
-                    <p className="text-sm text-slate-500">
-                      Once you delete your account, there is no going back.
-                      Please be certain.
-                    </p>
-                  </div>
-                  <button className="text-red-600 font-bold px-4 py-2 hover:bg-red-600 hover:text-white rounded-lg transition-all">
-                    Delete My Account
-                  </button>
                 </div>
               </section>
             </div>
