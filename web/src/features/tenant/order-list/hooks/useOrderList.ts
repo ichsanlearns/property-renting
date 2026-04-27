@@ -11,6 +11,9 @@ export default function useOrderList() {
 
   const [filterProperty, setFilterProperty] = useState("ALL");
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
   useEffect(() => {
     const fetchOrders = async () => {
       try {
@@ -83,6 +86,14 @@ export default function useOrderList() {
     return matchStatus && matchProperty;
   });
 
+  const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
+
+  const paginatedOrders = filteredOrders.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filterStatus, filterProperty]);
+
   const totalRevenue = orders.reduce((acc, o) => {
     if (o.status === "Confirmed") {
       return acc + Number(o.price.replace(/[^\d]/g, ""));
@@ -104,6 +115,11 @@ export default function useOrderList() {
     setFilterStatus,
     filterProperty,
     setFilterProperty,
+    paginatedOrders,
+    currentPage,
+    setCurrentPage,
+    totalPages,
+    itemsPerPage,
     uniqueProperties,
     totalRevenue,
     totalConfirmed,

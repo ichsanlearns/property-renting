@@ -9,10 +9,12 @@ import RevenueChart from "../dashboard-tenant/components/RevenueCharts";
 import SpotlightCard from "../dashboard-tenant/components/SpotlightCard";
 import RecentBookingsTable from "../dashboard-tenant/components/RecentBookingTable";
 
+import TablePagination from "./components/TablePagination";
+
 export default function DashboardTenant() {
   const [searchQuery, setSearchQuery] = useState("");
 
-  const { data, loading } = useDashboardTenant();
+  const { data, loading, currentPage, setCurrentPage, totalPages, paginatedBookings } = useDashboardTenant();
 
   if (loading) return <LoaderFetching />;
 
@@ -31,13 +33,13 @@ export default function DashboardTenant() {
           </section>
 
           <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-            <KPICard title="Total Revenue" value={formatRupiah(data.totalRevenue)} change="+12.5%" progressColor="bg-[#b52330]" progressWidth="75%" />
+            <KPICard title="Total Revenue" value={formatRupiah(data.totalRevenue)} progressColor="bg-[#b52330]" progressWidth="100%" />
 
-            <KPICard title="Total Bookings" value={data.totalBookings} change="+5.2%" progressColor="bg-blue-600" progressWidth="50%" />
+            <KPICard title="Total Bookings" value={data.totalBookings} progressColor="bg-blue-600" progressWidth="100%" />
 
-            <KPICard title="Active Properties" value={data.activeProperties} progressColor="bg-[#b52330]" progressWidth="80%" />
+            <KPICard title="Active Properties" value={data.activeProperties} progressColor="bg-[#b52330]" progressWidth="100%" />
 
-            <KPICard title="Avg. Occupancy" value={`${data.occupancyRate}%`} change="+3.1%" progressColor="bg-emerald-500" progressWidth="84%" />
+            <KPICard title="Avg. Occupancy" value={`${data.occupancyRate}%`} progressColor="bg-emerald-500" progressWidth="100%" />
           </section>
 
           <div className="grid grid-cols-12 gap-8 mb-10">
@@ -45,7 +47,8 @@ export default function DashboardTenant() {
             <SpotlightCard data={data} />
           </div>
 
-          <RecentBookingsTable bookings={data.recentBookings} />
+          <RecentBookingsTable bookings={paginatedBookings} />
+          <TablePagination currentPage={currentPage} totalPages={totalPages} setCurrentPage={setCurrentPage} />
         </div>
       </main>
     </div>

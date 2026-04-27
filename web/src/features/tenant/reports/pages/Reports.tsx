@@ -5,9 +5,10 @@ import SummaryCards from "../components/SummaryCards";
 import RevenueChart from "../components/RevenueChart";
 import BookingChart from "../components/BookingChart";
 import PropertySalesTable from "../components/PropertySalesTable";
+import TablePagination from "../../dashboard-tenant/components/TablePagination";
 
 function Reports() {
-  const { loading, data } = useReports();
+  const { loading, data, currentPage, setCurrentPage, totalPages, paginatedPropertySales } = useReports();
 
   if (loading) return <LoaderFetching />;
 
@@ -24,7 +25,8 @@ function Reports() {
         <BookingChart data={data.bookingData} />
       </div>
 
-      <PropertySalesTable data={data.propertySales} />
+      <PropertySalesTable data={paginatedPropertySales} />
+      <TablePagination currentPage={currentPage} totalPages={totalPages} setCurrentPage={setCurrentPage} />
     </div>
   );
 }
