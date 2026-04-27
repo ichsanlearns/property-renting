@@ -16,13 +16,13 @@ export const passwordSchema = z
   .object({
     currentPassword: z
       .string()
-      .min(3, "Current password must be at least 3 characters"),
+      .min(8, "Current password must be at least 8 characters"),
     newPassword: z
       .string()
-      .min(3, "New password must be at least 3 characters"),
+      .min(8, "New password must be at least 8 characters"),
     confirmPassword: z
       .string()
-      .min(3, "Confirm password must be at least 3 characters"),
+      .min(8, "Confirm password must be at least 8 characters"),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
     message: "Passwords do not match",

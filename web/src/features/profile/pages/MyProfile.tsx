@@ -19,12 +19,17 @@ import {
   useUpdateProfileImage,
 } from "../hooks/profile.mutation";
 import ConfirmModal from "../../../shared/ui/ConfirmModal";
+import PasswordVisibility from "../../../shared/ui/PasswordVisibility";
 
 function MyProfile() {
   const { user, setUser } = useAuthStore();
   const [isEdit, setIsEdit] = useState<null | "PERSONAL" | "PASSWORD">(null);
   const [changingProfilePhoto, setChangingProfilePhoto] = useState(false);
   const [personalLoading, setPersonalLoading] = useState(false);
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [personalModalOpen, setPersonalModalOpen] = useState(false);
@@ -49,7 +54,7 @@ function MyProfile() {
   const {
     register: registerPassword,
     handleSubmit: handleSubmitPassword,
-    reset: resetPasswordForm,
+    formState: { errors },
   } = useForm<PasswordFormData>({
     resolver: zodResolver(passwordSchema),
   });
@@ -142,6 +147,12 @@ function MyProfile() {
     } else {
       setImage(null);
     }
+  };
+
+  const handleOpenPasswordModal = () => {
+    handleSubmitPassword(() => {
+      setPasswordModalOpen(true);
+    })();
   };
 
   const onSubmitPassword = async (data: PasswordFormData) => {
@@ -360,7 +371,7 @@ function MyProfile() {
                     <div className="flex gap-8">
                       <button
                         type="button"
-                        onClick={() => setPasswordModalOpen(!passwordModalOpen)}
+                        onClick={handleOpenPasswordModal}
                         className="bg-primary text-white px-6 py-2.5 rounded-lg font-bold hover:bg-primary/90 transition-all shadow-md active:scale-95 cursor-pointer hover:scale-105"
                       >
                         Update
@@ -402,38 +413,76 @@ function MyProfile() {
                     <label className="text-sm font-semibold text-slate-500">
                       Current Password
                     </label>
-                    <input
-                      disabled={isEdit !== "PASSWORD"}
-                      {...registerPassword("currentPassword")}
-                      className={`w-full rounded-lg p-3.5 border border-primary/10 focus:border-primary focus:ring-primary  ${isEdit === "PASSWORD" ? "cursor-text bg-background-light/30" : "cursor-not-allowed bg-background-light"}`}
-                      placeholder="••••••••"
-                      type="password"
-                    />
+                    <div className="relative">
+                      <input
+                        disabled={isEdit !== "PASSWORD"}
+                        {...registerPassword("currentPassword")}
+                        className={`w-full rounded-lg p-3.5 border border-primary/10 focus:border-primary focus:ring-primary  ${isEdit === "PASSWORD" ? "cursor-text bg-background-light/30" : "cursor-not-allowed bg-background-light"}`}
+                        placeholder={showPassword ? "abcdefghi" : "••••••••"}
+                        type={showPassword ? "text" : "password"}
+                      />
+                      <PasswordVisibility
+                        showPassword={showPassword}
+                        setShowPassword={setShowPassword}
+                        disabled={isEdit !== "PASSWORD"}
+                      />
+                      {errors.currentPassword && (
+                        <p className="text-red-500 text-sm">
+                          {errors.currentPassword.message}
+                        </p>
+                      )}
+                    </div>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-1">
                       <label className="text-sm font-semibold text-slate-500">
                         New Password
                       </label>
-                      <input
-                        disabled={isEdit !== "PASSWORD"}
-                        {...registerPassword("newPassword")}
-                        className={`w-full rounded-lg p-3.5 border border-primary/10 focus:border-primary focus:ring-primary  ${isEdit === "PASSWORD" ? "cursor-text bg-background-light/30" : "cursor-not-allowed bg-background-light"}`}
-                        placeholder="Min. 8 characters"
-                        type="password"
-                      />
+                      <div className="relative">
+                        <input
+                          disabled={isEdit !== "PASSWORD"}
+                          {...registerPassword("newPassword")}
+                          className={`w-full rounded-lg p-3.5 border border-primary/10 focus:border-primary focus:ring-primary  ${isEdit === "PASSWORD" ? "cursor-text bg-background-light/30" : "cursor-not-allowed bg-background-light"}`}
+                          placeholder="Min. 8 characters"
+                          type={showNewPassword ? "text" : "password"}
+                        />
+                        <PasswordVisibility
+                          showPassword={showNewPassword}
+                          setShowPassword={setShowNewPassword}
+                          disabled={isEdit !== "PASSWORD"}
+                        />
+                        {errors.newPassword && (
+                          <p className="text-red-500 text-sm">
+                            {errors.newPassword.message}
+                          </p>
+                        )}
+                      </div>
                     </div>
                     <div className="space-y-1">
                       <label className="text-sm font-semibold text-slate-500">
                         Confirm New Password
                       </label>
-                      <input
-                        disabled={isEdit !== "PASSWORD"}
-                        {...registerPassword("confirmPassword")}
-                        className={`w-full rounded-lg p-3.5 border border-primary/10 focus:border-primary focus:ring-primary  ${isEdit === "PASSWORD" ? "cursor-text bg-background-light/30" : "cursor-not-allowed bg-background-light"}`}
-                        placeholder="Re-type password"
-                        type="password"
-                      />
+                      <div className="relative">
+                        <input
+                          disabled={isEdit !== "PASSWORD"}
+                          {...registerPassword("confirmPassword")}
+                          className={`w-full rounded-lg p-3.5 border border-primary/10 focus:border-primary focus:ring-primary  ${isEdit === "PASSWORD" ? "cursor-text bg-background-light/30" : "cursor-not-allowed bg-background-light"}`}
+                          placeholder="Re-type password"
+                          type={showConfirmPassword ? "text" : "password"}
+                        />
+
+                        <PasswordVisibility
+                          showPassword={showConfirmPassword}
+                          setShowPassword={setShowConfirmPassword}
+                          disabled={isEdit !== "PASSWORD"}
+                        />
+                      </div>
+
+                      {errors.confirmPassword && (
+                        <p className="text-red-500 text-sm">
+                          {errors.confirmPassword.message}
+                        </p>
+                      )}
                     </div>
                   </div>
                 </div>
