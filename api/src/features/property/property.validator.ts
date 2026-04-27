@@ -20,12 +20,9 @@ export const updateSchema = z.object({
   categoryId: z.uuid(),
   name: z.string().min(1, "Name is required"),
   description: z.string().min(1, "Description is required"),
-  latitude: z.number().min(1, "Latitude is required"),
-  longitude: z.number().min(1, "Longitude is required"),
-  numberOfBathrooms: z
-    .number()
-    .min(1, "Number of bathrooms is required")
-    .optional(),
+  latitude: z.coerce.number(),
+  longitude: z.coerce.number(),
+  numberOfBathrooms: z.coerce.number().optional(),
   amenities: z.array(z.string()).optional(),
 });
 

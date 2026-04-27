@@ -22,6 +22,7 @@ import { queryKeys } from "../../../../shared/lib/queryKeys.lib";
 import { useNavigate, useParams } from "react-router-dom";
 import LoaderFetching from "../../../../shared/ui/LoaderFetching";
 import { usePropertyDetailFullInfo } from "../hooks/useProperty";
+import { useUpdateProperty } from "../hooks/property.mutation";
 
 type Category = {
   id: string;
@@ -56,28 +57,9 @@ function FormEditProperties() {
     },
   });
 
-  const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  const mutation = useMutation({
-    mutationFn: createProperty,
-    onMutate: () => {
-      toast.loading("Creating property...");
-    },
-    onSuccess: (property) => {
-      toast.dismiss();
-      toast.success("Property created successfully");
-
-      queryClient.setQueryData(queryKeys.property.basic(property.data.id), {
-        data: property.data,
-      });
-      navigate(`/tenant/properties/${property.data.id}/rooms/create`);
-    },
-    onError: (error: any) => {
-      toast.dismiss();
-      toast.error(error.response?.data?.message || "Failed to create property");
-    },
-  });
+  const updateMutation = useUpdateProperty(propertyId!);
 
   const onSubmit = async (data: CreatePropertyPayload) => {
     const payload = {
@@ -104,28 +86,20 @@ function FormEditProperties() {
     formData.append(
       "imagesMeta",
       JSON.stringify(
-        images.map((image) => {
-          if (image.file !== undefined) {
-            return {
-              isCover: image.isCover,
-              order: image.order,
-            };
-          }
-        }),
+        images
+          .filter((image) => image.file !== undefined)
+          .map((image) => ({
+            isCover: image.isCover,
+            order: image.order,
+          })),
       ),
     );
 
-    const existingAmenities = new Set(
-      property?.propertyAmenities.map((a) => a.amenityId),
-    );
+    selectedAmenities.forEach((amenity) => {
+      formData.append("amenities", amenity);
+    });
 
-    selectedAmenities
-      .filter((amenity) => !existingAmenities.has(amenity))
-      .forEach((amenity) => {
-        formData.append("amenities", amenity);
-      });
-
-    mutation.mutate(formData);
+    updateMutation.mutate(formData);
   };
 
   const handleMapSelect = async (location: { lat: number; lng: number }) => {

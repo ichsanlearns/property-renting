@@ -33,8 +33,11 @@ export const useUpdateProperty = (propertyId: string) => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.property.detailFullInfo(propertyId),
       });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.property.allBasic(),
+      });
 
-      navigate("/tenant/properties");
+      navigate(`/tenant/property`);
     },
 
     onError: (error: any, _, toastId) => {

@@ -1,7 +1,10 @@
 import { prisma } from "../../shared/lib/prisma.lib.js";
 
 import { AppError } from "../../shared/utils/app-error.util.js";
-import type { CreatePropertyDto } from "./property.type.js";
+import type {
+  CreatePropertyDto,
+  updatePropertPayload,
+} from "./property.type.js";
 import {
   buildDateKey,
   getDatesInRangeExclusive,
@@ -100,12 +103,14 @@ export const update = async ({
   propertyId,
   tenantId,
   data,
+  categoryId,
   images,
   amenities,
 }: {
   propertyId: string;
   tenantId: string;
-  data: CreatePropertyDto;
+  data: updatePropertPayload;
+  categoryId: string;
   images?: {
     imageUrl: string;
     publicId?: string;
@@ -135,6 +140,9 @@ export const update = async ({
       },
       data: {
         ...data,
+        category: {
+          connect: { id: categoryId },
+        },
       },
       omit: {
         deletedAt: true,
@@ -162,21 +170,31 @@ export const update = async ({
       }
     }
 
-    if (amenities.length > 0) {
-      for (const amenity of amenities) {
-        await tx.propertyAmenity.create({
-          data: {
-            propertyId: property.id,
-            amenityId: amenity,
-          },
-          omit: {
-            deletedAt: true,
-            updatedAt: true,
-            createdAt: true,
-          },
-        });
-      }
-    }
+    const existingAmenities = await tx.propertyAmenity.findMany({
+      where: {
+        propertyId,
+      },
+    });
+
+    const existingIds = new Set(existingAmenities.map((a) => a.amenityId));
+    const newIds = new Set(amenities);
+
+    const toDelete = existingAmenities.filter((a) => !newIds.has(a.amenityId));
+
+    const toAdd = amenities.filter((id) => !existingIds.has(id));
+
+    await tx.propertyAmenity.deleteMany({
+      where: {
+        id: { in: toDelete.map((a) => a.id) },
+      },
+    });
+
+    await tx.propertyAmenity.createMany({
+      data: toAdd.map((id) => ({
+        propertyId,
+        amenityId: id,
+      })),
+    });
   });
 };
 

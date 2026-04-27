@@ -94,13 +94,11 @@ export const update = catchAsync(async (req: Request, res: Response) => {
   }
 
   const data = {
-    categoryId: parsed.data.categoryId,
     name: parsed.data.name,
     description: parsed.data.description,
     latitude: Number(parsed.data.latitude),
     longitude: Number(parsed.data.longitude),
     numberOfBathrooms: Number(parsed.data.numberOfBathrooms),
-    amenities: parsed.data.amenities,
   };
 
   let images: any[] = [];
@@ -135,9 +133,10 @@ export const update = catchAsync(async (req: Request, res: Response) => {
       province: location.province,
       fullAddress: location.fullAddress,
     },
+    categoryId: parsed.data.categoryId,
     tenantId,
     ...(images.length > 0 && { images }),
-    amenities: data.amenities ?? [],
+    amenities: parsed.data.amenities ?? [],
   });
 
   res.status(200).json({
