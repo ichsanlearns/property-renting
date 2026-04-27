@@ -15,3 +15,18 @@ export const searchByParamsSchema = z.object({
 });
 
 export type SearchByParamsInput = z.infer<typeof searchByParamsSchema>;
+
+export const updateSchema = z.object({
+  categoryId: z.uuid(),
+  name: z.string().min(1, "Name is required"),
+  description: z.string().min(1, "Description is required"),
+  latitude: z.number().min(1, "Latitude is required"),
+  longitude: z.number().min(1, "Longitude is required"),
+  numberOfBathrooms: z
+    .number()
+    .min(1, "Number of bathrooms is required")
+    .optional(),
+  amenities: z.array(z.string()).optional(),
+});
+
+export type UpdateInput = z.infer<typeof updateSchema>;

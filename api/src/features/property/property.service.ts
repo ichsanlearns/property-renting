@@ -96,6 +96,90 @@ export const create = async ({
   });
 };
 
+export const update = async ({
+  propertyId,
+  tenantId,
+  data,
+  images,
+  amenities,
+}: {
+  propertyId: string;
+  tenantId: string;
+  data: CreatePropertyDto;
+  images?: {
+    imageUrl: string;
+    publicId?: string;
+    isCover: boolean;
+    order: number;
+  }[];
+  amenities: string[];
+}) => {
+  const property = await prisma.property.findUnique({
+    where: {
+      id: propertyId,
+    },
+  });
+
+  if (!property) {
+    throw new AppError("Property not found", 404);
+  }
+
+  if (property.tenantId !== tenantId) {
+    throw new AppError("You are not authorized to update this property", 403);
+  }
+
+  return await prisma.$transaction(async (tx) => {
+    const property = await tx.property.update({
+      where: {
+        id: propertyId,
+      },
+      data: {
+        ...data,
+      },
+      omit: {
+        deletedAt: true,
+        updatedAt: true,
+        createdAt: true,
+      },
+    });
+
+    if (images) {
+      for (const image of images) {
+        await tx.propertyImage.create({
+          data: {
+            propertyId: property.id,
+            imageUrl: image.imageUrl,
+            imagePublicId: image.publicId ?? null,
+            isCover: image.isCover,
+            order: image.order,
+          },
+          omit: {
+            deletedAt: true,
+            updatedAt: true,
+            createdAt: true,
+          },
+        });
+      }
+    }
+
+    if (amenities.length > 0) {
+      for (const amenity of amenities) {
+        await tx.propertyAmenity.create({
+          data: {
+            propertyId: property.id,
+            amenityId: amenity,
+          },
+          omit: {
+            deletedAt: true,
+            updatedAt: true,
+            createdAt: true,
+          },
+        });
+      }
+    }
+  });
+};
+
 export const getAllBasic = async () => {
   const properties = await prisma.property.findMany({
     select: {

@@ -10,6 +10,7 @@ import * as uploadService from "../../shared/services/upload.service.js";
 import {
   getByIdBasicSchema,
   searchByParamsSchema,
+  updateSchema,
 } from "./property.validator.js";
 
 export const create = catchAsync(async (req: Request, res: Response) => {
@@ -74,6 +75,73 @@ export const create = catchAsync(async (req: Request, res: Response) => {
 
   res.status(201).json({
     message: "Property created successfully",
+    data: property,
+  });
+});
+
+export const update = catchAsync(async (req: Request, res: Response) => {
+  const tenantId = req.user?.userId!;
+
+  const { propertyId } = req.params as { propertyId: string };
+
+  const files = req.files as Express.Multer.File[];
+  const imagesMeta = JSON.parse(req.body.imagesMeta);
+
+  const parsed = updateSchema.safeParse(req.body);
+
+  if (!parsed.success) {
+    throw new AppError("Invalid request body", 400);
+  }
+
+  const data = {
+    categoryId: parsed.data.categoryId,
+    name: parsed.data.name,
+    description: parsed.data.description,
+    latitude: Number(parsed.data.latitude),
+    longitude: Number(parsed.data.longitude),
+    numberOfBathrooms: Number(parsed.data.numberOfBathrooms),
+    amenities: parsed.data.amenities,
+  };
+
+  let images: any[] = [];
+  if (files.length > 0) {
+    const uploadedImagesUrl = await Promise.all(
+      files.map((file) =>
+        uploadService.uploadToCloudinary(file.buffer, "propertyImages"),
+      ),
+    );
+
+    images = uploadedImagesUrl.map((item, index) => {
+      return {
+        imageUrl: item.url,
+        publicId: item.publicId,
+        isCover: imagesMeta[index].isCover,
+        order: imagesMeta[index].order,
+      };
+    });
+  }
+
+  const location = await geocodingService.reverseGeocode({
+    lat: data.latitude,
+    long: data.longitude,
+  });
+
+  const property = await PropertyService.update({
+    propertyId,
+    data: {
+      ...data,
+      country: location.country,
+      city: location.city,
+      province: location.province,
+      fullAddress: location.fullAddress,
+    },
+    tenantId,
+    ...(images.length > 0 && { images }),
+    amenities: data.amenities ?? [],
+  });
+
+  res.status(200).json({
+    message: "Property updated successfully",
     data: property,
   });
 });

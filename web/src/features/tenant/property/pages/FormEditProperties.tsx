@@ -115,9 +115,15 @@ function FormEditProperties() {
       ),
     );
 
-    selectedAmenities.forEach((amenity) => {
-      formData.append("amenities", amenity);
-    });
+    const existingAmenities = new Set(
+      property?.propertyAmenities.map((a) => a.amenityId),
+    );
+
+    selectedAmenities
+      .filter((amenity) => !existingAmenities.has(amenity))
+      .forEach((amenity) => {
+        formData.append("amenities", amenity);
+      });
 
     mutation.mutate(formData);
   };
