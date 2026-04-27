@@ -134,9 +134,13 @@ function Properties() {
       <header className="flex items-center justify-between mb-8">
         <div>
           <div className="flex items-center gap-2 text-slate-500 text-sm mb-1">
-            <a className="hover:text-primary transition-colors" href="#">
+            <button
+              type="button"
+              onClick={() => navigate("/tenant/properties")}
+              className="hover:text-primary transition-colors"
+            >
               Properties
-            </a>
+            </button>
             <span className="material-symbols-outlined text-xs">
               chevron_right
             </span>
@@ -353,7 +357,8 @@ function Properties() {
                   </button>
                   <button
                     type="button"
-                    className="w-full bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 py-3.5 rounded-xl font-bold hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+                    onClick={() => navigate("/tenant/properties")}
+                    className="w-full bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 py-3.5 rounded-xl font-bold hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors cursor-pointer"
                   >
                     Cancel
                   </button>

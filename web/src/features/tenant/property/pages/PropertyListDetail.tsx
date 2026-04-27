@@ -144,15 +144,6 @@ function PropertyListDetail() {
             <h3 className="text-[24px] font-bold text-on-surface">
               Room Types
             </h3>
-            <button className="text-primary font-bold text-sm hover:underline flex items-center gap-1">
-              <span
-                className="material-symbols-outlined text-[18px]"
-                data-icon="add"
-              >
-                add
-              </span>
-              Add Room Type
-            </button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {property.roomTypes.map((roomType) => {
@@ -214,11 +205,11 @@ function PropertyListDetail() {
                       </div>
                     </div>
                   </div>
-                  <div className="bg-surface-container px-6 py-3 border-t border-outline flex justify-end gap-3 text-sm">
-                    <button className="text-on-surface-variant hover:text-primary font-medium transition-colors">
+                  <div className="bg-white/50 px-6 py-3 border-t border-outline flex justify-end gap-3 text-sm">
+                    <button className="text-on-surface-variant hover:text-primary font-medium transition-colors cursor-pointer">
                       Edit
                     </button>
-                    <button className="text-on-surface-variant hover:text-primary font-medium transition-colors">
+                    <button className="text-on-surface-variant hover:text-primary font-medium transition-colors cursor-pointer">
                       Delete
                     </button>
                   </div>
