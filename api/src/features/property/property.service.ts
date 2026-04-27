@@ -306,7 +306,7 @@ export const getById = async ({ id }: { id: string }) => {
   };
 };
 
-export const getByPropertyId = async ({
+export const getByPropertyIdFullInfo = async ({
   propertyId,
 }: {
   propertyId: string;

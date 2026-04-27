@@ -7,6 +7,8 @@ export const PROPERTY_ENDPOINTS = {
   GET_BY_ID: (propertyId: string) => `/properties/${propertyId}`,
   GET_PROPERTY_ROOM_PRICES_DATE: (propertyId: string) =>
     `/properties/${propertyId}/availability`,
+  GET_BY_ID_FULL_INFO: (propertyId: string) =>
+    `/properties/${propertyId}/full-info`,
   CATEGORIES: {
     GET_ALL: "/property-categories",
   },

@@ -37,6 +37,13 @@ export const getPropertyById = async (propertyId: string) => {
   return response.data;
 };
 
+export const getPropertyByIdFullInfo = async (propertyId: string) => {
+  const response = await api.get<
+    ApiResponse<PropertyResponse.GetPropertyByIdFullInfoResponse>
+  >(PROPERTY_ENDPOINTS.GET_BY_ID_FULL_INFO(propertyId));
+  return response.data;
+};
+
 export const getPropertyByTenantId = async () => {
   const response = await api.get<
     ApiResponse<PropertyResponse.GetPropertyByTenantIdResponse[]>

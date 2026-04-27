@@ -9,6 +9,30 @@ export type PropertyBasicResponse = {
   coverImage: string;
 };
 
+export type GetPropertyByIdFullInfoResponse = {
+  id: string;
+  name: string;
+  description: string;
+
+  latitude: number;
+  longitude: number;
+
+  numberOfBathrooms: number;
+
+  category: CategoryResponse;
+
+  propertyImages: {
+    id: string;
+    imageUrl: string;
+    isCover: boolean;
+    order: number;
+  }[];
+
+  propertyAmenities: {
+    name: string;
+  }[];
+};
+
 export type GetPropertyAllBasicResponse = {
   id: string;
   name: string;

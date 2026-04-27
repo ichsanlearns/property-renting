@@ -35,6 +35,21 @@ export const usePropertyDetail = ({ propertyId }: { propertyId: string }) => {
   });
 };
 
+export const usePropertyDetailFullInfo = ({
+  propertyId,
+}: {
+  propertyId: string;
+}) => {
+  return useQuery({
+    queryKey: queryKeys.property.detailFullInfo(propertyId),
+    queryFn: () => PropertyService.getPropertyByIdFullInfo(propertyId),
+    select: (res) => res.data,
+    enabled: !!propertyId,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+  });
+};
+
 export const usePropertyByTenantId = () => {
   return useQuery({
     queryKey: queryKeys.property.byTenantId(),

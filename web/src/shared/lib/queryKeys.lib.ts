@@ -3,6 +3,8 @@ export const queryKeys = {
     allBasic: () => ["property", "all", "basic"] as const,
     basic: (propertyId: string) => ["property", propertyId, "basic"] as const,
     detail: (propertyId: string) => ["property", propertyId, "detail"] as const,
+    detailFullInfo: (propertyId: string) =>
+      ["property", propertyId, "detail", "fullInfo"] as const,
     byTenantId: () => ["property", "byTenantId"] as const,
     search: (
       search?: string,

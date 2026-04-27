@@ -113,11 +113,13 @@ export const getById = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-export const getByPropertyId = catchAsync(
+export const getByPropertyIdFullInfo = catchAsync(
   async (req: Request, res: Response) => {
     const { propertyId } = req.params as { propertyId: string };
 
-    const property = await PropertyService.getById({ id: propertyId });
+    const property = await PropertyService.getByPropertyIdFullInfo({
+      propertyId,
+    });
 
     res.status(200).json({
       message: "Property fetched successfully",
