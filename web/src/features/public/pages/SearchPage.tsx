@@ -105,6 +105,40 @@ function SearchPage() {
           </div>
         </div>
       </main>
+      <div className="my-16 flex justify-center items-center space-x-2">
+        <button
+          className="flex items-center justify-center w-10 h-10 rounded-full border border-outline text-on-surface-variant opacity-40 cursor-not-allowed"
+          disabled={true}
+        >
+          <span className="material-symbols-outlined text-xl">
+            chevron_left
+          </span>
+        </button>
+        <button className="w-10 h-10 flex items-center justify-center rounded-full bg-primary text-white font-semibold shadow-sm transition-all">
+          1
+        </button>
+        <button className="w-10 h-10 flex items-center justify-center rounded-full border border-outline bg-surface-container-low text-on-surface hover:bg-surface-container-high transition-colors font-medium">
+          2
+        </button>
+        <button className="w-10 h-10 flex items-center justify-center rounded-full border border-outline bg-surface-container-low text-on-surface hover:bg-surface-container-high transition-colors font-medium">
+          3
+        </button>
+        <button className="w-10 h-10 flex items-center justify-center rounded-full border border-outline bg-surface-container-low text-on-surface hover:bg-surface-container-high transition-colors font-medium">
+          4
+        </button>
+        <button className="w-10 h-10 flex items-center justify-center rounded-full border border-outline bg-surface-container-low text-on-surface hover:bg-surface-container-high transition-colors font-medium">
+          5
+        </button>
+        <span className="px-2 text-on-surface-variant">...</span>
+        <button className="w-10 h-10 flex items-center justify-center rounded-full border border-outline bg-surface-container-low text-on-surface hover:bg-surface-container-high transition-colors font-medium">
+          10
+        </button>
+        <button className="flex items-center justify-center w-10 h-10 rounded-full border border-outline bg-surface-container-low text-on-surface hover:bg-surface-container-high transition-colors shadow-sm">
+          <span className="material-symbols-outlined text-xl">
+            chevron_right
+          </span>
+        </button>
+      </div>
     </>
   );
 }
