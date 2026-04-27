@@ -32,3 +32,9 @@ export const getReservationByCodeRequest = async (code: string) => {
 
   return response.data;
 };
+
+export const cancelReservationRequest = async (id: string) => {
+  const response = await api.patch<ApiResponse<any>>(`/reservations/${id}/cancel`);
+
+  return response.data;
+};

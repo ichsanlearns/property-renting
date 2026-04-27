@@ -14,7 +14,7 @@ import BookingPagination from "../components/BookingPagination";
 function MyBooking() {
   const { user } = useAuthStore();
 
-  const { loading, search, setSearch, statusFilter, setStatusFilter, filteredBookings } = useMyBooking();
+  const { loading, search, setSearch, statusFilter, setStatusFilter, filteredBookings, handleCancelBooking } = useMyBooking();
 
   if (!user) return <Navigate to="/login" replace />;
 
@@ -27,7 +27,7 @@ function MyBooking() {
 
         <BookingFilters search={search} setSearch={setSearch} statusFilter={statusFilter} setStatusFilter={setStatusFilter} />
 
-        <BookingGrid bookings={filteredBookings} />
+        <BookingGrid bookings={filteredBookings} handleCancelBooking={handleCancelBooking} />
 
         <BookingPagination />
       </main>

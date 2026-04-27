@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
 
-export default function BookingCard({ booking }: any) {
+export default function BookingCard({ booking, handleCancelBooking }: any) {
   const navigate = useNavigate();
 
   return (
@@ -45,17 +46,48 @@ export default function BookingCard({ booking }: any) {
             <span className="material-symbols-outlined text-base">group</span>
             {booking.guests} Guests
           </div>
+
+          {booking.helperText && <p className="text-xs text-primary font-semibold pt-1">{booking.helperText}</p>}
         </div>
 
         {/* Actions */}
         <div className="flex flex-col gap-2">
-          {booking.status === "Waiting for Payment" ? (
+          {booking.status === "Waiting Payment" ? (
             <>
               <button onClick={() => navigate(`/reservations/${booking.reservationCode}`)} className="w-full bg-primary text-white font-bold py-2.5 rounded-lg hover:bg-primary/90 transition-colors text-sm">
                 Pay Now
               </button>
 
-              <button className="w-full text-slate-500 hover:text-red-500 font-semibold py-2 transition-colors text-sm">Cancel Booking</button>
+              <button
+                onClick={() => {
+                  toast((t) => (
+                    <div className="bg-white rounded-xl shadow-xl p-4 w-[320px] border">
+                      <h3 className="font-bold text-sm mb-1">Cancel Booking?</h3>
+
+                      <p className="text-sm text-slate-500 mb-4">Are you sure you want to cancel this booking?</p>
+
+                      <div className="flex justify-end gap-2">
+                        <button onClick={() => toast.dismiss(t.id)} className="px-3 py-2 text-sm rounded-lg bg-slate-100">
+                          Keep
+                        </button>
+
+                        <button
+                          onClick={() => {
+                            toast.dismiss(t.id);
+                            handleCancelBooking(booking.id);
+                          }}
+                          className="px-3 py-2 text-sm rounded-lg bg-red-500 text-white"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  ));
+                }}
+                className="w-full text-slate-500 hover:text-red-500 font-semibold py-2 transition-colors text-sm"
+              >
+                Cancel Booking
+              </button>
             </>
           ) : booking.canReview ? (
             <div className="flex gap-3">
