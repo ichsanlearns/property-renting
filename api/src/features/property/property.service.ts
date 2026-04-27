@@ -306,6 +306,72 @@ export const getById = async ({ id }: { id: string }) => {
   };
 };
 
+export const getByPropertyId = async ({
+  propertyId,
+}: {
+  propertyId: string;
+}) => {
+  const property = await prisma.property.findUnique({
+    where: {
+      id: propertyId,
+    },
+    select: {
+      id: true,
+      name: true,
+      description: true,
+
+      latitude: true,
+      longitude: true,
+
+      numberOfBathrooms: true,
+
+      category: {
+        select: {
+          name: true,
+        },
+      },
+
+      propertyImages: {
+        select: {
+          id: true,
+          imageUrl: true,
+          isCover: true,
+          order: true,
+        },
+      },
+
+      propertyAmenities: {
+        select: {
+          amenity: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!property) {
+    throw new AppError("Property not found", 404);
+  }
+
+  return {
+    id: property.id,
+    name: property.name,
+    description: property.description,
+
+    latitude: property.latitude,
+    longitude: property.longitude,
+
+    numberOfBathrooms: property.numberOfBathrooms,
+
+    category: property.category,
+    propertyImages: property.propertyImages,
+    propertyAmenities: property.propertyAmenities,
+  };
+};
+
 export const getByTenantId = async (tenantId: string) => {
   const properties = await prisma.property.findMany({
     where: {

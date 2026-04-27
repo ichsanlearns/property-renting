@@ -20,6 +20,8 @@ router.get("/search", PropertyController.searchByParams);
 
 router.get("/tenant", authMiddleware, PropertyController.getByTenantId);
 
+router.get("/:propertyId/full-info", PropertyController.getByPropertyId);
+
 router.get("/:propertyId/basic", PropertyController.getByIdBasic);
 router.get("/:propertyId", PropertyController.getById);
 
