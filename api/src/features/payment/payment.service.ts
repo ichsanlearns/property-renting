@@ -24,10 +24,8 @@ export const uploadPaymentProof = async ({ userId, reservationId, file }: { user
       throw new AppError("Invalid reservation status", 400);
     }
 
-    // upload ke cloudinary
     const uploadResult = await uploadToCloudinary(file.buffer);
 
-    // update reservation (simple dulu tanpa table payment)
     const updated = await tx.reservation.update({
       where: { id: reservationId },
       data: {
@@ -45,6 +43,7 @@ export const confirmPayment = async ({ reservationId, tenantId }: { reservationI
     const reservation = await tx.reservation.findUnique({
       where: { id: reservationId },
       include: {
+        customer: true,
         roomType: {
           include: {
             property: true,
@@ -70,6 +69,14 @@ export const confirmPayment = async ({ reservationId, tenantId }: { reservationI
       data: {
         status: ReservationStatus.PAID,
       },
+    });
+
+    await sendBookingConfirmedEmail({
+      to: reservation.customer.email,
+      name: reservation.customer.firstName || "Guest",
+      property: reservation.roomType.property.name,
+      checkIn: reservation.checkInDate,
+      checkOut: reservation.checkOutDate,
     });
 
     return updated;
