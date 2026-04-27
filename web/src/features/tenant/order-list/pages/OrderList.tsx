@@ -9,7 +9,25 @@ import OrderPagination from "../components/OrderPagination";
 import OrderStats from "../components/OrderStats";
 
 function OrderList() {
-  const { loading, filteredOrders, filterStatus, setFilterStatus, filterProperty, setFilterProperty, uniqueProperties, totalRevenue, totalConfirmed, totalPending, totalCancelled } = useOrderList();
+  const {
+    loading,
+    paginatedOrders,
+    filterStatus,
+    setFilterStatus,
+    filterProperty,
+    setFilterProperty,
+    uniqueProperties,
+    totalRevenue,
+    totalConfirmed,
+    totalPending,
+    totalCancelled,
+
+    currentPage,
+    setCurrentPage,
+    totalPages,
+    itemsPerPage,
+    filteredOrders,
+  } = useOrderList();
 
   if (loading) {
     return <LoaderFetching />;
@@ -21,9 +39,9 @@ function OrderList() {
 
       <OrderFilters filterStatus={filterStatus} setFilterStatus={setFilterStatus} filterProperty={filterProperty} setFilterProperty={setFilterProperty} uniqueProperties={uniqueProperties} />
 
-      <OrderTable orders={filteredOrders} />
+      <OrderTable orders={paginatedOrders} />
 
-      <OrderPagination />
+      <OrderPagination currentPage={currentPage} totalPages={totalPages} setCurrentPage={setCurrentPage} totalData={filteredOrders.length} itemsPerPage={itemsPerPage} />
 
       <OrderStats totalRevenue={totalRevenue} totalConfirmed={totalConfirmed} totalPending={totalPending} totalCancelled={totalCancelled} />
     </div>

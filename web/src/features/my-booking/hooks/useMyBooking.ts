@@ -13,6 +13,9 @@ export default function useMyBooking() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 3;
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -171,13 +174,28 @@ export default function useMyBooking() {
     });
   }, [bookings, search, statusFilter]);
 
+  const totalPages = Math.ceil(filteredBookings.length / itemsPerPage);
+
+  const paginatedBookings = filteredBookings.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, statusFilter]);
+
   return {
     loading,
     search,
     setSearch,
     statusFilter,
     setStatusFilter,
+
     filteredBookings,
+    paginatedBookings,
+
+    currentPage,
+    setCurrentPage,
+    totalPages,
+
     handleCancelBooking,
   };
 }
