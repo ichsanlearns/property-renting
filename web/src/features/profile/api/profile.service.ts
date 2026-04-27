@@ -29,3 +29,11 @@ export const updateProfilePhotoRequest = async (data: FormData) => {
 
   return response.data;
 };
+
+export const deleteProfilePhotoRequest = async () => {
+  const response = await api.delete<ApiResponse<FillProfileResponse>>(
+    PROFILE_ENDPOINTS.DELETE_PROFILE_PHOTO,
+  );
+
+  return response.data;
+};

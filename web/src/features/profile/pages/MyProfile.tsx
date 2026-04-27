@@ -8,7 +8,10 @@ import toast from "react-hot-toast";
 import { updateMeRequest } from "../api/profile.service";
 import ProfilePhoto from "../../auth/components/ProfilePhoto";
 import type { ImageType } from "../../tenant/property/types/image.type";
-import { useUpdateProfileImage } from "../hooks/profile.mutation";
+import {
+  useDeleteProfilePhoto,
+  useUpdateProfileImage,
+} from "../hooks/profile.mutation";
 
 function MyProfile() {
   const { user, setUser } = useAuthStore();
@@ -16,6 +19,7 @@ function MyProfile() {
   const [changingProfilePhoto, setChangingProfilePhoto] = useState(false);
 
   const mutation = useUpdateProfileImage();
+  const deleteMutation = useDeleteProfilePhoto();
 
   const [image, setImage] = useState<ImageType | null>(null);
 
@@ -43,26 +47,48 @@ function MyProfile() {
     }
   };
 
-  // const handleSaveProfilePhoto = () => {
-  //   if (!image?.file) {
-  //     toast.error("Please select an image first");
-  //     return;
-  //   }
+  const handleSaveProfilePhoto = () => {
+    if (!image && user?.profileImage) {
+      handleDeleteProfilePhoto();
+    } else {
+      handleChangeProfilePhoto();
+    }
+  };
 
-  //   const formData = new FormData();
-  //   formData.append("profileImage", image.file);
+  const handleChangeProfilePhoto = () => {
+    if (!image?.file) {
+      toast.error("Please select an image first");
+      return;
+    }
 
-  //   const toastId = toast.loading("Uploading photo...");
+    const formData = new FormData();
+    formData.append("profileImage", image.file);
 
-  //   mutation.mutate(formData, {
-  //     onSuccess: () => {
-  //       toast.success("Profile photo updated", { id: toastId });
-  //     },
-  //     onError: () => {
-  //       toast.error("Upload failed", { id: toastId });
-  //     },
-  //   });
-  // };
+    const toastId = toast.loading("Uploading photo...");
+
+    mutation.mutate(formData, {
+      onSuccess: () => {
+        toast.success("Profile photo updated", { id: toastId });
+      },
+      onError: () => {
+        toast.error("Upload failed", { id: toastId });
+      },
+    });
+  };
+
+  const handleDeleteProfilePhoto = () => {
+    const toastId = toast.loading("Deleting profile photo...");
+
+    deleteMutation.mutate(undefined, {
+      onSuccess: () => {
+        toast.success("Profile photo deleted", { id: toastId });
+        setChangingProfilePhoto(false);
+      },
+      onError: () => {
+        toast.error("Delete failed", { id: toastId });
+      },
+    });
+  };
 
   const handleCancelProfilePhoto = () => {
     setChangingProfilePhoto(false);
@@ -104,12 +130,25 @@ function MyProfile() {
                     {changingProfilePhoto ? (
                       <>
                         <button
-                          // onClick={handleSaveProfilePhoto}
+                          onClick={handleSaveProfilePhoto}
+                          disabled={
+                            mutation.isPending || deleteMutation.isPending
+                          }
                           type="button"
-                          className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium shadow-sm hover:bg-primary/90 active:scale-[0.98] transition cursor-pointer`}
+                          className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium shadow-sm hover:bg-primary/90 active:scale-[0.98] transition  ${
+                            mutation.isPending || deleteMutation.isPending
+                              ? "opacity-50 cursor-not-allowed"
+                              : "cursor-pointer"
+                          }`}
                         >
-                          {" "}
-                          Save Changes
+                          {mutation.isPending ? (
+                            <>
+                              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                              Saving changes...
+                            </>
+                          ) : (
+                            "Save changes"
+                          )}
                         </button>
                         <button
                           onClick={handleCancelProfilePhoto}
