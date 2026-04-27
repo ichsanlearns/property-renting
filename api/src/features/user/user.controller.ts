@@ -7,6 +7,8 @@ import * as uploadService from "../../shared/services/upload.service.js";
 import { updatePasswordSchema } from "./user.validator.js";
 import { AppError } from "../../shared/utils/app-error.util.js";
 
+import * as authService from "../auth/auth.service.js";
+
 export const updateMe = async (req: Request, res: Response) => {
   const userId = req.user?.userId;
 
@@ -107,6 +109,8 @@ export const updateProfilePhoto = catchAsync(
 export const updatePassword = catchAsync(
   async (req: Request, res: Response) => {
     const userId = req.user?.userId!;
+    const refreshToken = req.cookies.refreshToken;
+    console.log(refreshToken);
 
     const input = updatePasswordSchema.safeParse(req.body);
 

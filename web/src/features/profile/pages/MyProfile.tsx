@@ -360,9 +360,7 @@ function MyProfile() {
                     <div className="flex gap-8">
                       <button
                         type="button"
-                        onClick={handleSubmitPassword(() => {
-                          setPasswordModalOpen(true);
-                        })}
+                        onClick={() => setPasswordModalOpen(!passwordModalOpen)}
                         className="bg-primary text-white px-6 py-2.5 rounded-lg font-bold hover:bg-primary/90 transition-all shadow-md active:scale-95 cursor-pointer hover:scale-105"
                       >
                         Update

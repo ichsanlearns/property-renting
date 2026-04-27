@@ -1,4 +1,4 @@
-import api from "../../../api/client";
+import api, { apiAuth } from "../../../api/client";
 import type { ApiResponse } from "../../../shared/types/api-response";
 
 import { PROFILE_ENDPOINTS } from "./profile.endpoint";

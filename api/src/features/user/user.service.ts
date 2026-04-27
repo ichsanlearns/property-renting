@@ -104,7 +104,10 @@ export const updatePassword = async ({
 
   await prisma.user.update({
     where: { id: userId },
-    data: { password: hashedPassword },
+    data: {
+      password: hashedPassword,
+      refreshTokens: { deleteMany: {} },
+    },
   });
 };
 
