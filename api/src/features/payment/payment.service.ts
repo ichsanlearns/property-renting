@@ -136,7 +136,7 @@ export const handleMidtransNotification = async (payload: any) => {
     throw new AppError("Invalid signature", 403);
   }
 
-  const reservationCode = order_id.split("-").slice(0, 3).join("-");
+  const reservationCode = order_id;
 
   const reservation = await prisma.reservation.findUnique({
     where: { reservationCode },
@@ -146,7 +146,6 @@ export const handleMidtransNotification = async (payload: any) => {
     throw new AppError("Reservation not found", 404);
   }
 
-  // SUCCESS PAYMENT
   if (transaction_status === "settlement" || (transaction_status === "capture" && fraud_status === "accept")) {
     await prisma.reservation.update({
       where: { reservationCode },
