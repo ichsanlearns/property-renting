@@ -5,3 +5,7 @@ export const createReviewSchema = z.object({
   rating: z.number().min(1).max(5),
   comment: z.string().min(1),
 });
+
+export const replyReviewSchema = z.object({
+  reply: z.string().min(1, "Reply required"),
+});

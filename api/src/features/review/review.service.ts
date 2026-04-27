@@ -70,7 +70,9 @@ export const createReview = async ({ userId, reservationId, rating, comment }: {
 
 export const getPropertyReviews = async (propertyId: string) => {
   const reviews = await prisma.review.findMany({
-    where: { propertyId },
+    where: {
+      propertyId,
+    },
     include: {
       customer: {
         select: {
@@ -79,6 +81,22 @@ export const getPropertyReviews = async (propertyId: string) => {
           profileImage: true,
         },
       },
+
+      property: {
+        select: {
+          tenant: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              profileImage: true,
+            },
+          },
+        },
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
     },
   });
 
@@ -89,4 +107,29 @@ export const getPropertyReviews = async (propertyId: string) => {
     totalReviews: reviews.length,
     reviews,
   };
+};
+
+export const replyReview = async ({ reviewId, tenantId, reply }: { reviewId: string; tenantId: string; reply: string }) => {
+  const review = await prisma.review.findUnique({
+    where: { id: reviewId },
+    include: {
+      property: true,
+    },
+  });
+
+  if (!review) {
+    throw new AppError("Review not found", 404);
+  }
+
+  if (review.property.tenantId !== tenantId) {
+    throw new AppError("Unauthorized", 403);
+  }
+
+  return prisma.review.update({
+    where: { id: reviewId },
+    data: {
+      tenantReply: reply,
+      repliedAt: new Date(),
+    },
+  });
 };
