@@ -1,28 +1,41 @@
+import toast from "react-hot-toast";
 import type { ImageType } from "../../tenant/property/types/image.type";
 import { v4 as uuidv4 } from "uuid";
 
 function ProfilePhoto({
   image,
   onChange,
-  page,
   changingProfilePhoto = true,
-  setChangingProfilePhoto,
 }: {
   image: ImageType | null;
   onChange: (image: ImageType | null) => void;
-  page?: string;
   changingProfilePhoto?: boolean;
-  setChangingProfilePhoto?: (changingProfile: boolean) => void;
 }) {
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      onChange({
-        id: uuidv4(),
-        preview: URL.createObjectURL(file),
-        file,
-      });
+
+    if (!file) return;
+
+    const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
+    const maxSize = 1 * 1024 * 1024;
+
+    if (!allowedTypes.includes(file.type)) {
+      toast.error("Only JPG, PNG, and GIF files are allowed");
+      e.target.value = "";
+      return;
     }
+
+    if (file.size > maxSize) {
+      toast.error("File size must be less than 1MB");
+      e.target.value = "";
+      return;
+    }
+
+    onChange({
+      id: uuidv4(),
+      preview: URL.createObjectURL(file),
+      file,
+    });
 
     e.target.value = "";
   };

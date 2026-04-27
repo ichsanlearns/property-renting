@@ -210,8 +210,6 @@ function MyProfile() {
                       image={image}
                       onChange={setImage}
                       changingProfilePhoto={changingProfilePhoto}
-                      setChangingProfilePhoto={setChangingProfilePhoto}
-                      page="my-profile"
                     />
                     {changingProfilePhoto ? (
                       <>

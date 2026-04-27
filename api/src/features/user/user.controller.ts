@@ -85,7 +85,17 @@ export const updateProfilePhoto = catchAsync(
     const profileImage = req.file;
 
     if (!profileImage) {
-      throw new Error("Profile image not uploaded");
+      throw new AppError("Profile image not uploaded", 400);
+    }
+
+    const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
+
+    if (!allowedTypes.includes(profileImage.mimetype)) {
+      throw new AppError("Invalid file type", 400);
+    }
+
+    if (profileImage.size > 1 * 1024 * 1024) {
+      throw new AppError("Profile image size must be less than 1MB", 400);
     }
 
     const profileImageLink = await uploadService.uploadToCloudinary(
