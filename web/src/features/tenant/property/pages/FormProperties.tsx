@@ -148,18 +148,6 @@ function Properties() {
             Property Management
           </h2>
         </div>
-        <div className="flex items-center gap-4">
-          <button className="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 transition-colors">
-            <span className="material-symbols-outlined">notifications</span>
-          </button>
-          <button
-            type="button"
-            className="flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-xl font-bold hover:bg-primary/90 transition-all shadow-sm"
-          >
-            <span className="material-symbols-outlined text-[20px]">save</span>
-            Save Changes
-          </button>
-        </div>
       </header>
       <form
         onSubmit={handleSubmit(onSubmit, (errors) => console.error(errors))}
@@ -351,58 +339,15 @@ function Properties() {
             <ImageUpload value={images} onChange={setImages} />
           </div>
           <div className="lg:col-span-4 space-y-6">
-            <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
-              <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-4">
-                Location Preview
-              </h3>
-              <div className="w-full aspect-square rounded-xl overflow-hidden relative border border-slate-200 dark:border-slate-700">
-                <img
-                  alt="Mini map view"
-                  className="w-full h-full object-cover"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuCwo3bT2Dse-rXfKGaZvylKcanlpO7YGCaZ0A67Sxqwk5daFWZBAfE5otahLSqlEPgMAX41x7mhCWJ-2_8UyEb5CdQ_RemRVSzSAW46tSlD4jZ0KYFdS-OQ4DPX17s9bRc-Ln39ITVOYnYHL2JD26wlM9NZUZz4hDGrVoqsuKbAWOoRQWoRwIouXfdxseUIVTRq3vB8AFOe5yOkST84FpOwvWPI1YPm5Npw68xMAlySlfjQKcj_ZO1SbZBz3eAUW2-X__iGA8_71s3W"
-                />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="bg-primary size-4 rounded-full border-2 border-white shadow-lg animate-pulse"></div>
-                </div>
-              </div>
-              <p className="mt-3 text-xs text-slate-500 text-center">
-                Seattle, WA 98101
-              </p>
-            </div>
-            <div className="sticky top-48 lg:col-span-4 space-y-6">
+            <div className="sticky top-24 lg:col-span-4 space-y-6">
               <div className=" bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
                 <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-6">
                   Status &amp; Settings
                 </h3>
-                <div className="space-y-6">
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase mb-2">
-                      Publish Status
-                    </label>
-                    <select className="w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:border-primary focus:ring-primary p-3 text-sm font-medium">
-                      <option defaultValue={"PUBLISHED"}>Publish</option>
-                      <option>Draft</option>
-                      <option>Archive</option>
-                    </select>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-bold text-slate-700 dark:text-slate-300">
-                      Accept Inquiries
-                    </span>
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input
-                        className="sr-only peer"
-                        type="checkbox"
-                        value=""
-                      />
-                      <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-                    </label>
-                  </div>
-                </div>
                 <div className="mt-8 space-y-3">
                   <button
                     type="submit"
-                    className="w-full bg-primary text-white py-3.5 rounded-xl font-bold hover:opacity-90 transition-all shadow-sm"
+                    className="w-full bg-primary text-white py-3.5 rounded-xl font-bold hover:opacity-90 transition-all shadow-sm cursor-pointer"
                   >
                     Save Property
                   </button>
@@ -424,8 +369,8 @@ function Properties() {
                       Quick Tip
                     </p>
                     <p className="text-slate-600 dark:text-slate-400 text-xs mt-1 leading-relaxed">
-                      Listing with at least 5 high-quality photos receive 60%
-                      more tenant inquiries on average.
+                      New created property is in draft mode. It will not be
+                      visible to public until you create published room(s).
                     </p>
                   </div>
                 </div>

@@ -16,12 +16,23 @@ export const createRoom = async ({
   }[];
   amenities: string[];
 }) => {
-  const property = await prisma.property.findUnique({
-    where: { id: data.propertyId },
-  });
+  if (data.isPublished === "PUBLISHED") {
+    await prisma.property.update({
+      where: {
+        id: data.propertyId,
+      },
+      data: {
+        isPublished: "PUBLISHED",
+      },
+    });
+  } else {
+    const property = await prisma.property.findUnique({
+      where: { id: data.propertyId },
+    });
 
-  if (!property) {
-    throw new AppError("Property not found", 404);
+    if (!property) {
+      throw new AppError("Property not found", 404);
+    }
   }
 
   return await prisma.$transaction(async (tx) => {

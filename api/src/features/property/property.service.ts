@@ -42,7 +42,7 @@ export const create = async ({
         ...data,
         tenantId,
         isVerified: "VERIFIED",
-        isPublished: "PUBLISHED",
+        isPublished: "DRAFT",
       },
       omit: {
         deletedAt: true,
@@ -126,6 +126,9 @@ export const getAllBasic = async () => {
         },
         take: 1,
       },
+    },
+    where: {
+      isPublished: "PUBLISHED",
     },
   });
 
@@ -389,97 +392,10 @@ export const getByTenantId = async (tenantId: string) => {
   }));
 };
 
-// export const searchByParams = async (params: SearchPropertiesParams) => {
-//   const where: Prisma.PropertyWhereInput = params.search
-//     ? {
-//         OR: [
-//           { name: { contains: params.search, mode: "insensitive" as const } },
-//           { city: { contains: params.search, mode: "insensitive" as const } },
-//           {
-//             country: { contains: params.search, mode: "insensitive" as const },
-//           },
-//         ],
-//       }
-//     : {};
-
-//   let dates: Date[] = [];
-//   if (params.checkIn && params.checkOut) {
-//     dates = getDatesInRangeExclusive(params.checkIn, params.checkOut);
-//     where.roomTypes = {
-//       some: {
-//         roomTypePrices: {
-//           some: {
-//             date: {
-//               gte: new Date(params.checkIn),
-//               lt: new Date(params.checkOut),
-//             },
-//             availableRooms: {
-//               gt: 0,
-//             },
-//             isClosed: false,
-//           },
-//         },
-//       },
-//     };
-//   }
-
-//   const properties = await prisma.property.findMany({
-//     where,
-//     orderBy: {
-//       [params.sortBy as string]: params.order,
-//     },
-//     select: {
-//       id: true,
-//       name: true,
-//       city: true,
-//       province: true,
-//       country: true,
-
-//       latitude: true,
-//       longitude: true,
-
-//       averageRating: true,
-//       reviewCount: true,
-
-//       propertyImages: {
-//         where: {
-//           isCover: true,
-//         },
-//         select: {
-//           imageUrl: true,
-//         },
-//       },
-
-//       roomTypes: {
-//         select: {
-//           basePrice: true,
-//         },
-//         orderBy: {
-//           basePrice: "asc",
-//         },
-//         take: 1,
-//       },
-//     },
-//   });
-
-//   return properties.map((property) => ({
-//     id: property.id,
-//     name: property.name,
-//     city: property.city,
-//     province: property.province,
-//     latitude: property.latitude,
-//     longitude: property.longitude,
-//     country: property.country,
-//     price: property.roomTypes[0]?.basePrice,
-//     averageRating: property.averageRating,
-//     reviewCount: property.reviewCount,
-//     coverImage: property.propertyImages[0]?.imageUrl,
-//   }));
-// };
-
 export const searchByParams = async (params: SearchPropertiesParams) => {
   const where: Prisma.PropertyWhereInput = params.search
     ? {
+        isPublished: "PUBLISHED",
         OR: [
           { name: { contains: params.search, mode: "insensitive" } },
           { city: { contains: params.search, mode: "insensitive" } },

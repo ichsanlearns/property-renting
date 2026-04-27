@@ -64,7 +64,7 @@ function PropertyList() {
                 src={property.coverImage}
               />
               <div className="absolute top-3 left-3 bg-surface/90 backdrop-blur-sm text-primary px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider shadow-sm border border-slate-200/10">
-                {property.isPublished ? "Published" : "Draft"}
+                {property.isPublished}
               </div>
             </div>
             <div className="flex flex-col justify-center flex-1 py-2">
