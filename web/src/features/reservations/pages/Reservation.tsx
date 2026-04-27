@@ -52,6 +52,8 @@ function Reservation() {
 
   const tax = useMemo(() => pricePerNight * nights * 0.1, [pricePerNight, nights]);
 
+  const grandTotal = Number(data?.totalAmount || 0) + tax;
+
   const handlePay = async () => {
     try {
       if (selectedPayment === "MANUAL_TRANSFER") {
@@ -106,7 +108,7 @@ function Reservation() {
         </div>
 
         <div>
-          <PriceDetailCard nights={nights} tax={tax} pricePerNight={pricePerNight} totalAmount={data.totalAmount} handlePay={handlePay} />
+          <PriceDetailCard nights={nights} tax={tax} pricePerNight={pricePerNight} totalAmount={grandTotal} handlePay={handlePay} />
         </div>
       </div>
     </div>
