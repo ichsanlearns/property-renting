@@ -70,10 +70,12 @@ export const searchProperties = async ({
   order,
   checkIn,
   checkOut,
+  city,
 }: {
   search?: string;
   checkIn?: string;
   checkOut?: string;
+  city?: string;
   sortBy?: "name" | "price" | "createdAt";
   order?: "asc" | "desc";
 }) => {
@@ -84,6 +86,7 @@ export const searchProperties = async ({
       search,
       checkIn,
       checkOut,
+      city,
       sortBy,
       order,
     },

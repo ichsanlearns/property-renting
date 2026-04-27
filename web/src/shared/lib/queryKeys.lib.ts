@@ -11,10 +11,20 @@ export const queryKeys = {
       search?: string,
       checkIn?: string,
       checkOut?: string,
+      city?: string,
       sortBy?: "name" | "price" | "createdAt",
       order?: "asc" | "desc",
     ) =>
-      ["property", "search", search, checkIn, checkOut, sortBy, order] as const,
+      [
+        "property",
+        "search",
+        search,
+        checkIn,
+        checkOut,
+        city,
+        sortBy,
+        order,
+      ] as const,
     roomPricesDate: (
       propertyId: string,
       startDate: string | null,

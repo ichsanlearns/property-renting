@@ -9,11 +9,13 @@ function SearchPage() {
   const search = searchParams.get("search");
   const checkIn = searchParams.get("checkIn");
   const checkOut = searchParams.get("checkOut");
+  const city = searchParams.get("city");
 
   const { data: properties, isLoading } = usePropertySearch({
     search: search || "",
     checkIn: checkIn || "",
     checkOut: checkOut || "",
+    city: city || "",
   });
 
   return (

@@ -19,6 +19,7 @@ type SearchPropertiesParams = {
   search?: string;
   checkIn?: string;
   checkOut?: string;
+  city?: string;
   sortBy?: "name" | "price" | "createdAt";
   order?: "asc" | "desc";
 };
@@ -564,14 +565,14 @@ export const searchByParams = async (params: SearchPropertiesParams) => {
   const where: Prisma.PropertyWhereInput = params.search
     ? {
         isPublished: "PUBLISHED",
-        OR: [
-          { name: { contains: params.search, mode: "insensitive" } },
-          { city: { contains: params.search, mode: "insensitive" } },
-          { country: { contains: params.search, mode: "insensitive" } },
-        ],
+        name: { contains: params.search, mode: "insensitive" },
       }
     : {};
   let dates: Date[] = [];
+
+  if (params.city) {
+    where.city = { contains: params.city, mode: "insensitive" };
+  }
 
   if (params.checkIn && params.checkOut) {
     dates = getDatesInRangeExclusive(params.checkIn, params.checkOut);

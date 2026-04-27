@@ -64,6 +64,7 @@ export const usePropertySearch = ({
   search,
   checkIn,
   checkOut,
+  city,
   sortBy,
   order,
 }: {
@@ -72,12 +73,14 @@ export const usePropertySearch = ({
   checkOut?: string;
   sortBy?: "name" | "price" | "createdAt";
   order?: "asc" | "desc";
+  city?: string;
 }) => {
   return useQuery({
     queryKey: queryKeys.property.search(
       search,
       checkIn,
       checkOut,
+      city,
       sortBy,
       order,
     ),
@@ -86,11 +89,13 @@ export const usePropertySearch = ({
         search,
         checkIn,
         checkOut,
+        city,
         sortBy,
         order,
       }),
     select: (res) => res.data,
-    enabled: !!search || !!checkIn || !!checkOut || !!sortBy || !!order,
+    enabled:
+      !!search || !!checkIn || !!checkOut || !!city || !!sortBy || !!order,
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
   });
