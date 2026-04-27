@@ -1,3 +1,4 @@
+import { isToday } from "date-fns";
 import { useEffect, useState } from "react";
 import { DayPicker, type DateRange } from "react-day-picker";
 import "react-day-picker/dist/style.css";
@@ -60,7 +61,7 @@ export function DateRangePicker({
       }}
       modifiersClassNames={{
         selected: "!bg-primary !border-none !text-white",
-        today: " border border-black",
+
         range_start: "!bg-primary !border-none !text-white rounded-l-full",
         range_end: "!bg-primary !border-none !text-white rounded-r-full",
         range_middle: "!bg-primary/60 !border-none",

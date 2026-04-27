@@ -71,7 +71,7 @@ function SearchBar({
   return (
     <form
       onSubmit={handleSubmit(handleSearch, (errors) => console.error(errors))}
-      className="glass-search hover:-translate-y-2 w-[50%] max-w-3xl rounded-full shadow-2xl flex flex-col md:flex-row items-center gap-2 group transition-all duration-500 hover:h-20 border-2 border-gray-200 h-16 p-2"
+      className="glass-search hover:-translate-y-2 w-full max-w-3xl rounded-full shadow-2xl flex flex-col md:flex-row items-center gap-2 group transition-all duration-500 hover:h-20 border-2 border-gray-200 h-16 p-2"
     >
       <div className="flex-1 w-full flex items-center px-6 py-3 border-r border-slate-200/50">
         <span
@@ -89,6 +89,77 @@ function SearchBar({
           type="text"
         />
       </div>
+      <div className="relative">
+        <div className="flex h-full items-center px-6 py-3 border-r border-slate-200/50 cursor-pointer hover:bg-slate-100/50 rounded-l-full transition-colors group/city">
+          <span
+            className="material-symbols-outlined text-slate-400 mr-2 group-hover/city:text-primary"
+            data-icon="location_on"
+          >
+            location_on
+          </span>
+          <span className="text-slate-800 font-semibold text-sm whitespace-nowrap">
+            Select city
+          </span>
+          <span
+            className="material-symbols-outlined text-slate-400 ml-2 text-sm"
+            data-icon="keyboard_arrow_down"
+          >
+            keyboard_arrow_down
+          </span>
+        </div>
+        <div className="absolute top-full left-0 mt-4 w-[360px] bg-white rounded-2xl shadow-xl overflow-hidden z-50 flex flex-col border border-slate-100">
+          <div className="max-h-[280px] overflow-y-auto py-2 z-40">
+            <div className="flex items-center px-4 py-3 hover:bg-slate-50 cursor-pointer transition-colors text-left">
+              <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center mr-3 shrink-0">
+                <span className="material-symbols-outlined text-slate-500">
+                  location_on
+                </span>
+              </div>
+              <div>
+                <p className="font-bold text-slate-800 text-sm">Jakarta</p>
+                <p className="text-xs text-slate-500">Indonesia</p>
+              </div>
+            </div>
+            <div className="flex items-center px-4 py-3 hover:bg-slate-50 cursor-pointer transition-colors text-left">
+              <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center mr-3 shrink-0">
+                <span className="material-symbols-outlined text-slate-500">
+                  location_on
+                </span>
+              </div>
+              <div>
+                <p className="font-bold text-slate-800 text-sm">Bandung</p>
+                <p className="text-xs text-slate-500">Indonesia</p>
+              </div>
+            </div>
+            <div className="flex items-center px-4 py-3 hover:bg-slate-50 cursor-pointer transition-colors text-left">
+              <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center mr-3 shrink-0">
+                <span className="material-symbols-outlined text-slate-500">
+                  location_on
+                </span>
+              </div>
+              <div>
+                <p className="font-bold text-slate-800 text-sm">Surabaya</p>
+                <p className="text-xs text-slate-500">Indonesia</p>
+              </div>
+            </div>
+            <div className="flex items-center px-4 py-3 bg-slate-50 cursor-pointer transition-colors text-left">
+              <div className="w-10 h-10 rounded-xl bg-[#ff5c61]/10 flex items-center justify-center mr-3 shrink-0">
+                <span className="material-symbols-outlined text-[#ff5c61]">
+                  location_on
+                </span>
+              </div>
+              <div className="flex-1">
+                <p className="font-bold text-slate-800 text-sm">Bali</p>
+                <p className="text-xs text-slate-500">Indonesia</p>
+              </div>
+              <span className="material-symbols-outlined text-[#ff5c61]">
+                check
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <button
         type="button"
         disabled={openCalendar}
