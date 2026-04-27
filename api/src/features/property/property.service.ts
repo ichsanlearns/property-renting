@@ -642,7 +642,6 @@ export const searchByParams = async (params: SearchPropertiesParams) => {
                 }
               : false,
         },
-        orderBy: { basePrice: "asc" },
       },
     },
     skip: (page - 1) * limit,

@@ -12,9 +12,14 @@ function SearchPage() {
   const checkOut = searchParams.get("checkOut");
   const city = searchParams.get("city");
   const page = Number(searchParams.get("page")) || 1;
+  const sortByParams = searchParams.get("sortBy") as
+    | "name"
+    | "createdAt"
+    | null;
+  const orderParams = searchParams.get("order") as "asc" | "desc" | null;
 
-  const [sortBy, setSortBy] = useState<string | null>(null);
-  const [order, setOrder] = useState<"Ascending" | "Descending" | null>(null);
+  const [sortBy, setSortBy] = useState<"name" | "createdAt" | null>(null);
+  const [order, setOrder] = useState<"asc" | "desc" | null>(null);
 
   const handleSearchClick = (
     search: string,
@@ -32,47 +37,47 @@ function SearchPage() {
     setSearchParams(params);
   };
 
-  const handlePriceClick = () => {
-    let nextOrder: "Ascending" | "Descending" | null;
+  // const handlePriceClick = () => {
+  //   let nextOrder: "Ascending" | "Descending" | null;
 
-    if (sortBy === "price") {
-      if (order === "Ascending") nextOrder = "Descending";
-      else if (order === "Descending") nextOrder = null;
-      else nextOrder = "Ascending";
-    } else {
-      nextOrder = "Ascending";
-    }
+  //   if (sortBy === "price") {
+  //     if (order === "Ascending") nextOrder = "Descending";
+  //     else if (order === "Descending") nextOrder = null;
+  //     else nextOrder = "Ascending";
+  //   } else {
+  //     nextOrder = "Ascending";
+  //   }
 
-    const params = new URLSearchParams(searchParams);
+  //   const params = new URLSearchParams(searchParams);
 
-    if (nextOrder) {
-      params.set("sortBy", "price");
-      params.set("order", nextOrder);
+  //   if (nextOrder) {
+  //     params.set("sortBy", "price");
+  //     params.set("order", nextOrder);
 
-      setSortBy("price");
-      setOrder(nextOrder);
-    } else {
-      params.delete("sortBy");
-      params.delete("order");
+  //     setSortBy("price");
+  //     setOrder(nextOrder);
+  //   } else {
+  //     params.delete("sortBy");
+  //     params.delete("order");
 
-      setSortBy(null);
-      setOrder(null);
-    }
+  //     setSortBy(null);
+  //     setOrder(null);
+  //   }
 
-    params.set("page", "1");
+  //   params.set("page", "1");
 
-    setSearchParams(params);
-  };
+  //   setSearchParams(params);
+  // };
 
   const handleNameClick = () => {
-    let nextOrder: "Ascending" | "Descending" | null;
+    let nextOrder: "asc" | "desc" | null;
 
     if (sortBy === "name") {
-      if (order === "Ascending") nextOrder = "Descending";
-      else if (order === "Descending") nextOrder = null;
-      else nextOrder = "Ascending";
+      if (order === "asc") nextOrder = "desc";
+      else if (order === "desc") nextOrder = null;
+      else nextOrder = "asc";
     } else {
-      nextOrder = "Ascending";
+      nextOrder = "asc";
     }
 
     const params = new URLSearchParams(searchParams);
@@ -111,6 +116,8 @@ function SearchPage() {
     checkOut: checkOut || "",
     city: city || "",
     page,
+    sortBy: sortByParams || undefined,
+    order: orderParams || undefined,
   });
 
   return (
@@ -125,7 +132,7 @@ function SearchPage() {
               checkOut={checkOut || undefined}
             />
             <div className="flex items-center space-x-3 overflow-x-auto hide-scrollbar pb-2">
-              <button
+              {/* <button
                 type="button"
                 onClick={() => handlePriceClick()}
                 className={`flex items-center space-x-2 border  rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors whitespace-nowrap justify-center h-12 w-30 cursor-pointer ${
@@ -144,7 +151,7 @@ function SearchPage() {
                       ? "keyboard_arrow_up"
                       : "keyboard_arrow_down")}
                 </span>
-              </button>
+              </button> */}
               <button
                 type="button"
                 onClick={() => handleNameClick()}
@@ -160,7 +167,7 @@ function SearchPage() {
                   data-icon="keyboard_arrow_down"
                 >
                   {sortBy === "name" &&
-                    (order === "Ascending"
+                    (order === "asc"
                       ? "keyboard_arrow_up"
                       : "keyboard_arrow_down")}
                 </span>
