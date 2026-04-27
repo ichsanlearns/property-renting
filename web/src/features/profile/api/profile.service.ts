@@ -30,6 +30,21 @@ export const updateProfilePhotoRequest = async (data: FormData) => {
   return response.data;
 };
 
+export const updatePasswordRequest = async ({
+  currentPassword,
+  newPassword,
+}: {
+  currentPassword: string;
+  newPassword: string;
+}) => {
+  const response = await api.patch<ApiResponse<void>>(
+    PROFILE_ENDPOINTS.UPDATE_PASSWORD,
+    { currentPassword, newPassword },
+  );
+
+  return response.data;
+};
+
 export const deleteProfilePhotoRequest = async () => {
   const response = await api.delete<ApiResponse<FillProfileResponse>>(
     PROFILE_ENDPOINTS.DELETE_PROFILE_PHOTO,

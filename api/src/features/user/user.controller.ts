@@ -120,6 +120,13 @@ export const updatePassword = catchAsync(
       newPassword: input.data.newPassword,
     });
 
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      path: "/",
+    });
+
     res.status(200).json({
       message: "Password updated successfully",
     });

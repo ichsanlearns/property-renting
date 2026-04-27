@@ -21,3 +21,13 @@ export const useDeleteProfilePhoto = () => {
     },
   });
 };
+
+export const useUpdatePassword = () => {
+  const { logout } = useAuthStore();
+  return useMutation({
+    mutationFn: ProfileApi.updatePasswordRequest,
+    onSuccess: () => {
+      logout();
+    },
+  });
+};
