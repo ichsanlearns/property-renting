@@ -94,8 +94,7 @@ export const usePropertySearch = ({
         order,
       }),
     select: (res) => res.data,
-    enabled:
-      !!search || !!checkIn || !!checkOut || !!city || !!sortBy || !!order,
+
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
   });

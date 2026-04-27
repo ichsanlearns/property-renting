@@ -48,7 +48,7 @@ export type GetPropertyAllBasicResponse = {
   averageRating: number;
   reviewCount: number;
   coverImage: string;
-}[];
+};
 
 export type GetPropertySearchResponse = {
   id: string;

@@ -539,6 +539,196 @@ const seed = async () => {
       ],
     });
 
+    const property4 = await create({
+      data: {
+        categoryId: propertyCategories[2]!.id,
+        name: "Property 4",
+        description: "Description 4",
+        latitude: -5.522211,
+        longitude: 95.320868,
+        numberOfBathrooms: 4,
+        country: "Indonesia",
+        city: "Aceh",
+        province: "Nanggroe Aceh Darussalam",
+        fullAddress: "Jl. Nanggroe Aceh No. 1",
+      },
+      tenantId: users[1]!.id,
+      images: [
+        {
+          imageUrl: propertyImageList[3]!.imageUrl,
+          isCover: true,
+          order: 1,
+        },
+        {
+          imageUrl: propertyImageList[4]!.imageUrl,
+          isCover: false,
+          order: 2,
+        },
+        {
+          imageUrl: propertyImageList[2]!.imageUrl,
+          isCover: false,
+          order: 3,
+        },
+      ],
+      amenities: [
+        propertyAmenities[2]!.id,
+        propertyAmenities[3]!.id,
+        propertyAmenities[4]!.id,
+      ],
+    });
+
+    const property5 = await create({
+      data: {
+        categoryId: propertyCategories[2]!.id,
+        name: "Property 5",
+        description: "Description 5",
+        latitude: -0.947712,
+        longitude: 100.464468,
+        numberOfBathrooms: 4,
+        country: "Indonesia",
+        city: "Padang",
+        province: "Sumatera Barat",
+        fullAddress: "Jl. Padang No. 1",
+      },
+      tenantId: users[1]!.id,
+      images: [
+        {
+          imageUrl: propertyImageList[1]!.imageUrl,
+          isCover: true,
+          order: 1,
+        },
+        {
+          imageUrl: propertyImageList[3]!.imageUrl,
+          isCover: false,
+          order: 2,
+        },
+        {
+          imageUrl: propertyImageList[2]!.imageUrl,
+          isCover: false,
+          order: 3,
+        },
+      ],
+      amenities: [
+        propertyAmenities[2]!.id,
+        propertyAmenities[3]!.id,
+        propertyAmenities[4]!.id,
+      ],
+    });
+
+    const property6 = await create({
+      data: {
+        categoryId: propertyCategories[2]!.id,
+        name: "Property 6",
+        description: "Description 6",
+        latitude: -2.902556,
+        longitude: 100.666468,
+        numberOfBathrooms: 4,
+        country: "Indonesia",
+        city: "Pekanbaru",
+        province: "Riau",
+        fullAddress: "Jl. Pekanbaru No. 1",
+      },
+      tenantId: users[1]!.id,
+      images: [
+        {
+          imageUrl: propertyImageList[4]!.imageUrl,
+          isCover: true,
+          order: 1,
+        },
+        {
+          imageUrl: propertyImageList[3]!.imageUrl,
+          isCover: false,
+          order: 2,
+        },
+        {
+          imageUrl: propertyImageList[2]!.imageUrl,
+          isCover: false,
+          order: 3,
+        },
+      ],
+      amenities: [
+        propertyAmenities[2]!.id,
+        propertyAmenities[3]!.id,
+        propertyAmenities[4]!.id,
+      ],
+    });
+
+    const property7 = await create({
+      data: {
+        categoryId: propertyCategories[2]!.id,
+        name: "Property 7",
+        description: "Description 7",
+        latitude: -1.148747,
+        longitude: 104.042971,
+        numberOfBathrooms: 4,
+        country: "Indonesia",
+        city: "Jambi",
+        province: "Jambi",
+        fullAddress: "Jl. Jambi No. 1",
+      },
+      tenantId: users[1]!.id,
+      images: [
+        {
+          imageUrl: propertyImageList[2]!.imageUrl,
+          isCover: true,
+          order: 1,
+        },
+        {
+          imageUrl: propertyImageList[3]!.imageUrl,
+          isCover: false,
+          order: 2,
+        },
+        {
+          imageUrl: propertyImageList[4]!.imageUrl,
+          isCover: false,
+          order: 3,
+        },
+      ],
+      amenities: [
+        propertyAmenities[2]!.id,
+        propertyAmenities[3]!.id,
+        propertyAmenities[4]!.id,
+      ],
+    });
+
+    const property8 = await create({
+      data: {
+        categoryId: propertyCategories[2]!.id,
+        name: "Property 8",
+        description: "Description 8",
+        numberOfBathrooms: 4,
+        country: "Singapore",
+        city: "Singapore",
+        province: "Singapore",
+        fullAddress: "16 Collyer Quay, #47-01, Singapore 049318",
+        latitude: 1.2865795498497033,
+        longitude: 103.85158960873396,
+      },
+      tenantId: users[1]!.id,
+      images: [
+        {
+          imageUrl: propertyImageList[1]!.imageUrl,
+          isCover: true,
+          order: 1,
+        },
+        {
+          imageUrl: propertyImageList[2]!.imageUrl,
+          isCover: false,
+          order: 2,
+        },
+        {
+          imageUrl: propertyImageList[3]!.imageUrl,
+          isCover: false,
+          order: 3,
+        },
+      ],
+      amenities: [
+        propertyAmenities[2]!.id,
+        propertyAmenities[3]!.id,
+        propertyAmenities[4]!.id,
+      ],
+    });
+
     // =============================
     // CREATE ROOM
     // =============================

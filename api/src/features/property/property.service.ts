@@ -233,6 +233,7 @@ export const getAllBasic = async () => {
     where: {
       isPublished: "PUBLISHED",
     },
+    take: 8,
   });
 
   return properties.map((property) => ({
@@ -562,18 +563,25 @@ export const getByTenantId = async (tenantId: string) => {
 };
 
 export const searchByParams = async (params: SearchPropertiesParams) => {
-  const where: Prisma.PropertyWhereInput = params.search
-    ? {
-        isPublished: "PUBLISHED",
-        name: { contains: params.search, mode: "insensitive" },
-      }
-    : {};
-  let dates: Date[] = [];
+  const where: Prisma.PropertyWhereInput = {
+    isPublished: "PUBLISHED",
+  };
 
-  if (params.city) {
-    where.city = { contains: params.city, mode: "insensitive" };
+  if (params.search) {
+    where.name = {
+      contains: params.search,
+      mode: "insensitive",
+    };
   }
 
+  if (params.city) {
+    where.city = {
+      contains: params.city,
+      mode: "insensitive",
+    };
+  }
+
+  let dates: Date[] = [];
   if (params.checkIn && params.checkOut) {
     dates = getDatesInRangeExclusive(params.checkIn, params.checkOut);
     where.roomTypes = {

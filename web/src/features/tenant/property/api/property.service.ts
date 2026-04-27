@@ -31,7 +31,7 @@ export const updateProperty = async (data: FormData, propertyId: string) => {
 
 export const getPropertyAllBasic = async () => {
   const response = await api.get<
-    ApiResponse<PropertyResponse.GetPropertyAllBasicResponse>
+    ApiResponse<PropertyResponse.GetPropertyAllBasicResponse[]>
   >(PROPERTY_ENDPOINTS.GET_ALL_BASIC);
   return response.data;
 };

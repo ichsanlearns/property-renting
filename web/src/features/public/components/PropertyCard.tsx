@@ -2,10 +2,10 @@ import type { GetPropertyAllBasicResponse } from "../../tenant/property/api/prop
 import { useNavigate } from "react-router-dom";
 
 function PropertyCard({
-  properties,
+  property,
   page,
 }: {
-  properties: GetPropertyAllBasicResponse;
+  property?: GetPropertyAllBasicResponse;
   page?: "search" | "home";
 }) {
   const navigate = useNavigate();
@@ -13,7 +13,11 @@ function PropertyCard({
     navigate(`/property/${id}`);
   };
 
-  return properties?.map((property) => (
+  if (!property) {
+    return null;
+  }
+
+  return (
     <div
       onClick={() => handleCardClick(property.id)}
       key={property.id}
@@ -59,7 +63,7 @@ function PropertyCard({
         )}
       </div>
     </div>
-  ));
+  );
 }
 
 export default PropertyCard;

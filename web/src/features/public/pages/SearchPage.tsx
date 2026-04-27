@@ -56,7 +56,11 @@ function SearchPage() {
             ) : (
               <>
                 {properties && (
-                  <PropertyCard properties={properties} page="search" />
+                  <>
+                    {properties.map((property) => (
+                      <PropertyCard property={property} page="search" />
+                    ))}
+                  </>
                 )}
               </>
             )}
