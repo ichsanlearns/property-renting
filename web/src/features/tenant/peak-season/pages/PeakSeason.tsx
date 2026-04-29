@@ -97,7 +97,7 @@ function PeakSeason() {
 
               <form
                 onSubmit={handleSubmit(onSubmit, (err) => {
-                  console.log(err);
+                  console.error(err);
                 })}
                 className="p-5 flex flex-col gap-6"
               >

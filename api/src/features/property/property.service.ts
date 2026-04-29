@@ -20,7 +20,7 @@ type SearchPropertiesParams = {
   checkIn?: string;
   checkOut?: string;
   city?: string;
-  sortBy?: "name" | "price" | "createdAt";
+  sortBy?: "name" | "minPrice" | "createdAt";
   order?: "asc" | "desc";
   page?: number;
 };
@@ -561,6 +561,7 @@ export const searchByParams = async (params: SearchPropertiesParams) => {
 
   const where: Prisma.PropertyWhereInput = {
     isPublished: "PUBLISHED",
+    minPrice: { not: null },
   };
 
   if (params.search) {

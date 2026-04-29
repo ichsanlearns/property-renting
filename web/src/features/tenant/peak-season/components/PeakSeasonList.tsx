@@ -18,15 +18,6 @@ const LEVEL_CONFIG = {
     subtitle: "(Default: tenant)",
     description: "Overrides Global",
   },
-  //   PROPERTY: {
-  //     icon: "home_work",
-  //     container: "bg-surface-container-highest text-on-surface",
-  //   },
-  //   ROOM: {
-  //     icon: "bed",
-  //     container: "bg-primary-container/20 text-primary",
-  //     fill: true,
-  //   },
 } as const;
 
 const STATUS_CONFIG = {

@@ -369,7 +369,7 @@ function MyProfile() {
                 <ConfirmModal
                   isOpen={personalModalOpen}
                   onConfirm={handleSubmit(onSubmitProfile, (errors) => {
-                    console.log(errors);
+                    console.error(errors);
                   })}
                   onCancel={() => setPersonalModalOpen(false)}
                   title="Update Profile"
@@ -415,7 +415,7 @@ function MyProfile() {
                   onConfirm={handleSubmitPassword(
                     onSubmitPassword,
                     (errors) => {
-                      console.log(errors);
+                      console.error(errors);
                     },
                   )}
                   onCancel={() => setPasswordModalOpen(false)}

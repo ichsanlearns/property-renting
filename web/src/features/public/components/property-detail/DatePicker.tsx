@@ -240,34 +240,6 @@ function DatePicker({
                     disabled={!day.isAvailable || !day.isCurrentMonth}
                     key={day.date.toISOString()}
                     className={`${baseClass} ${stateClass}`}
-                    // className={`py-2 rounded-lg ${
-                    //   !day.isAvailable ||
-                    //   day.date.getTime() < startOfDay(Date.now()).getTime() - 1
-                    //     ? "text-slate-300 cursor-not-allowed"
-                    //     : !day.isCurrentMonth
-                    //       ? "text-slate-300"
-                    //       : (selectedDate.checkInDate?.getMonth() ||
-                    //             selectedDate.checkOutDate?.getMonth()) ===
-                    //             day.date.getMonth() &&
-                    //           (selectedDate.checkInDate?.getDate() ===
-                    //             day.date.getDate() ||
-                    //             selectedDate.checkOutDate?.getDate() ===
-                    //               day.date.getDate())
-                    //         ? "bg-primary text-white font-bold hover:bg-primary-container hover:text-primary cursor-pointer"
-                    //         : (selectedDate.checkInDate?.getMonth() ||
-                    //               selectedDate.checkOutDate?.getMonth()) ===
-                    //               day.date.getMonth() &&
-                    //             selectedDate.checkInDate?.getDate() &&
-                    //             selectedDate.checkOutDate?.getDate() &&
-                    //             day.date.getDate() >
-                    //               selectedDate.checkInDate.getDate() &&
-                    //             day.date.getDate() <
-                    //               selectedDate.checkOutDate.getDate()
-                    //           ? "bg-primary-container text-primary font-bold hover:bg-primary hover:text-white cursor-pointer"
-                    //           : day.isWeekend
-                    //             ? "text-red-500 hover:bg-surface-container hover:text-primary cursor-pointer"
-                    //             : "hover:bg-surface-container hover:text-primary cursor-pointer"
-                    // }`}
                   >
                     <div className="flex flex-col items-center">
                       {format(day.date, "d")}

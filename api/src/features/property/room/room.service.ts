@@ -38,7 +38,11 @@ export const createRoom = async ({
   }
 
   return await prisma.$transaction(async (tx) => {
-    if (Number(data.basePrice) < Number(property.minPrice)) {
+    if (
+      (property.minPrice &&
+        Number(data.basePrice) < Number(property.minPrice)) ||
+      !property.minPrice
+    ) {
       await tx.property.update({
         where: {
           id: data.propertyId,
