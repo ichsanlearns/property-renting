@@ -16,8 +16,10 @@ export const createRoom = async ({
   }[];
   amenities: string[];
 }) => {
+  let property;
+
   if (data.isPublished === "PUBLISHED") {
-    await prisma.property.update({
+    property = await prisma.property.update({
       where: {
         id: data.propertyId,
       },
@@ -26,7 +28,7 @@ export const createRoom = async ({
       },
     });
   } else {
-    const property = await prisma.property.findUnique({
+    property = await prisma.property.findUnique({
       where: { id: data.propertyId },
     });
 
@@ -36,6 +38,17 @@ export const createRoom = async ({
   }
 
   return await prisma.$transaction(async (tx) => {
+    if (Number(data.basePrice) < Number(property.minPrice)) {
+      await tx.property.update({
+        where: {
+          id: data.propertyId,
+        },
+        data: {
+          minPrice: data.basePrice,
+        },
+      });
+    }
+
     const room = await tx.roomType.create({
       data: {
         ...data,
