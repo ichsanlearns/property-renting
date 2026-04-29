@@ -175,26 +175,6 @@ function PeakSeasonList({
                           : `Rp. ${pricingRule.adjustmentValue}`}
                       </span>
                     </td>
-
-                    {/* <td className="px-6 py-4 text-center">
-                      <button
-                        onClick={pricingRule.onEdit}
-                        className="text-on-surface-variant hover:text-primary transition-colors p-1.5 rounded-full hover:bg-primary-container/10"
-                      >
-                        <span className="material-symbols-outlined text-[20px]">
-                          edit
-                        </span>
-                      </button>
-
-                      <button
-                        onClick={pricingRule.onDelete}
-                        className="text-on-surface-variant hover:text-error transition-colors p-1.5 rounded-full hover:bg-error-container/50 ml-1"
-                      >
-                        <span className="material-symbols-outlined text-[20px]">
-                          delete
-                        </span>
-                      </button>
-                    </td> */}
                   </tr>
                 );
               })}

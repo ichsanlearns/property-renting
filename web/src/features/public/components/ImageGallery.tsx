@@ -140,39 +140,6 @@ function ImageGallery({
                 />
               </button>
             ))}
-            {/* <button className="shrink-0 snap-center w-[100px] h-[70px] md:w-[120px] md:h-[80px] rounded-xl overflow-hidden border-2 border-white scale-105 shadow-xl relative transition-all z-10">
-              <img
-                className="w-full h-full object-cover"
-                data-alt="Thumbnail of modern master bedroom with ocean view"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBUCGAdHW5urrNzh54OCwWF9jQLGYb8fSDftyTldyXLBVC-pWK_pEw2ZdvLB0ERuupoqPTt7HAJj6rxt-A5SM8uc_9hCQgtg254Cwe5P-E7FNG-3LYXBR6vlcVce1VObYZDtzUXsd1SEbkEGdQuRtLFbNfzebxew_uEUI_M0RSSCClZa3h9_XxKoeUJfPggBYtQibfto_Ja3zIPZaiAN_L6rpVWq9CvqEQzZtCyhdbyJcG-hcOwC9LvHp8mZkfPwnxViwWb29KVvtI"
-              />
-            </button> */}
-            {/* <button className="shrink-0 snap-center w-[100px] h-[70px] md:w-[120px] md:h-[80px] rounded-xl overflow-hidden border border-white/10 opacity-50 hover:opacity-100 transition-all hover:scale-105 active:scale-95">
-              <img
-                className="w-full h-full object-cover"
-                data-alt="Thumbnail of secondary bedroom with light wood accents"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZUKIqeT7sIRmquQMkBUucWK2OEftN0IkIxDqOTpRUvgUqDSBiwrFVExnXnFYme9eTybNN1kA9ZZfJ-Zk-VNaDdz-vUyCCb8hkZXtuMx2w1TppaGRiw9ZSkHSr4sIq1t6HzEKkZEP_EBasDBHUCSb4TTNBMFn9zQ-urJ5e_YBzsXCSAkhQ0DnVTGyxzAMghRRPlSfixnPcWXyMIolhF6-mMD9yGUvQnd4b3DMsWzeB0d3HMvTED6Bf-_I0ACxCSBY4YqfH2SfmdfBk"
-              />
-            </button>
-            <button className="shrink-0 snap-center w-[100px] h-[70px] md:w-[120px] md:h-[80px] rounded-xl overflow-hidden border border-white/10 opacity-50 hover:opacity-100 transition-all hover:scale-105 active:scale-95">
-              <img
-                className="w-full h-full object-cover"
-                data-alt="Thumbnail of luxurious bathroom with freestanding tub"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfM0vuARTTuwj58Qtt3NW_q5YNEBtdRBUHZOoB-xiIm8dP-dZG_AsFgnzktRIXptHoKqQgQUDTeeThv0ELVw12eHyi784F8tLvTxkacQXeQN-BwgP0xf50L0fEG8uj_rIrKsACOKfK-SW5mrvdKAksf8qrGmJeHVz8vwaTzTqoCLJHSvEuhwmceEP86yH6AEgsvVTqcTYgS3iICQlHP09-9VV-ZEpL6BYoQ1boIOEYLry3rmJ5wtuex3z4QgISeSBW0BOTGR_3bwaR"
-              />
-            </button>
-            <button className="shrink-0 snap-center w-[100px] h-[70px] md:w-[120px] md:h-[80px] rounded-xl overflow-hidden border border-white/10 opacity-60 hover:opacity-100 transition-all hover:scale-105 active:scale-95 relative group">
-              <img
-                className="w-full h-full object-cover"
-                data-alt="Thumbnail of walk in closet"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuADZ40YStBG_GianZzSodMpI4O_vOC4x9B1VfP8r8NCDDLDmpOZIT2_cex_4owLp1O_3YyNQ0BsECU3WqdLP9phwQIHIoqWbw7t_LVSQaaFdHq_6yYToMdIfb0ReILZgXQgunhrBomjOW0qtqYP11ioxjAYWfiBgsf5nttt9wRcKTc1EiHzxzOH8rV5ryRKJr7PlhnNg4gNUy1NB7-wzJDD8uOyYaVCQepdycTFqjfYxBG-UWHMRppWHiWTxwk5Qf5iplsn6lebm5iB"
-              />
-              <div className="absolute inset-0 bg-black/60 flex items-center justify-center group-hover:bg-black/40 transition-colors backdrop-blur-[2px]">
-                <span className="text-[10px] md:text-xs font-semibold tracking-widest text-white/90 drop-shadow-sm">
-                  +8 MORE
-                </span>
-              </div>
-            </button> */}
           </div>
         </div>
       </footer>
