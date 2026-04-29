@@ -5,6 +5,7 @@ import {
 } from "../../generated/prisma/enums.js";
 import { prisma } from "../../shared/lib/prisma.lib.js";
 import { calculateAdjustedPrice } from "./utils/calculate-adjusted-price.util.js";
+import { shouldApplyRule } from "./utils/should-apply-rule.util.js";
 
 interface CreatePricingRuleInput {
   name: string;
@@ -80,43 +81,22 @@ export const createPricingRule = async (input: CreatePricingRuleInput) => {
   });
 
   const updates = currentPrices
-    .filter((price) => {
-      const currentRule = price.appliedPricingRule;
-
-      if (!currentRule) return true;
-
-      if (pricingRule.scopeType === ScopeType.TENANT) {
-        if (
-          currentRule.scopeType === ScopeType.ROOM_TYPE ||
-          currentRule.scopeType === ScopeType.PROPERTY
-        ) {
-          return false;
-        }
-      }
-
-      if (pricingRule.scopeType === ScopeType.SYSTEM) {
-        if (
-          currentRule.scopeType === ScopeType.ROOM_TYPE ||
-          currentRule.scopeType === ScopeType.PROPERTY ||
-          currentRule.scopeType === ScopeType.TENANT
-        ) {
-          return false;
-        }
-      }
-
-      if (pricingRule.scopeType === currentRule.scopeType) {
-        if (pricingRule.priority > currentRule.priority) return true;
-
-        if (
-          pricingRule.priority === currentRule.priority &&
-          pricingRule.createdAt > currentRule.createdAt
-        ) {
-          return true;
-        }
-      }
-
-      return false;
-    })
+    .filter((price) =>
+      shouldApplyRule({
+        newRule: {
+          scopeType: pricingRule.scopeType,
+          priority: pricingRule.priority,
+          createdAt: pricingRule.createdAt,
+        },
+        currentRule: price.appliedPricingRule
+          ? {
+              scopeType: price.appliedPricingRule.scopeType,
+              priority: price.appliedPricingRule.priority,
+              createdAt: price.appliedPricingRule.createdAt,
+            }
+          : null,
+      }),
+    )
     .map((price) => {
       const newPrice = calculateAdjustedPrice({
         basePrice: Number(price.roomType.basePrice),
