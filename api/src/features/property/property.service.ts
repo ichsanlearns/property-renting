@@ -20,7 +20,7 @@ type SearchPropertiesParams = {
   checkIn?: string;
   checkOut?: string;
   city?: string;
-  sortBy?: "name" | "price" | "createdAt";
+  sortBy?: "name" | "minPrice" | "createdAt";
   order?: "asc" | "desc";
   page?: number;
 };
@@ -212,6 +212,8 @@ export const getAllBasic = async () => {
       averageRating: true,
       reviewCount: true,
 
+      minPrice: true,
+
       propertyImages: {
         where: {
           isCover: true,
@@ -219,16 +221,6 @@ export const getAllBasic = async () => {
         select: {
           imageUrl: true,
         },
-      },
-
-      roomTypes: {
-        select: {
-          basePrice: true,
-        },
-        orderBy: {
-          basePrice: "asc",
-        },
-        take: 1,
       },
     },
     where: {
@@ -243,7 +235,7 @@ export const getAllBasic = async () => {
     city: property.city,
     province: property.province,
     country: property.country,
-    price: property.roomTypes[0]?.basePrice,
+    price: property.minPrice,
     averageRating: property.averageRating,
     reviewCount: property.reviewCount,
     coverImage: property.propertyImages[0]?.imageUrl,
@@ -569,6 +561,7 @@ export const searchByParams = async (params: SearchPropertiesParams) => {
 
   const where: Prisma.PropertyWhereInput = {
     isPublished: "PUBLISHED",
+    minPrice: { not: null },
   };
 
   if (params.search) {
@@ -763,27 +756,6 @@ export const getPropertyRoomPricesDate = async ({
   );
 
   const result = transformRoomTypePrices(raw, roomTypesWithBasePrice);
-
-  // const result = roomTypes.map((roomType) => {
-  //   const dates = fillEmpty
-  //     .filter((item) => item.roomTypeId === roomType.id)
-  //     .reduce(
-  //       (acc, item) => {
-  //         acc[item.date] = {
-  //           price: item.price,
-  //           availableRooms: item.availableRooms,
-  //           isClosed: item.isClosed,
-  //         };
-  //         return acc;
-  //       },
-  //       {} as Record<string, any>,
-  //     );
-
-  //   return {
-  //     ...roomType,
-  //     dates,
-  //   };
-  // });
 
   return result;
 };

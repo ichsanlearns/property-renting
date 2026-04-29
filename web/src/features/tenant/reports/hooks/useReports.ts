@@ -24,7 +24,9 @@ export function useReports() {
     }
   };
 
-  const totalPages = Math.ceil((data?.propertySales?.length || 0) / itemsPerPage);
+  const totalPages = Math.ceil(
+    (data?.propertySales?.length || 0) / itemsPerPage,
+  );
 
   const paginatedPropertySales = useMemo(() => {
     if (!data?.propertySales) return [];

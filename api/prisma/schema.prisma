@@ -85,23 +85,35 @@ model Property {
   id                String             @id @default(uuid())
   tenantId          String             @map("tenant_id")
   categoryId        String             @map("category_id")
+
+  name              String
   description       String
-  country           String
+
   city              String
+  province          String
+  country           String
+
+  latitude          Float
+  longitude         Float
+  
   fullAddress       String             @map("full_address")
   numberOfBathrooms Int                @map("number_of_bathrooms")
+
   averageRating     Decimal?           @map("average_rating") @db.Decimal(2, 1)
   reviewCount       Int                @default(0) @map("review_count")
+
+  roomAvailable     Int                @default(0) @map("room_available")
+  minPrice          Decimal?            @db.Decimal(10, 2) @map("min_price")
+
   createdAt         DateTime           @default(now()) @map("created_at")
   updatedAt         DateTime           @updatedAt @map("updated_at")
   deletedAt         DateTime?          @map("deleted_at")
-  province          String
+
+
   isPublished       PublishStatus      @default(DRAFT) @map("is_published")
   isVerified        VerificationStatus @default(PENDING) @map("is_verified")
-  latitude          Float
-  longitude         Float
-  name              String
-  roomAvailable     Int                @default(0) @map("room_available")
+  
+  
 
   category          PropertyCategory   @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   tenant            User               @relation(fields: [tenantId], references: [id], onDelete: Cascade)

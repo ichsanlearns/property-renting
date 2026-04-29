@@ -184,15 +184,6 @@ export type GetPropertyByTenantIdResponse = {
     availableRooms: number;
   }[];
 };
-
-// export type GetPropertyRoomPricesDateResponse = {
-//   roomTypeId: string;
-//   date: string;
-//   price: number;
-//   availableRooms: number;
-//   isClosed: boolean;
-// };
-
 export type GetPropertyRoomPricesDateResponse = {
   [roomTypeId: string]: {
     basePrice: number;

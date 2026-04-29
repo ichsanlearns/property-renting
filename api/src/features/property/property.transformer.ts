@@ -29,22 +29,6 @@ export const transformRoomTypePrices = (
   roomTypePrices: RoomTypePrice[],
   roomTypes: RoomType[],
 ): Transformed => {
-  // return roomTypePrices.reduce(
-  //   (acc, item) => {
-  //     acc[item.roomTypeId] = {
-  //       ...acc[item.roomTypeId],
-  //       basePrice: item.price,
-  //       [item.date]: {
-  //         price: item.price,
-  //         availableRooms: item.availableRooms,
-  //         isClosed: item.isClosed,
-  //       },
-  //     };
-  //     return acc;
-  //   },
-  //   {} as Record<string, any>,
-  // );
-
   return roomTypePrices.reduce((acc, item) => {
     if (!acc[item.roomTypeId]) {
       acc[item.roomTypeId] = {

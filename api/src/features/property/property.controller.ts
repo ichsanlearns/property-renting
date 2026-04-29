@@ -226,7 +226,11 @@ export const searchByParams = catchAsync(
     const finalPage = typeof page === "number" ? page : undefined;
 
     const finalSortBy =
-      sortBy === "name" || sortBy === "createdAt" ? sortBy : "createdAt";
+      sortBy === "name" || sortBy === "createdAt"
+        ? sortBy
+        : sortBy === "price"
+          ? "minPrice"
+          : "createdAt";
 
     const finalOrder = order === "asc" || order === "desc" ? order : "desc";
 
