@@ -18,7 +18,9 @@ function SearchPage() {
     | null;
   const orderParams = searchParams.get("order") as "asc" | "desc" | null;
 
-  const [sortBy, setSortBy] = useState<"name" | "createdAt" | null>(null);
+  const [sortBy, setSortBy] = useState<"name" | "price" | "createdAt" | null>(
+    null,
+  );
   const [order, setOrder] = useState<"asc" | "desc" | null>(null);
 
   const handleSearchClick = (
@@ -37,37 +39,37 @@ function SearchPage() {
     setSearchParams(params);
   };
 
-  // const handlePriceClick = () => {
-  //   let nextOrder: "Ascending" | "Descending" | null;
+  const handlePriceClick = () => {
+    let nextOrder: "asc" | "desc" | null;
 
-  //   if (sortBy === "price") {
-  //     if (order === "Ascending") nextOrder = "Descending";
-  //     else if (order === "Descending") nextOrder = null;
-  //     else nextOrder = "Ascending";
-  //   } else {
-  //     nextOrder = "Ascending";
-  //   }
+    if (sortBy === "price") {
+      if (order === "asc") nextOrder = "desc";
+      else if (order === "desc") nextOrder = null;
+      else nextOrder = "asc";
+    } else {
+      nextOrder = "asc";
+    }
 
-  //   const params = new URLSearchParams(searchParams);
+    const params = new URLSearchParams(searchParams);
 
-  //   if (nextOrder) {
-  //     params.set("sortBy", "price");
-  //     params.set("order", nextOrder);
+    if (nextOrder) {
+      params.set("sortBy", "price");
+      params.set("order", nextOrder);
 
-  //     setSortBy("price");
-  //     setOrder(nextOrder);
-  //   } else {
-  //     params.delete("sortBy");
-  //     params.delete("order");
+      setSortBy("price");
+      setOrder(nextOrder);
+    } else {
+      params.delete("sortBy");
+      params.delete("order");
 
-  //     setSortBy(null);
-  //     setOrder(null);
-  //   }
+      setSortBy(null);
+      setOrder(null);
+    }
 
-  //   params.set("page", "1");
+    params.set("page", "1");
 
-  //   setSearchParams(params);
-  // };
+    setSearchParams(params);
+  };
 
   const handleNameClick = () => {
     let nextOrder: "asc" | "desc" | null;
@@ -132,7 +134,7 @@ function SearchPage() {
               checkOut={checkOut || undefined}
             />
             <div className="flex items-center space-x-3 overflow-x-auto hide-scrollbar pb-2">
-              {/* <button
+              <button
                 type="button"
                 onClick={() => handlePriceClick()}
                 className={`flex items-center space-x-2 border  rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors whitespace-nowrap justify-center h-12 w-30 cursor-pointer ${
@@ -147,11 +149,11 @@ function SearchPage() {
                   data-icon="keyboard_arrow_up"
                 >
                   {sortBy === "price" &&
-                    (order === "Ascending"
+                    (order === "asc"
                       ? "keyboard_arrow_up"
                       : "keyboard_arrow_down")}
                 </span>
-              </button> */}
+              </button>
               <button
                 type="button"
                 onClick={() => handleNameClick()}
