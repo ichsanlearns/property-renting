@@ -38,6 +38,16 @@ export const uploadPaymentProof = async ({ userId, reservationId, file }: { user
   });
 };
 
+const sendPaidReservationEmail = async (reservation: any) => {
+  await sendBookingConfirmedEmail({
+    to: reservation.customer.email,
+    name: reservation.customer.firstName || "Guest",
+    property: reservation.propertyNameSnapshot,
+    checkIn: reservation.checkInDate,
+    checkOut: reservation.checkOutDate,
+  });
+};
+
 export const confirmPayment = async ({ reservationId, tenantId }: { reservationId: string; tenantId: string }) => {
   return await prisma.$transaction(async (tx) => {
     const reservation = await tx.reservation.findUnique({
@@ -71,13 +81,7 @@ export const confirmPayment = async ({ reservationId, tenantId }: { reservationI
       },
     });
 
-    await sendBookingConfirmedEmail({
-      to: reservation.customer.email,
-      name: reservation.customer.firstName || "Guest",
-      property: reservation.roomType.property.name,
-      checkIn: reservation.checkInDate,
-      checkOut: reservation.checkOutDate,
-    });
+    await sendPaidReservationEmail(reservation);
 
     return updated;
   });
@@ -168,13 +172,7 @@ export const handleMidtransNotification = async (payload: any) => {
       data: { status: ReservationStatus.PAID },
     });
 
-    await sendBookingConfirmedEmail({
-      to: reservation.customer.email,
-      name: reservation.customer.firstName || "Guest",
-      property: reservation.roomType.property.name,
-      checkIn: reservation.checkInDate,
-      checkOut: reservation.checkOutDate,
-    });
+    await sendPaidReservationEmail(reservation);
   }
 
   if (["expire", "cancel", "deny"].includes(transaction_status)) {
