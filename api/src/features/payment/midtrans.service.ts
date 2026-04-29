@@ -20,8 +20,8 @@ export const createSnapTransaction = async (reservation: any) => {
     },
 
     customer_details: {
-      first_name: reservation.customerName || "Guest",
-      email: reservation.email || "guest@mail.com",
+      first_name: reservation.customer.firstName || "Guest",
+      email: reservation.customer.email,
     },
 
     item_details: [
