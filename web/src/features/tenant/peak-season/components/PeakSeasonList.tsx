@@ -65,7 +65,6 @@ function PeakSeasonList({
                   </div>
                 </th>
                 <th className="pr-20 py-4 text-right">Adjustment</th>
-                {/* <th className="px-6 py-4 text-centesr">Actions</th> */}
               </tr>
             </thead>
             <tbody className="divide-y divide-outline">

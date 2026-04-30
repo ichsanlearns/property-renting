@@ -209,14 +209,6 @@ function PropertyListDetail() {
                       </div>
                     </div>
                   </div>
-                  {/* <div className="bg-white/50 px-6 py-3 border-t border-outline flex justify-end gap-3 text-sm">
-                    <button className="text-on-surface-variant hover:text-primary font-medium transition-colors cursor-pointer">
-                      Edit
-                    </button>
-                    <button className="text-on-surface-variant hover:text-primary font-medium transition-colors cursor-pointer">
-                      Delete
-                    </button>
-                  </div> */}
                 </div>
               );
             })}
