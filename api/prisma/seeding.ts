@@ -949,6 +949,391 @@ const seed = async () => {
     await ensurePrices({ roomTypeId: room1p3.id, daysAhead: 30 });
     await ensurePrices({ roomTypeId: room2p3.id, daysAhead: 30 });
 
+    const room1p4 = await createRoom({
+      data: {
+        propertyId: property4.id,
+        name: "Room 1",
+        basePrice: 400000,
+        totalRooms: 4,
+        bedType: BedType.KING_SIZE,
+        bedCount: 2,
+        viewType: ViewType.OCEAN_FRONT,
+        bathroomType: BathroomType.PRIVATE,
+        capacity: 4,
+        isPublished: PublishStatus.PUBLISHED,
+      },
+      images: [
+        {
+          imageUrl: roomImageList[2]!.imageUrl,
+          isCover: true,
+          order: 1,
+        },
+        {
+          imageUrl: roomImageList[3]!.imageUrl,
+          isCover: false,
+          order: 2,
+        },
+        {
+          imageUrl: roomImageList[1]!.imageUrl,
+          isCover: false,
+          order: 3,
+        },
+      ],
+      amenities: [
+        roomAmenities[2]!.id,
+        roomAmenities[1]!.id,
+        roomAmenities[0]!.id,
+      ],
+    });
+
+    const room2p4 = await createRoom({
+      data: {
+        propertyId: property4.id,
+        name: "Room 2",
+        basePrice: 500000,
+        totalRooms: 4,
+        bedType: BedType.SINGLE,
+        bedCount: 2,
+        viewType: ViewType.GARDEN_VIEW,
+        bathroomType: BathroomType.PRIVATE,
+        capacity: 2,
+        isPublished: PublishStatus.PUBLISHED,
+      },
+      images: [
+        {
+          imageUrl: roomImageList[3]!.imageUrl,
+          isCover: true,
+          order: 1,
+        },
+        {
+          imageUrl: roomImageList[2]!.imageUrl,
+          isCover: false,
+          order: 2,
+        },
+        {
+          imageUrl: roomImageList[1]!.imageUrl,
+          isCover: false,
+          order: 3,
+        },
+      ],
+      amenities: [
+        roomAmenities[6]!.id,
+        roomAmenities[4]!.id,
+        roomAmenities[5]!.id,
+      ],
+    });
+
+    await ensurePrices({ roomTypeId: room1p4.id, daysAhead: 30 });
+    await ensurePrices({ roomTypeId: room2p4.id, daysAhead: 30 });
+
+    const room1p5 = await createRoom({
+      data: {
+        propertyId: property5.id,
+        name: "Room 1",
+        basePrice: 600000,
+        totalRooms: 4,
+        bedType: BedType.KING_SIZE,
+        bedCount: 2,
+        viewType: ViewType.OCEAN_FRONT,
+        bathroomType: BathroomType.PRIVATE,
+        capacity: 4,
+        isPublished: PublishStatus.PUBLISHED,
+      },
+      images: [
+        {
+          imageUrl: roomImageList[2]!.imageUrl,
+          isCover: true,
+          order: 1,
+        },
+        {
+          imageUrl: roomImageList[3]!.imageUrl,
+          isCover: false,
+          order: 2,
+        },
+        {
+          imageUrl: roomImageList[1]!.imageUrl,
+          isCover: false,
+          order: 3,
+        },
+      ],
+      amenities: [
+        roomAmenities[2]!.id,
+        roomAmenities[1]!.id,
+        roomAmenities[0]!.id,
+      ],
+    });
+
+    const room2p5 = await createRoom({
+      data: {
+        propertyId: property5.id,
+        name: "Room 2",
+        basePrice: 700000,
+        totalRooms: 4,
+        bedType: BedType.SINGLE,
+        bedCount: 2,
+        viewType: ViewType.GARDEN_VIEW,
+        bathroomType: BathroomType.PRIVATE,
+        capacity: 2,
+        isPublished: PublishStatus.PUBLISHED,
+      },
+      images: [
+        {
+          imageUrl: roomImageList[3]!.imageUrl,
+          isCover: true,
+          order: 1,
+        },
+        {
+          imageUrl: roomImageList[2]!.imageUrl,
+          isCover: false,
+          order: 2,
+        },
+        {
+          imageUrl: roomImageList[1]!.imageUrl,
+          isCover: false,
+          order: 3,
+        },
+      ],
+      amenities: [
+        roomAmenities[6]!.id,
+        roomAmenities[4]!.id,
+        roomAmenities[5]!.id,
+      ],
+    });
+
+    await ensurePrices({ roomTypeId: room1p5.id, daysAhead: 30 });
+    await ensurePrices({ roomTypeId: room2p5.id, daysAhead: 30 });
+
+    const room1p6 = await createRoom({
+      data: {
+        propertyId: property6.id,
+        name: "Room 1",
+        basePrice: 800000,
+        totalRooms: 4,
+        bedType: BedType.KING_SIZE,
+        bedCount: 2,
+        viewType: ViewType.OCEAN_FRONT,
+        bathroomType: BathroomType.PRIVATE,
+        capacity: 4,
+        isPublished: PublishStatus.PUBLISHED,
+      },
+      images: [
+        {
+          imageUrl: roomImageList[2]!.imageUrl,
+          isCover: true,
+          order: 1,
+        },
+        {
+          imageUrl: roomImageList[3]!.imageUrl,
+          isCover: false,
+          order: 2,
+        },
+        {
+          imageUrl: roomImageList[1]!.imageUrl,
+          isCover: false,
+          order: 3,
+        },
+      ],
+      amenities: [
+        roomAmenities[2]!.id,
+        roomAmenities[1]!.id,
+        roomAmenities[0]!.id,
+      ],
+    });
+
+    const room2p6 = await createRoom({
+      data: {
+        propertyId: property6.id,
+        name: "Room 2",
+        basePrice: 900000,
+        totalRooms: 4,
+        bedType: BedType.SINGLE,
+        bedCount: 2,
+        viewType: ViewType.GARDEN_VIEW,
+        bathroomType: BathroomType.PRIVATE,
+        capacity: 2,
+        isPublished: PublishStatus.PUBLISHED,
+      },
+      images: [
+        {
+          imageUrl: roomImageList[3]!.imageUrl,
+          isCover: true,
+          order: 1,
+        },
+        {
+          imageUrl: roomImageList[2]!.imageUrl,
+          isCover: false,
+          order: 2,
+        },
+        {
+          imageUrl: roomImageList[1]!.imageUrl,
+          isCover: false,
+          order: 3,
+        },
+      ],
+      amenities: [
+        roomAmenities[6]!.id,
+        roomAmenities[4]!.id,
+        roomAmenities[5]!.id,
+      ],
+    });
+
+    await ensurePrices({ roomTypeId: room1p6.id, daysAhead: 30 });
+    await ensurePrices({ roomTypeId: room2p6.id, daysAhead: 30 });
+
+    const room1p7 = await createRoom({
+      data: {
+        propertyId: property7.id,
+        name: "Room 1",
+        basePrice: 1000000,
+        totalRooms: 4,
+        bedType: BedType.KING_SIZE,
+        bedCount: 2,
+        viewType: ViewType.OCEAN_FRONT,
+        bathroomType: BathroomType.PRIVATE,
+        capacity: 4,
+        isPublished: PublishStatus.PUBLISHED,
+      },
+      images: [
+        {
+          imageUrl: roomImageList[2]!.imageUrl,
+          isCover: true,
+          order: 1,
+        },
+        {
+          imageUrl: roomImageList[3]!.imageUrl,
+          isCover: false,
+          order: 2,
+        },
+        {
+          imageUrl: roomImageList[1]!.imageUrl,
+          isCover: false,
+          order: 3,
+        },
+      ],
+      amenities: [
+        roomAmenities[2]!.id,
+        roomAmenities[1]!.id,
+        roomAmenities[0]!.id,
+      ],
+    });
+
+    const room2p7 = await createRoom({
+      data: {
+        propertyId: property7.id,
+        name: "Room 2",
+        basePrice: 1100000,
+        totalRooms: 4,
+        bedType: BedType.SINGLE,
+        bedCount: 2,
+        viewType: ViewType.GARDEN_VIEW,
+        bathroomType: BathroomType.PRIVATE,
+        capacity: 2,
+        isPublished: PublishStatus.PUBLISHED,
+      },
+      images: [
+        {
+          imageUrl: roomImageList[3]!.imageUrl,
+          isCover: true,
+          order: 1,
+        },
+        {
+          imageUrl: roomImageList[2]!.imageUrl,
+          isCover: false,
+          order: 2,
+        },
+        {
+          imageUrl: roomImageList[1]!.imageUrl,
+          isCover: false,
+          order: 3,
+        },
+      ],
+      amenities: [
+        roomAmenities[6]!.id,
+        roomAmenities[4]!.id,
+        roomAmenities[5]!.id,
+      ],
+    });
+
+    await ensurePrices({ roomTypeId: room1p7.id, daysAhead: 30 });
+    await ensurePrices({ roomTypeId: room2p7.id, daysAhead: 30 });
+
+    const room1p8 = await createRoom({
+      data: {
+        propertyId: property8.id,
+        name: "Room 1",
+        basePrice: 1200000,
+        totalRooms: 4,
+        bedType: BedType.KING_SIZE,
+        bedCount: 2,
+        viewType: ViewType.OCEAN_FRONT,
+        bathroomType: BathroomType.PRIVATE,
+        capacity: 4,
+        isPublished: PublishStatus.PUBLISHED,
+      },
+      images: [
+        {
+          imageUrl: roomImageList[2]!.imageUrl,
+          isCover: true,
+          order: 1,
+        },
+        {
+          imageUrl: roomImageList[3]!.imageUrl,
+          isCover: false,
+          order: 2,
+        },
+        {
+          imageUrl: roomImageList[1]!.imageUrl,
+          isCover: false,
+          order: 3,
+        },
+      ],
+      amenities: [
+        roomAmenities[2]!.id,
+        roomAmenities[1]!.id,
+        roomAmenities[0]!.id,
+      ],
+    });
+
+    const room2p8 = await createRoom({
+      data: {
+        propertyId: property8.id,
+        name: "Room 2",
+        basePrice: 1300000,
+        totalRooms: 4,
+        bedType: BedType.SINGLE,
+        bedCount: 2,
+        viewType: ViewType.GARDEN_VIEW,
+        bathroomType: BathroomType.PRIVATE,
+        capacity: 2,
+        isPublished: PublishStatus.PUBLISHED,
+      },
+      images: [
+        {
+          imageUrl: roomImageList[3]!.imageUrl,
+          isCover: true,
+          order: 1,
+        },
+        {
+          imageUrl: roomImageList[2]!.imageUrl,
+          isCover: false,
+          order: 2,
+        },
+        {
+          imageUrl: roomImageList[1]!.imageUrl,
+          isCover: false,
+          order: 3,
+        },
+      ],
+      amenities: [
+        roomAmenities[6]!.id,
+        roomAmenities[4]!.id,
+        roomAmenities[5]!.id,
+      ],
+    });
+
+    await ensurePrices({ roomTypeId: room1p8.id, daysAhead: 30 });
+    await ensurePrices({ roomTypeId: room2p8.id, daysAhead: 30 });
+
     // =============================
     // DONE
     // =============================
