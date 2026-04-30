@@ -23,18 +23,18 @@ function SearchPage() {
   );
   const [order, setOrder] = useState<"asc" | "desc" | null>(null);
 
-  const handleSearchClick = (
-    search: string,
-    checkIn: string,
-    checkOut: string,
-    city: string,
-  ) => {
+  const handleSearchClick = (sentParams: {
+    search: string;
+    checkIn: string;
+    checkOut: string;
+    city: string;
+  }) => {
     const params = new URLSearchParams(searchParams);
 
-    params.set("search", search);
-    params.set("checkIn", checkIn);
-    params.set("checkOut", checkOut);
-    params.set("city", city);
+    params.set("search", sentParams.search);
+    params.set("checkIn", sentParams.checkIn);
+    params.set("checkOut", sentParams.checkOut);
+    params.set("city", sentParams.city);
 
     setSearchParams(params);
   };
@@ -128,8 +128,9 @@ function SearchPage() {
         <div className="max-w-screen-2xl mx-auto px-6 md:px-12 py-4 mt-2">
           <div className="flex flex-col items-center justify-center gap-8">
             <SearchBar
-              sentParams={handleSearchClick}
+              sentParams={(params) => handleSearchClick(params)}
               search={search || undefined}
+              city={city || undefined}
               checkIn={checkIn || undefined}
               checkOut={checkOut || undefined}
             />

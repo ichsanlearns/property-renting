@@ -17,16 +17,23 @@ type CityOption = {
 function SearchBar({
   sentParams,
   search,
+  city,
   checkIn,
   checkOut,
 }: {
-  sentParams?: (
-    search: string,
-    checkIn: string,
-    checkOut: string,
-    city: string,
-  ) => void;
+  sentParams?: ({
+    search,
+    checkIn,
+    checkOut,
+    city,
+  }: {
+    search: string;
+    checkIn: string;
+    checkOut: string;
+    city: string;
+  }) => void;
   search?: string;
+  city?: string;
   checkIn?: string;
   checkOut?: string;
 }) {
@@ -38,7 +45,7 @@ function SearchBar({
   const [openCalendar, setOpenCalendar] = useState(false);
   const [openCity, setOpenCity] = useState(false);
 
-  const [cityName, setCityName] = useState<string | null>(null);
+  const [cityName, setCityName] = useState<string | null>(city ?? null);
   const [range, setRange] = useState<DateRange | undefined>(
     checkIn && checkOut
       ? {
@@ -54,12 +61,12 @@ function SearchBar({
 
   const handleSearch = (data: SearchSchema) => {
     if (sentParams) {
-      sentParams(
-        data.param ?? "",
-        range?.from ? format(range.from, "yyyy-MM-dd") : "",
-        range?.to ? format(range.to, "yyyy-MM-dd") : "",
-        cityName ?? "",
-      );
+      sentParams({
+        search: data.param ?? "",
+        checkIn: range?.from ? format(range.from, "yyyy-MM-dd") : "",
+        checkOut: range?.to ? format(range.to, "yyyy-MM-dd") : "",
+        city: cityName ?? "",
+      });
       return;
     }
     const params = new URLSearchParams();
