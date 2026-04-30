@@ -10,9 +10,6 @@ export const uploadPaymentProof = async ({ userId, reservationId, file }: { user
   return await prisma.$transaction(async (tx) => {
     const reservation = await tx.reservation.findUnique({
       where: { id: reservationId },
-      include: {
-        customer: true,
-      },
     });
 
     if (!reservation) {
@@ -129,6 +126,9 @@ export const rejectPayment = async ({ reservationId, tenantId, reason }: { reser
 export const createMidtransTransaction = async (reservationId: string) => {
   const reservation = await prisma.reservation.findUnique({
     where: { id: reservationId },
+    include: {
+      customer: true,
+    },
   });
 
   if (!reservation) {
