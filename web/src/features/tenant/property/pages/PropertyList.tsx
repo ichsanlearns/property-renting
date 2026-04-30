@@ -4,6 +4,7 @@ import { usePropertyByTenantId } from "../hooks/useProperty";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import ConfirmModal from "../../../../shared/ui/ConfirmModal";
+import { formatRupiah } from "../../../../shared/utils/price.util";
 
 function PropertyList() {
   const { data: properties, isLoading } = usePropertyByTenantId();
@@ -106,7 +107,7 @@ function PropertyList() {
                     <span>{roomType.capacity} Guests</span>
                     <span>•</span>
                     <span className="text-primary font-bold">
-                      Rp. {roomType.basePrice}
+                      {formatRupiah(roomType.basePrice)}
                     </span>
                   </div>
                 ))}

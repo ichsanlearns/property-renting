@@ -1,5 +1,6 @@
 import { format } from "date-fns";
 import type { GetByTenantIdResponse } from "../api/pricing.response";
+import { formatRupiah } from "../../../../shared/utils/price.util";
 
 type Level = "SYSTEM" | "TENANT";
 
@@ -163,7 +164,7 @@ function PeakSeasonList({
                           : "-"}
                         {pricingRule.adjustmentType === "PERCENTAGE"
                           ? `${pricingRule.adjustmentValue}%`
-                          : `Rp. ${pricingRule.adjustmentValue}`}
+                          : `${formatRupiah(pricingRule.adjustmentValue)}`}
                       </span>
                     </td>
                   </tr>

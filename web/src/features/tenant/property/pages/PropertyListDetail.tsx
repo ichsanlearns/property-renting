@@ -1,3 +1,4 @@
+import { formatRupiah } from "../../../../shared/utils/price.util";
 import type { GetPropertyByTenantIdResponse } from "../api/property.response";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -197,7 +198,7 @@ function PropertyListDetail() {
                     <div className="mt-auto pt-4 border-t border-outline flex items-end justify-between">
                       <div>
                         <span className="text-lg font-extrabold text-on-surface">
-                          Rp. {roomType.basePrice}
+                          {formatRupiah(roomType.basePrice)}
                         </span>
                         <span className="text-xs text-on-surface-variant font-medium">
                           /night
@@ -208,14 +209,14 @@ function PropertyListDetail() {
                       </div>
                     </div>
                   </div>
-                  <div className="bg-white/50 px-6 py-3 border-t border-outline flex justify-end gap-3 text-sm">
+                  {/* <div className="bg-white/50 px-6 py-3 border-t border-outline flex justify-end gap-3 text-sm">
                     <button className="text-on-surface-variant hover:text-primary font-medium transition-colors cursor-pointer">
                       Edit
                     </button>
                     <button className="text-on-surface-variant hover:text-primary font-medium transition-colors cursor-pointer">
                       Delete
                     </button>
-                  </div>
+                  </div> */}
                 </div>
               );
             })}
