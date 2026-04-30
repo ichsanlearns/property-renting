@@ -139,17 +139,21 @@ function SearchBar({
       </div>
       <div className="relative">
         <div
-          onClick={() => setOpenCity((prev) => !prev)}
-          className="flex h-full w-50 items-center px-6 py-3 border-r border-slate-200/50 cursor-pointer hover:bg-slate-100/50 rounded-l-full transition-colors group/city justify-between"
+          onClick={() => cities && setOpenCity((prev) => !prev)}
+          className={`flex h-full w-50 items-center px-6 py-3 border-r border-slate-200/50 hover:bg-slate-100/50 rounded-l-full transition-colors group/city justify-between ${!cities ? "cursor-not-allowed opacity-50" : "cursor-pointer"}`}
         >
           <span
-            className="material-symbols-outlined text-slate-400 mr-2 group-hover/city:text-primary"
+            className={`material-symbols-outlined mr-2 group-hover/city:text-primary ${!cities ? "text-slate-400" : "text-primary"}`}
             data-icon="location_on"
           >
             location_on
           </span>
           <span className="text-slate-800 font-semibold text-sm whitespace-nowrap">
-            {cityName === null ? "Select city" : cityName}
+            {!cities
+              ? "Loading..."
+              : cityName === null
+                ? "Select city"
+                : cityName}
           </span>
           <span
             className="material-symbols-outlined text-slate-400 ml-2 text-sm"
