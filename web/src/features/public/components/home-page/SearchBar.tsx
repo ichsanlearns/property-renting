@@ -17,16 +17,23 @@ type CityOption = {
 function SearchBar({
   sentParams,
   search,
+  city,
   checkIn,
   checkOut,
 }: {
-  sentParams?: (
-    search: string,
-    checkIn: string,
-    checkOut: string,
-    city: string,
-  ) => void;
+  sentParams?: ({
+    search,
+    checkIn,
+    checkOut,
+    city,
+  }: {
+    search: string;
+    checkIn: string;
+    checkOut: string;
+    city: string;
+  }) => void;
   search?: string;
+  city?: string;
   checkIn?: string;
   checkOut?: string;
 }) {
@@ -38,7 +45,7 @@ function SearchBar({
   const [openCalendar, setOpenCalendar] = useState(false);
   const [openCity, setOpenCity] = useState(false);
 
-  const [cityName, setCityName] = useState<string | null>(null);
+  const [cityName, setCityName] = useState<string | null>(city ?? null);
   const [range, setRange] = useState<DateRange | undefined>(
     checkIn && checkOut
       ? {
@@ -54,12 +61,12 @@ function SearchBar({
 
   const handleSearch = (data: SearchSchema) => {
     if (sentParams) {
-      sentParams(
-        data.param ?? "",
-        range?.from ? format(range.from, "yyyy-MM-dd") : "",
-        range?.to ? format(range.to, "yyyy-MM-dd") : "",
-        cityName ?? "",
-      );
+      sentParams({
+        search: data.param ?? "",
+        checkIn: range?.from ? format(range.from, "yyyy-MM-dd") : "",
+        checkOut: range?.to ? format(range.to, "yyyy-MM-dd") : "",
+        city: cityName ?? "",
+      });
       return;
     }
     const params = new URLSearchParams();
@@ -132,17 +139,21 @@ function SearchBar({
       </div>
       <div className="relative">
         <div
-          onClick={() => setOpenCity((prev) => !prev)}
-          className="flex h-full w-50 items-center px-6 py-3 border-r border-slate-200/50 cursor-pointer hover:bg-slate-100/50 rounded-l-full transition-colors group/city justify-between"
+          onClick={() => cities && setOpenCity((prev) => !prev)}
+          className={`flex h-full w-50 items-center px-6 py-3 border-r border-slate-200/50 hover:bg-slate-100/50 rounded-l-full transition-colors group/city justify-between ${!cities ? "cursor-not-allowed opacity-50" : "cursor-pointer"}`}
         >
           <span
-            className="material-symbols-outlined text-slate-400 mr-2 group-hover/city:text-primary"
+            className={`material-symbols-outlined mr-2 group-hover/city:text-primary ${!cities ? "text-slate-400" : "text-primary"}`}
             data-icon="location_on"
           >
             location_on
           </span>
           <span className="text-slate-800 font-semibold text-sm whitespace-nowrap">
-            {cityName === null ? "Select city" : cityName}
+            {!cities
+              ? "Loading..."
+              : cityName === null
+                ? "Select city"
+                : cityName}
           </span>
           <span
             className="material-symbols-outlined text-slate-400 ml-2 text-sm"

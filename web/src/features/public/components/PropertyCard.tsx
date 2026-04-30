@@ -1,3 +1,4 @@
+import { formatRupiah } from "../../../shared/utils/price.util";
 import type { GetPropertyAllBasicResponse } from "../../tenant/property/api/property.response";
 import { useNavigate } from "react-router-dom";
 
@@ -45,7 +46,7 @@ function PropertyCard({
             {property.city}, {property.country}
           </p>
           <p className="mt-2 font-bold text-[#ff5c61]">
-            Rp. {property.price}
+            {formatRupiah(property.price)}
             <span className="text-on-surface-variant font-normal">/ night</span>
           </p>
         </div>

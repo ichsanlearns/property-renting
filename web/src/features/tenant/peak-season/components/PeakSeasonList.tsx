@@ -1,5 +1,6 @@
 import { format } from "date-fns";
 import type { GetByTenantIdResponse } from "../api/pricing.response";
+import { formatRupiah } from "../../../../shared/utils/price.util";
 
 type Level = "SYSTEM" | "TENANT";
 
@@ -64,7 +65,6 @@ function PeakSeasonList({
                   </div>
                 </th>
                 <th className="pr-20 py-4 text-right">Adjustment</th>
-                {/* <th className="px-6 py-4 text-centesr">Actions</th> */}
               </tr>
             </thead>
             <tbody className="divide-y divide-outline">
@@ -163,7 +163,7 @@ function PeakSeasonList({
                           : "-"}
                         {pricingRule.adjustmentType === "PERCENTAGE"
                           ? `${pricingRule.adjustmentValue}%`
-                          : `Rp. ${pricingRule.adjustmentValue}`}
+                          : `${formatRupiah(pricingRule.adjustmentValue)}`}
                       </span>
                     </td>
                   </tr>

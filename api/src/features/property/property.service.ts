@@ -771,7 +771,6 @@ export const getCities = async () => {
     },
   });
 
-  // return cities.map((city) => city.city);
   return cities.map((city) => ({ name: city.city, count: city._count.city }));
 };
 

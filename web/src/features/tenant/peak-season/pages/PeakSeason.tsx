@@ -9,9 +9,10 @@ import {
   type CreatePricingPayload,
 } from "../schemas/peakseason.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import LoaderFetching from "../../../../shared/ui/LoaderFetching";
 
 function PeakSeason() {
-  const { data: pricingRules } = usePricing();
+  const { data: pricingRules, isLoading } = usePricing();
 
   const createRule = useCreatePricingRule();
 
@@ -51,6 +52,10 @@ function PeakSeason() {
     setAdjustmentDirection(direction);
     setValue("adjustmentDirection", direction);
   };
+
+  if (isLoading) {
+    return <LoaderFetching />;
+  }
 
   return (
     <main className="flex-1 overflow-hidden mt-16 flex flex-col p-6 bg-surface-dim">
