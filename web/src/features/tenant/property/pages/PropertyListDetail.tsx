@@ -209,6 +209,16 @@ function PropertyListDetail() {
                       </div>
                     </div>
                   </div>
+                  <button
+                    onClick={() =>
+                      navigate(
+                        `/tenant/properties/${property.id}/rooms/${roomType.id}/edit`,
+                      )
+                    }
+                    className="w-full py-2.5 px-4 bg-surface-container text-on-surface-variant border-t border-outline text-sm font-bold hover:bg-surface-container-high transition-colors cursor-pointer"
+                  >
+                    Edit Room
+                  </button>
                 </div>
               );
             })}
