@@ -87,7 +87,7 @@ export const createRoom = async ({
   });
 };
 
-export const getRoom = async ({
+export const getRoomById = async ({
   roomId,
   tenantId,
 }: {
@@ -135,13 +135,9 @@ export const getRoom = async ({
     isPublished: room.isPublished,
     isVerified: room.isVerified,
 
-    amenities: room.roomAmenities.map((amenity) => ({
-      id: amenity.id,
-    })),
+    amenities: room.roomAmenities.map((amenity) => amenity.id),
 
-    roomTypeImages: room.roomTypeImages.map((image) => ({
-      imageUrl: image.imageUrl,
-    })),
+    roomTypeImages: room.roomTypeImages.map((image) => image.imageUrl),
   };
 };
 

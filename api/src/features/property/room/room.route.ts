@@ -12,8 +12,6 @@ export const createRoomRouter = router.post(
   RoomController.createRoomController,
 );
 
-export const getRoomRouter = router.get(
-  "/:roomId",
-  authMiddleware,
-  RoomController.getRoomController,
-);
+router.get("/:roomId", authMiddleware, RoomController.getRoomController);
+
+export default router;
