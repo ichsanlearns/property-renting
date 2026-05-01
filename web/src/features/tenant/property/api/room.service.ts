@@ -1,4 +1,6 @@
 import api from "../../../../api/client";
+import type { ApiResponse } from "../../../../shared/types/api-response";
+import * as RoomResponse from "./room.response";
 import { ROOM_ENDPOINTS } from "./room.endpoint";
 
 export const createRoom = async ({
@@ -15,5 +17,12 @@ export const createRoom = async ({
       "Content-Type": "multipart/form-data",
     },
   });
+  return response.data;
+};
+
+export const getRoomById = async ({ roomId }: { roomId: string }) => {
+  const response = await api.get<ApiResponse<RoomResponse.GetRoomByIdResponse>>(
+    ROOM_ENDPOINTS.GET_BY_ID(roomId),
+  );
   return response.data;
 };

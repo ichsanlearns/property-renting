@@ -43,7 +43,7 @@ const publishStatuses = [
   { value: "archived", label: "Archive" },
 ];
 
-function FormRoom() {
+function CreateRoomPage() {
   const navigate = useNavigate();
   const { propertyId } = useParams();
   const { data: property, isLoading, error } = usePropertyBasic(propertyId!);
@@ -473,4 +473,4 @@ function FormRoom() {
   );
 }
 
-export default FormRoom;
+export default CreateRoomPage;

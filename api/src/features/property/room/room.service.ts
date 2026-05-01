@@ -87,6 +87,60 @@ export const createRoom = async ({
   });
 };
 
+export const getRoomById = async ({
+  roomId,
+  tenantId,
+}: {
+  roomId: string;
+  tenantId: string;
+}) => {
+  const room = await prisma.roomType.findUnique({
+    where: { id: roomId },
+    include: {
+      roomAmenities: true,
+      roomTypeImages: true,
+      property: {
+        select: {
+          tenantId: true,
+        },
+      },
+    },
+  });
+
+  if (room?.property.tenantId !== tenantId) {
+    throw new AppError("Unauthorized", 401);
+  }
+
+  if (!room) {
+    throw new AppError("Room not found", 404);
+  }
+
+  return {
+    id: room.id,
+    name: room.name,
+    basePrice: room.basePrice,
+    totalRooms: room.totalRooms,
+
+    bedType: room.bedType,
+    capacity: room.capacity,
+    viewType: room.viewType,
+    bathroomType: room.bathroomType,
+    bedCount: room.bedCount,
+
+    availableRooms: room.availableRooms,
+
+    averageRating: room.averageRating,
+    reviewCount: room.reviewCount,
+
+    isPublished: room.isPublished,
+    isVerified: room.isVerified,
+
+    amenities: room.roomAmenities.map((amenity) => amenity.amenityId),
+
+    roomTypeImages: room.roomTypeImages.map((image) => image.imageUrl),
+  };
+};
+
 export const ensurePrices = async ({
   roomTypeId,
   daysAhead,
