@@ -62,7 +62,7 @@ export default function PropertyReviewSection({ propertyId }: { propertyId: stri
               <div>
                 <h4 className="font-bold">{review.customer?.firstName || "Guest"}</h4>
 
-                <p className="text-sm text-slate-400">{format(new Date(review.createdAt), "MMMM yyyy")}</p>
+                <p className="text-sm text-slate-400">{format(new Date(review.createdAt), "dd MMMM yyyy")}</p>
               </div>
             </div>
 
@@ -86,7 +86,7 @@ export default function PropertyReviewSection({ propertyId }: { propertyId: stri
 
             {/* Reply */}
             {review.tenantReply && (
-              <div className="mt-4 rounded-2xl border border-primary/10 bg-gradient-to-br from-primary/5 to-white dark:to-slate-900 p-5">
+              <div className="mt-4 rounded-2xl border border-primary/10 bg-linear-to-br from-primary/5 to-white dark:to-slate-900 p-5">
                 <div className="flex items-start gap-3">
                   {/* Avatar */}
                   <img src={review.property?.tenant?.profileImage || "https://ui-avatars.com/api/?name=Host"} alt="tenant" className="w-11 h-11 rounded-full object-cover border border-white shadow-sm" />
