@@ -72,3 +72,17 @@ export const createRoomController = catchAsync(
     });
   },
 );
+
+export const getRoomController = catchAsync(
+  async (req: Request, res: Response) => {
+    const { roomId } = req.params as { roomId: string };
+    const tenantId = req.user?.userId as string;
+
+    const room = await RoomService.getRoom({ roomId, tenantId });
+
+    res.status(200).json({
+      message: "Room fetched successfully",
+      data: room,
+    });
+  },
+);

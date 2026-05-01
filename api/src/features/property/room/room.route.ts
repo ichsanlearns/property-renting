@@ -11,3 +11,9 @@ export const createRoomRouter = router.post(
   uploadCloud.array("images", 3),
   RoomController.createRoomController,
 );
+
+export const getRoomRouter = router.get(
+  "/:roomId",
+  authMiddleware,
+  RoomController.getRoomController,
+);
