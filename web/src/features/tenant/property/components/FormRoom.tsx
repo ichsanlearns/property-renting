@@ -14,6 +14,7 @@ import type { ImagesType } from "../types/image.type";
 import { useNavigate, useParams } from "react-router";
 import { usePropertyBasic } from "../hooks/useProperty";
 import LoaderFetching from "../../../../shared/ui/LoaderFetching";
+import type { GetRoomByIdResponse } from "../api/room.response";
 
 const viewTypes = [
   { value: "ocean_front", label: "Ocean Front" },
@@ -41,14 +42,34 @@ const publishStatuses = [
   { value: "archived", label: "Archive" },
 ];
 
-function FormRoom(defaultValues: Partial<CreateRoomPayload>) {
+type TFormRoomMode = "create" | "edit";
+
+function FormRoom({
+  defaultValues,
+  mode,
+}: {
+  defaultValues?: Partial<GetRoomByIdResponse>;
+  mode?: TFormRoomMode;
+}) {
   const navigate = useNavigate();
   const { propertyId } = useParams();
   const { data: property, isLoading, error } = usePropertyBasic(propertyId!);
 
-  const [images, setImages] = useState<ImagesType[]>([]);
-  const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
-  const [selectedBathroomType, setSelectedBathroomType] = useState<string>("");
+  const [images, setImages] = useState<ImagesType[]>(
+    defaultValues?.roomTypeImages?.map((image) => {
+      return {
+        preview: image,
+      };
+    }) ?? [],
+  );
+  const [selectedAmenities, setSelectedAmenities] = useState<string[]>(
+    defaultValues?.amenities ?? [],
+  );
+  const [selectedBathroomType, setSelectedBathroomType] = useState<string>(
+    defaultValues?.bathroomType?.toLocaleLowerCase() ?? "",
+  );
+
+  console.log("defaultValues: ", defaultValues);
 
   const {
     register,
@@ -130,6 +151,7 @@ function FormRoom(defaultValues: Partial<CreateRoomPayload>) {
                     Room Name
                   </label>
                   <input
+                    defaultValue={defaultValues?.name}
                     {...register("name")}
                     className="w-full p-4 bg-slate-50 hover:bg-white focus:bg-white border-slate-200 border rounded-xl text-sm font-semibold focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-slate-400"
                     placeholder="e.g. Master Oceanfront Suite"
@@ -152,6 +174,7 @@ function FormRoom(defaultValues: Partial<CreateRoomPayload>) {
                       IDR
                     </span>
                     <input
+                      defaultValue={defaultValues?.basePrice}
                       {...register("basePrice", {
                         valueAsNumber: true,
                       })}
@@ -177,6 +200,7 @@ function FormRoom(defaultValues: Partial<CreateRoomPayload>) {
                     Room Total
                   </label>
                   <input
+                    defaultValue={defaultValues?.totalRooms}
                     {...register("totalRooms", {
                       valueAsNumber: true,
                     })}
@@ -208,6 +232,7 @@ function FormRoom(defaultValues: Partial<CreateRoomPayload>) {
                     Bed Type
                   </label>
                   <select
+                    defaultValue={defaultValues?.bedType}
                     {...register("bedType")}
                     className="w-full p-4 bg-slate-50 hover:bg-white focus:bg-white border-slate-200 border rounded-xl text-sm font-semibold focus:ring-2 focus:ring-primary/20 transition-all"
                   >
@@ -228,6 +253,7 @@ function FormRoom(defaultValues: Partial<CreateRoomPayload>) {
                     Guest Capacity
                   </label>
                   <input
+                    defaultValue={defaultValues?.capacity}
                     {...register("capacity", {
                       valueAsNumber: true,
                     })}
@@ -246,6 +272,7 @@ function FormRoom(defaultValues: Partial<CreateRoomPayload>) {
                     View Type
                   </label>
                   <select
+                    defaultValue={defaultValues?.viewType}
                     {...register("viewType")}
                     className="w-full p-4 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-primary/20 transition-all bg-slate-50 hover:bg-white focus:bg-white border-slate-200 border"
                   >
@@ -292,17 +319,18 @@ function FormRoom(defaultValues: Partial<CreateRoomPayload>) {
                   </label>
                   <div className="flex gap-4">
                     <input
+                      defaultValue={defaultValues?.bedCount ?? 1}
                       {...register("bedCount", {
                         valueAsNumber: true,
                       })}
                       className="w-full accent-primary h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer mt-4"
                       type="range"
-                      defaultValue={1}
                       min={1}
                       max={10}
                       step={1}
                     />
                     <input
+                      defaultValue={defaultValues?.bedCount ?? 1}
                       value={watch("bedCount")}
                       onChange={(e) =>
                         setValue("bedCount", Number(e.target.value))
@@ -357,7 +385,12 @@ function FormRoom(defaultValues: Partial<CreateRoomPayload>) {
                         <option
                           key={status.value}
                           value={status.value}
-                          defaultChecked={status.value === "published"}
+                          defaultChecked={
+                            status.value ===
+                            (mode === "edit"
+                              ? true
+                              : defaultValues?.isPublished)
+                          }
                         >
                           {status.label}
                         </option>
@@ -391,7 +424,7 @@ function FormRoom(defaultValues: Partial<CreateRoomPayload>) {
                       Quick Tip
                     </p>
                     <p className="text-slate-600 dark:text-slate-400 text-xs mt-1 leading-relaxed">
-                      Publishing this room will make both this room and the
+                      Publishing the room will make both this room and the
                       property visible to public.
                     </p>
                   </div>

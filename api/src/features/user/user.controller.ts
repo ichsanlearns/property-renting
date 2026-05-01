@@ -118,8 +118,6 @@ export const updateProfilePhoto = catchAsync(
 export const updatePassword = catchAsync(
   async (req: Request, res: Response) => {
     const userId = req.user?.userId!;
-    const refreshToken = req.cookies.refreshToken;
-    console.log(refreshToken);
 
     const input = updatePasswordSchema.safeParse(req.body);
 

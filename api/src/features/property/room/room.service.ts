@@ -135,7 +135,7 @@ export const getRoomById = async ({
     isPublished: room.isPublished,
     isVerified: room.isVerified,
 
-    amenities: room.roomAmenities.map((amenity) => amenity.id),
+    amenities: room.roomAmenities.map((amenity) => amenity.amenityId),
 
     roomTypeImages: room.roomTypeImages.map((image) => image.imageUrl),
   };
