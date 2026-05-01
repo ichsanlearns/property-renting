@@ -1,7 +1,7 @@
 import { useState } from "react";
 
-import ImageUpload from "../components/ImageUpload";
-import AmenityList from "../components/AmenityList";
+import ImageUpload from "./ImageUpload";
+import AmenityList from "./AmenityList";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,8 +11,6 @@ import {
   type CreateRoomPayload,
 } from "../schemas/room.schema";
 import type { ImagesType } from "../types/image.type";
-import toast from "react-hot-toast";
-import { createRoom } from "../api/room.service";
 import { useNavigate, useParams } from "react-router";
 import { usePropertyBasic } from "../hooks/useProperty";
 import LoaderFetching from "../../../../shared/ui/LoaderFetching";
@@ -43,15 +41,13 @@ const publishStatuses = [
   { value: "archived", label: "Archive" },
 ];
 
-function FormEditRoom() {
+function FormRoom(defaultValues: Partial<CreateRoomPayload>) {
   const navigate = useNavigate();
   const { propertyId } = useParams();
   const { data: property, isLoading, error } = usePropertyBasic(propertyId!);
 
   const [images, setImages] = useState<ImagesType[]>([]);
-
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
-
   const [selectedBathroomType, setSelectedBathroomType] = useState<string>("");
 
   const {
@@ -67,58 +63,8 @@ function FormEditRoom() {
     },
   });
 
-  const onSubmit = async (data: CreateRoomPayload) => {
-    const payload = {
-      name: data.name,
-      basePrice: data.basePrice,
-      totalRooms: data.totalRooms,
-      bedType: data.bedType,
-      bedCount: data.bedCount,
-      viewType: data.viewType,
-      bathroomType: data.bathroomType,
-      capacity: data.capacity,
-      isPublished: data.isPublished,
-    };
-
-    const formData = new FormData();
-
-    Object.entries(payload).forEach(([key, value]) => {
-      formData.append(key, String(value));
-    });
-
-    if (images.length > 0) {
-      images.forEach((image) => {
-        if (image.file) {
-          formData.append("images", image.file);
-        }
-      });
-
-      formData.append(
-        "imagesMeta",
-        JSON.stringify(
-          images.map((image) => ({
-            isCover: image.isCover,
-            order: image.order,
-          })),
-        ),
-      );
-    }
-
-    selectedAmenities.forEach((amenity) => {
-      formData.append("amenities", amenity);
-    });
-
-    try {
-      toast.loading("Creating room...");
-
-      await createRoom({ propertyId: propertyId!, data: formData });
-
-      toast.dismiss();
-      toast.success("Room created successfully");
-    } catch (error: any) {
-      toast.dismiss();
-      toast.error(error.response?.data?.message || "Failed to create room");
-    }
+  const onSubmit = (data: CreateRoomPayload) => {
+    return console.log("data: ", data);
   };
 
   if (isLoading) {
@@ -473,4 +419,4 @@ function FormEditRoom() {
   );
 }
 
-export default FormEditRoom;
+export default FormRoom;

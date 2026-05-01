@@ -20,7 +20,6 @@ import DetailReviewPage from "./features/tenant/review/pages/DetailReviewPage";
 import PaymentPage from "./features/payment/pages/PaymentPage";
 
 import FormProperties from "./features/tenant/property/pages/FormProperties";
-import FormRoom from "./features/tenant/property/pages/FormRoom";
 
 import { refreshSession } from "./features/auth/api/auth.service";
 import { useAuthStore } from "./features/auth/stores/auth.store";
@@ -42,7 +41,8 @@ import PeakSeason from "./features/tenant/peak-season/pages/PeakSeason";
 import PropertyList from "./features/tenant/property/pages/PropertyList";
 import PropertyListDetail from "./features/tenant/property/pages/PropertyListDetail";
 import FormEditProperties from "./features/tenant/property/pages/FormEditProperties";
-import FormEditRoom from "./features/tenant/property/pages/FormEditRoom";
+import CreateRoomPage from "./features/tenant/property/pages/CreateRoomPage";
+import EditRoomPage from "./features/tenant/property/pages/EditRoomPage";
 
 function requireOnboarding(user: User | null) {
   if (!user?.fullName && user?.email) {
@@ -118,11 +118,11 @@ const router = createBrowserRouter([
           },
           {
             path: "properties/:propertyId/rooms/create",
-            element: <FormRoom />,
+            element: <CreateRoomPage />,
           },
           {
             path: "properties/:propertyId/rooms/:roomId/edit",
-            element: <FormEditRoom />,
+            element: <EditRoomPage />,
           },
           {
             path: "peak-season",
