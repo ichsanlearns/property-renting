@@ -6,6 +6,8 @@ import LoaderFetching from "../../../../shared/ui/LoaderFetching";
 function EditRoomPage() {
   const { roomId } = useParams();
 
+  const handleOnSubmit = (params: FormData) => {};
+
   const {
     data: roomData,
     isLoading,
@@ -20,7 +22,13 @@ function EditRoomPage() {
     return <div>Error: {error.message}</div>;
   }
 
-  return <FormRoom defaultValues={roomData} mode="edit" />;
+  return (
+    <FormRoom
+      defaultValues={roomData}
+      mode="edit"
+      handleOnSubmit={handleOnSubmit}
+    />
+  );
 }
 
 export default EditRoomPage;

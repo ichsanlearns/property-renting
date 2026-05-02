@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import ImageUpload from "./ImageUpload";
 import AmenityList from "./AmenityList";
@@ -27,9 +27,11 @@ type TFormRoomMode = "create" | "edit";
 function FormRoom({
   defaultValues,
   mode,
+  handleOnSubmit,
 }: {
   defaultValues?: Partial<GetRoomByIdResponse>;
   mode?: TFormRoomMode;
+  handleOnSubmit: (params: FormData) => void;
 }) {
   const navigate = useNavigate();
   const { propertyId } = useParams();
@@ -63,8 +65,62 @@ function FormRoom({
   });
 
   const onSubmit = (data: CreateRoomPayload) => {
-    return console.log("data: ", data);
+    const payload = {
+      name: data.name,
+      basePrice: data.basePrice,
+      totalRooms: data.totalRooms,
+      bedType: data.bedType,
+      bedCount: data.bedCount,
+      viewType: data.viewType,
+      bathroomType: data.bathroomType,
+      capacity: data.capacity,
+      isPublished: data.isPublished,
+    };
+
+    const formData = new FormData();
+
+    Object.entries(payload).forEach(([key, value]) => {
+      formData.append(key, String(value));
+    });
+
+    if (images.length > 0) {
+      images.forEach((image) => {
+        if (image.file) {
+          formData.append("images", image.file);
+        }
+      });
+
+      formData.append(
+        "imagesMeta",
+        JSON.stringify(
+          images.map((image) => ({
+            isCover: image.isCover,
+            order: image.order,
+          })),
+        ),
+      );
+    }
+
+    selectedAmenities.forEach((amenity) => {
+      formData.append("amenities", amenity);
+    });
+
+    handleOnSubmit(formData);
   };
+
+  useEffect(() => {
+    if (mode === "edit") {
+      setValue("name", defaultValues?.name ?? "");
+      setValue("basePrice", defaultValues?.basePrice ?? 0);
+      setValue("totalRooms", defaultValues?.totalRooms ?? 0);
+      setValue("bedType", defaultValues?.bedType ?? "");
+      setValue("bedCount", defaultValues?.bedCount ?? 0);
+      setValue("viewType", defaultValues?.viewType ?? "");
+      setValue("bathroomType", defaultValues?.bathroomType ?? "");
+      setValue("capacity", defaultValues?.capacity ?? 0);
+      setValue("isPublished", defaultValues?.isPublished ?? "published");
+    }
+  }, [defaultValues, mode, setValue]);
 
   if (isLoading) {
     return <LoaderFetching />;
