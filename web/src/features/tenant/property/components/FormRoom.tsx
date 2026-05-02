@@ -15,32 +15,12 @@ import { useNavigate, useParams } from "react-router";
 import { usePropertyBasic } from "../hooks/useProperty";
 import LoaderFetching from "../../../../shared/ui/LoaderFetching";
 import type { GetRoomByIdResponse } from "../api/room.response";
-
-const viewTypes = [
-  { value: "ocean_front", label: "Ocean Front" },
-  { value: "garden_view", label: "Garden View" },
-  { value: "city_skyline", label: "City Skyline" },
-  { value: "pool_side", label: "Pool Side" },
-  { value: "none", label: "None" },
-];
-
-const bedTypes = [
-  { value: "king_size", label: "King Size Bed" },
-  { value: "queen_size", label: "Queen Size Bed" },
-  { value: "double_twin", label: "Double Twin Beds" },
-  { value: "single", label: "Single Bed" },
-];
-
-const bathroomTypes = [
-  { value: "private", label: "Private" },
-  { value: "shared", label: "Shared" },
-];
-
-const publishStatuses = [
-  { value: "published", label: "Publish" },
-  { value: "draft", label: "Draft" },
-  { value: "archived", label: "Archive" },
-];
+import {
+  bathroomTypes,
+  bedTypes,
+  publishStatuses,
+  viewTypes,
+} from "../constants/room.const";
 
 type TFormRoomMode = "create" | "edit";
 
@@ -68,8 +48,6 @@ function FormRoom({
   const [selectedBathroomType, setSelectedBathroomType] = useState<string>(
     defaultValues?.bathroomType?.toLocaleLowerCase() ?? "",
   );
-
-  console.log("defaultValues: ", defaultValues);
 
   const {
     register,

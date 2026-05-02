@@ -16,32 +16,12 @@ import { createRoom } from "../api/room.service";
 import { useNavigate, useParams } from "react-router";
 import { usePropertyBasic } from "../hooks/useProperty";
 import LoaderFetching from "../../../../shared/ui/LoaderFetching";
-
-const viewTypes = [
-  { value: "ocean_front", label: "Ocean Front" },
-  { value: "garden_view", label: "Garden View" },
-  { value: "city_skyline", label: "City Skyline" },
-  { value: "pool_side", label: "Pool Side" },
-  { value: "none", label: "None" },
-];
-
-const bedTypes = [
-  { value: "king_size", label: "King Size Bed" },
-  { value: "queen_size", label: "Queen Size Bed" },
-  { value: "double_twin", label: "Double Twin Beds" },
-  { value: "single", label: "Single Bed" },
-];
-
-const bathroomTypes = [
-  { value: "private", label: "Private" },
-  { value: "shared", label: "Shared" },
-];
-
-const publishStatuses = [
-  { value: "published", label: "Publish" },
-  { value: "draft", label: "Draft" },
-  { value: "archived", label: "Archive" },
-];
+import {
+  bathroomTypes,
+  bedTypes,
+  publishStatuses,
+  viewTypes,
+} from "../constants/room.const";
 
 function CreateRoomPage() {
   const navigate = useNavigate();
