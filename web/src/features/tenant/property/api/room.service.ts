@@ -20,6 +20,23 @@ export const createRoom = async ({
   return response.data;
 };
 
+export const updateRoom = async ({
+  roomId,
+  data,
+}: {
+  roomId: string;
+  data: FormData;
+}) => {
+  const endpoint = ROOM_ENDPOINTS.UPDATE(roomId);
+
+  const response = await api.patch<ApiResponse<void>>(endpoint, data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response.data;
+};
+
 export const getRoomById = async ({ roomId }: { roomId: string }) => {
   const response = await api.get<ApiResponse<RoomResponse.GetRoomByIdResponse>>(
     ROOM_ENDPOINTS.GET_BY_ID(roomId),

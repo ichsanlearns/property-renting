@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import ImageUpload from "./ImageUpload";
 import AmenityList from "./AmenityList";
@@ -15,41 +15,23 @@ import { useNavigate, useParams } from "react-router";
 import { usePropertyBasic } from "../hooks/useProperty";
 import LoaderFetching from "../../../../shared/ui/LoaderFetching";
 import type { GetRoomByIdResponse } from "../api/room.response";
-
-const viewTypes = [
-  { value: "ocean_front", label: "Ocean Front" },
-  { value: "garden_view", label: "Garden View" },
-  { value: "city_skyline", label: "City Skyline" },
-  { value: "pool_side", label: "Pool Side" },
-  { value: "none", label: "None" },
-];
-
-const bedTypes = [
-  { value: "king_size", label: "King Size Bed" },
-  { value: "queen_size", label: "Queen Size Bed" },
-  { value: "double_twin", label: "Double Twin Beds" },
-  { value: "single", label: "Single Bed" },
-];
-
-const bathroomTypes = [
-  { value: "private", label: "Private" },
-  { value: "shared", label: "Shared" },
-];
-
-const publishStatuses = [
-  { value: "published", label: "Publish" },
-  { value: "draft", label: "Draft" },
-  { value: "archived", label: "Archive" },
-];
+import {
+  bathroomTypes,
+  bedTypes,
+  publishStatuses,
+  viewTypes,
+} from "../constants/room.const";
 
 type TFormRoomMode = "create" | "edit";
 
 function FormRoom({
   defaultValues,
   mode,
+  handleOnSubmit,
 }: {
   defaultValues?: Partial<GetRoomByIdResponse>;
   mode?: TFormRoomMode;
+  handleOnSubmit: (params: FormData) => void;
 }) {
   const navigate = useNavigate();
   const { propertyId } = useParams();
@@ -69,8 +51,6 @@ function FormRoom({
     defaultValues?.bathroomType?.toLocaleLowerCase() ?? "",
   );
 
-  console.log("defaultValues: ", defaultValues);
-
   const {
     register,
     watch,
@@ -85,8 +65,65 @@ function FormRoom({
   });
 
   const onSubmit = (data: CreateRoomPayload) => {
-    return console.log("data: ", data);
+    const payload = {
+      name: data.name,
+      basePrice: data.basePrice,
+      totalRooms: data.totalRooms,
+      bedType: data.bedType,
+      bedCount: data.bedCount,
+      viewType: data.viewType,
+      bathroomType: data.bathroomType,
+      capacity: data.capacity,
+      isPublished: data.isPublished,
+    };
+
+    const formData = new FormData();
+
+    Object.entries(payload).forEach(([key, value]) => {
+      formData.append(key, String(value));
+    });
+
+    if (images.length > 0) {
+      images.forEach((image) => {
+        if (image.file) {
+          formData.append("images", image.file);
+        }
+      });
+
+      formData.append(
+        "imagesMeta",
+        JSON.stringify(
+          images.map((image) => ({
+            isCover: image.isCover,
+            order: image.order,
+          })),
+        ),
+      );
+    }
+
+    selectedAmenities.forEach((amenity) => {
+      formData.append("amenities", amenity);
+    });
+
+    handleOnSubmit(formData);
   };
+
+  useEffect(() => {
+    if (mode === "edit") {
+      setValue("name", defaultValues?.name ?? "");
+      setValue("basePrice", defaultValues?.basePrice ?? 0);
+      setValue("totalRooms", defaultValues?.totalRooms ?? 0);
+      setValue("bedType", (defaultValues?.bedType || "").toLocaleLowerCase());
+      setValue("bedCount", defaultValues?.bedCount ?? 0);
+      setValue("viewType", (defaultValues?.viewType || "").toLocaleLowerCase());
+      setValue(
+        "bathroomType",
+        (defaultValues?.bathroomType || "").toLocaleLowerCase(),
+      );
+      setValue("capacity", defaultValues?.capacity ?? 0);
+      setValue("isPublished", defaultValues?.isPublished ?? "published");
+    }
+  }, [defaultValues, mode, setValue]);
 
   if (isLoading) {
     return <LoaderFetching />;
@@ -232,12 +269,18 @@ function FormRoom({
                     Bed Type
                   </label>
                   <select
-                    defaultValue={defaultValues?.bedType}
                     {...register("bedType")}
                     className="w-full p-4 bg-slate-50 hover:bg-white focus:bg-white border-slate-200 border rounded-xl text-sm font-semibold focus:ring-2 focus:ring-primary/20 transition-all"
                   >
                     {bedTypes.map((bedType) => (
-                      <option key={bedType.value} value={bedType.value}>
+                      <option
+                        key={bedType.value}
+                        selected={
+                          bedType.value ===
+                          defaultValues?.bedType?.toLowerCase()
+                        }
+                        value={bedType.value}
+                      >
                         {bedType.label}
                       </option>
                     ))}
@@ -272,7 +315,6 @@ function FormRoom({
                     View Type
                   </label>
                   <select
-                    defaultValue={defaultValues?.viewType}
                     {...register("viewType")}
                     className="w-full p-4 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-primary/20 transition-all bg-slate-50 hover:bg-white focus:bg-white border-slate-200 border"
                   >

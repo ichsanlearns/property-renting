@@ -37,7 +37,7 @@ export const useUpdateProperty = (propertyId: string) => {
         queryKey: queryKeys.property.allBasic(),
       });
 
-      navigate(`/tenant/property`);
+      navigate(`/tenant/properties`);
     },
 
     onError: (error: any, _, toastId) => {
