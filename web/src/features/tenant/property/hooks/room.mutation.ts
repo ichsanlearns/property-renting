@@ -34,8 +34,11 @@ export const useUpdateRoom = (roomId: string, propertyId: string) => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.property.allBasic(),
       });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.room.getById(roomId),
+      });
 
-      navigate(`/tenant/property/${propertyId}`);
+      navigate(`/tenant/properties`);
     },
     onError: (error: any, _, toastId) => {
       toast.dismiss(toastId);

@@ -2,11 +2,16 @@ import { useParams } from "react-router";
 import FormRoom from "../components/FormRoom";
 import { useRoom } from "../hooks/room.query";
 import LoaderFetching from "../../../../shared/ui/LoaderFetching";
+import { useUpdateRoom } from "../hooks/room.mutation";
 
 function EditRoomPage() {
-  const { roomId } = useParams();
+  const { roomId, propertyId } = useParams();
 
-  const handleOnSubmit = (params: FormData) => {};
+  const { mutate: updateRoom } = useUpdateRoom(roomId || "", propertyId || "");
+
+  const handleOnSubmit = (params: FormData) => {
+    updateRoom(params);
+  };
 
   const {
     data: roomData,

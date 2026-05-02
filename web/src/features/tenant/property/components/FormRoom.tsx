@@ -113,10 +113,13 @@ function FormRoom({
       setValue("name", defaultValues?.name ?? "");
       setValue("basePrice", defaultValues?.basePrice ?? 0);
       setValue("totalRooms", defaultValues?.totalRooms ?? 0);
-      setValue("bedType", defaultValues?.bedType ?? "");
+      setValue("bedType", (defaultValues?.bedType || "").toLocaleLowerCase());
       setValue("bedCount", defaultValues?.bedCount ?? 0);
-      setValue("viewType", defaultValues?.viewType ?? "");
-      setValue("bathroomType", defaultValues?.bathroomType ?? "");
+      setValue("viewType", (defaultValues?.viewType || "").toLocaleLowerCase());
+      setValue(
+        "bathroomType",
+        (defaultValues?.bathroomType || "").toLocaleLowerCase(),
+      );
       setValue("capacity", defaultValues?.capacity ?? 0);
       setValue("isPublished", defaultValues?.isPublished ?? "published");
     }
@@ -266,12 +269,18 @@ function FormRoom({
                     Bed Type
                   </label>
                   <select
-                    defaultValue={defaultValues?.bedType}
                     {...register("bedType")}
                     className="w-full p-4 bg-slate-50 hover:bg-white focus:bg-white border-slate-200 border rounded-xl text-sm font-semibold focus:ring-2 focus:ring-primary/20 transition-all"
                   >
                     {bedTypes.map((bedType) => (
-                      <option key={bedType.value} value={bedType.value}>
+                      <option
+                        key={bedType.value}
+                        selected={
+                          bedType.value ===
+                          defaultValues?.bedType?.toLowerCase()
+                        }
+                        value={bedType.value}
+                      >
                         {bedType.label}
                       </option>
                     ))}
@@ -306,7 +315,6 @@ function FormRoom({
                     View Type
                   </label>
                   <select
-                    defaultValue={defaultValues?.viewType}
                     {...register("viewType")}
                     className="w-full p-4 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-primary/20 transition-all bg-slate-50 hover:bg-white focus:bg-white border-slate-200 border"
                   >
