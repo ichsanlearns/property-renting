@@ -73,6 +73,68 @@ export const createRoomController = catchAsync(
   },
 );
 
+export const updateRoomController = catchAsync(
+  async (req: Request, res: Response) => {
+    const { roomId } = req.params as { roomId: string };
+    const tenantId = req.user?.userId as string;
+
+    const files = req.files as Express.Multer.File[];
+    const imagesMeta = JSON.parse(req.body.imagesMeta);
+
+    const {
+      name,
+      basePrice,
+      totalRooms,
+      bedType,
+      bedCount,
+      viewType,
+      bathroomType,
+      capacity,
+      isPublished,
+      amenities,
+    } = req.body;
+
+    const data = {
+      name,
+      basePrice: Number(basePrice),
+      totalRooms: Number(totalRooms),
+      bedType: bedType.toUpperCase(),
+      bedCount: Number(bedCount),
+      viewType: viewType.toUpperCase(),
+      bathroomType: bathroomType.toUpperCase(),
+      capacity: Number(capacity),
+      isPublished: isPublished.toUpperCase(),
+    };
+
+    const uploadedImagesUrl = await Promise.all(
+      files.map((file) =>
+        uploadService.uploadToCloudinary(file.buffer, "roomImages"),
+      ),
+    );
+
+    const images = uploadedImagesUrl.map((item, index) => {
+      return {
+        imageUrl: item.url,
+        publicId: item.publicId,
+        isCover: imagesMeta[index].isCover,
+        order: imagesMeta[index].order,
+      };
+    });
+
+    await RoomService.updateRoom({
+      tenantId,
+      roomId,
+      data,
+      images,
+      amenities,
+    });
+
+    res.status(200).json({
+      message: "Room updated successfully",
+    });
+  },
+);
+
 export const getRoomController = catchAsync(
   async (req: Request, res: Response) => {
     const { roomId } = req.params as { roomId: string };

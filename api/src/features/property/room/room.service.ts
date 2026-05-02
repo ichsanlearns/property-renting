@@ -87,6 +87,97 @@ export const createRoom = async ({
   });
 };
 
+export const updateRoom = async ({
+  tenantId,
+  roomId,
+  data,
+  images,
+  amenities,
+}: {
+  tenantId: string;
+  roomId: string;
+  data: Partial<CreateRoomPayload>;
+  images?: {
+    imageUrl: string;
+    publicId?: string;
+    isCover: boolean;
+    order: number;
+  }[];
+  amenities: string[];
+}) => {
+  const room = await prisma.roomType.findUnique({
+    where: { id: roomId },
+    include: {
+      property: true,
+      roomTypeImages: true,
+    },
+  });
+
+  if (!room) {
+    throw new AppError("Room not found", 404);
+  }
+
+  if (room.property.tenantId !== tenantId) {
+    throw new AppError("Unauthorized", 401);
+  }
+
+  await prisma.$transaction(async (tx) => {
+    await tx.roomType.update({
+      where: { id: roomId },
+      data,
+    });
+
+    if (images) {
+      for (const image of images) {
+        await tx.roomTypeImage.create({
+          data: {
+            roomTypeId: room.id,
+            imageUrl: image.imageUrl,
+            imagePublicId: image.publicId ?? null,
+            isCover: image.isCover,
+            order: image.order,
+          },
+          omit: {
+            deletedAt: true,
+            updatedAt: true,
+            createdAt: true,
+          },
+        });
+      }
+    }
+
+    if (amenities) {
+      const existingAmenities = await tx.roomTypeAmenity.findMany({
+        where: {
+          roomTypeId: roomId,
+        },
+      });
+
+      const existingIds = new Set(existingAmenities.map((a) => a.amenityId));
+      const newIds = new Set(amenities);
+
+      const toDelete = existingAmenities.filter(
+        (a) => !newIds.has(a.amenityId),
+      );
+
+      const toAdd = amenities.filter((id) => !existingIds.has(id));
+
+      await tx.roomTypeAmenity.deleteMany({
+        where: {
+          id: { in: toDelete.map((a) => a.id) },
+        },
+      });
+
+      await tx.roomTypeAmenity.createMany({
+        data: toAdd.map((id) => ({
+          roomTypeId: roomId,
+          amenityId: id,
+        })),
+      });
+    }
+  });
+};
+
 export const getRoomById = async ({
   roomId,
   tenantId,

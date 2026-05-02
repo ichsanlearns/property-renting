@@ -135,7 +135,7 @@ export const update = async ({
     throw new AppError("You are not authorized to update this property", 403);
   }
 
-  return await prisma.$transaction(async (tx) => {
+  await prisma.$transaction(async (tx) => {
     const property = await tx.property.update({
       where: {
         id: propertyId,

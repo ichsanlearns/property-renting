@@ -12,6 +12,13 @@ export const createRoomRouter = router.post(
   RoomController.createRoomController,
 );
 
+export const updateRoomRouter = router.patch(
+  "/:roomId",
+  authMiddleware,
+  uploadCloud.array("images", 3),
+  RoomController.updateRoomController,
+);
+
 router.get("/:roomId", authMiddleware, RoomController.getRoomController);
 
 export default router;
