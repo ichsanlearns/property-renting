@@ -59,6 +59,9 @@ model Account {
 model RegisterToken {
   id        String    @id @default(uuid())
   email     String
+
+  newEmail     String?    @map("new_email")
+  
   token     String    @unique
   type      TokenType
   expiresAt DateTime  @map("expires_at")
