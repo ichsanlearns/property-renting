@@ -33,16 +33,8 @@ export default function OrderFilters({ filterStatus, setFilterStatus, filterProp
             ))}
           </select>
 
-          <div className="relative">
-            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">calendar_today</span>
-
-            <input className="pl-9 pr-4 py-2 text-sm border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-lg w-48" readOnly type="text" defaultValue="Oct 12 - Oct 19, 2023" />
-          </div>
-
           <button className="flex items-center gap-2 px-4 py-2 border border-slate-200 dark:border-slate-800 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800">
             <span className="material-symbols-outlined text-sm">filter_list</span>
-
-            <span>More Filters</span>
           </button>
         </div>
       </div>

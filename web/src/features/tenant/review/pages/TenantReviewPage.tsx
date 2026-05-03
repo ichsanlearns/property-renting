@@ -3,7 +3,6 @@ import LoaderFetching from "../../../../shared/ui/LoaderFetching";
 import useTenantReview from "../hooks/useTenantReview";
 
 import PropertyCard from "../components/PropertyCard";
-import StatCard from "../components/StatCard";
 
 export default function TenantReviewPage() {
   const {
@@ -12,10 +11,6 @@ export default function TenantReviewPage() {
 
     filteredProperties,
     isLoading,
-
-    totalAssets,
-    totalPublished,
-    avgRating,
   } = useTenantReview();
 
   if (isLoading) return <LoaderFetching />;
@@ -49,17 +44,6 @@ export default function TenantReviewPage() {
             {filteredProperties.map((property: any) => (
               <PropertyCard key={property.id} property={property} />
             ))}
-          </div>
-
-          {/* STATS */}
-          <div className="mt-16 grid grid-cols-1 md:grid-cols-4 gap-6">
-            <StatCard label="Total Assets" value={totalAssets} />
-
-            <StatCard label="Published" value={totalPublished} colorClass="text-emerald-500" />
-
-            <StatCard label="Average Rating" value={avgRating} colorClass="text-blue-500" />
-
-            <StatCard label="Draft" value={totalAssets - totalPublished} />
           </div>
         </section>
       </main>

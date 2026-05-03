@@ -11,7 +11,6 @@ export default function OrderPagination({ currentPage, totalPages, setCurrentPag
       </p>
 
       <div className="flex items-center gap-2">
-        {/* Previous */}
         <button
           onClick={() => setCurrentPage((prev: number) => prev - 1)}
           disabled={currentPage === 1}
@@ -20,7 +19,6 @@ export default function OrderPagination({ currentPage, totalPages, setCurrentPag
           Previous
         </button>
 
-        {/* Numbers */}
         {Array.from({ length: totalPages }).map((_, i) => {
           const page = i + 1;
 
@@ -37,7 +35,6 @@ export default function OrderPagination({ currentPage, totalPages, setCurrentPag
           );
         })}
 
-        {/* Next */}
         <button
           onClick={() => setCurrentPage((prev: number) => prev + 1)}
           disabled={currentPage === totalPages}
