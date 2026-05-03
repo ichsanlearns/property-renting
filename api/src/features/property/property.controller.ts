@@ -13,6 +13,8 @@ import {
   updateSchema,
 } from "./property.validator.js";
 
+import * as propertyValidator from "./property.validator.js";
+
 export const create = catchAsync(async (req: Request, res: Response) => {
   const tenantId = req.user?.userId;
 
@@ -21,23 +23,19 @@ export const create = catchAsync(async (req: Request, res: Response) => {
   const files = req.files as Express.Multer.File[];
   const imagesMeta = JSON.parse(req.body.imagesMeta);
 
-  const {
-    categoryId,
-    name,
-    description,
-    latitude,
-    longitude,
-    numberOfBathrooms,
-    amenities,
-  } = req.body;
+  const parsed = propertyValidator.createSchema.safeParse(req.body);
+
+  if (!parsed.success) {
+    throw new AppError("Invalid request body", 400);
+  }
 
   const data = {
-    categoryId,
-    name,
-    description,
-    latitude: Number(latitude),
-    longitude: Number(longitude),
-    numberOfBathrooms: Number(numberOfBathrooms),
+    name: parsed.data.name,
+    categoryId: parsed.data.categoryId,
+    description: parsed.data.description,
+    latitude: parsed.data.latitude,
+    longitude: parsed.data.longitude,
+    numberOfBathrooms: parsed.data.numberOfBathrooms,
   };
 
   const uploadedImagesUrl = await Promise.all(
@@ -70,7 +68,7 @@ export const create = catchAsync(async (req: Request, res: Response) => {
     },
     tenantId,
     images,
-    amenities,
+    amenities: parsed.data.amenities ?? [],
   });
 
   res.status(201).json({
