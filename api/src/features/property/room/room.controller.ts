@@ -3,6 +3,14 @@ import * as RoomService from "./room.service.js";
 import { catchAsync } from "../../../shared/utils/catch-async.util.js";
 import * as uploadService from "../../../shared/services/upload.service.js";
 
+import * as RoomValidator from "./room.validator.js";
+import type {
+  BathroomType,
+  BedType,
+  PublishStatus,
+  ViewType,
+} from "../../../generated/prisma/enums.js";
+
 export const createRoomController = catchAsync(
   async (req: Request, res: Response) => {
     const { propertyId } = req.params as { propertyId: string };
@@ -10,30 +18,26 @@ export const createRoomController = catchAsync(
     const files = req.files as Express.Multer.File[];
     const imagesMeta = JSON.parse(req.body.imagesMeta);
 
-    const {
-      name,
-      basePrice,
-      totalRooms,
-      bedType,
-      bedCount,
-      viewType,
-      bathroomType,
-      capacity,
-      isPublished,
-      amenities,
-    } = req.body;
+    const parsed = RoomValidator.createSchema.safeParse(req.body);
+
+    if (!parsed.success) {
+      return res.status(400).json({
+        message: "Invalid credentials",
+        errors: parsed.error.issues,
+      });
+    }
 
     const data = {
       propertyId,
-      name,
-      basePrice: Number(basePrice),
-      totalRooms: Number(totalRooms),
-      bedType: bedType.toUpperCase(),
-      bedCount: Number(bedCount),
-      viewType: viewType.toUpperCase(),
-      bathroomType: bathroomType.toUpperCase(),
-      capacity: Number(capacity),
-      isPublished: isPublished.toUpperCase(),
+      name: parsed.data.name,
+      basePrice: parsed.data.basePrice,
+      totalRooms: parsed.data.totalRooms,
+      bedType: parsed.data.bedType as BedType,
+      bedCount: parsed.data.bedCount,
+      viewType: parsed.data.viewType as ViewType,
+      bathroomType: parsed.data.bathroomType as BathroomType,
+      capacity: parsed.data.capacity,
+      isPublished: parsed.data.isPublished as PublishStatus,
     };
 
     const uploadedImagesUrl = await Promise.all(
@@ -45,7 +49,7 @@ export const createRoomController = catchAsync(
     const images = uploadedImagesUrl.map((item, index) => {
       return {
         imageUrl: item.url,
-        publicId: item.publicId,
+        imagePublicId: item.publicId,
         isCover: imagesMeta[index].isCover,
         order: imagesMeta[index].order,
       };
@@ -54,7 +58,7 @@ export const createRoomController = catchAsync(
     const room = await RoomService.createRoom({
       data,
       images,
-      amenities,
+      amenities: parsed.data.amenities ?? [],
     });
 
     RoomService.ensurePrices({
@@ -81,29 +85,25 @@ export const updateRoomController = catchAsync(
     const files = req.files as Express.Multer.File[];
     const imagesMeta = JSON.parse(req.body.imagesMeta);
 
-    const {
-      name,
-      basePrice,
-      totalRooms,
-      bedType,
-      bedCount,
-      viewType,
-      bathroomType,
-      capacity,
-      isPublished,
-      amenities,
-    } = req.body;
+    const parsed = RoomValidator.updateSchema.safeParse(req.body);
+
+    if (!parsed.success) {
+      return res.status(400).json({
+        message: "Invalid credentials",
+        errors: parsed.error.issues,
+      });
+    }
 
     const data = {
-      name,
-      basePrice: Number(basePrice),
-      totalRooms: Number(totalRooms),
-      bedType: bedType.toUpperCase(),
-      bedCount: Number(bedCount),
-      viewType: viewType.toUpperCase(),
-      bathroomType: bathroomType.toUpperCase(),
-      capacity: Number(capacity),
-      isPublished: isPublished.toUpperCase(),
+      name: parsed.data.name,
+      basePrice: parsed.data.basePrice,
+      totalRooms: parsed.data.totalRooms,
+      bedType: parsed.data.bedType as BedType,
+      bedCount: parsed.data.bedCount,
+      viewType: parsed.data.viewType as ViewType,
+      bathroomType: parsed.data.bathroomType as BathroomType,
+      capacity: parsed.data.capacity,
+      isPublished: parsed.data.isPublished as PublishStatus,
     };
 
     const uploadedImagesUrl = await Promise.all(
@@ -126,7 +126,7 @@ export const updateRoomController = catchAsync(
       roomId,
       data,
       images,
-      amenities,
+      amenities: parsed.data.amenities ?? [],
     });
 
     res.status(200).json({

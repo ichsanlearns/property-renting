@@ -22,8 +22,10 @@ import {
   publishStatuses,
   viewTypes,
 } from "../constants/room.const";
+import { useQueryClient } from "@tanstack/react-query";
 
 function CreateRoomPage() {
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { propertyId } = useParams();
   const { data: property, isLoading, error } = usePropertyBasic(propertyId!);
@@ -93,8 +95,11 @@ function CreateRoomPage() {
 
       await createRoom({ propertyId: propertyId!, data: formData });
 
+      queryClient.invalidateQueries();
+
       toast.dismiss();
       toast.success("Room created successfully");
+      navigate(`/tenant/properties`);
     } catch (error: any) {
       toast.dismiss();
       toast.error(error.response?.data?.message || "Failed to create room");

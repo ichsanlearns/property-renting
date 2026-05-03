@@ -81,7 +81,7 @@ function HomePage() {
         {isLoading && <LoaderFetching />}
         <div ref={scrollRef} className="flex gap-8 overflow-x-auto">
           {properties?.map((p) => (
-            <div key={p.id} className="min-w-[300px] shrink-0">
+            <div key={p.id} className="w-[400px] h-full shrink-0">
               <PropertyCard property={p} />
             </div>
           ))}

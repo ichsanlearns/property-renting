@@ -25,6 +25,7 @@ import { error } from "./shared/middleware/error.middleware.js";
 
 import { expiredReservationJob } from "./shared/cron/expired-reservation.js";
 import { checkinReminderJob } from "./shared/cron/checkin-reminder.js";
+import { startPriceScheduler } from "./shared/cron/price-scheduler.js";
 
 const app: Application = express();
 const PORT: number = 8000;
@@ -59,6 +60,7 @@ app.use(error);
 
 expiredReservationJob();
 checkinReminderJob();
+startPriceScheduler();
 
 app.listen(PORT, () => {
   console.info(`Server is listening on port: ${PORT}`);

@@ -7,75 +7,85 @@ import * as uploadService from "../../shared/services/upload.service.js";
 import { updatePasswordSchema } from "./user.validator.js";
 import { AppError } from "../../shared/utils/app-error.util.js";
 
-import * as authService from "../auth/auth.service.js";
+import * as userValidator from "./user.validator.js";
+import type { Role } from "../../generated/prisma/enums.js";
 
-export const updateMe = async (req: Request, res: Response) => {
+export const updateMe = catchAsync(async (req: Request, res: Response) => {
   const userId = req.user?.userId;
 
   if (!userId) {
     throw new Error("User not found");
   }
 
-  const {
-    firstName,
-    lastName,
-    email,
-    phoneNumber,
-    role,
-    isVerified,
-    profileImage,
-  } = req.body;
+  const parsed = userValidator.updateMeSchema.safeParse(req.body);
+
+  if (!parsed.success) {
+    throw new Error("Invalid input");
+  }
+
+  const data = {
+    ...(parsed.data.firstName !== undefined && {
+      firstName: parsed.data.firstName,
+    }),
+    ...(parsed.data.lastName !== undefined && {
+      lastName: parsed.data.lastName,
+    }),
+    ...(parsed.data.phoneNumber !== undefined && {
+      phoneNumber: parsed.data.phoneNumber,
+    }),
+    ...(parsed.data.role !== undefined && { role: parsed.data.role as Role }),
+    ...(parsed.data.isVerified !== undefined && {
+      isVerified: parsed.data.isVerified,
+    }),
+    ...(parsed.data.profileImage !== undefined && {
+      profileImage: parsed.data.profileImage,
+    }),
+  };
 
   const result = await UserService.updateMe({
     userId,
-    data: {
-      firstName: firstName ?? undefined,
-      lastName: lastName ?? undefined,
-      email: email ?? undefined,
-      phoneNumber: phoneNumber ?? undefined,
-      role: role ?? undefined,
-      isVerified: isVerified ?? undefined,
-      profileImage: profileImage ?? undefined,
-    },
+    data,
   });
 
   res.status(200).json({
     message: "Profile updated successfully",
     data: { user: result },
   });
-};
+});
 
-export const createPricingRule = async (req: Request, res: Response) => {
-  const tenantId = req.user?.userId;
-  const scopeType = "TENANT";
+export const createPricingRule = catchAsync(
+  async (req: Request, res: Response) => {
+    const tenantId = req.user?.userId;
+    const scopeType = "TENANT";
 
-  if (!tenantId) {
-    throw new Error("Tenant not found");
-  }
+    if (!tenantId) {
+      throw new Error("Tenant not found");
+    }
 
-  const input = createPricingRuleValidator.safeParse(req.body);
+    const input = createPricingRuleValidator.safeParse(req.body);
 
-  if (!input.success) {
-    throw new Error("Invalid input");
-  }
+    if (!input.success) {
+      throw new Error("Invalid input");
+    }
 
-  await PricingService.createPricingRule({
-    ...input.data,
-    createdBy: tenantId,
+    await PricingService.createPricingRule({
+      ...input.data,
+      createdBy: tenantId,
 
-    scopeType,
-    tenantId,
+      scopeType,
+      tenantId,
 
-    daysOfWeek: input.data.daysOfWeek ?? [],
+      daysOfWeek: input.data.daysOfWeek ?? [],
 
-    priority: input.data.priority ?? 0,
-    isActive: input.data.isActive ?? true,
-  });
+      priority: input.data.priority ?? 0,
+      isActive: input.data.isActive ?? true,
+    });
 
-  res.status(200).json({
-    message: "Pricing rule created successfully",
-  });
-};
+    res.status(200).json({
+      message: "Pricing rule created successfully",
+    });
+  },
+);
 
 export const updateProfilePhoto = catchAsync(
   async (req: Request, res: Response) => {

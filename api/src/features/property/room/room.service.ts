@@ -10,7 +10,7 @@ export const createRoom = async ({
   data: CreateRoomPayload;
   images: {
     imageUrl: string;
-    publicId?: string;
+    imagePublicId?: string;
     isCover: boolean;
     order: number;
   }[];
@@ -70,18 +70,20 @@ export const createRoom = async ({
       data: images.map((image) => ({
         ...image,
         roomTypeId: room.id,
-        imagePublicId: image.publicId ?? null,
+        imagePublicId: image.imagePublicId ?? null,
       })),
     });
 
-    const amenitiesId = Array.isArray(amenities) ? amenities : [amenities];
+    if (amenities.length > 0) {
+      const amenitiesId = Array.isArray(amenities) ? amenities : [amenities];
 
-    await tx.roomTypeAmenity.createMany({
-      data: amenitiesId.map((amenity) => ({
-        amenityId: amenity,
-        roomTypeId: room.id,
-      })),
-    });
+      await tx.roomTypeAmenity.createMany({
+        data: amenitiesId.map((amenity) => ({
+          amenityId: amenity,
+          roomTypeId: room.id,
+        })),
+      });
+    }
 
     return room;
   });

@@ -50,10 +50,13 @@ export const usePropertyDetailFullInfo = ({
   });
 };
 
-export const usePropertyByTenantId = () => {
+export const usePropertyByTenantId = (
+  page: number = 1,
+  limit: number = 100,
+) => {
   return useQuery({
-    queryKey: queryKeys.property.byTenantId(),
-    queryFn: () => PropertyService.getPropertyByTenantId(),
+    queryKey: queryKeys.property.byTenantId(page, limit),
+    queryFn: () => PropertyService.getPropertyByTenantId({ page, limit }),
     select: (res) => res.data,
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,

@@ -1,5 +1,15 @@
 import { z } from "zod";
 
+export const createSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  categoryId: z.uuid(),
+  description: z.string().min(1, "Description is required"),
+  latitude: z.coerce.number(),
+  longitude: z.coerce.number(),
+  numberOfBathrooms: z.coerce.number(),
+  amenities: z.array(z.string()).optional(),
+});
+
 export const getByIdBasicSchema = z.object({
   propertyId: z.uuid(),
 });

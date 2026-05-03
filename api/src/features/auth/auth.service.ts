@@ -339,8 +339,6 @@ export const verifyChangeEmail = async ({ token }: { token: string }) => {
 
   if (!user) throw new AppError("User not found", 404);
 
-  console.log(tokenData);
-
   await prisma.user.update({
     where: { id: user.id },
     data: { email: tokenData.newEmail! },
@@ -349,6 +347,8 @@ export const verifyChangeEmail = async ({ token }: { token: string }) => {
   await prisma.registerToken.delete({
     where: { token: hashedToken },
   });
+
+  return user.email;
 };
 
 export const updatePassword = async ({
@@ -469,6 +469,16 @@ export const resetPassword = async ({ email }: { email: string }) => {
   });
 
   if (!user) throw new AppError("User not found", 404);
+
+  const notExpiredToken = await prisma.registerToken.findFirst({
+    where: { email, type: "RESET_PASSWORD", expiresAt: { gte: new Date() } },
+  });
+
+  if (notExpiredToken)
+    throw new AppError(
+      "You already have a reset password token, please check your email",
+      400,
+    );
 
   await prisma.registerToken.deleteMany({
     where: { email, type: "RESET_PASSWORD" },

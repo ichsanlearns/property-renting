@@ -9,6 +9,7 @@ import { useAuthStore } from "../stores/auth.store";
 import { Link, useNavigate } from "react-router";
 import { useState } from "react";
 import GoogleButtonWrapper from "../components/GoogleButtonWrapper";
+import PasswordVisibility from "../../../shared/ui/PasswordVisibility";
 
 function Login() {
   const navigate = useNavigate();
@@ -149,18 +150,12 @@ function Login() {
                     {errors.password?.message}
                   </p>
                 )}
-                <button
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-8 -translate-y-1/2 text-slate-400 hover:text-primary transition-colors focus:outline-none"
-                  type="button"
-                >
-                  <span
-                    className="material-symbols-outlined text-xl"
-                    id="password-icon"
-                  >
-                    visibility
-                  </span>
-                </button>
+                <div className="absolute right-2 top-8 -translate-y-1/2">
+                  <PasswordVisibility
+                    showPassword={showPassword}
+                    setShowPassword={setShowPassword}
+                  />
+                </div>
                 <div className="flex justify-end">
                   <Link
                     className="text-xs mt-2 font-bold text-primary hover:opacity-80 transition-opacity"
@@ -170,19 +165,6 @@ function Login() {
                   </Link>
                 </div>
               </div>
-            </div>
-            <div className="flex items-center gap-2 py-1 ml-1">
-              <input
-                className="w-4 h-4 rounded-md border-slate-300 text-primary focus:ring-primary/20 cursor-pointer"
-                id="remember"
-                type="checkbox"
-              />
-              <label
-                className="text-sm text-slate-600 dark:text-slate-400 font-semibold cursor-pointer"
-                htmlFor="remember"
-              >
-                Keep me logged in
-              </label>
             </div>
             <button
               disabled={isSubmitting}

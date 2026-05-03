@@ -184,6 +184,17 @@ export type GetPropertyByTenantIdResponse = {
     availableRooms: number;
   }[];
 };
+
+export type GetPropertyByTenantIdFullResponse = {
+  data: GetPropertyByTenantIdResponse[];
+  meta: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+};
+
 export type GetPropertyRoomPricesDateResponse = {
   [roomTypeId: string]: {
     basePrice: number;

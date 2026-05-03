@@ -3,7 +3,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import * as PropertyApi from "../api/property.service";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { queryKeys } from "../../../../shared/lib/queryKeys.lib";
 
 export const useUpdateProperty = (propertyId: string) => {
   const navigate = useNavigate();
@@ -21,22 +20,7 @@ export const useUpdateProperty = (propertyId: string) => {
       toast.dismiss(toastId);
       toast.success(res.message || "Property updated successfully!");
 
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.property.byTenantId(),
-      });
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.property.basic(propertyId),
-      });
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.property.detail(propertyId),
-      });
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.property.detailFullInfo(propertyId),
-      });
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.property.allBasic(),
-      });
-
+      queryClient.invalidateQueries();
       navigate(`/tenant/properties`);
     },
 
@@ -57,25 +41,11 @@ export const useDeleteProperty = () => {
       return toast.loading("Deleting property...");
     },
 
-    onSuccess: (res, propertyId, toastId) => {
+    onSuccess: (res, _, toastId) => {
       toast.dismiss(toastId);
       toast.success(res.message || "Property deleted successfully!");
 
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.property.byTenantId(),
-      });
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.property.basic(propertyId),
-      });
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.property.detail(propertyId),
-      });
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.property.detailFullInfo(propertyId),
-      });
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.property.allBasic(),
-      });
+      queryClient.invalidateQueries();
     },
 
     onError: (error: any, _, toastId) => {

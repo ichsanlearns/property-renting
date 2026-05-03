@@ -61,6 +61,8 @@ function Properties() {
       toast.dismiss();
       toast.success("Property created successfully");
 
+      queryClient.invalidateQueries();
+
       queryClient.setQueryData(queryKeys.property.basic(property.data.id), {
         data: property.data,
       });

@@ -51,7 +51,6 @@ function MyProfile() {
     defaultValues: {
       firstName: user?.fullName.split(" ")[0],
       lastName: user?.fullName.split(" ")[1],
-      email: user?.email,
       phoneNumber: user?.phoneNumber,
     },
   });
@@ -69,7 +68,6 @@ function MyProfile() {
     if (
       watch("firstName") === user?.fullName.split(" ")[0] &&
       watch("lastName") === user?.fullName.split(" ")[1] &&
-      watch("email") === user?.email &&
       watch("phoneNumber") === user?.phoneNumber
     ) {
       toast.error("No changes to update");
@@ -107,6 +105,12 @@ function MyProfile() {
   };
 
   const handleChangeProfilePhoto = () => {
+    if (image?.preview === user?.profileImage) {
+      toast.error("No changes to update");
+      setChangingProfilePhoto(false);
+      return;
+    }
+
     if (!image?.file) {
       toast.error("Please select an image first");
       return;
@@ -307,7 +311,9 @@ function MyProfile() {
                     </div>
                     <p className="text-slate-500">{user?.email}</p>
                     <p className="text-xs text-slate-400">
-                      Member since January 2023
+                      {user.role === "TENANT"
+                        ? "This account is for tenant and have full access to tenant features"
+                        : "This account is for customer and have full access to customer features"}
                     </p>
                   </div>
                 </div>
@@ -366,31 +372,7 @@ function MyProfile() {
                       type="text"
                     />
                   </div>
-                  <div className="space-y-1 md:col-span-2">
-                    <label className="text-sm font-semibold text-slate-500">
-                      Email Address
-                    </label>
-                    <div className="relative flex gap-2">
-                      <input
-                        {...register("email")}
-                        disabled={isEdit !== "PERSONAL"}
-                        className={`flex-1 rounded-lg p-3.5 border border-primary/10 focus:border-primary focus:ring-primary  ${isEdit === "PERSONAL" ? "cursor-text bg-background-light/30" : "cursor-not-allowed bg-background-light"}`}
-                        type="email"
-                      />
-                      <button
-                        type="button"
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-primary text-xs font-bold hover:underline transition-all cursor-pointer"
-                        onClick={() => setIsEdit("EMAIL")}
-                      >
-                        Change
-                      </button>
-                    </div>
-                  </div>
-                  {isEdit === "EMAIL" && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center ">
-                      <ChangeEmailModal onClose={() => setIsEdit(null)} />
-                    </div>
-                  )}
+
                   <div className="space-y-1 md:col-span-2">
                     <label className="text-sm font-semibold text-slate-500">
                       Phone Number
@@ -402,6 +384,44 @@ function MyProfile() {
                       type="tel"
                     />
                   </div>
+                  <div className="space-y-1 md:col-span-2">
+                    <label className="text-sm font-semibold text-slate-500">
+                      Email Address
+                    </label>
+                    <div
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => setIsEdit("EMAIL")}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          setIsEdit("EMAIL");
+                        }
+                      }}
+                      className="relative group cursor-pointer"
+                    >
+                      <input
+                        disabled
+                        className="w-full rounded-lg p-3.5 border border-primary/10 bg-background-light text-sm text-slate-700 
+               cursor-pointer transition-all group-hover:blur-[1px]"
+                        type="email"
+                        value={user?.email}
+                      />
+
+                      <div
+                        className="absolute inset-0 rounded-lg bg-primary/70 opacity-0 
+               group-hover:opacity-100 transition-all flex items-center justify-center"
+                      >
+                        <span className="text-white font-semibold text-sm tracking-wide">
+                          Change Email
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  {isEdit === "EMAIL" && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center ">
+                      <ChangeEmailModal onClose={() => setIsEdit(null)} />
+                    </div>
+                  )}
                 </div>
                 <ConfirmModal
                   isOpen={personalModalOpen}

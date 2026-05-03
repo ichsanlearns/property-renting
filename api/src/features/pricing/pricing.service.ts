@@ -114,7 +114,7 @@ export const createPricingRule = async (input: CreatePricingRuleInput) => {
       });
     });
 
-  await prisma.$transaction(updates);
+  await Promise.allSettled(updates);
 };
 
 export const getByTenantId = async (tenantId: string) => {
