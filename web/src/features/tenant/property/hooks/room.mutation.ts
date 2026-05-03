@@ -19,24 +19,7 @@ export const useUpdateRoom = (roomId: string, propertyId: string) => {
       toast.dismiss(toastId);
       toast.success(res.message || "Room updated successfully!");
 
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.property.byTenantId(),
-      });
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.property.basic(propertyId),
-      });
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.property.detail(propertyId),
-      });
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.property.detailFullInfo(propertyId),
-      });
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.property.allBasic(),
-      });
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.room.getById(roomId),
-      });
+      queryClient.invalidateQueries();
 
       navigate(`/tenant/properties`);
     },

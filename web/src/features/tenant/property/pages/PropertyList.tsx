@@ -12,10 +12,10 @@ function PropertyList() {
   const page = queryParams.get("page") || 1;
   const limit = queryParams.get("limit") || 3;
 
-  const { data, isLoading } = usePropertyByTenantId({
-    page: Number(page),
-    limit: Number(limit),
-  });
+  const { data, isLoading } = usePropertyByTenantId(
+    Number(page),
+    Number(limit),
+  );
 
   const properties = data?.data;
 
@@ -121,7 +121,7 @@ function PropertyList() {
                 {property.roomTypes.map((roomType) => (
                   <div
                     key={roomType.id}
-                    className="flex items-center gap-2 px-2.5 py-1 bg-surface-container-highest rounded-lg text-[11px] font-medium text-secondary border border-outline-variant/30 shadow-sm"
+                    className="flex items-center gap-2 px-2.5 py-1 bg-surface-container-highest/40 rounded-lg text-[11px] font-medium text-secondary border border-outline-variant/30 shadow-sm"
                   >
                     <span className="font-bold text-on-surface">
                       {roomType.name}
