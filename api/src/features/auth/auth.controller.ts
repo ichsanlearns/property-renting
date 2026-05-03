@@ -3,11 +3,19 @@ import * as authService from "./auth.service.js";
 import { catchAsync } from "../../shared/utils/catch-async.util.js";
 import * as uploadService from "../../shared/services/upload.service.js";
 import { AppError } from "../../shared/utils/app-error.util.js";
+import * as authValidator from "./auth.validator.js";
 
 export const login = catchAsync(async (req: Request, res: Response) => {
-  const { email, password } = req.body;
+  const parsed = authValidator.loginSchema.safeParse(req.body);
 
-  const result = await authService.login({ email, password });
+  if (!parsed.success) {
+    throw new AppError("Invalid credentials", 400);
+  }
+
+  const result = await authService.login({
+    email: parsed.data.email,
+    password: parsed.data.password,
+  });
 
   res.cookie("refreshToken", result.refreshToken, {
     httpOnly: true,
@@ -25,9 +33,15 @@ export const login = catchAsync(async (req: Request, res: Response) => {
 
 export const loginWithGoogle = catchAsync(
   async (req: Request, res: Response) => {
-    const { token } = req.body;
+    const parsed = authValidator.loginWithGoogleSchema.safeParse(req.body);
 
-    const result = await authService.loginWithGoogle({ token });
+    if (!parsed.success) {
+      throw new AppError("Invalid credentials", 400);
+    }
+
+    const result = await authService.loginWithGoogle({
+      token: parsed.data.token,
+    });
 
     res.cookie("refreshToken", result.refreshToken, {
       httpOnly: true,
@@ -45,9 +59,13 @@ export const loginWithGoogle = catchAsync(
 );
 
 export const register = catchAsync(async (req: Request, res: Response) => {
-  const { email } = req.body;
+  const parsed = authValidator.registerSchema.safeParse(req.body);
 
-  await authService.register({ email });
+  if (!parsed.success) {
+    throw new AppError("Invalid credentials", 400);
+  }
+
+  await authService.register({ email: parsed.data.email });
 
   res.status(200).json({
     message: "Register success, please check your email to verify your account",
@@ -55,9 +73,13 @@ export const register = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const resendToken = catchAsync(async (req: Request, res: Response) => {
-  const { email } = req.body;
+  const parsed = authValidator.resendTokenSchema.safeParse(req.body);
 
-  const result = await authService.resendToken({ email });
+  if (!parsed.success) {
+    throw new AppError("Invalid credentials", 400);
+  }
+
+  const result = await authService.resendToken({ email: parsed.data.email });
 
   res.status(200).json({
     message: "Token resent successfully",
@@ -101,11 +123,21 @@ export const verifyChangeEmail = catchAsync(
 
 export const updatePassword = catchAsync(
   async (req: Request, res: Response) => {
-    const { password, token } = req.body;
+    const parsed = authValidator.updatePasswordSchema.safeParse(req.body);
 
-    const email = await authService.updatePassword({ password, token });
+    if (!parsed.success) {
+      throw new AppError("Invalid credentials", 400);
+    }
 
-    const result = await authService.login({ email, password });
+    const email = await authService.updatePassword({
+      password: parsed.data.password,
+      token: parsed.data.token,
+    });
+
+    const result = await authService.login({
+      email: email,
+      password: parsed.data.password,
+    });
 
     res.cookie("refreshToken", result.refreshToken, {
       httpOnly: true,
@@ -140,14 +172,18 @@ export const fillProfile = catchAsync(async (req: Request, res: Response) => {
     );
   }
 
-  const { firstName, lastName, role, phoneNumber } = req.body;
+  const parsed = authValidator.fillProfileSchema.safeParse(req.body);
+
+  if (!parsed.success) {
+    throw new AppError("Invalid credentials", 400);
+  }
 
   const result = await authService.fillProfile({
     userId,
-    firstName,
-    lastName,
-    role,
-    phoneNumber: phoneNumber ?? null,
+    firstName: parsed.data.firstName,
+    lastName: parsed.data.lastName,
+    role: parsed.data.role,
+    phoneNumber: parsed.data.phoneNumber,
     profileImage: profileImageLink?.url ?? null,
     profileImagePublicId: profileImageLink?.publicId ?? null,
   });
@@ -159,9 +195,13 @@ export const fillProfile = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const resetPassword = catchAsync(async (req: Request, res: Response) => {
-  const { email } = req.body;
+  const parsed = authValidator.resetPasswordSchema.safeParse(req.body);
 
-  await authService.resetPassword({ email });
+  if (!parsed.success) {
+    throw new AppError("Invalid credentials", 400);
+  }
+
+  await authService.resetPassword({ email: parsed.data.email });
 
   res.status(200).json({
     message:
@@ -171,9 +211,16 @@ export const resetPassword = catchAsync(async (req: Request, res: Response) => {
 
 export const updateResetPassword = catchAsync(
   async (req: Request, res: Response) => {
-    const { password, token } = req.body;
+    const parsed = authValidator.updateResetPasswordSchema.safeParse(req.body);
 
-    await authService.updateResetPassword({ password, token });
+    if (!parsed.success) {
+      throw new AppError("Invalid credentials", 400);
+    }
+
+    await authService.updateResetPassword({
+      password: parsed.data.password,
+      token: parsed.data.token,
+    });
 
     res.status(200).json({
       message: "Password updated successfully, please login again",
