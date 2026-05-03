@@ -1,6 +1,5 @@
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { searchSchema, type SearchSchema } from "../../schema/search.schema";
+import { type SearchSchema } from "../../schema/search.schema";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { DateRangePicker } from "../DateRangePicker";
@@ -59,9 +58,7 @@ function SearchBar({
       : undefined,
   );
 
-  const { register, handleSubmit, watch } = useForm<SearchSchema>({
-    resolver: zodResolver(searchSchema),
-  });
+  const { register, handleSubmit, watch } = useForm();
 
   const handleSearch = (data: SearchSchema) => {
     if (sentParams) {

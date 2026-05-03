@@ -39,7 +39,7 @@ function SearchPage() {
     params.set("checkIn", sentParams.checkIn);
     params.set("checkOut", sentParams.checkOut);
     params.set("city", sentParams.city);
-    params.set("guests", sentParams.guests.toString());
+    params.set("guests", sentParams.guests?.toString() || "");
 
     params.set("page", "1");
 
