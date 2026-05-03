@@ -76,7 +76,10 @@ function PeakSeasonList({
                 const level = LEVEL_CONFIG[pricingRule.scopeType as Level];
                 const status = STATUS_CONFIG[checkStatus];
                 return (
-                  <tr className="hover:bg-surface-variant transition-colors group">
+                  <tr
+                    key={pricingRule.id}
+                    className="hover:bg-surface-variant transition-colors group"
+                  >
                     <td className="pl-20 py-4">
                       <span
                         className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${status.container}`}
