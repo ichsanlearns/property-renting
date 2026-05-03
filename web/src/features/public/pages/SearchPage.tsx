@@ -4,11 +4,11 @@ import PropertyCard from "../components/PropertyCard";
 import SearchBar from "../components/home-page/SearchBar";
 import LoaderPropertyCard from "../components/LoaderPropertyCard";
 import { useState } from "react";
-import MapPicker from "../../tenant/property/components/Map";
 import MapViewer from "../components/MapViewer";
 
 function SearchPage() {
   const [searchParams, setSearchParams] = useSearchParams();
+
   const search = searchParams.get("search");
   const checkIn = searchParams.get("checkIn");
   const checkOut = searchParams.get("checkOut");

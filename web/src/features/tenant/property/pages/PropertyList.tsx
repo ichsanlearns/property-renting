@@ -1,13 +1,24 @@
 import LoaderFetching from "../../../../shared/ui/LoaderFetching";
 import { useDeleteProperty } from "../hooks/property.mutation";
 import { usePropertyByTenantId } from "../hooks/useProperty";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useState } from "react";
 import ConfirmModal from "../../../../shared/ui/ConfirmModal";
 import { formatRupiah } from "../../../../shared/utils/price.util";
 
 function PropertyList() {
-  const { data: properties, isLoading } = usePropertyByTenantId();
+  const [queryParams, setQueryParams] = useSearchParams();
+
+  const page = queryParams.get("page") || 1;
+  const limit = queryParams.get("limit") || 3;
+
+  const { data, isLoading } = usePropertyByTenantId({
+    page: Number(page),
+    limit: Number(limit),
+  });
+
+  const properties = data?.data;
+
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
 
   const deleteMutation = useDeleteProperty();
@@ -36,6 +47,15 @@ function PropertyList() {
   if (isLoading) {
     return <LoaderFetching />;
   }
+
+  const handlePageClick = (newPage: number) => {
+    const params = new URLSearchParams(queryParams);
+    params.set("page", newPage.toString());
+
+    setQueryParams(params);
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <main className="pt-24 pb-12 px-6 md:px-12 md:pt-12 min-h-screen">
@@ -99,7 +119,10 @@ function PropertyList() {
               </p>
               <div className="flex flex-wrap gap-2 mt-2">
                 {property.roomTypes.map((roomType) => (
-                  <div className="flex items-center gap-2 px-2.5 py-1 bg-surface-container-highest rounded-lg text-[11px] font-medium text-secondary border border-outline-variant/30 shadow-sm">
+                  <div
+                    key={roomType.id}
+                    className="flex items-center gap-2 px-2.5 py-1 bg-surface-container-highest rounded-lg text-[11px] font-medium text-secondary border border-outline-variant/30 shadow-sm"
+                  >
                     <span className="font-bold text-on-surface">
                       {roomType.name}
                     </span>
@@ -166,6 +189,52 @@ function PropertyList() {
             </div>
           </div>
         ))}
+      </div>
+      <div className="my-16 flex justify-center items-center space-x-2">
+        <button
+          onClick={() => {
+            handlePageClick((data?.meta.page || 1) - 1);
+          }}
+          className={`flex items-center justify-center w-10 h-10 rounded-full border border-outline   transition-colors shadow-sm ${
+            data?.meta.page === 1
+              ? "opacity-40 text-on-surface-variant cursor-not-allowed"
+              : "bg-surface-container-low cursor-pointer text-on-surface hover:bg-surface-container-high"
+          }`}
+          disabled={data?.meta.page === 1}
+        >
+          <span className="material-symbols-outlined text-xl">
+            chevron_left
+          </span>
+        </button>
+        {data?.meta?.totalPages &&
+          data.meta.totalPages > 0 &&
+          Array.from({ length: data.meta.totalPages }).map((_, index) => (
+            <button
+              onClick={() => {
+                handlePageClick(index + 1);
+              }}
+              key={index}
+              disabled={data?.meta.page === index + 1}
+              className={`w-10 h-10 flex items-center justify-center rounded-full ${data?.meta.page === index + 1 ? "bg-primary text-white" : "bg-surface-container-low text-on-surface hover:bg-surface-container-high cursor-pointer"} font-semibold shadow-sm transition-all`}
+            >
+              {index + 1}
+            </button>
+          ))}
+        <button
+          onClick={() => {
+            handlePageClick((data?.meta.page || 1) + 1);
+          }}
+          className={`flex items-center justify-center w-10 h-10 rounded-full border border-outline   transition-colors shadow-sm ${
+            data?.meta.page === data?.meta.totalPages
+              ? "opacity-40 text-on-surface-variant cursor-not-allowed"
+              : "bg-surface-container-low cursor-pointer text-on-surface hover:bg-surface-container-high"
+          }`}
+          disabled={data?.meta.page === data?.meta.totalPages}
+        >
+          <span className="material-symbols-outlined text-xl">
+            chevron_right
+          </span>
+        </button>
       </div>
       <ConfirmModal
         isOpen={confirmDelete !== null}
