@@ -38,6 +38,8 @@ function SearchPage() {
     params.set("checkOut", sentParams.checkOut);
     params.set("city", sentParams.city);
 
+    params.set("page", "1");
+
     setSearchParams(params);
   };
 
