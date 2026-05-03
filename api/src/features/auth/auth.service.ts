@@ -328,7 +328,7 @@ export const verifyChangeEmail = async ({ token }: { token: string }) => {
   const hashedToken = hashToken({ token });
 
   const tokenData = await prisma.registerToken.findUnique({
-    where: { token: hashedToken },
+    where: { token: hashedToken, expiresAt: { gte: new Date() } },
   });
 
   if (!tokenData) throw new AppError("Invalid or expired token", 400);
@@ -338,6 +338,8 @@ export const verifyChangeEmail = async ({ token }: { token: string }) => {
   });
 
   if (!user) throw new AppError("User not found", 404);
+
+  console.log(tokenData);
 
   await prisma.user.update({
     where: { id: user.id },
