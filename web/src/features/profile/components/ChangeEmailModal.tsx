@@ -11,7 +11,7 @@ import { useChangeEmail } from "../hooks/profile.mutation";
 function ChangeEmailModal({ onClose }: { onClose: () => void }) {
   const [showPassword, setShowPassword] = useState(false);
 
-  const { mutate: changeEmail } = useChangeEmail();
+  const { mutate: changeEmail, isPending } = useChangeEmail();
 
   const {
     register,
@@ -22,7 +22,7 @@ function ChangeEmailModal({ onClose }: { onClose: () => void }) {
   });
 
   const onSubmit = (data: ChangeEmailFormData) => {
-    changeEmail(data);
+    changeEmail(data, { onSuccess: onClose });
   };
 
   return (
@@ -35,9 +35,14 @@ function ChangeEmailModal({ onClose }: { onClose: () => void }) {
               Change Email
             </h2>
             <button
+              disabled={isPending}
               onClick={() => onClose()}
               aria-label="Close modal"
-              className="text-on-surface-variant hover:text-on-surface transition-colors p-1 rounded-full hover:bg-surface-variant cursor-pointer"
+              className={`text-on-surface-variant hover:text-on-surface transition-colors p-1 rounded-full ${
+                isPending
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:bg-surface-variant cursor-pointer"
+              }`}
               type="button"
             >
               <span className="material-symbols-outlined text-[24px]">
@@ -46,24 +51,24 @@ function ChangeEmailModal({ onClose }: { onClose: () => void }) {
             </button>
           </div>
           <div className="p-6 flex flex-col gap-6">
-            {/* <div className="bg-tertiary-container/30 border border-tertiary/20 rounded-lg p-4 flex items-start gap-3">
+            <div className="bg-primary-container/30 border border-primary/20 rounded-lg p-4 flex items-start gap-3">
               <span
-                className="material-symbols-outlined text-tertiary mt-0.5"
+                className="material-symbols-outlined text-primary mt-0.5"
                 style={{
                   fontVariationSettings: "'FILL' 1",
                 }}
               >
-                check_circle
+                info
               </span>
               <div>
                 <p className="text-sm font-medium text-on-tertiary-container font-headline">
-                  Verification email sent.
+                  Are you sure you want to change your email?
                 </p>
                 <p className="text-sm text-on-tertiary-container/80 mt-1">
-                  Please check your new email inbox to confirm the change.
+                  Please confirm your password to verify this change.
                 </p>
               </div>
-            </div> */}
+            </div>
             <form
               id="change-email-form"
               onSubmit={handleSubmit(onSubmit)}
@@ -130,21 +135,40 @@ function ChangeEmailModal({ onClose }: { onClose: () => void }) {
           </div>
           <div className="px-6 py-5 bg-surface-container-low border-t border-surface-container flex items-center justify-end gap-3 rounded-b-xl">
             <button
+              disabled={isPending}
               onClick={() => onClose()}
-              className="px-5 py-2.5 rounded-lg text-sm font-semibold text-on-surface hover:bg-surface-variant transition-colors border border-transparent hover:border-outline cursor-pointer"
+              className={`px-5 py-2.5 rounded-lg text-sm font-semibold text-on-surface transition-colors border border-transparent hover:border-outline  ${
+                isPending
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:bg-surface-variant cursor-pointer"
+              }`}
               type="button"
             >
               Cancel
             </button>
             <button
+              disabled={isPending}
               form="change-email-form"
-              className="px-5 py-2.5 bg-primary text-on-primary rounded-lg text-sm font-bold tracking-wide hover:bg-surface-tint shadow-sm hover:shadow transition-all active:scale-95 duration-100 flex items-center gap-2 cursor-pointer hover:opacity-90"
+              className={`px-5 py-2.5 bg-primary text-on-primary rounded-lg text-sm font-bold tracking-wide shadow-sm hover:shadow transition-all active:scale-95 duration-100 flex items-center gap-2 ${
+                isPending
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:bg-surface-tint hover:opacity-90 cursor-pointer"
+              }`}
               type="submit"
             >
-              Send Verification
-              <span className="material-symbols-outlined text-lg">
-                arrow_forward
-              </span>
+              {isPending ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <span className="animate-pulse">Sending...</span>
+                </>
+              ) : (
+                <>
+                  Send Verification
+                  <span className="material-symbols-outlined text-lg">
+                    arrow_forward
+                  </span>
+                </>
+              )}
             </button>
           </div>
         </div>

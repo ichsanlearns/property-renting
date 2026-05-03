@@ -156,8 +156,7 @@ export const changeEmail = catchAsync(async (req: Request, res: Response) => {
   await UserService.changeEmail({ userId, email, password });
 
   res.status(200).json({
-    message:
-      "Email changed successfully, please check your email to verify your account",
+    message: "Verification email sent, check your email to verify your email",
   });
 });
 
