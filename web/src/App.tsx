@@ -43,6 +43,7 @@ import PropertyListDetail from "./features/tenant/property/pages/PropertyListDet
 import FormEditProperties from "./features/tenant/property/pages/FormEditProperties";
 import CreateRoomPage from "./features/tenant/property/pages/CreateRoomPage";
 import EditRoomPage from "./features/tenant/property/pages/EditRoomPage";
+import VerifyEmailChangePage from "./features/public/pages/VerifyEmailChangePage";
 
 function requireOnboarding(user: User | null) {
   if (!user?.fullName && user?.email) {
@@ -204,6 +205,11 @@ const router = createBrowserRouter([
     path: "/fill-data",
     element: <FillData />,
   },
+  {
+    path: "verify-email-change",
+    element: <VerifyEmailChangePage />,
+  },
+
   {
     path: "*",
     element: <NotFoundPage />,

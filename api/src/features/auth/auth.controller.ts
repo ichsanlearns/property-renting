@@ -82,6 +82,22 @@ export const verifyPasswordToken = catchAsync(
   },
 );
 
+export const verifyChangeEmail = catchAsync(
+  async (req: Request, res: Response) => {
+    const token = req.query.token as string;
+
+    if (!token) {
+      throw new AppError("Token not found", 400);
+    }
+
+    await authService.verifyChangeEmail({ token });
+
+    res.status(200).json({
+      message: "Email changed successfully",
+    });
+  },
+);
+
 export const updatePassword = catchAsync(
   async (req: Request, res: Response) => {
     const { password, token } = req.body;

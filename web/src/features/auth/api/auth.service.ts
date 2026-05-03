@@ -87,6 +87,19 @@ export const verifyPasswordTokenRequest = async (token: string) => {
   return response.data;
 };
 
+export const verifyChangeEmailRequest = async (token: string) => {
+  const response = await apiAuth.get<ApiResponse<void>>(
+    AUTH_ENDPOINTS.VERIFY_EMAIL_CHANGE,
+    {
+      params: {
+        token,
+      },
+    },
+  );
+
+  return response.data;
+};
+
 export const updatePasswordRequest = async (data: UpdatePasswordPayload) => {
   const response = await apiAuth.patch<ApiResponse<LoginResponse>>(
     AUTH_ENDPOINTS.UPDATE_PASSWORD,
