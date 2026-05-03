@@ -144,6 +144,23 @@ export const updatePassword = catchAsync(
   },
 );
 
+export const changeEmail = catchAsync(async (req: Request, res: Response) => {
+  const userId = req.user?.userId;
+
+  if (!userId) {
+    throw new AppError("Unauthorized", 401);
+  }
+
+  const { email, password } = req.body;
+
+  await UserService.changeEmail({ userId, email, password });
+
+  res.status(200).json({
+    message:
+      "Email changed successfully, please check your email to verify your account",
+  });
+});
+
 export const deleteProfilePhoto = catchAsync(
   async (req: Request, res: Response) => {
     const userId = req.user?.userId!;
