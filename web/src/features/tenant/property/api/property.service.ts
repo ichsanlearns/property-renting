@@ -83,6 +83,7 @@ export const searchProperties = async ({
   checkOut,
   city,
   page,
+  guests,
 }: {
   search?: string;
   checkIn?: string;
@@ -90,6 +91,7 @@ export const searchProperties = async ({
   city?: string;
   sortBy?: "name" | "price" | "createdAt";
   order?: "asc" | "desc";
+  guests?: number;
   page?: number;
 }) => {
   const response = await api.get<
@@ -102,6 +104,7 @@ export const searchProperties = async ({
       city,
       sortBy,
       order,
+      guests,
       page,
     },
   });

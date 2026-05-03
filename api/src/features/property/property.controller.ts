@@ -223,7 +223,7 @@ export const searchByParams = catchAsync(
       throw new AppError("Invalid search parameters", 400);
     }
 
-    const { search, checkIn, checkOut, city, sortBy, order, page } =
+    const { search, checkIn, checkOut, city, sortBy, order, page, guests } =
       parsed.data;
 
     const finalSearch = typeof search === "string" ? search : undefined;
@@ -231,6 +231,7 @@ export const searchByParams = catchAsync(
     const finalCheckOut = typeof checkOut === "string" ? checkOut : undefined;
     const finalCity = typeof city === "string" ? city : undefined;
     const finalPage = typeof page === "number" ? page : undefined;
+    const finalGuests = typeof guests === "number" ? guests : undefined;
 
     const finalSortBy =
       sortBy === "name" || sortBy === "createdAt"
@@ -248,6 +249,7 @@ export const searchByParams = catchAsync(
       ...(finalCheckOut && { checkOut: finalCheckOut }),
       ...(finalSearch && { search: finalSearch }),
       ...(finalCity && { city: finalCity }),
+      ...(finalGuests && { guests: finalGuests }),
       ...(finalPage && { page: finalPage }),
     });
 

@@ -27,11 +27,13 @@ function SearchBar({
     checkIn,
     checkOut,
     city,
+    guests,
   }: {
     search: string;
     checkIn: string;
     checkOut: string;
     city: string;
+    guests: number;
   }) => void;
   search?: string;
   city?: string;
@@ -68,6 +70,7 @@ function SearchBar({
         checkIn: range?.from ? format(range.from, "yyyy-MM-dd") : "",
         checkOut: range?.to ? format(range.to, "yyyy-MM-dd") : "",
         city: cityName ?? "",
+        guests: data.guests ?? 0,
       });
       return;
     }

@@ -31,6 +31,7 @@ function SearchPage() {
     checkIn: string;
     checkOut: string;
     city: string;
+    guests: number;
   }) => {
     const params = new URLSearchParams(searchParams);
 
@@ -38,6 +39,7 @@ function SearchPage() {
     params.set("checkIn", sentParams.checkIn);
     params.set("checkOut", sentParams.checkOut);
     params.set("city", sentParams.city);
+    params.set("guests", sentParams.guests.toString());
 
     params.set("page", "1");
 
@@ -125,6 +127,7 @@ function SearchPage() {
     page,
     sortBy: sortByParams || undefined,
     order: orderParams || undefined,
+    guests: guests || undefined,
   });
 
   return (

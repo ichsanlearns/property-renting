@@ -22,6 +22,7 @@ type SearchPropertiesParams = {
   city?: string;
   sortBy?: "name" | "minPrice" | "createdAt";
   order?: "asc" | "desc";
+  guests?: number;
   page?: number;
 };
 
@@ -579,6 +580,14 @@ export const searchByParams = async (params: SearchPropertiesParams) => {
     where.city = {
       contains: params.city,
       mode: "insensitive",
+    };
+  }
+
+  if (params.guests) {
+    where.roomTypes = {
+      some: {
+        capacity: { gte: params.guests },
+      },
     };
   }
 
