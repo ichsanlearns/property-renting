@@ -13,6 +13,7 @@ function SearchPage() {
   const checkIn = searchParams.get("checkIn");
   const checkOut = searchParams.get("checkOut");
   const city = searchParams.get("city");
+  const guests = Number(searchParams.get("guests")) || 0;
   const page = Number(searchParams.get("page")) || 1;
   const sortByParams = searchParams.get("sortBy") as
     | "name"
@@ -131,13 +132,16 @@ function SearchPage() {
       <div className="absolute w-full z-40 bg-white">
         <div className="max-w-screen-2xl mx-auto px-6 md:px-12 py-4 mt-2">
           <div className="flex flex-col items-center justify-center gap-8">
-            <SearchBar
-              sentParams={(params) => handleSearchClick(params)}
-              search={search || undefined}
-              city={city || undefined}
-              checkIn={checkIn || undefined}
-              checkOut={checkOut || undefined}
-            />
+            <div>
+              <SearchBar
+                sentParams={(params) => handleSearchClick(params)}
+                search={search || undefined}
+                city={city || undefined}
+                checkIn={checkIn || undefined}
+                checkOut={checkOut || undefined}
+                guests={guests || undefined}
+              />
+            </div>
             <div className="flex items-center space-x-3 overflow-x-auto hide-scrollbar pb-2">
               <button
                 type="button"
