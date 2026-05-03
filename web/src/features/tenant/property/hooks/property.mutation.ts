@@ -3,7 +3,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import * as PropertyApi from "../api/property.service";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { queryKeys } from "../../../../shared/lib/queryKeys.lib";
 
 export const useUpdateProperty = (propertyId: string) => {
   const navigate = useNavigate();

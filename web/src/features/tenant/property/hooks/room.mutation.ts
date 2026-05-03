@@ -2,9 +2,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import * as RoomApi from "../api/room.service";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
-import { queryKeys } from "../../../../shared/lib/queryKeys.lib";
 
-export const useUpdateRoom = (roomId: string, propertyId: string) => {
+export const useUpdateRoom = (roomId: string) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
