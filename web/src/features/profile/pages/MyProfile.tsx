@@ -105,6 +105,12 @@ function MyProfile() {
   };
 
   const handleChangeProfilePhoto = () => {
+    if (image?.preview === user?.profileImage) {
+      toast.error("No changes to update");
+      setChangingProfilePhoto(false);
+      return;
+    }
+
     if (!image?.file) {
       toast.error("Please select an image first");
       return;
@@ -305,7 +311,9 @@ function MyProfile() {
                     </div>
                     <p className="text-slate-500">{user?.email}</p>
                     <p className="text-xs text-slate-400">
-                      Member since January 2023
+                      {user.role === "TENANT"
+                        ? "This account is for tenant and have full access to tenant features"
+                        : "This account is for customer and have full access to customer features"}
                     </p>
                   </div>
                 </div>
@@ -380,22 +388,33 @@ function MyProfile() {
                     <label className="text-sm font-semibold text-slate-500">
                       Email Address
                     </label>
-                    <div className="relative flex gap-2">
+                    <div
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => setIsEdit("EMAIL")}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          setIsEdit("EMAIL");
+                        }
+                      }}
+                      className="relative group cursor-pointer"
+                    >
                       <input
                         disabled
-                        className={
-                          "flex-1 rounded-lg p-3.5 border border-primary/10 focus:border-primary focus:ring-primary cursor-not-allowed bg-background-light"
-                        }
+                        className="w-full rounded-lg p-3.5 border border-primary/10 bg-background-light text-sm text-slate-700 
+               cursor-pointer transition-all group-hover:blur-[1px]"
                         type="email"
                         value={user?.email}
                       />
-                      <button
-                        type="button"
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-primary text-xs font-bold hover:underline transition-all cursor-pointer"
-                        onClick={() => setIsEdit("EMAIL")}
+
+                      <div
+                        className="absolute inset-0 rounded-lg bg-primary/70 opacity-0 
+               group-hover:opacity-100 transition-all flex items-center justify-center"
                       >
-                        Change
-                      </button>
+                        <span className="text-white font-semibold text-sm tracking-wide">
+                          Change Email
+                        </span>
+                      </div>
                     </div>
                   </div>
                   {isEdit === "EMAIL" && (
