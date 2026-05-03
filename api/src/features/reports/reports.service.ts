@@ -54,9 +54,9 @@ export const getReportsDashboard = async (tenantId: string) => {
     revenueMap[date] = (revenueMap[date] || 0) + Number(item.totalAmount);
   });
 
-  const revenueData = Object.entries(revenueMap).map(([date, revenue]) => ({
-    date,
-    revenue,
+  const revenueData = reservations.map((item) => ({
+    date: item.createdAt,
+    revenue: Number(item.totalAmount),
   }));
 
   // Booking per property
@@ -104,4 +104,53 @@ export const getReportsDashboard = async (tenantId: string) => {
     bookingData,
     propertySales,
   };
+};
+
+export const getSalesReport = async (tenantId: string, query: any) => {
+  const { startDate, endDate, sort } = query;
+
+  const where: any = {
+    status: { in: ["PAID", "REVIEWED"] },
+    roomType: {
+      property: { tenantId },
+    },
+  };
+
+  // 📅 filter tanggal
+  if (startDate && endDate) {
+    where.createdAt = {
+      gte: new Date(startDate),
+      lte: new Date(endDate),
+    };
+  }
+
+  // 🔽 sorting
+  let orderBy: any = { createdAt: "desc" };
+
+  if (sort === "highest") {
+    orderBy = { totalAmount: "desc" };
+  }
+
+  if (sort === "lowest") {
+    orderBy = { totalAmount: "asc" };
+  }
+
+  const reservations = await prisma.reservation.findMany({
+    where,
+    include: {
+      customer: true,
+      roomType: {
+        include: { property: true },
+      },
+    },
+    orderBy,
+  });
+
+  return reservations.map((item) => ({
+    date: item.createdAt,
+    userName: item.customer.firstName,
+    userEmail: item.customer.email,
+    propertyName: item.roomType.property.name,
+    total: Number(item.totalAmount),
+  }));
 };
