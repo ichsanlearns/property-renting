@@ -1,4 +1,13 @@
-function ChangeEmailModal() {
+import PasswordVisibility from "../../../shared/ui/PasswordVisibility";
+import { useState } from "react";
+
+function ChangeEmailModal({ onClose }: { onClose: () => void }) {
+  const [showPassword, setShowPassword] = useState(false);
+
+  const onSubmit = () => {
+    console.log("submitted");
+  };
+
   return (
     <div className="bg-background text-on-background min-h-screen font-body antialiased flex flex-col relative">
       <main className="grow flex items-center justify-center p-6 relative z-10">
@@ -9,8 +18,9 @@ function ChangeEmailModal() {
               Change Email
             </h2>
             <button
+              onClick={() => onClose()}
               aria-label="Close modal"
-              className="text-on-surface-variant hover:text-on-surface transition-colors p-1 rounded-full hover:bg-surface-variant"
+              className="text-on-surface-variant hover:text-on-surface transition-colors p-1 rounded-full hover:bg-surface-variant cursor-pointer"
               type="button"
             >
               <span className="material-symbols-outlined text-[24px]">
@@ -64,12 +74,6 @@ function ChangeEmailModal() {
                   htmlFor="current-password"
                 >
                   Current Password
-                  <a
-                    className="text-xs text-primary font-medium hover:underline"
-                    href="#"
-                  >
-                    Forgot password?
-                  </a>
                 </label>
                 <div className="relative">
                   <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">
@@ -80,17 +84,14 @@ function ChangeEmailModal() {
                     id="current-password"
                     name="current-password"
                     placeholder="Confirm your password to continue"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                   />
-                  <button
-                    aria-label="Toggle password visibility"
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface"
-                    type="button"
-                  >
-                    <span className="material-symbols-outlined text-[20px]">
-                      visibility_off
-                    </span>
-                  </button>
+                  <div className="absolute right-0 top-3/5 -translate-y-1/2">
+                    <PasswordVisibility
+                      showPassword={showPassword}
+                      setShowPassword={setShowPassword}
+                    />
+                  </div>
                 </div>
                 <p className="text-xs text-on-surface-variant mt-1">
                   We need your current password to verify this change.
@@ -100,14 +101,16 @@ function ChangeEmailModal() {
           </div>
           <div className="px-6 py-5 bg-surface-container-low border-t border-surface-container flex items-center justify-end gap-3 rounded-b-xl">
             <button
-              className="px-5 py-2.5 rounded-lg text-sm font-semibold text-on-surface hover:bg-surface-variant transition-colors border border-transparent hover:border-outline"
+              onClick={() => onClose()}
+              className="px-5 py-2.5 rounded-lg text-sm font-semibold text-on-surface hover:bg-surface-variant transition-colors border border-transparent hover:border-outline cursor-pointer"
               type="button"
             >
               Cancel
             </button>
             <button
-              className="px-5 py-2.5 bg-primary text-on-primary rounded-lg text-sm font-bold tracking-wide hover:bg-surface-tint shadow-sm hover:shadow transition-all active:scale-95 duration-100 flex items-center gap-2"
-              type="button"
+              onClick={onSubmit}
+              className="px-5 py-2.5 bg-primary text-on-primary rounded-lg text-sm font-bold tracking-wide hover:bg-surface-tint shadow-sm hover:shadow transition-all active:scale-95 duration-100 flex items-center gap-2 cursor-pointer hover:opacity-90"
+              type="submit"
             >
               Send Verification
               <span className="material-symbols-outlined text-lg">
