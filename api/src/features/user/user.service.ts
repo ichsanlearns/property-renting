@@ -5,9 +5,9 @@ import type { UpdateMe } from "../../shared/types/user.type.js";
 import { AppError } from "../../shared/utils/app-error.util.js";
 
 import bcrypt from "bcrypt";
-import { generateToken, hashToken } from "../../shared/utils/token.util.js";
+import { generateToken } from "../../shared/utils/token.util.js";
 import { sendEmail } from "../../shared/services/email/email.service.js";
-import { registrationEmailTemplate } from "../../shared/services/email/registration.template.js";
+import { changeEmailTemplate } from "../../shared/services/email/changeemail.template.js";
 
 export const updateMe = async ({
   userId,
@@ -184,7 +184,7 @@ export const changeEmail = async ({
   await sendEmail({
     to: email,
     subject: "Verify your email",
-    html: registrationEmailTemplate(verifyUrl),
+    html: changeEmailTemplate(verifyUrl),
   });
 };
 
