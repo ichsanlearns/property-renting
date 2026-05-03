@@ -95,6 +95,7 @@ function CreateRoomPage() {
 
       toast.dismiss();
       toast.success("Room created successfully");
+      navigate(`/tenant/properties`);
     } catch (error: any) {
       toast.dismiss();
       toast.error(error.response?.data?.message || "Failed to create room");
