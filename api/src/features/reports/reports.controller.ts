@@ -11,3 +11,17 @@ export const getReportsDashboardController = catchAsync(async (req, res) => {
     data: result,
   });
 });
+
+export const getSalesReportController = catchAsync(async (req, res) => {
+  const tenantId = req.user!.userId;
+
+  const result = await reportsService.getSalesReport(
+    tenantId,
+    req.query, // 🔥 ini penting
+  );
+
+  res.status(200).json({
+    message: "Sales report fetched",
+    data: result,
+  });
+});

@@ -12,16 +12,10 @@ function PaymentMethodCard({ selectedPayment, setSelectedPayment }: Props) {
       desc: "Upload transfer receipt manually",
     },
     {
-      label: "E-Wallet",
+      label: "Midtrans",
       value: "E_WALLET",
       icon: "wallet",
-      desc: "GoPay, ShopeePay, QRIS & more",
-    },
-    {
-      label: "Credit Card",
-      value: "CREDIT_CARD",
-      icon: "credit_card",
-      desc: "Visa, Mastercard, JCB",
+      desc: "Credit/Debit, QRIS & more",
     },
   ];
 

@@ -1,5 +1,5 @@
 import LoaderFetching from "../../../../shared/ui/LoaderFetching";
-import { useReports } from "../hooks/useReports";
+import { useReports, useSalesReport } from "../hooks/useReports";
 
 import SummaryCards from "../components/SummaryCards";
 import RevenueChart from "../components/RevenueChart";
@@ -8,7 +8,8 @@ import PropertySalesTable from "../components/PropertySalesTable";
 import TablePagination from "../../dashboard-tenant/components/TablePagination";
 
 function Reports() {
-  const { loading, data, currentPage, setCurrentPage, totalPages, paginatedPropertySales } = useReports();
+  const { loading, data, currentPage, setCurrentPage, totalPages } = useReports();
+  const { data: salesData, filters, handleFilterChange, handleSearch } = useSalesReport();
 
   if (loading) return <LoaderFetching />;
 
@@ -25,7 +26,7 @@ function Reports() {
         <BookingChart data={data.bookingData} />
       </div>
 
-      <PropertySalesTable data={paginatedPropertySales} />
+      <PropertySalesTable filters={filters} onChange={handleFilterChange} onSearch={handleSearch} data={salesData} />
       <TablePagination currentPage={currentPage} totalPages={totalPages} setCurrentPage={setCurrentPage} />
     </div>
   );

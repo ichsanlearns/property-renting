@@ -5,30 +5,20 @@ export default function SummaryCards({ summary }: any) {
     {
       label: "Total Revenue",
       value: formatRupiah(summary.totalRevenue),
-      trend: "+12.5%",
       icon: "payments",
       color: "primary",
     },
     {
       label: "Total Bookings",
       value: summary.totalBookings,
-      trend: "+5.2%",
       icon: "confirmation_number",
       color: "blue-500",
     },
     {
       label: "Active Properties",
       value: summary.activeProperties,
-      trend: "0%",
       icon: "domain",
       color: "purple-500",
-    },
-    {
-      label: "Avg. Occupancy Rate",
-      value: `${summary.occupancyRate}%`,
-      trend: "+3.1%",
-      icon: "percent",
-      color: "amber-500",
     },
   ];
 
@@ -40,8 +30,6 @@ export default function SummaryCards({ summary }: any) {
             <div className={`p-2 rounded-lg ${card.color === "primary" ? "bg-primary/10 text-primary" : `bg-${card.color}/10 text-${card.color}`}`}>
               <span className="material-symbols-outlined">{card.icon}</span>
             </div>
-
-            <span className="text-sm font-bold flex items-center px-2 py-1 rounded-full bg-emerald-50 text-emerald-500">{card.trend}</span>
           </div>
 
           <p className="text-slate-500 text-sm font-medium">{card.label}</p>
