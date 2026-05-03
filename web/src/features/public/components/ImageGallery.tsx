@@ -60,7 +60,7 @@ function ImageGallery({
   }, [images.length, setShowImageGallery]);
 
   return (
-    <div className="fixed inset-0 p-20 z-50 bg-black/40  text-white w-screen h-screen overflow-hidden font-body selection:bg-primary selection:text-white">
+    <div className="fixed inset-0 p-20 z-9000 bg-black/40  text-white w-screen h-screen overflow-hidden font-body selection:bg-primary selection:text-white">
       <div className="absolute inset-0 w-full h-full z-0 p-2 md:p-4">
         <div className="w-full h-full rounded-2xl md:rounded-4xl overflow-hidden relative md:p-20 ">
           <img
