@@ -5,7 +5,7 @@ import type { UpdateMe } from "../../shared/types/user.type.js";
 import { AppError } from "../../shared/utils/app-error.util.js";
 
 import bcrypt from "bcrypt";
-import { generateToken } from "../../shared/utils/token.util.js";
+import { generateToken, hashToken } from "../../shared/utils/token.util.js";
 import { sendEmail } from "../../shared/services/email/email.service.js";
 import { registrationEmailTemplate } from "../../shared/services/email/registration.template.js";
 
@@ -172,13 +172,14 @@ export const changeEmail = async ({
   await prisma.registerToken.create({
     data: {
       email: user.email,
+      newEmail: email,
       token: hashed,
       type: "CHANGE_EMAIL",
       expiresAt: new Date(Date.now() + 15 * 60 * 1000),
     },
   });
 
-  const verifyUrl = `${process.env.APP_URL}/register/verify/password?token=${raw}`;
+  const verifyUrl = `${process.env.APP_URL}/verify-email-change?token=${raw}`;
 
   await sendEmail({
     to: email,
