@@ -30,7 +30,9 @@ function VerifyEmailChangePage() {
           <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-tertiary-fixed rounded-full mix-blend-multiply filter blur-[128px] opacity-50"></div>
         </div>
         <div className="relative z-10 bg-surface w-full max-w-md rounded-xl p-10 text-center flex flex-col items-center">
-          <div className="mb-8 flex items-center justify-center w-16 h-16 bg-primary-fixed rounded-full">
+          <div
+            className={`mb-8 flex items-center justify-center w-16 h-16 rounded-full ${isSuccess ? "bg-tertiary-fixed" : "bg-primary-fixed"}`}
+          >
             <span
               className={`material-symbols-outlined  text-3xl ${
                 isPending
@@ -43,7 +45,9 @@ function VerifyEmailChangePage() {
               }`}
               data-icon="mark_email_read"
               data-weight="fill"
-              style={{ fontVariationSettings: '"FILL" 1' }}
+              {...(!isSuccess && {
+                style: { fontVariationSettings: '"FILL" 1' },
+              })}
             >
               {isPending
                 ? "mark_email_read"

@@ -339,8 +339,6 @@ export const verifyChangeEmail = async ({ token }: { token: string }) => {
 
   if (!user) throw new AppError("User not found", 404);
 
-  console.log(tokenData);
-
   await prisma.user.update({
     where: { id: user.id },
     data: { email: tokenData.newEmail! },
@@ -349,6 +347,8 @@ export const verifyChangeEmail = async ({ token }: { token: string }) => {
   await prisma.registerToken.delete({
     where: { token: hashedToken },
   });
+
+  return user.email;
 };
 
 export const updatePassword = async ({

@@ -90,10 +90,11 @@ export const verifyChangeEmail = catchAsync(
       throw new AppError("Token not found", 400);
     }
 
-    await authService.verifyChangeEmail({ token });
+    const email = await authService.verifyChangeEmail({ token });
 
     res.status(200).json({
       message: "Email changed successfully",
+      data: { email },
     });
   },
 );
