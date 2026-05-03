@@ -38,11 +38,23 @@ function MyBooking() {
       <main className="max-w-7xl mx-auto px-4 py-8 lg:py-12">
         <BookingHeader />
 
-        <BookingFilters search={search} setSearch={setSearch} statusFilter={statusFilter} setStatusFilter={setStatusFilter} />
+        <BookingFilters
+          search={search}
+          setSearch={setSearch}
+          statusFilter={statusFilter}
+          setStatusFilter={setStatusFilter}
+        />
 
-        <BookingGrid bookings={paginatedBookings} handleCancelBooking={handleCancelBooking} />
+        <BookingGrid
+          bookings={paginatedBookings}
+          handleCancelBooking={handleCancelBooking}
+        />
 
-        <BookingPagination currentPage={currentPage} totalPages={totalPages} setCurrentPage={setCurrentPage} />
+        <BookingPagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          setCurrentPage={setCurrentPage}
+        />
       </main>
 
       <Footer />

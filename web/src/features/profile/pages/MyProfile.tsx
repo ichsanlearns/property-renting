@@ -21,9 +21,11 @@ import {
 import ConfirmModal from "../../../shared/ui/ConfirmModal";
 import PasswordVisibility from "../../../shared/ui/PasswordVisibility";
 import ChangeEmailModal from "../components/ChangeEmailModal";
+import { Navigate } from "react-router";
 
 function MyProfile() {
   const { user, setUser } = useAuthStore();
+
   const [isEdit, setIsEdit] = useState<
     null | "PERSONAL" | "EMAIL" | "PASSWORD"
   >(null);
@@ -211,6 +213,14 @@ function MyProfile() {
       document.body.style.overflow = "";
     };
   }, [isEdit]);
+
+  if (!user)
+    return (
+      <>
+        {toast.error("You are not authorized to access this page")}
+        <Navigate to="/login" replace />
+      </>
+    );
 
   return (
     <div className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">

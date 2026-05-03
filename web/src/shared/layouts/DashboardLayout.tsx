@@ -4,6 +4,7 @@ import { useAuthStore } from "../../features/auth/stores/auth.store";
 
 import SideBar from "../ui/SideBar";
 import LoaderFullPage from "../ui/LoaderFullPage";
+import toast from "react-hot-toast";
 
 function DashboardLayout() {
   const { user, authLoading } = useAuthStore();
@@ -13,7 +14,10 @@ function DashboardLayout() {
   }
 
   if (!user || user.role !== "TENANT") {
-    return <Navigate to={`/login`} replace />;
+    return (
+      toast.error("You are not authorized to access this page"),
+      (<Navigate to={`/login`} replace />)
+    );
   }
 
   return (
