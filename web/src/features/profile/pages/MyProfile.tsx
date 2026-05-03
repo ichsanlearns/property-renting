@@ -51,7 +51,6 @@ function MyProfile() {
     defaultValues: {
       firstName: user?.fullName.split(" ")[0],
       lastName: user?.fullName.split(" ")[1],
-      email: user?.email,
       phoneNumber: user?.phoneNumber,
     },
   });
@@ -69,7 +68,6 @@ function MyProfile() {
     if (
       watch("firstName") === user?.fullName.split(" ")[0] &&
       watch("lastName") === user?.fullName.split(" ")[1] &&
-      watch("email") === user?.email &&
       watch("phoneNumber") === user?.phoneNumber
     ) {
       toast.error("No changes to update");
@@ -366,16 +364,30 @@ function MyProfile() {
                       type="text"
                     />
                   </div>
+
+                  <div className="space-y-1 md:col-span-2">
+                    <label className="text-sm font-semibold text-slate-500">
+                      Phone Number
+                    </label>
+                    <input
+                      {...register("phoneNumber")}
+                      disabled={isEdit !== "PERSONAL"}
+                      className={`w-full p-3.5 rounded-lg border border-primary/10 focus:border-primary focus:ring-primary  ${isEdit === "PERSONAL" ? "cursor-text bg-background-light/30" : "cursor-not-allowed bg-background-light"}`}
+                      type="tel"
+                    />
+                  </div>
                   <div className="space-y-1 md:col-span-2">
                     <label className="text-sm font-semibold text-slate-500">
                       Email Address
                     </label>
                     <div className="relative flex gap-2">
                       <input
-                        {...register("email")}
-                        disabled={isEdit !== "PERSONAL"}
-                        className={`flex-1 rounded-lg p-3.5 border border-primary/10 focus:border-primary focus:ring-primary  ${isEdit === "PERSONAL" ? "cursor-text bg-background-light/30" : "cursor-not-allowed bg-background-light"}`}
+                        disabled
+                        className={
+                          "flex-1 rounded-lg p-3.5 border border-primary/10 focus:border-primary focus:ring-primary cursor-not-allowed bg-background-light"
+                        }
                         type="email"
+                        value={user?.email}
                       />
                       <button
                         type="button"
@@ -391,17 +403,6 @@ function MyProfile() {
                       <ChangeEmailModal onClose={() => setIsEdit(null)} />
                     </div>
                   )}
-                  <div className="space-y-1 md:col-span-2">
-                    <label className="text-sm font-semibold text-slate-500">
-                      Phone Number
-                    </label>
-                    <input
-                      {...register("phoneNumber")}
-                      disabled={isEdit !== "PERSONAL"}
-                      className={`w-full p-3.5 rounded-lg border border-primary/10 focus:border-primary focus:ring-primary  ${isEdit === "PERSONAL" ? "cursor-text bg-background-light/30" : "cursor-not-allowed bg-background-light"}`}
-                      type="tel"
-                    />
-                  </div>
                 </div>
                 <ConfirmModal
                   isOpen={personalModalOpen}

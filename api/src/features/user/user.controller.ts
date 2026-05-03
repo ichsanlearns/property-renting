@@ -16,22 +16,14 @@ export const updateMe = async (req: Request, res: Response) => {
     throw new Error("User not found");
   }
 
-  const {
-    firstName,
-    lastName,
-    email,
-    phoneNumber,
-    role,
-    isVerified,
-    profileImage,
-  } = req.body;
+  const { firstName, lastName, phoneNumber, role, isVerified, profileImage } =
+    req.body;
 
   const result = await UserService.updateMe({
     userId,
     data: {
       firstName: firstName ?? undefined,
       lastName: lastName ?? undefined,
-      email: email ?? undefined,
       phoneNumber: phoneNumber ?? undefined,
       role: role ?? undefined,
       isVerified: isVerified ?? undefined,
