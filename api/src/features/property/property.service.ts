@@ -227,6 +227,9 @@ export const getAllBasic = async () => {
       isPublished: "PUBLISHED",
     },
     take: 8,
+    orderBy: {
+      createdAt: "desc",
+    },
   });
 
   return properties.map((property) => ({

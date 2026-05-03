@@ -328,45 +328,6 @@ const seed = async () => {
       data: roomAmenities,
     });
 
-    // const seedRoomAvailability = async () => {
-    //   const roomTypes = await prisma.roomType.findMany();
-
-    //   const today = new Date();
-    //   const totalDays = 30;
-
-    //   for (const room of roomTypes) {
-    //     for (let i = 0; i < totalDays; i++) {
-    //       const date = new Date();
-    //       date.setDate(today.getDate() + i);
-    //       date.setHours(0, 0, 0, 0);
-
-    //       await prisma.roomTypePrice.upsert({
-    //         where: {
-    //           roomTypeId_date: {
-    //             roomTypeId: room.id,
-    //             date: date,
-    //           },
-    //         },
-    //         update: {
-    //           availableRooms: room.totalRooms,
-    //         },
-    //         create: {
-    //           roomTypeId: room.id,
-    //           date: date,
-    //           availableRooms: room.totalRooms,
-    //           price: room.basePrice,
-    //         },
-    //       });
-    //     }
-    //   }
-    // };
-
-    // await seedRoomAvailability();
-
-    // =============================
-    // PRICING RULES
-    // =============================
-
     const pricingRules = [
       {
         id: "012e717a-2429-4757-945f-e24724bcd7ac",
@@ -506,8 +467,8 @@ const seed = async () => {
         categoryId: propertyCategories[2]!.id,
         name: "Property 3",
         description: "Description 3",
-        latitude: -3.595211,
-        longitude: 98.672222,
+        latitude: 3.5952,
+        longitude: 98.6722,
         numberOfBathrooms: 4,
         country: "Indonesia",
         city: "Medan",
@@ -544,8 +505,8 @@ const seed = async () => {
         categoryId: propertyCategories[2]!.id,
         name: "Property 4",
         description: "Description 4",
-        latitude: -5.522211,
-        longitude: 95.320868,
+        latitude: 5.5483,
+        longitude: 95.3238,
         numberOfBathrooms: 4,
         country: "Indonesia",
         city: "Aceh",
@@ -582,8 +543,8 @@ const seed = async () => {
         categoryId: propertyCategories[2]!.id,
         name: "Property 5",
         description: "Description 5",
-        latitude: -0.947712,
-        longitude: 100.464468,
+        latitude: -0.9471,
+        longitude: 100.4172,
         numberOfBathrooms: 4,
         country: "Indonesia",
         city: "Padang",
@@ -620,8 +581,8 @@ const seed = async () => {
         categoryId: propertyCategories[2]!.id,
         name: "Property 6",
         description: "Description 6",
-        latitude: -2.902556,
-        longitude: 100.666468,
+        latitude: 0.5071,
+        longitude: 101.4478,
         numberOfBathrooms: 4,
         country: "Indonesia",
         city: "Pekanbaru",
@@ -658,8 +619,8 @@ const seed = async () => {
         categoryId: propertyCategories[2]!.id,
         name: "Property 7",
         description: "Description 7",
-        latitude: -1.148747,
-        longitude: 104.042971,
+        latitude: -1.6101,
+        longitude: 103.6131,
         numberOfBathrooms: 4,
         country: "Indonesia",
         city: "Jambi",
@@ -701,8 +662,8 @@ const seed = async () => {
         city: "Singapore",
         province: "Singapore",
         fullAddress: "16 Collyer Quay, #47-01, Singapore 049318",
-        latitude: 1.2865795498497033,
-        longitude: 103.85158960873396,
+        latitude: 1.3521,
+        longitude: 103.8198,
       },
       tenantId: users[1]!.id,
       images: [
