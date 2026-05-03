@@ -116,12 +116,12 @@ function Login() {
                   className="w-full pl-12 pr-4 py-4 bg-white/50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700 rounded-xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all text-slate-900 dark:text-white placeholder:text-slate-400 font-medium"
                   id="email"
                 />
-                {typeof errors.email?.message === "string" && (
-                  <p className="text-red-500 text-sm mt-2">
-                    {errors.email?.message}
-                  </p>
-                )}
               </div>
+              {typeof errors.email?.message === "string" && (
+                <p className="text-red-500 text-sm mt-2">
+                  {errors.email?.message}
+                </p>
+              )}
             </div>
             <div className="space-y-2">
               <div className="flex justify-between items-center ml-1">
