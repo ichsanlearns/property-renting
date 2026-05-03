@@ -5,9 +5,9 @@ import LoaderFetching from "../../../../shared/ui/LoaderFetching";
 import { useUpdateRoom } from "../hooks/room.mutation";
 
 function EditRoomPage() {
-  const { roomId, propertyId } = useParams();
+  const { roomId } = useParams();
 
-  const { mutate: updateRoom } = useUpdateRoom(roomId || "", propertyId || "");
+  const { mutate: updateRoom } = useUpdateRoom(roomId || "");
 
   const handleOnSubmit = (params: FormData) => {
     updateRoom(params);
