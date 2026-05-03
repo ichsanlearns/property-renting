@@ -7,7 +7,7 @@ type Location = {
   lng: number;
   label?: string;
   price?: number;
-  id: string;
+  id?: string;
 };
 
 export default function MapViewer({ locations }: { locations: Location[] }) {
@@ -29,21 +29,26 @@ export default function MapViewer({ locations }: { locations: Location[] }) {
       />
 
       {locations.map((loc) => (
-        <Marker key={loc.id} position={[loc.lat, loc.lng]}>
-          <Popup>
-            <button
-              onClick={() => navigate(`/property/${loc.id}`)}
-              className="text-left w-full cursor-pointer"
-            >
-              {loc.label && <p className="font-semibold">{loc.label}</p>}
+        <Marker
+          key={loc.id || `${loc.lat}-${loc.lng}`}
+          position={[loc.lat, loc.lng]}
+        >
+          {loc.id && (
+            <Popup>
+              <button
+                onClick={() => navigate(`/property/${loc.id}`)}
+                className="text-left w-full cursor-pointer"
+              >
+                {loc.label && <p className="font-semibold">{loc.label}</p>}
 
-              {loc.price !== undefined && (
-                <p className="text-sm text-primary">
-                  {formatRupiah(loc.price)}
-                </p>
-              )}
-            </button>
-          </Popup>
+                {loc.price !== undefined && (
+                  <p className="text-sm text-primary">
+                    {formatRupiah(loc.price)}
+                  </p>
+                )}
+              </button>
+            </Popup>
+          )}
         </Marker>
       ))}
     </MapContainer>
