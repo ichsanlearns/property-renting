@@ -207,22 +207,32 @@ function SearchPage() {
               <>
                 {properties && (
                   <>
-                    {properties.data.map((property) => (
-                      <PropertyCard
-                        key={property.id}
-                        property={property}
-                        page="search"
-                      />
-                    ))}
+                    {properties.data.length > 0 ? (
+                      properties.data.map((property) => (
+                        <PropertyCard
+                          key={property.id}
+                          property={property}
+                          page="search"
+                        />
+                      ))
+                    ) : (
+                      <div className="h-[400px] flex items-center justify-center col-span-full text-center text-on-surface-variant">
+                        <p className="text-lg font-medium">
+                          Sorry, we couldn't find any properties that match your
+                          search.
+                        </p>
+                      </div>
+                    )}
                   </>
                 )}
               </>
             )}
           </div>
         </div>
+
         <div className="hidden lg:block lg:w-[40%] sticky top-[220px] h-[calc(100vh-220px)] bg-surface-container overflow-hidden">
           <div className="relative w-full h-full rounded-xl">
-            {properties && (
+            {properties && properties?.data.length > 0 && (
               <MapViewer
                 locations={
                   properties.data.map((property) => ({
