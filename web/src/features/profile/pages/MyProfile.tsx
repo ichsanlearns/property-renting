@@ -20,10 +20,13 @@ import {
 } from "../hooks/profile.mutation";
 import ConfirmModal from "../../../shared/ui/ConfirmModal";
 import PasswordVisibility from "../../../shared/ui/PasswordVisibility";
+import ChangeEmailModal from "../components/ChangeEmailModal";
 
 function MyProfile() {
   const { user, setUser } = useAuthStore();
-  const [isEdit, setIsEdit] = useState<null | "PERSONAL" | "PASSWORD">(null);
+  const [isEdit, setIsEdit] = useState<
+    null | "PERSONAL" | "EMAIL" | "PASSWORD"
+  >(null);
   const [changingProfilePhoto, setChangingProfilePhoto] = useState(false);
   const [personalLoading, setPersonalLoading] = useState(false);
 
@@ -197,6 +200,18 @@ function MyProfile() {
     }
   }, [user]);
 
+  useEffect(() => {
+    if (isEdit === "EMAIL") {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isEdit]);
+
   return (
     <div className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
       <div className="layout-container flex h-full grow flex-col">
@@ -345,15 +360,27 @@ function MyProfile() {
                     <label className="text-sm font-semibold text-slate-500">
                       Email Address
                     </label>
-                    <div className="flex gap-2">
+                    <div className="relative flex gap-2">
                       <input
                         {...register("email")}
                         disabled={isEdit !== "PERSONAL"}
                         className={`flex-1 rounded-lg p-3.5 border border-primary/10 focus:border-primary focus:ring-primary  ${isEdit === "PERSONAL" ? "cursor-text bg-background-light/30" : "cursor-not-allowed bg-background-light"}`}
                         type="email"
                       />
+                      <button
+                        type="button"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-primary text-xs font-bold hover:underline transition-all cursor-pointer"
+                        onClick={() => setIsEdit("EMAIL")}
+                      >
+                        Change
+                      </button>
                     </div>
                   </div>
+                  {isEdit === "EMAIL" && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center ">
+                      <ChangeEmailModal />
+                    </div>
+                  )}
                   <div className="space-y-1 md:col-span-2">
                     <label className="text-sm font-semibold text-slate-500">
                       Phone Number
