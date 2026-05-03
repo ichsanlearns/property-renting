@@ -70,6 +70,7 @@ export const usePropertySearch = ({
   city,
   sortBy,
   order,
+  guests,
   page,
 }: {
   search?: string;
@@ -79,6 +80,7 @@ export const usePropertySearch = ({
   order?: "asc" | "desc";
   city?: string;
   page?: number;
+  guests?: number;
 }) => {
   return useQuery({
     queryKey: queryKeys.property.search(
@@ -88,6 +90,7 @@ export const usePropertySearch = ({
       city,
       sortBy,
       order,
+      guests,
       page,
     ),
     queryFn: () =>
@@ -98,6 +101,7 @@ export const usePropertySearch = ({
         city,
         sortBy,
         order,
+        guests,
         page,
       }),
     select: (res) => res.data,

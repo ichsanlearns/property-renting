@@ -20,22 +20,26 @@ function SearchBar({
   city,
   checkIn,
   checkOut,
+  guests,
 }: {
   sentParams?: ({
     search,
     checkIn,
     checkOut,
     city,
+    guests,
   }: {
     search: string;
     checkIn: string;
     checkOut: string;
     city: string;
+    guests: number;
   }) => void;
   search?: string;
   city?: string;
   checkIn?: string;
   checkOut?: string;
+  guests?: number;
 }) {
   const navigate = useNavigate();
   const calendarRef = useRef<HTMLDivElement>(null);
@@ -66,6 +70,7 @@ function SearchBar({
         checkIn: range?.from ? format(range.from, "yyyy-MM-dd") : "",
         checkOut: range?.to ? format(range.to, "yyyy-MM-dd") : "",
         city: cityName ?? "",
+        guests: data.guests ?? 0,
       });
       return;
     }
@@ -82,6 +87,10 @@ function SearchBar({
     if (range?.from && range?.to) {
       params.set("checkIn", format(range.from, "yyyy-MM-dd"));
       params.set("checkOut", format(range.to, "yyyy-MM-dd"));
+    }
+
+    if (data.guests) {
+      params.set("guests", data.guests.toString());
     }
 
     navigate(`/search?${params.toString()}`);
@@ -119,7 +128,7 @@ function SearchBar({
   return (
     <form
       onSubmit={handleSubmit(handleSearch, (errors) => console.error(errors))}
-      className="glass-search hover:-translate-y-2 w-full max-w-3xl rounded-full shadow-2xl flex flex-col md:flex-row items-center gap-2 group transition-all duration-500 hover:h-20 border-2 border-gray-200 h-16 p-2"
+      className="glass-search hover:-translate-y-2 w-full rounded-full shadow-2xl flex flex-col md:flex-row items-center gap-2 group transition-all duration-500 hover:h-20 border-2 border-gray-200 h-16 p-2"
     >
       <div className="flex-1 w-full flex items-center px-6 py-3 border-r border-slate-200/50">
         <span
@@ -133,7 +142,7 @@ function SearchBar({
           defaultValue={search}
           className="w-full bg-transparent border-none outline-none focus:ring-0 text-slate-800 placeholder-slate-400 font-medium text-base"
           autoComplete="off"
-          placeholder="Search city, country, or property"
+          placeholder="Search property..."
           type="text"
         />
       </div>
@@ -223,9 +232,27 @@ function SearchBar({
           />
         </div>
       )}
+      <div className="w-40 flex items-center px-6 py-3 border-r border-slate-200/50">
+        <span
+          className="material-symbols-outlined text-slate-800 mr-3"
+          data-icon="person"
+        >
+          person
+        </span>
+        <input
+          {...register("guests", {
+            valueAsNumber: true,
+          })}
+          defaultValue={guests}
+          className="w-1/2 bg-transparent border-none outline-none focus:ring-0 text-slate-800 placeholder-slate-400 font-medium text-base"
+          autoComplete="off"
+          placeholder="guests"
+          type="text"
+        />
+      </div>
 
       <button
-        disabled={!watch("param") && !range && !cityName}
+        disabled={!watch("param") && !range && !cityName && !watch("guests")}
         type="submit"
         className="w-full md:w-auto bg-[#ff5c61] text-white p-3 rounded-full flex items-center justify-center hover:bg-[#e64a50] transition-colors shadow-lg shadow-[#ff5c61]/30 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
       >

@@ -15,6 +15,7 @@ export const queryKeys = {
       city?: string,
       sortBy?: "name" | "price" | "createdAt",
       order?: "asc" | "desc",
+      guests?: number,
       page?: number,
     ) =>
       [
@@ -26,6 +27,7 @@ export const queryKeys = {
         city,
         sortBy,
         order,
+        guests,
         page,
       ] as const,
     roomPricesDate: (

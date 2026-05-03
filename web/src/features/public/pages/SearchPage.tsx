@@ -13,6 +13,7 @@ function SearchPage() {
   const checkIn = searchParams.get("checkIn");
   const checkOut = searchParams.get("checkOut");
   const city = searchParams.get("city");
+  const guests = Number(searchParams.get("guests")) || 0;
   const page = Number(searchParams.get("page")) || 1;
   const sortByParams = searchParams.get("sortBy") as
     | "name"
@@ -30,6 +31,7 @@ function SearchPage() {
     checkIn: string;
     checkOut: string;
     city: string;
+    guests: number;
   }) => {
     const params = new URLSearchParams(searchParams);
 
@@ -37,6 +39,7 @@ function SearchPage() {
     params.set("checkIn", sentParams.checkIn);
     params.set("checkOut", sentParams.checkOut);
     params.set("city", sentParams.city);
+    params.set("guests", sentParams.guests.toString());
 
     params.set("page", "1");
 
@@ -124,6 +127,7 @@ function SearchPage() {
     page,
     sortBy: sortByParams || undefined,
     order: orderParams || undefined,
+    guests: guests || undefined,
   });
 
   return (
@@ -131,13 +135,16 @@ function SearchPage() {
       <div className="absolute w-full z-40 bg-white">
         <div className="max-w-screen-2xl mx-auto px-6 md:px-12 py-4 mt-2">
           <div className="flex flex-col items-center justify-center gap-8">
-            <SearchBar
-              sentParams={(params) => handleSearchClick(params)}
-              search={search || undefined}
-              city={city || undefined}
-              checkIn={checkIn || undefined}
-              checkOut={checkOut || undefined}
-            />
+            <div>
+              <SearchBar
+                sentParams={(params) => handleSearchClick(params)}
+                search={search || undefined}
+                city={city || undefined}
+                checkIn={checkIn || undefined}
+                checkOut={checkOut || undefined}
+                guests={guests || undefined}
+              />
+            </div>
             <div className="flex items-center space-x-3 overflow-x-auto hide-scrollbar pb-2">
               <button
                 type="button"
@@ -200,22 +207,32 @@ function SearchPage() {
               <>
                 {properties && (
                   <>
-                    {properties.data.map((property) => (
-                      <PropertyCard
-                        key={property.id}
-                        property={property}
-                        page="search"
-                      />
-                    ))}
+                    {properties.data.length > 0 ? (
+                      properties.data.map((property) => (
+                        <PropertyCard
+                          key={property.id}
+                          property={property}
+                          page="search"
+                        />
+                      ))
+                    ) : (
+                      <div className="h-[400px] flex items-center justify-center col-span-full text-center text-on-surface-variant">
+                        <p className="text-lg font-medium">
+                          Sorry, we couldn't find any properties that match your
+                          search.
+                        </p>
+                      </div>
+                    )}
                   </>
                 )}
               </>
             )}
           </div>
         </div>
+
         <div className="hidden lg:block lg:w-[40%] sticky top-[220px] h-[calc(100vh-220px)] bg-surface-container overflow-hidden">
           <div className="relative w-full h-full rounded-xl">
-            {properties && (
+            {properties && properties?.data.length > 0 && (
               <MapViewer
                 locations={
                   properties.data.map((property) => ({
