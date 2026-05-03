@@ -519,6 +519,7 @@ enum ViewType {
 
 enum TokenType {
   VERIFY_EMAIL
+  CHANGE_EMAIL
   RESET_PASSWORD
   REGISTER
 }
