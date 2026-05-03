@@ -3,4 +3,5 @@ export const PROFILE_ENDPOINTS = {
   UPDATE_PROFILE_PHOTO: "/users/me/profile-image",
   DELETE_PROFILE_PHOTO: "/users/me/profile-image",
   UPDATE_PASSWORD: "/users/me/password",
+  CHANGE_EMAIL: "/users/me/email",
 };

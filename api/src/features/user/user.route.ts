@@ -23,7 +23,7 @@ router.delete(
 
 router.patch("/me/password", authMiddleware, UserController.updatePassword);
 
-router.patch("/me/change-email", authMiddleware, UserController.changeEmail);
+router.patch("/me/email", authMiddleware, UserController.changeEmail);
 
 router.post("/pricing-rule", authMiddleware, UserController.createPricingRule);
 

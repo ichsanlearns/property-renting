@@ -45,6 +45,21 @@ export const updatePasswordRequest = async ({
   return response.data;
 };
 
+export const changeEmailRequest = async ({
+  email,
+  password,
+}: {
+  email: string;
+  password: string;
+}) => {
+  const response = await api.patch<ApiResponse<void>>(
+    PROFILE_ENDPOINTS.CHANGE_EMAIL,
+    { email, password },
+  );
+
+  return response.data;
+};
+
 export const deleteProfilePhotoRequest = async () => {
   const response = await api.delete<ApiResponse<FillProfileResponse>>(
     PROFILE_ENDPOINTS.DELETE_PROFILE_PHOTO,
