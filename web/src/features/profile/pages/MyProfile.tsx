@@ -378,7 +378,7 @@ function MyProfile() {
                   </div>
                   {isEdit === "EMAIL" && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center ">
-                      <ChangeEmailModal />
+                      <ChangeEmailModal onClose={() => setIsEdit(null)} />
                     </div>
                   )}
                   <div className="space-y-1 md:col-span-2">

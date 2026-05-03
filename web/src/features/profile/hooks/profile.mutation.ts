@@ -22,10 +22,12 @@ export const useChangeEmail = () => {
       toast.loading("Changing email...");
     },
     onSuccess: (res) => {
+      toast.dismiss();
       toast.success(res.message);
     },
-    onError: (error) => {
-      toast.error(error.message);
+    onError: (error: any) => {
+      toast.dismiss();
+      toast.error(error.response?.data?.message || error.message);
     },
   });
 };
