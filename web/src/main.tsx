@@ -15,7 +15,14 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
       <QueryClientProvider client={queryClient}>
-        <Toaster position="top-center" />
+        <Toaster
+          position="top-center"
+          toastOptions={{
+            style: {
+              zIndex: 9999,
+            },
+          }}
+        />
         <App />
         {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
       </QueryClientProvider>

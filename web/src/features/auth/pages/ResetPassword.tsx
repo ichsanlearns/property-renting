@@ -4,13 +4,17 @@ import { resetPasswordSchema } from "../schemas/reset-password.schema";
 import type { ResetPasswordFormData } from "../schemas/reset-password.schema";
 import toast from "react-hot-toast";
 import { resetPasswordRequest } from "../api/auth.service";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
+import PasswordVisibility from "../../../shared/ui/PasswordVisibility";
 
 function ResetPassword() {
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const navigate = useNavigate();
 
@@ -74,20 +78,13 @@ function ResetPassword() {
                     disabled={isSubmitting}
                     className={`w-full px-4 py-3.5 bg-surface-container-low border-0 focus:ring-2 focus:ring-primary/20 rounded-lg text-on-surface placeholder:text-slate-300 transition-all ${isSubmitting ? "opacity-50 cursor-not-allowed" : ""}`}
                     placeholder="••••••••"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     {...register("password")}
                   />
-                  <button
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-primary p-1"
-                    type="button"
-                  >
-                    <span
-                      className="material-symbols-outlined text-xl"
-                      data-icon="visibility"
-                    >
-                      visibility
-                    </span>
-                  </button>
+                  <PasswordVisibility
+                    showPassword={showPassword}
+                    setShowPassword={setShowPassword}
+                  />
                 </div>
                 {errors.password && (
                   <p className="text-red-500 text-sm mt-1">
@@ -104,20 +101,13 @@ function ResetPassword() {
                     disabled={isSubmitting}
                     className={`w-full px-4 py-3.5 bg-surface-container-low border-0 focus:ring-2 focus:ring-primary/20 rounded-lg text-on-surface placeholder:text-slate-300 transition-all ${isSubmitting ? "opacity-50 cursor-not-allowed" : ""}`}
                     placeholder="••••••••"
-                    type="password"
+                    type={showConfirmPassword ? "text" : "password"}
                     {...register("confirmPassword")}
                   />
-                  <button
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-primary p-1"
-                    type="button"
-                  >
-                    <span
-                      className="material-symbols-outlined text-xl"
-                      data-icon="visibility_off"
-                    >
-                      visibility_off
-                    </span>
-                  </button>
+                  <PasswordVisibility
+                    showPassword={showConfirmPassword}
+                    setShowPassword={setShowConfirmPassword}
+                  />
                 </div>
                 {errors.confirmPassword && (
                   <p className="text-red-500 text-sm mt-1">
