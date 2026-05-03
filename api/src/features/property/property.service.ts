@@ -472,90 +472,91 @@ export const getByPropertyIdFullInfo = async ({
   };
 };
 
-export const getByTenantId = async (tenantId: string) => {
-  const properties = await prisma.property.findMany({
-    where: {
-      tenantId,
-    },
-    select: {
-      id: true,
-      name: true,
+export const getByTenantId = async ({
+  tenantId,
+  page = 1,
+  limit = 3,
+}: {
+  tenantId: string;
+  page?: number;
+  limit?: number;
+}) => {
+  const skip = (page - 1) * limit;
 
-      category: {
-        select: {
-          name: true,
+  const [properties, total] = await Promise.all([
+    prisma.property.findMany({
+      where: { tenantId },
+      select: {
+        id: true,
+        name: true,
+
+        category: { select: { name: true } },
+
+        city: true,
+        country: true,
+
+        averageRating: true,
+        reviewCount: true,
+
+        numberOfBathrooms: true,
+        updatedAt: true,
+
+        isPublished: true,
+
+        propertyImages: {
+          where: { isCover: true },
+          select: { imageUrl: true },
+          take: 1,
+        },
+
+        roomTypes: {
+          select: {
+            id: true,
+            name: true,
+            capacity: true,
+            bedType: true,
+            bedCount: true,
+            bathroomType: true,
+            basePrice: true,
+            isPublished: true,
+            totalRooms: true,
+            availableRooms: true,
+          },
+          orderBy: { basePrice: "asc" },
         },
       },
+      orderBy: { updatedAt: "desc" },
+      skip,
+      take: limit,
+    }),
 
-      city: true,
-      country: true,
+    prisma.property.count({
+      where: { tenantId },
+    }),
+  ]);
 
-      averageRating: true,
-      reviewCount: true,
-
-      numberOfBathrooms: true,
-      updatedAt: true,
-
-      isPublished: true,
-
-      propertyImages: {
-        where: {
-          isCover: true,
-        },
-        select: {
-          imageUrl: true,
-        },
-        take: 1,
-      },
-
-      roomTypes: {
-        select: {
-          id: true,
-          name: true,
-          capacity: true,
-
-          bedType: true,
-          bedCount: true,
-
-          bathroomType: true,
-
-          basePrice: true,
-
-          isPublished: true,
-
-          totalRooms: true,
-          availableRooms: true,
-        },
-        orderBy: {
-          basePrice: "asc",
-        },
-      },
-    },
-  });
-
-  return properties.map((property) => ({
-    id: property.id,
-    name: property.name,
-
-    category: property.category.name,
-
-    city: property.city,
-    country: property.country,
-
-    averageRating: property.averageRating,
-    reviewCount: property.reviewCount,
-
-    numberOfBathrooms: property.numberOfBathrooms,
-    updatedAt: property.updatedAt,
-
-    isPublished: property.isPublished,
-
-    coverImage: property.propertyImages[0]?.imageUrl,
-
-    roomTypes: property.roomTypes.map((roomType) => ({
-      ...roomType,
+  return {
+    data: properties.map((property) => ({
+      id: property.id,
+      name: property.name,
+      category: property.category.name,
+      city: property.city,
+      country: property.country,
+      averageRating: property.averageRating,
+      reviewCount: property.reviewCount,
+      numberOfBathrooms: property.numberOfBathrooms,
+      updatedAt: property.updatedAt,
+      isPublished: property.isPublished,
+      coverImage: property.propertyImages[0]?.imageUrl,
+      roomTypes: property.roomTypes,
     })),
-  }));
+    meta: {
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+    },
+  };
 };
 
 export const searchByParams = async (params: SearchPropertiesParams) => {

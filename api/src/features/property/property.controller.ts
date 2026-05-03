@@ -196,13 +196,20 @@ export const getByPropertyIdFullInfo = catchAsync(
 export const getByTenantId = catchAsync(async (req: Request, res: Response) => {
   const tenantId = req.user?.userId;
 
+  const { page, limit } = req.query as { page?: string; limit?: string };
+
   if (!tenantId) throw new AppError("Unauthorized", 401);
 
-  const properties = await PropertyService.getByTenantId(tenantId);
+  const properties = await PropertyService.getByTenantId({
+    tenantId,
+    ...(page && { page: Number(page) }),
+    ...(limit && { limit: Number(limit) }),
+  });
 
   res.status(200).json({
     message: "Properties fetched successfully",
-    data: properties,
+    data: properties.data,
+    meta: properties.meta,
   });
 });
 
