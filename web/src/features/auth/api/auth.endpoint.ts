@@ -4,6 +4,7 @@ export const AUTH_ENDPOINTS = {
   REGISTER: "/auth/register",
   RESEND_TOKEN: "/auth/resend-token",
   VERIFY_PASSWORD_TOKEN: "/auth/verify-password-token",
+  VERIFY_EMAIL_CHANGE: "/auth/verify-email-change",
   UPDATE_PASSWORD: "/auth/update-password",
   FILL_PROFILE: "/auth/fill-profile",
   FORGOT_PASSWORD: "/auth/forgot-password",
