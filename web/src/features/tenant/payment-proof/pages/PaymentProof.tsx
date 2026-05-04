@@ -7,7 +7,6 @@ import PaymentProofHeader from "../components/PaymentProofHeader";
 import BookingInformationCard from "../components/BookingInformationCard";
 import RejectionNotesCard from "../components/RejectionNotesCard";
 import ReceiptPreviewCard from "../components/ReceiptPreviewCard";
-import AdditionalDetailCards from "../components/AdditionalDetailCards";
 
 function PaymentProof() {
   const { code } = useParams();
@@ -38,8 +37,6 @@ function PaymentProof() {
           <ReceiptPreviewCard data={data} loadingApprove={loadingApprove} handleApprove={handleApprove} handleReject={handleReject} />
         </div>
       </div>
-
-      <AdditionalDetailCards />
     </div>
   );
 }
