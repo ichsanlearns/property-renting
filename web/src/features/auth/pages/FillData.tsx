@@ -136,10 +136,7 @@ function FillData() {
               </p>
             </div>
           </div>
-          <form
-            onSubmit={handleSubmit(onSubmit, (errors) => console.error(errors))}
-            className="space-y-6"
-          >
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="flex flex-col items-center mb-8">
               <ProfilePhoto image={image} onChange={handleChangeImage} />
               <label className="text-[10px] uppercase tracking-widest font-bold text-slate-400 mt-3">

@@ -124,7 +124,7 @@ function SearchBar({
 
   return (
     <form
-      onSubmit={handleSubmit(handleSearch, (errors) => console.error(errors))}
+      onSubmit={handleSubmit(handleSearch)}
       className="glass-search hover:-translate-y-2 w-full rounded-full shadow-2xl flex flex-col md:flex-row items-center gap-2 group transition-all duration-500 hover:h-20 border-2 border-gray-200 h-16 p-2"
     >
       <div className="w=40 flex items-center pl-6 py-3 border-r border-slate-200/50">

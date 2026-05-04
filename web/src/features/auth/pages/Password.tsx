@@ -79,12 +79,7 @@ function Password() {
           <p className="text-on-surface-variant text-sm font-medium">Email:</p>
           <p className="text-sm text-primary font-medium">{data?.email}</p>
         </div>
-        <form
-          onSubmit={handleSubmit(onSubmit, (errors) => {
-            console.error(errors);
-          })}
-          className="space-y-6"
-        >
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-1.5">
             <label className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant block ml-1">
               New Password

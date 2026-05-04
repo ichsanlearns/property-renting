@@ -504,9 +504,7 @@ function PropertyDetail() {
               </div>
               <button
                 disabled={isSubmitting}
-                onClick={handleSubmit(onSubmit, (errors) => {
-                  console.error(errors);
-                })}
+                onClick={handleSubmit(onSubmit)}
                 className={`w-full bg-primary text-on-primary py-3.5 rounded-xl font-extrabold text-lg shadow-md active:scale-[0.98] transition-all  mb-6 ${isSubmitting ? "opacity-50 cursor-not-allowed" : "hover:opacity-95 cursor-pointer"}`}
               >
                 {isSubmitting ? (

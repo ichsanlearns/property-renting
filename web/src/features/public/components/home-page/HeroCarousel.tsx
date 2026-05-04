@@ -107,7 +107,7 @@ function HeroCarousel(
         ))}
       </div>
 
-      <div className="relative w-1/2 flex justify-center  px-6 mt-48 z-40">
+      <div className="relative w-2/3 flex justify-center  px-6 mt-48 z-40">
         <SearchBar />
       </div>
 

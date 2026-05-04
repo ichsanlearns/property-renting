@@ -169,9 +169,7 @@ function FormEditProperties() {
           </h2>
         </div>
       </header>
-      <form
-        onSubmit={handleSubmit(onSubmit, (errors) => console.error(errors))}
-      >
+      <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <div className="lg:col-span-8 space-y-6">
             <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-8 shadow-sm">

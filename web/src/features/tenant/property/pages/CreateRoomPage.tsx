@@ -116,10 +116,7 @@ function CreateRoomPage() {
 
   return (
     <main className=" m-16 min-h-[calc(100vh-4rem)]">
-      <form
-        onSubmit={handleSubmit(onSubmit, (error) => console.error(error))}
-        className="mx-auto space-y-8"
-      >
+      <form onSubmit={handleSubmit(onSubmit)} className="mx-auto space-y-8">
         <header className="relative overflow-hidden rounded-3xl bg-white shadow-sm border border-primary/10 flex flex-col md:flex-row items-center gap-6 p-6">
           <div className="relative w-full md:w-48 h-32 shrink-0 rounded-2xl overflow-hidden shadow-md">
             <img
