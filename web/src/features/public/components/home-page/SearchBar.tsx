@@ -125,9 +125,9 @@ function SearchBar({
   return (
     <form
       onSubmit={handleSubmit(handleSearch)}
-      className="glass-search hover:-translate-y-2 w-full rounded-full shadow-2xl flex flex-col md:flex-row items-center gap-2 group transition-all duration-500 hover:h-20 border-2 border-gray-200 h-16 p-2"
+      className="glass-search hover:-translate-y-2 w-full rounded-full shadow-2xl flex flex-col md:flex-row items-center gap-2 group transition-all duration-500 hover:h-20 border-2 border-gray-200 h-16 p-2 justify-between"
     >
-      <div className="w=40 flex items-center pl-6 py-3 border-r border-slate-200/50">
+      <div className="flex-1 flex items-center pl-6 py-3 border-r border-slate-200/50">
         <span
           className="material-symbols-outlined text-slate-400 mr-3"
           data-icon="search"
@@ -146,7 +146,7 @@ function SearchBar({
       <div className="relative">
         <div
           onClick={() => cities && setOpenCity((prev) => !prev)}
-          className={`flex h-full w-50 items-center px-6 py-3 border-r border-slate-200/50 hover:bg-slate-100/50 rounded-l-full transition-colors group/city justify-between ${!cities ? "cursor-not-allowed opacity-50" : "cursor-pointer"}`}
+          className={`flex h-full w-60 items-center px-6 py-3 border-r border-slate-200/50 hover:bg-slate-100/50 rounded-l-full transition-colors group/city justify-between ${!cities ? "cursor-not-allowed opacity-50" : "cursor-pointer"}`}
         >
           <span
             className={`material-symbols-outlined mr-2 group-hover/city:text-primary ${!cities ? "text-slate-400" : "text-primary"}`}
