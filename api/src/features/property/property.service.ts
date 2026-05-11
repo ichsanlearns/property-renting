@@ -1,17 +1,8 @@
 import { prisma } from "../../shared/lib/prisma.lib.js";
 
 import { AppError } from "../../shared/utils/app-error.util.js";
-import type {
-  CreatePropertyDto,
-  updatePropertPayload,
-} from "./property.type.js";
-import {
-  buildDateKey,
-  getDatesInRangeExclusive,
-  getDatesInRangeInclusive,
-  toDateKey,
-  toLocalFromDb,
-} from "../../shared/utils/date.util.js";
+import type { CreatePropertyDto, updatePropertPayload } from "./property.type.js";
+import { buildDateKey, getDatesInRangeExclusive, getDatesInRangeInclusive, toDateKey, toLocalFromDb } from "../../shared/utils/date.util.js";
 import { transformRoomTypePrices } from "./property.transformer.js";
 import type { Prisma } from "../../generated/prisma/client.js";
 
@@ -223,6 +214,22 @@ export const getAllBasic = async () => {
           imageUrl: true,
         },
       },
+
+      reviews: {
+        take: 1,
+        orderBy: {
+          createdAt: "desc",
+        },
+        select: {
+          rating: true,
+          comment: true,
+          customer: {
+            select: {
+              firstName: true,
+            },
+          },
+        },
+      },
     },
     where: {
       isPublished: "PUBLISHED",
@@ -243,6 +250,8 @@ export const getAllBasic = async () => {
     averageRating: property.averageRating,
     reviewCount: property.reviewCount,
     coverImage: property.propertyImages[0]?.imageUrl,
+
+    reviews: property.reviews,
   }));
 };
 
@@ -407,11 +416,7 @@ export const getById = async ({ id }: { id: string }) => {
   };
 };
 
-export const getByPropertyIdFullInfo = async ({
-  propertyId,
-}: {
-  propertyId: string;
-}) => {
+export const getByPropertyIdFullInfo = async ({ propertyId }: { propertyId: string }) => {
   const property = await prisma.property.findUnique({
     where: {
       id: propertyId,
@@ -473,15 +478,7 @@ export const getByPropertyIdFullInfo = async ({
   };
 };
 
-export const getByTenantId = async ({
-  tenantId,
-  page = 1,
-  limit = 3,
-}: {
-  tenantId: string;
-  page?: number;
-  limit?: number;
-}) => {
+export const getByTenantId = async ({ tenantId, page = 1, limit = 3 }: { tenantId: string; page?: number; limit?: number }) => {
   const skip = (page - 1) * limit;
 
   const [properties, total] = await Promise.all([
@@ -664,9 +661,7 @@ export const searchByParams = async (params: SearchPropertiesParams) => {
     return property.roomTypes.some((roomType) => {
       if (!roomType.roomTypePrices) return false;
 
-      const validDates = roomType.roomTypePrices.filter(
-        (p) => p.availableRooms > 0 && !p.isClosed,
-      );
+      const validDates = roomType.roomTypePrices.filter((p) => p.availableRooms > 0 && !p.isClosed);
 
       return validDates.length === dates.length;
     });
@@ -695,15 +690,7 @@ export const searchByParams = async (params: SearchPropertiesParams) => {
   };
 };
 
-export const getPropertyRoomPricesDate = async ({
-  propertyId,
-  startDate,
-  endDate,
-}: {
-  propertyId: string;
-  startDate: string;
-  endDate: string;
-}) => {
+export const getPropertyRoomPricesDate = async ({ propertyId, startDate, endDate }: { propertyId: string; startDate: string; endDate: string }) => {
   const roomTypes = await prisma.roomType.findMany({
     where: { propertyId },
     orderBy: {
@@ -744,12 +731,7 @@ export const getPropertyRoomPricesDate = async ({
     },
   });
 
-  const roomTypePricesMap = new Map(
-    roomTypePrices.map((roomTypePrice) => [
-      buildDateKey(roomTypePrice.roomTypeId, toLocalFromDb(roomTypePrice.date)),
-      roomTypePrice,
-    ]),
-  );
+  const roomTypePricesMap = new Map(roomTypePrices.map((roomTypePrice) => [buildDateKey(roomTypePrice.roomTypeId, toLocalFromDb(roomTypePrice.date)), roomTypePrice]));
 
   const allDates = getDatesInRangeInclusive(startDate, endDate);
 

@@ -44,3 +44,11 @@ export const replyReviewController = catchAsync(async (req, res) => {
     data: result,
   });
 });
+
+export const getLatestReviewsController = catchAsync(async (req, res) => {
+  const result = await reviewService.getLatestReviews();
+  res.status(200).json({
+    message: "Latest reviews retrieved successfully",
+    data: result,
+  });
+});

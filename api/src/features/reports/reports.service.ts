@@ -116,7 +116,7 @@ export const getSalesReport = async (tenantId: string, query: any) => {
     },
   };
 
-  // 📅 filter tanggal
+  //  filter tanggal
   if (startDate && endDate) {
     where.createdAt = {
       gte: new Date(startDate),
@@ -124,7 +124,7 @@ export const getSalesReport = async (tenantId: string, query: any) => {
     };
   }
 
-  // 🔽 sorting
+  //  sorting
   let orderBy: any = { createdAt: "desc" };
 
   if (sort === "highest") {
