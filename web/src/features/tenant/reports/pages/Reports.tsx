@@ -1,15 +1,16 @@
 import LoaderFetching from "../../../../shared/ui/LoaderFetching";
 import { useReports, useSalesReport } from "../hooks/useReports";
-
 import SummaryCards from "../components/SummaryCards";
 import RevenueChart from "../components/RevenueChart";
 import BookingChart from "../components/BookingChart";
 import PropertySalesTable from "../components/PropertySalesTable";
-import TablePagination from "../../dashboard-tenant/components/TablePagination";
+import { useAvailability } from "../hooks/useAvailability";
+import AvailabilityCalendar from "../components/AvailabilityCalendar";
 
 function Reports() {
-  const { loading, data, currentPage, setCurrentPage, totalPages } = useReports();
+  const { loading, data } = useReports();
   const { data: salesData, filters, handleFilterChange, handleSearch } = useSalesReport();
+  const availability = useAvailability();
 
   if (loading) return <LoaderFetching />;
 
@@ -27,7 +28,17 @@ function Reports() {
       </div>
 
       <PropertySalesTable filters={filters} onChange={handleFilterChange} onSearch={handleSearch} data={salesData} />
-      <TablePagination currentPage={currentPage} totalPages={totalPages} setCurrentPage={setCurrentPage} />
+
+      <AvailabilityCalendar
+        data={availability.data}
+        filters={availability.filters}
+        onMonthChange={(month: string) =>
+          availability.setFilters({
+            ...availability.filters,
+            month,
+          })
+        }
+      />
     </div>
   );
 }

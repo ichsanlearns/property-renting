@@ -44,6 +44,11 @@ export default function useOrderList() {
               statusClass = "bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400";
               break;
 
+            case "REVIEWED":
+              status = "Reviewed";
+              statusClass = "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400";
+              break;
+
             default:
               status = item.status;
               statusClass = "bg-slate-100 text-slate-600";
@@ -95,14 +100,13 @@ export default function useOrderList() {
   }, [filterStatus, filterProperty]);
 
   const totalRevenue = orders.reduce((acc, o) => {
-    if (o.status === "Confirmed") {
+    if (["Confirmed", "Reviewed"].includes(o.status)) {
       return acc + Number(o.price.replace(/[^\d]/g, ""));
     }
-
     return acc;
   }, 0);
 
-  const totalConfirmed = orders.filter((o) => o.status === "Confirmed").length;
+  const totalConfirmed = orders.filter((o) => ["Confirmed", "Reviewed"].includes(o.status)).length;
 
   const totalPending = orders.filter((o) => o.status === "Waiting Payment" || o.status === "Waiting Confirmation").length;
 

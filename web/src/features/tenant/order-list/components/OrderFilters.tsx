@@ -11,7 +11,7 @@ export default function OrderFilters({ filterStatus, setFilterStatus, filterProp
     <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-4 mb-6 shadow-sm">
       <div className="flex flex-wrap items-center gap-4">
         <div className="flex items-center gap-2 p-1 bg-slate-100 dark:bg-slate-800 rounded-lg overflow-x-auto max-w-full">
-          {["ALL", "Waiting Payment", "Waiting Confirmation", "Confirmed", "Cancelled"].map((tab) => (
+          {["ALL", "Waiting Payment", "Waiting Confirmation", "Confirmed", "Cancelled", "Reviewed"].map((tab) => (
             <button
               key={tab}
               onClick={() => setFilterStatus(tab)}

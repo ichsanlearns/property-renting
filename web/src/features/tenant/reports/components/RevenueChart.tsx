@@ -9,11 +9,15 @@ export default function RevenueChart({ data }: any) {
 
       <div className="h-64">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={data}>
+          <LineChart data={data} margin={{ top: 10, right: 20, left: 40, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" />
+
             <XAxis dataKey="date" />
-            <YAxis />
-            <Tooltip />
+
+            <YAxis tickFormatter={(value) => Number(value).toLocaleString("id-ID")} />
+
+            <Tooltip formatter={(value) => `Rp ${Number(value).toLocaleString("id-ID")}`} />
+
             <Line type="monotone" dataKey="revenue" stroke="#ff5c61" strokeWidth={3} />
           </LineChart>
         </ResponsiveContainer>

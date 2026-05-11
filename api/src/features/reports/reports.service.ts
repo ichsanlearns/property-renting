@@ -116,7 +116,7 @@ export const getSalesReport = async (tenantId: string, query: any) => {
     },
   };
 
-  // 📅 filter tanggal
+  //  filter tanggal
   if (startDate && endDate) {
     where.createdAt = {
       gte: new Date(startDate),
@@ -124,7 +124,7 @@ export const getSalesReport = async (tenantId: string, query: any) => {
     };
   }
 
-  // 🔽 sorting
+  //  sorting
   let orderBy: any = { createdAt: "desc" };
 
   if (sort === "highest") {
@@ -152,5 +152,48 @@ export const getSalesReport = async (tenantId: string, query: any) => {
     userEmail: item.customer.email,
     propertyName: item.roomType.property.name,
     total: Number(item.totalAmount),
+  }));
+};
+export const getAvailabilityCalendar = async (tenantId: string, query: any) => {
+  const { propertyId, roomTypeId, month } = query;
+
+  if (!month) {
+    throw new Error("Month is required");
+  }
+
+  const start = new Date(`${month}-01`);
+  const end = new Date(start);
+  end.setMonth(end.getMonth() + 1);
+
+  const data = await prisma.roomTypePrice.findMany({
+    where: {
+      roomType: {
+        property: {
+          tenantId,
+          ...(propertyId && { id: propertyId }),
+        },
+        ...(roomTypeId && { id: roomTypeId }),
+      },
+      date: {
+        gte: start,
+        lt: end,
+      },
+    },
+    include: {
+      roomType: {
+        include: {
+          property: true,
+        },
+      },
+    },
+  });
+
+  return data.map((item) => ({
+    date: item.date,
+    availableRooms: item.availableRooms,
+    isClosed: item.isClosed,
+    price: Number(item.price),
+    propertyName: item.roomType.property.name,
+    roomTypeName: item.roomType.name,
   }));
 };

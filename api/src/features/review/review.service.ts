@@ -109,6 +109,32 @@ export const getPropertyReviews = async (propertyId: string) => {
   };
 };
 
+export const getLatestReviews = async () => {
+  return prisma.review.findMany({
+    take: 6,
+    orderBy: {
+      createdAt: "desc",
+    },
+    include: {
+      customer: {
+        select: {
+          firstName: true,
+          profileImage: true,
+        },
+      },
+
+      property: {
+        select: {
+          id: true,
+          name: true,
+          city: true,
+          country: true,
+        },
+      },
+    },
+  });
+};
+
 export const replyReview = async ({ reviewId, tenantId, reply }: { reviewId: string; tenantId: string; reply: string }) => {
   const review = await prisma.review.findUnique({
     where: { id: reviewId },
