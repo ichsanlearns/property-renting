@@ -49,7 +49,7 @@ export type GetPropertyAllBasicResponse = {
   reviewCount: number;
   coverImage: string;
 
-  reviews: {
+  reviews?: {
     rating: number;
     comment: string;
     customer: {
