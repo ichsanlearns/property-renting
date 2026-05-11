@@ -2,7 +2,13 @@ import { formatRupiah } from "../../../shared/utils/price.util";
 import type { GetPropertyAllBasicResponse } from "../../tenant/property/api/property.response";
 import { useNavigate } from "react-router-dom";
 
-function PropertyCard({ property, page }: { property?: GetPropertyAllBasicResponse; page?: "search" | "home" }) {
+function PropertyCard({
+  property,
+  page,
+}: {
+  property?: GetPropertyAllBasicResponse;
+  page?: "search" | "home";
+}) {
   const navigate = useNavigate();
   const handleCardClick = (id: string) => {
     navigate(`/property/${id}`);
@@ -13,11 +19,24 @@ function PropertyCard({ property, page }: { property?: GetPropertyAllBasicRespon
   }
 
   return (
-    <div onClick={() => handleCardClick(property.id)} key={property.id} className="group cursor-pointer">
-      <div className={`relative ${page === "search" ? "aspect-4/3" : "aspect-4/5"} rounded-3xl overflow-hidden transition-all duration-300 transform group-hover:scale-[1.02]`}>
-        <img alt="Modern wood cabin" className="w-full h-full object-cover" data-alt="Architectural wood and glass cabin nestled in a snowy pine forest with warm interior lights glowing against the blue dusk" src={property.coverImage} />
+    <div
+      onClick={() => handleCardClick(property.id)}
+      key={property.id}
+      className="group cursor-pointer"
+    >
+      <div
+        className={`relative ${page === "search" ? "aspect-4/3" : "aspect-4/5"} rounded-3xl overflow-hidden transition-all duration-300 transform group-hover:scale-[1.02]`}
+      >
+        <img
+          alt="Modern wood cabin"
+          className="w-full h-full object-cover"
+          data-alt="Architectural wood and glass cabin nestled in a snowy pine forest with warm interior lights glowing against the blue dusk"
+          src={property.coverImage}
+        />
         <div className="absolute bottom-0 left-0 right-0 p-6 bg-linear-to-t from-black/60 to-transparent">
-          <span className="bg-white/20 backdrop-blur-md text-white text-[10px] uppercase font-bold px-3 py-1 rounded-full border border-white/30">Rare find</span>
+          <span className="bg-white/20 backdrop-blur-md text-white text-[10px] uppercase font-bold px-3 py-1 rounded-full border border-white/30">
+            Rare find
+          </span>
         </div>
       </div>
       <div className="mt-4 flex justify-between">
@@ -43,7 +62,10 @@ function PropertyCard({ property, page }: { property?: GetPropertyAllBasicRespon
                     key={star}
                     className="material-symbols-outlined text-sm"
                     style={{
-                      fontVariationSettings: star <= property.reviews[0].rating ? "'FILL' 1" : "'FILL' 0",
+                      fontVariationSettings:
+                        star <= property.reviews![0].rating
+                          ? "'FILL' 1"
+                          : "'FILL' 0",
                     }}
                   >
                     star
@@ -52,17 +74,25 @@ function PropertyCard({ property, page }: { property?: GetPropertyAllBasicRespon
               </div>
 
               {/* Comment */}
-              <p className="text-sm text-slate-600 italic line-clamp-2">"{property.reviews[0].comment}"</p>
+              <p className="text-sm text-slate-600 italic line-clamp-2">
+                "{property.reviews[0].comment}"
+              </p>
 
               {/* Reviewer */}
-              <p className="text-xs text-slate-400 font-semibold mt-2">— {property.reviews[0].customer.firstName}</p>
+              <p className="text-xs text-slate-400 font-semibold mt-2">
+                — {property.reviews[0].customer.firstName}
+              </p>
             </div>
           )}
         </div>
 
         {property.averageRating && (
           <div className="flex items-center gap-1 h-fit">
-            <span className="material-symbols-outlined text-sm" data-icon="star" style={{ fontVariationSettings: "'FILL' 1" }}>
+            <span
+              className="material-symbols-outlined text-sm"
+              data-icon="star"
+              style={{ fontVariationSettings: "'FILL' 1" }}
+            >
               star
             </span>
 
